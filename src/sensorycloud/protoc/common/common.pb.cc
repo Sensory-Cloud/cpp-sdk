@@ -124,10 +124,23 @@ struct MemorySummaryDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MemorySummaryDefaultTypeInternal _MemorySummary_default_instance_;
+constexpr GenericClient::GenericClient(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : clientid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , secret_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct GenericClientDefaultTypeInternal {
+  constexpr GenericClientDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~GenericClientDefaultTypeInternal() {}
+  union {
+    GenericClient _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GenericClientDefaultTypeInternal _GenericClient_default_instance_;
 }  // namespace common
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_common_2fcommon_2eproto[7];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_common_2fcommon_2eproto[8];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_common_2fcommon_2eproto[6];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_common_2fcommon_2eproto = nullptr;
 
@@ -194,6 +207,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_common_2fcommon_2eproto::offse
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::MemorySummary, memtotal_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::MemorySummary, memfree_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::MemorySummary, memavailable_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::GenericClient, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::GenericClient, clientid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::GenericClient, secret_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::sensory::api::common::CompressionConfiguration)},
@@ -203,6 +223,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 32, -1, sizeof(::sensory::api::common::SystemSummary)},
   { 39, -1, sizeof(::sensory::api::common::CpuSummary)},
   { 54, -1, sizeof(::sensory::api::common::MemorySummary)},
+  { 62, -1, sizeof(::sensory::api::common::GenericClient)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -213,6 +234,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_SystemSummary_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_CpuSummary_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_MemorySummary_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_GenericClient_default_instance_),
 };
 
 const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -236,39 +258,40 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "\017\n\007softIrq\030\007 \001(\004\022\r\n\005steal\030\010 \001(\004\022\r\n\005guest"
   "\030\t \001(\004\022\021\n\tguestNice\030\n \001(\004\"H\n\rMemorySumma"
   "ry\022\020\n\010memTotal\030\001 \001(\004\022\017\n\007memFree\030\002 \001(\004\022\024\n"
-  "\014memAvailable\030\003 \001(\004*D\n\007KeyType\022\016\n\nPUBLIC"
-  "_KEY\020\000\022\026\n\022PUBLIC_KEY_ED25519\020\001\022\021\n\rSHARED"
-  "_SECRET\020\003*\220\004\n\tModelType\022\"\n\036VOICE_BIOMETR"
-  "IC_TEXT_DEPENDENT\020\000\022$\n VOICE_BIOMETRIC_T"
-  "EXT_INDEPENDENT\020\001\022\034\n\030VOICE_BIOMETRIC_WAK"
-  "EWORD\020\002\022\030\n\024VOICE_EVENT_WAKEWORD\020\003\022\034\n\030VOI"
-  "CE_TRANSCRIBE_GRAMMAR\020\004\022\'\n#VOICE_TRANSCR"
-  "IBE_COMMAND_AND_SEARCH\020\005\022(\n$VOICE_RECOGN"
-  "ITION_ACTIVITY_DETECTION\020\006\022\033\n\027VOICE_FEAT"
-  "URE_EXTRACTOR\020\007\022\"\n\036VOICE_BIOMETRIC_LIVEN"
-  "ESS_DIGIT\020\010\022\032\n\026SOUND_EVENT_ENROLLABLE\020d\022"
-  "\034\n\030SOUND_EVENT_REVALIDATION\020e\022\025\n\021SOUND_E"
-  "VENT_FIXED\020f\022\025\n\021SOUND_SCENE_FIXED\020g\022\023\n\016F"
-  "ACE_BIOMETRIC\020\311\001\022\025\n\020FACE_RECOGNITION\020\312\001\022"
-  "\027\n\022OBJECT_RECOGNITION\020\313\001\022\024\n\017IMAGE_TRANSF"
-  "ORM\020\314\001\022\014\n\007UNKNOWN\020\350\007*8\n\016TechnologyType\022\013"
-  "\n\007NOT_SET\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003*&"
-  "\n\017CompressionType\022\023\n\017IMAGE_GRAYSCALE\020\000*9"
-  "\n\nClientType\022\010\n\004ROOT\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CL"
-  "USTER\020\002\022\010\n\004USER\020\003*E\n\016UsageEventType\022\022\n\016A"
-  "UTHENTICATION\020\000\022\017\n\013RECOGNITION\020\001\022\016\n\nENRO"
-  "LLMENT\020\002Bj\n\025io.sensory.api.commonB\025Senso"
-  "ryApiCommonProtoP\001Z8gitlab.com/sensory-c"
-  "loud/server/titan.git/pkg/api/commonb\006pr"
-  "oto3"
+  "\014memAvailable\030\003 \001(\004\"D\n\rGenericClient\022\032\n\010"
+  "clientId\030\001 \001(\tB\010\372B\005r\003\260\001\001\022\027\n\006secret\030\002 \001(\t"
+  "B\007\372B\004r\002\020\n*D\n\007KeyType\022\016\n\nPUBLIC_KEY\020\000\022\026\n\022"
+  "PUBLIC_KEY_ED25519\020\001\022\021\n\rSHARED_SECRET\020\003*"
+  "\220\004\n\tModelType\022\"\n\036VOICE_BIOMETRIC_TEXT_DE"
+  "PENDENT\020\000\022$\n VOICE_BIOMETRIC_TEXT_INDEPE"
+  "NDENT\020\001\022\034\n\030VOICE_BIOMETRIC_WAKEWORD\020\002\022\030\n"
+  "\024VOICE_EVENT_WAKEWORD\020\003\022\034\n\030VOICE_TRANSCR"
+  "IBE_GRAMMAR\020\004\022\'\n#VOICE_TRANSCRIBE_COMMAN"
+  "D_AND_SEARCH\020\005\022(\n$VOICE_RECOGNITION_ACTI"
+  "VITY_DETECTION\020\006\022\033\n\027VOICE_FEATURE_EXTRAC"
+  "TOR\020\007\022\"\n\036VOICE_BIOMETRIC_LIVENESS_DIGIT\020"
+  "\010\022\032\n\026SOUND_EVENT_ENROLLABLE\020d\022\034\n\030SOUND_E"
+  "VENT_REVALIDATION\020e\022\025\n\021SOUND_EVENT_FIXED"
+  "\020f\022\025\n\021SOUND_SCENE_FIXED\020g\022\023\n\016FACE_BIOMET"
+  "RIC\020\311\001\022\025\n\020FACE_RECOGNITION\020\312\001\022\027\n\022OBJECT_"
+  "RECOGNITION\020\313\001\022\024\n\017IMAGE_TRANSFORM\020\314\001\022\014\n\007"
+  "UNKNOWN\020\350\007*8\n\016TechnologyType\022\013\n\007NOT_SET\020"
+  "\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003*&\n\017Compress"
+  "ionType\022\023\n\017IMAGE_GRAYSCALE\020\000*9\n\nClientTy"
+  "pe\022\010\n\004ROOT\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CLUSTER\020\002\022\010\n"
+  "\004USER\020\003*E\n\016UsageEventType\022\022\n\016AUTHENTICAT"
+  "ION\020\000\022\017\n\013RECOGNITION\020\001\022\016\n\nENROLLMENT\020\002Bj"
+  "\n\025io.sensory.api.commonB\025SensoryApiCommo"
+  "nProtoP\001Z8gitlab.com/sensory-cloud/serve"
+  "r/titan.git/pkg/api/commonb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2fcommon_2eproto_deps[1] = {
   &::descriptor_table_validate_2fvalidate_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2fcommon_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2fcommon_2eproto = {
-  false, false, 1764, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
-  &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 1, 7,
+  false, false, 1834, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
+  &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 1, 8,
   schemas, file_default_instances, TableStruct_common_2fcommon_2eproto::offsets,
   file_level_metadata_common_2fcommon_2eproto, file_level_enum_descriptors_common_2fcommon_2eproto, file_level_service_descriptors_common_2fcommon_2eproto,
 };
@@ -2360,6 +2383,248 @@ void MemorySummary::InternalSwap(MemorySummary* other) {
       file_level_metadata_common_2fcommon_2eproto[6]);
 }
 
+// ===================================================================
+
+class GenericClient::_Internal {
+ public:
+};
+
+GenericClient::GenericClient(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.common.GenericClient)
+}
+GenericClient::GenericClient(const GenericClient& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_clientid().empty()) {
+    clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_clientid(), 
+      GetArenaForAllocation());
+  }
+  secret_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_secret().empty()) {
+    secret_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_secret(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.common.GenericClient)
+}
+
+inline void GenericClient::SharedCtor() {
+clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+secret_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+GenericClient::~GenericClient() {
+  // @@protoc_insertion_point(destructor:sensory.api.common.GenericClient)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void GenericClient::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  clientid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  secret_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void GenericClient::ArenaDtor(void* object) {
+  GenericClient* _this = reinterpret_cast< GenericClient* >(object);
+  (void)_this;
+}
+void GenericClient::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void GenericClient::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void GenericClient::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.common.GenericClient)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  clientid_.ClearToEmpty();
+  secret_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GenericClient::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string clientId = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_clientid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.GenericClient.clientId"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string secret = 2 [(.validate.rules) = {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_secret();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.GenericClient.secret"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* GenericClient::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.common.GenericClient)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string clientId = 1 [(.validate.rules) = {
+  if (!this->_internal_clientid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_clientid().data(), static_cast<int>(this->_internal_clientid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.GenericClient.clientId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_clientid(), target);
+  }
+
+  // string secret = 2 [(.validate.rules) = {
+  if (!this->_internal_secret().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_secret().data(), static_cast<int>(this->_internal_secret().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.GenericClient.secret");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_secret(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.common.GenericClient)
+  return target;
+}
+
+size_t GenericClient::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.common.GenericClient)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string clientId = 1 [(.validate.rules) = {
+  if (!this->_internal_clientid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_clientid());
+  }
+
+  // string secret = 2 [(.validate.rules) = {
+  if (!this->_internal_secret().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_secret());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GenericClient::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    GenericClient::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GenericClient::GetClassData() const { return &_class_data_; }
+
+void GenericClient::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<GenericClient *>(to)->MergeFrom(
+      static_cast<const GenericClient &>(from));
+}
+
+
+void GenericClient::MergeFrom(const GenericClient& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.common.GenericClient)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_clientid().empty()) {
+    _internal_set_clientid(from._internal_clientid());
+  }
+  if (!from._internal_secret().empty()) {
+    _internal_set_secret(from._internal_secret());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GenericClient::CopyFrom(const GenericClient& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.common.GenericClient)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GenericClient::IsInitialized() const {
+  return true;
+}
+
+void GenericClient::InternalSwap(GenericClient* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &clientid_, GetArenaForAllocation(),
+      &other->clientid_, other->GetArenaForAllocation()
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &secret_, GetArenaForAllocation(),
+      &other->secret_, other->GetArenaForAllocation()
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GenericClient::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_common_2fcommon_2eproto_getter, &descriptor_table_common_2fcommon_2eproto_once,
+      file_level_metadata_common_2fcommon_2eproto[7]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace common
 }  // namespace api
@@ -2385,6 +2650,9 @@ template<> PROTOBUF_NOINLINE ::sensory::api::common::CpuSummary* Arena::CreateMa
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::common::MemorySummary* Arena::CreateMaybeMessage< ::sensory::api::common::MemorySummary >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::common::MemorySummary >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::common::GenericClient* Arena::CreateMaybeMessage< ::sensory::api::common::GenericClient >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::common::GenericClient >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

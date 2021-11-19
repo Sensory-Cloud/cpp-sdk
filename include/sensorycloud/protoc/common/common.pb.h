@@ -48,7 +48,7 @@ struct TableStruct_common_2fcommon_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -64,6 +64,9 @@ extern CompressionConfigurationDefaultTypeInternal _CompressionConfiguration_def
 class CpuSummary;
 struct CpuSummaryDefaultTypeInternal;
 extern CpuSummaryDefaultTypeInternal _CpuSummary_default_instance_;
+class GenericClient;
+struct GenericClientDefaultTypeInternal;
+extern GenericClientDefaultTypeInternal _GenericClient_default_instance_;
 class MemorySummary;
 struct MemorySummaryDefaultTypeInternal;
 extern MemorySummaryDefaultTypeInternal _MemorySummary_default_instance_;
@@ -85,6 +88,7 @@ extern TokenResponseDefaultTypeInternal _TokenResponse_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::sensory::api::common::CompressionConfiguration* Arena::CreateMaybeMessage<::sensory::api::common::CompressionConfiguration>(Arena*);
 template<> ::sensory::api::common::CpuSummary* Arena::CreateMaybeMessage<::sensory::api::common::CpuSummary>(Arena*);
+template<> ::sensory::api::common::GenericClient* Arena::CreateMaybeMessage<::sensory::api::common::GenericClient>(Arena*);
 template<> ::sensory::api::common::MemorySummary* Arena::CreateMaybeMessage<::sensory::api::common::MemorySummary>(Arena*);
 template<> ::sensory::api::common::ServerHealthResponse* Arena::CreateMaybeMessage<::sensory::api::common::ServerHealthResponse>(Arena*);
 template<> ::sensory::api::common::ServiceHealth* Arena::CreateMaybeMessage<::sensory::api::common::ServiceHealth>(Arena*);
@@ -1530,6 +1534,166 @@ class MemorySummary final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_common_2fcommon_2eproto;
 };
+// -------------------------------------------------------------------
+
+class GenericClient final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.GenericClient) */ {
+ public:
+  inline GenericClient() : GenericClient(nullptr) {}
+  ~GenericClient() override;
+  explicit constexpr GenericClient(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GenericClient(const GenericClient& from);
+  GenericClient(GenericClient&& from) noexcept
+    : GenericClient() {
+    *this = ::std::move(from);
+  }
+
+  inline GenericClient& operator=(const GenericClient& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GenericClient& operator=(GenericClient&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GenericClient& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GenericClient* internal_default_instance() {
+    return reinterpret_cast<const GenericClient*>(
+               &_GenericClient_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(GenericClient& a, GenericClient& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GenericClient* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GenericClient* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GenericClient* New() const final {
+    return new GenericClient();
+  }
+
+  GenericClient* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GenericClient>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GenericClient& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GenericClient& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GenericClient* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.GenericClient";
+  }
+  protected:
+  explicit GenericClient(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kClientIdFieldNumber = 1,
+    kSecretFieldNumber = 2,
+  };
+  // string clientId = 1 [(.validate.rules) = {
+  void clear_clientid();
+  const std::string& clientid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_clientid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_clientid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_clientid();
+  void set_allocated_clientid(std::string* clientid);
+  private:
+  const std::string& _internal_clientid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_clientid(const std::string& value);
+  std::string* _internal_mutable_clientid();
+  public:
+
+  // string secret = 2 [(.validate.rules) = {
+  void clear_secret();
+  const std::string& secret() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_secret(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_secret();
+  PROTOBUF_MUST_USE_RESULT std::string* release_secret();
+  void set_allocated_secret(std::string* secret);
+  private:
+  const std::string& _internal_secret() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_secret(const std::string& value);
+  std::string* _internal_mutable_secret();
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.GenericClient)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr secret_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
 // ===================================================================
 
 
@@ -2470,9 +2634,107 @@ inline void MemorySummary::set_memavailable(::PROTOBUF_NAMESPACE_ID::uint64 valu
   // @@protoc_insertion_point(field_set:sensory.api.common.MemorySummary.memAvailable)
 }
 
+// -------------------------------------------------------------------
+
+// GenericClient
+
+// string clientId = 1 [(.validate.rules) = {
+inline void GenericClient::clear_clientid() {
+  clientid_.ClearToEmpty();
+}
+inline const std::string& GenericClient::clientid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.GenericClient.clientId)
+  return _internal_clientid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GenericClient::set_clientid(ArgT0&& arg0, ArgT... args) {
+ 
+ clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.GenericClient.clientId)
+}
+inline std::string* GenericClient::mutable_clientid() {
+  std::string* _s = _internal_mutable_clientid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.GenericClient.clientId)
+  return _s;
+}
+inline const std::string& GenericClient::_internal_clientid() const {
+  return clientid_.Get();
+}
+inline void GenericClient::_internal_set_clientid(const std::string& value) {
+  
+  clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* GenericClient::_internal_mutable_clientid() {
+  
+  return clientid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* GenericClient::release_clientid() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.GenericClient.clientId)
+  return clientid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void GenericClient::set_allocated_clientid(std::string* clientid) {
+  if (clientid != nullptr) {
+    
+  } else {
+    
+  }
+  clientid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), clientid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.GenericClient.clientId)
+}
+
+// string secret = 2 [(.validate.rules) = {
+inline void GenericClient::clear_secret() {
+  secret_.ClearToEmpty();
+}
+inline const std::string& GenericClient::secret() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.GenericClient.secret)
+  return _internal_secret();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GenericClient::set_secret(ArgT0&& arg0, ArgT... args) {
+ 
+ secret_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.GenericClient.secret)
+}
+inline std::string* GenericClient::mutable_secret() {
+  std::string* _s = _internal_mutable_secret();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.GenericClient.secret)
+  return _s;
+}
+inline const std::string& GenericClient::_internal_secret() const {
+  return secret_.Get();
+}
+inline void GenericClient::_internal_set_secret(const std::string& value) {
+  
+  secret_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* GenericClient::_internal_mutable_secret() {
+  
+  return secret_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* GenericClient::release_secret() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.GenericClient.secret)
+  return secret_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void GenericClient::set_allocated_secret(std::string* secret) {
+  if (secret != nullptr) {
+    
+  } else {
+    
+  }
+  secret_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), secret,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.GenericClient.secret)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
