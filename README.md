@@ -62,17 +62,16 @@ export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
 ### Protocol Buffer Generation
 
 protocol buffer and gRPC stub files can be automatically generated from the
-`.proto` files in [proto](proto) with the command:
+`.proto` files in [proto](https://gitlab.com/sensory-cloud/sdk/proto) with the
+command:
 
 ```shell
 ./cs.sh genproto
 ```
 
 The generated header files and definition files will be in
-[][include/sensorycloud/protoc] and [][src/sensorycloud/protoc], respectively.
-
-[include/sensorycloud/protoc]: include/sensorycloud/protoc
-[src/sensorycloud/protoc]: src/sensorycloud/protoc
+[include/sensorycloud/protoc](include/sensorycloud/protoc) and
+[src/sensorycloud/protoc](src/sensorycloud/protoc), respectively.
 
 ### Library Compilation
 
