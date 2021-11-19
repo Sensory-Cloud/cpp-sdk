@@ -36,12 +36,12 @@ include(FetchContent)
 # set(FETCHCONTENT_QUIET OFF)
 # FetchContent_MakeAvailable(gRPC)
 
-# # Install the Catch2 development dependency
-# FetchContent_Declare(Catch2
-#     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-#     GIT_TAG        v3.0.0-preview3
-# )
-# FetchContent_MakeAvailable(Catch2)
+# Install the Catch2 development dependency
+FetchContent_Declare(Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v2.13.7
+)
+FetchContent_MakeAvailable(Catch2)
 
 # --- Library ----------------------------------------------------------------
 
@@ -83,9 +83,9 @@ add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
 # --- Test Cases -------------------------------------------------------------
 
-# target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
-
-# TODO
+add_executable(test_sensorycloud_config tests/sensorycloud/test_config.cpp)
+target_link_libraries(test_sensorycloud_config PRIVATE sensorycloud)
+target_link_libraries(test_sensorycloud_config PRIVATE Catch2::Catch2)
 
 # --- Benchmarks -------------------------------------------------------------
 
