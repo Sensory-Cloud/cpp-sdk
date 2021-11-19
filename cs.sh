@@ -8,12 +8,13 @@ USAGE="Usage: ./cs.sh [COMMAND]"
 
 COMMANDS="
     Commands:\n
-    genproto | gp\t\t Generate Proto Files\n
-    test | t\t\t Run Unit Tests\n
+    genproto | gp\t\t Compile Proto Files\n
+    compile | c\t\t Compile the library\n
+    lint | l\t\t Lint source files\n
+    test | t\t\t Run unit tests\n
     bench | b\t\t Run benchmarks\n
-    lint | l\t\t Lint Source Files\n
-    doc | d\t\t Generate Documentation\n
-    help | h\t\t Display This Help Message\n
+    doc | d\t\t Generate documentation\n
+    help | h\t\t Display this help message\n
 "
 
 # The directory where the header files are stored
@@ -30,12 +31,15 @@ print_helper() {
 }
 
 # --- Options Processing -------------------------------------------
+
 if [ $# == 0 ] ; then
     print_helper
     exit 1;
 fi
 
 # --- Helper Functions ---------------------------------------------
+
+# Generate the protobuf C++ headers and definitions
 gen_proto() {
   # Generate a build directory for the generated gRPC code
   PROTOC_OUTPUT_PATH="./build/sensorycloud/protoc"
@@ -70,33 +74,58 @@ gen_proto() {
   rm -rf ${PROTOC_OUTPUT_PATH}
 }
 
+# Compile the Makefiles and library. Also pull some dependencies.
 compile() {
   cmake .
   make sensorycloud
 }
 
+# Lint the header files and definition files.
+lint() {
+  make clean
+  cmake "-DCMAKE_CXX_CPPLINT=cpplint" .
+  make
+  make clean
+  rm CMakeCache.txt
+  rm -rf CMakeFiles
+}
+
+# Compile the unit test suite.
 compile_tests() {
   make test_sensorycloud_config
 }
 
+# Compile the benchmark suite.
 compile_benchmarks() {
   echo 'TODO'
 }
 
+# Execute the unit test suite.
 run_tests() {
   ./build/test_sensorycloud_config
 }
 
+# Execute the benchmark suite.
 run_benchmarks() {
   echo 'TODO'
 }
 
 # --- Body ---------------------------------------------------------
+
 case "$1" in
 
+  "genproto"|"gp")
+    gen_proto
+    exit 0;
+    ;;
+
+  "compile"|"c")
+    compile
+    exit 0;
+    ;;
+
   "lint"|"l")
-    make clean
-    cmake "-DCMAKE_CXX_CPPLINT=cpplint" .
+    lint
     exit 0;
     ;;
 
@@ -111,11 +140,6 @@ case "$1" in
     compile
     compile_benchmarks
     run_benchmarks
-    exit 0;
-    ;;
-
-  "genproto"|"gp")
-    gen_proto
     exit 0;
     ;;
 
