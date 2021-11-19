@@ -70,21 +70,47 @@ gen_proto() {
   rm -rf ${PROTOC_OUTPUT_PATH}
 }
 
+compile() {
+  cmake .
+  make sensorycloud
+}
+
+compile_tests() {
+  make test_sensorycloud_config
+}
+
+compile_benchmarks() {
+  echo 'TODO'
+}
+
+run_tests() {
+  ./build/test_sensorycloud_config
+}
+
+run_benchmarks() {
+  echo 'TODO'
+}
+
 # --- Body ---------------------------------------------------------
 case "$1" in
 
   "lint"|"l")
-    echo 'TODO'
+    make clean
+    cmake "-DCMAKE_CXX_CPPLINT=cpplint" .
     exit 0;
     ;;
 
   "test"|"t")
-    echo 'TODO'
+    compile
+    compile_tests
+    run_tests
     exit 0;
     ;;
 
   "bench"|"b")
-    echo 'TODO'
+    compile
+    compile_benchmarks
+    run_benchmarks
     exit 0;
     ;;
 
@@ -94,7 +120,7 @@ case "$1" in
     ;;
 
   "doc"|"d")
-    echo 'TODO'
+    doxygen Doxyfile
     exit 0;
     ;;
 
