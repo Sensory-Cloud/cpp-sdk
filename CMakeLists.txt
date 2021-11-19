@@ -55,7 +55,7 @@ file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/*.h
     ${PROJECT_SOURCE_DIR}/include/*.hpp
 )
-message(INCLUDES="${INCLUDES}")
+# message(INCLUDES="${INCLUDES}")
 
 # Locate the definition files for the sensorycloud library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
@@ -63,7 +63,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/src/*.cc
     ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
-message(SOURCES="${SOURCES}")
+# message(SOURCES="${SOURCES}")
 
 # Create the sensorycloud library
 add_library(sensorycloud STATIC)
