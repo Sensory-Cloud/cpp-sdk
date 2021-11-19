@@ -121,7 +121,7 @@ class Config {
     /// between 0 and 1 where 0 is most compressed, and 1 is highest quality.
     ///
     inline void setJpegCompression(const double& jpegCompression = 0.5) {
-        this->jpegCompression = std::max(std::min(jpegCompression, 0.0), 1.0);
+        this->jpegCompression = std::min(std::max(jpegCompression, 0.0), 1.0);
     }
 
     /// @brief Return the compression factor for JPEG compression.
