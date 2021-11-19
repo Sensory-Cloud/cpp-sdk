@@ -30,13 +30,13 @@
 #include <cstdint>
 #include <string>
 
-/// @brief The Sensory Cloud API
+/// @brief The Sensory Cloud C++ SDK.
 namespace sensory {
 
 /// @brief Configuration structures for setting up the Sensory Cloud SDK.
 namespace config {
 
-/// @brief Struct for providing info on a cloud host
+/// @brief A structure for providing information about a cloud host.
 struct CloudHost {
     /// Cloud DNS Host
     std::string host;
@@ -46,7 +46,7 @@ struct CloudHost {
     bool isSecure;
 };
 
-/// @brief Configuration endpoints for Sensory Cloud.
+/// @brief A configuration endpoint for Sensory Cloud.
 class Config {
  private:
     /// the cloud host to interact with
