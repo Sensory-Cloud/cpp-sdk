@@ -48,9 +48,10 @@ gen_proto() {
   for x in $(find ./proto -iname "*.proto");
   do
     protoc \
-      -I="src"\
       --proto_path="./proto" \
       --cpp_out=${PROTOC_OUTPUT_PATH} \
+      --plugin=protoc-gen-grpc=/usr/local/bin/grpc_cpp_plugin \
+      --grpc_out=${PROTOC_OUTPUT_PATH} \
       $x;
     echo "Generated grpc code for $x";
   done
@@ -71,7 +72,7 @@ gen_proto() {
   cp -r ${PROTOC_OUTPUT_PATH} "${SRC_DIR}/protoc"
   find "${SRC_DIR}/protoc" -name "*.h" -delete
   # Remove the build directory
-  rm -rf ${PROTOC_OUTPUT_PATH}
+  # rm -rf ${PROTOC_OUTPUT_PATH}
 }
 
 # Compile the Makefiles and library. Also pull some dependencies.
