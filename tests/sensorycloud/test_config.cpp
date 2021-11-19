@@ -1,5 +1,7 @@
 // Test cases for types and structures for the structures in sensory::config.
 //
+// Author: Christian Kauten (ckauten@sensoryinc.com)
+//
 // Copyright (c) 2021 Sensory, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
