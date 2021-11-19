@@ -72,8 +72,6 @@ gen_proto() {
   rm -rf "${SRC_DIR}/protoc"
   cp -r ${PROTOC_OUTPUT_PATH} "${SRC_DIR}/protoc"
   find "${SRC_DIR}/protoc" -name "*.h" -delete
-  # Remove the build directory
-  # rm -rf ${PROTOC_OUTPUT_PATH}
 }
 
 # Compile the Makefiles and library. Also pull some dependencies.
