@@ -19,7 +19,7 @@ find_package(Protobuf REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS})
 # Find the gRPC dependency
 # find_package(OpenSSL REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+# find_package(gRPC CONFIG REQUIRED)
 
 include(FetchContent)
 
