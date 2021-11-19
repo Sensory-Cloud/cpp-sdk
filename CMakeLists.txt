@@ -88,9 +88,21 @@ FetchContent_Declare(Catch2
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(test_sensorycloud_config tests/sensorycloud/test_config.cpp)
-target_link_libraries(test_sensorycloud_config PRIVATE sensorycloud)
-target_link_libraries(test_sensorycloud_config PRIVATE Catch2::Catch2)
+# Find the source files for the test code to compile iteratively
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
+foreach(TEST_SOURCE IN ITEMS ${TEST_SOURCES})
+    # Convert the path name to an executable name to build.
+    string(REPLACE "${PROJECT_SOURCE_DIR}/tests/" "test_" BINARY_NAME ${TEST_SOURCE})
+    string(REPLACE "/" "_" BINARY_NAME ${BINARY_NAME})
+    string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
+    # Create the binary and link it with the required libraries
+    add_executable(${BINARY_NAME} ${TEST_SOURCE})
+    target_link_libraries(${BINARY_NAME} PRIVATE sensorycloud)
+    target_link_libraries(${BINARY_NAME} PRIVATE Catch2::Catch2)
+    list(APPEND BINARY_NAMES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BINARY_NAME})
+endforeach()
+# Create a combined target to compile all of the test codes
+add_custom_target(tests ALL DEPENDS ${BINARY_NAMES})
 
 # --- Benchmarks -------------------------------------------------------------
 
