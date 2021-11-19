@@ -77,7 +77,7 @@ target_link_libraries(sensorycloud PRIVATE OpenSSL::Crypto)
 # Link with the gRPC library
 target_link_libraries(sensorycloud PRIVATE gRPC::grpc++)
 
-add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
+# add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
 # --- Test Cases -------------------------------------------------------------
 
