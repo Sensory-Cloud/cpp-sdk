@@ -4,11 +4,17 @@ This repository contains the source code for the Sensory Cloud C++ SDK.
 
 ## Requirements
 
-### gRPC
+### Build Tools
+
+#### Debian
 
 ```shell
-brew install openssl grpc
+sudo apt-get install build-essential autoconf libtool pkg-config cmake
 ```
+
+#### MacOS
+
+TODO
 
 ### Protocol Buffer Compiler
 
@@ -25,6 +31,21 @@ apt install -y protobuf-compiler
 
 ```shell
 brew install protobuf
+```
+
+### gRPC
+
+#### Debian
+
+```shell
+sudo apt-get install openssl grpc
+```
+
+#### MacOS
+
+```shell
+brew install openssl grpc
+export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
 ```
 
 ## Usage
