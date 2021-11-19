@@ -9,6 +9,9 @@ add_compile_options(-std=c++11)
 # Log the source directory
 message(PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 
+# Output built binaries to a `build` directory instead of the project root
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build")
+
 # --- Dependencies -----------------------------------------------------------
 
 # Find the Protobuf dependency
