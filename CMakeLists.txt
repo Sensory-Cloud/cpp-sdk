@@ -18,8 +18,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build")
 find_package(Protobuf REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS})
 # Find the gRPC dependency
-# find_package(OpenSSL REQUIRED)
-# find_package(gRPC CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
 
 include(FetchContent)
 
@@ -38,13 +38,6 @@ include(FetchContent)
 # )
 # set(FETCHCONTENT_QUIET OFF)
 # FetchContent_MakeAvailable(gRPC)
-
-# Install the Catch2 development dependency
-FetchContent_Declare(Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v2.13.7
-)
-FetchContent_MakeAvailable(Catch2)
 
 # --- Library ----------------------------------------------------------------
 
@@ -76,15 +69,24 @@ target_compile_features(sensorycloud PUBLIC cxx_std_11)
 set_target_properties(sensorycloud PROPERTIES
     PUBLIC_HEADER include/sensorycloud/sensorycloud.hpp
 )
-# Link with the protobuff library
+# Link with the Protobuf library
 target_link_libraries(sensorycloud PRIVATE ${Protobuf_LIBRARIES})
-# Link with the GRPC library
-# target_link_libraries(sensorycloud PRIVATE grpc++)
-# target_link_libraries(sensorycloud PRIVATE gRPC::grpc++)
+# Link with the OpenSSL library
+target_link_libraries(sensorycloud PRIVATE OpenSSL::SSL)
+target_link_libraries(sensorycloud PRIVATE OpenSSL::Crypto)
+# Link with the gRPC library
+target_link_libraries(sensorycloud PRIVATE gRPC::grpc++)
 
 add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
 # --- Test Cases -------------------------------------------------------------
+
+# Install the Catch2 development dependency
+FetchContent_Declare(Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v2.13.7
+)
+FetchContent_MakeAvailable(Catch2)
 
 add_executable(test_sensorycloud_config tests/sensorycloud/test_config.cpp)
 target_link_libraries(test_sensorycloud_config PRIVATE sensorycloud)
