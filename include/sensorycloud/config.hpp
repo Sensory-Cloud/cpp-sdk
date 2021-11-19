@@ -113,7 +113,7 @@ class Config {
     ///
     /// @returns the cloud host or `nullptr` if a host has not been configured
     ///
-    inline CloudHost* getCloudHost() const { return cloudHost; }
+    inline const CloudHost* getCloudHost() const { return cloudHost; }
 
     /// @brief Set the JPEG compression level to a new value.
     ///

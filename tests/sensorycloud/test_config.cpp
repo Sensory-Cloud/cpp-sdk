@@ -92,7 +92,7 @@ SCENARIO("A user wants to create a secure connection to a secure cloud host") {
     GIVEN("An initialized Config object") {
         sensory::config::Config config;
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "http://localhost";
+            std::string host = "rpc://localhost";
             uint32_t port = 443;
             config.setCloudHost(host, port);
             THEN("The cloud host is set") {
@@ -104,13 +104,27 @@ SCENARIO("A user wants to create a secure connection to a secure cloud host") {
             }
         }
     }
+    GIVEN("An initialized Config object with an existing connection") {
+        sensory::config::Config config;
+        config.setCloudHost("rpc://localhost", 8080);
+        WHEN("The cloud host is set to its initial value") {
+            std::string host = "rpc://cloud.sensory.com/test";
+            uint32_t port = 443;
+            config.setCloudHost(host, port);
+            THEN("The cloud host is set") {
+                REQUIRE(nullptr != config.getCloudHost());
+                REQUIRE(host == config.getCloudHost()->host);
+                REQUIRE(port == config.getCloudHost()->port);
+            }
+        }
+    }
 }
 
 SCENARIO("A user wants to create an insecure connection to a secure cloud host") {
     GIVEN("An initialized Config object") {
         sensory::config::Config config;
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "http://localhost";
+            std::string host = "rpc://localhost";
             uint32_t port = 443;
             config.setInsecureCloudHost(host, port);
             THEN("The cloud host is set") {
@@ -119,6 +133,20 @@ SCENARIO("A user wants to create an insecure connection to a secure cloud host")
                 REQUIRE(port == config.getCloudHost()->port);
                 REQUIRE(false == config.getCloudHost()->isSecure);
 
+            }
+        }
+    }
+    GIVEN("An initialized Config object with an existing connection") {
+        sensory::config::Config config;
+        config.setInsecureCloudHost("rpc://localhost", 8080);
+        WHEN("The cloud host is set to its initial value") {
+            std::string host = "rpc://cloud.sensory.com/test";
+            uint32_t port = 443;
+            config.setCloudHost(host, port);
+            THEN("The cloud host is set") {
+                REQUIRE(nullptr != config.getCloudHost());
+                REQUIRE(host == config.getCloudHost()->host);
+                REQUIRE(port == config.getCloudHost()->port);
             }
         }
     }
