@@ -43,6 +43,7 @@ fi
 gen_proto() {
   # Generate a build directory for the generated gRPC code
   PROTOC_OUTPUT_PATH="./build/sensorycloud/protoc"
+  rm -rf ${PROTOC_OUTPUT_PATH}
   mkdir -p ${PROTOC_OUTPUT_PATH}
   # Generate the C++ source for the protobuff files
   for x in $(find ./proto -iname "*.proto");
