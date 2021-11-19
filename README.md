@@ -6,6 +6,9 @@ This repository contains the source code for the Sensory Cloud C++ SDK.
 
 ### Build Tools
 
+This project uses CMake as the primary build system. To install CMake, run the
+following installation command depending on your deployment target.
+
 #### Debian
 
 ```shell
@@ -14,12 +17,15 @@ sudo apt-get install build-essential autoconf libtool pkg-config cmake
 
 #### MacOS
 
-TODO
+```shell
+brew install cmake
+```
 
 ### Protocol Buffer Compiler
 
 This project relies on protocol buffers to automatically generate API interface
-code. To install the protocol buffers compiler, `protoc`, run the following.
+code. To install the protocol buffers compiler, `protoc`, run the following
+command depending on your deployment target.
 
 #### Debian
 
@@ -34,6 +40,9 @@ brew install protobuf
 ```
 
 ### gRPC
+
+This SDK uses gRPC to communicate with back-end servers. To install gRPC,
+execute the following command depending on your deployment target.
 
 #### Debian
 
@@ -52,13 +61,18 @@ export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
 
 ### Protocol Buffer Generation
 
-gRPC and protocol buffer files can be automatically generated from the `.proto` files in [proto](proto) with the command:
+protocol buffer and gRPC stub files can be automatically generated from the
+`.proto` files in [proto](proto) with the command:
 
 ```shell
 ./cs.sh genproto
 ```
 
-The generated header files and definition files will be in [include/sensorycloud/protoc](include/sensorycloud/protoc) and [src/sensorycloud/protoc](src/sensorycloud/protoc), respectively.
+The generated header files and definition files will be in
+[][include/sensorycloud/protoc] and [][src/sensorycloud/protoc], respectively.
+
+[include/sensorycloud/protoc]: include/sensorycloud/protoc
+[src/sensorycloud/protoc]: src/sensorycloud/protoc
 
 ### Library Compilation
 
