@@ -1,0 +1,97 @@
+cmake_minimum_required(VERSION 3.2)
+project(sensory-cloud-cpp-sdk)
+
+# Setup the C++ environment
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
+add_compile_options(-std=c++11)
+
+# Log the source directory
+message(PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
+
+# --- Dependencies -----------------------------------------------------------
+
+# Find the Protobuf dependency
+find_package(Protobuf REQUIRED)
+include_directories(${Protobuf_INCLUDE_DIRS})
+# Find the gRPC dependency
+# find_package(OpenSSL REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
+
+include(FetchContent)
+
+# # Install the protobuf dependency
+# FetchContent_Declare(Protobuf
+#     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+#     GIT_TAG        v3.13.0
+# )
+# set(FETCHCONTENT_QUIET OFF)
+# FetchContent_MakeAvailable(Protobuf)
+
+# # Install the gRPC dependency
+# FetchContent_Declare(gRPC
+#     GIT_REPOSITORY https://github.com/grpc/grpc
+#     GIT_TAG        v1.42.0
+# )
+# set(FETCHCONTENT_QUIET OFF)
+# FetchContent_MakeAvailable(gRPC)
+
+# # Install the Catch2 development dependency
+# FetchContent_Declare(Catch2
+#     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+#     GIT_TAG        v3.0.0-preview3
+# )
+# FetchContent_MakeAvailable(Catch2)
+
+# --- Library ----------------------------------------------------------------
+
+# include_directories("${PROJECT_SOURCE_DIR}/include/sensorycloud")
+
+# Locate the header files for the sensorycloud library
+file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
+    ${PROJECT_SOURCE_DIR}/include/*.h
+    ${PROJECT_SOURCE_DIR}/include/*.hpp
+)
+message(INCLUDES="${INCLUDES}")
+
+# Locate the definition files for the sensorycloud library
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    ${PROJECT_SOURCE_DIR}/src/*.c
+    ${PROJECT_SOURCE_DIR}/src/*.cc
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
+)
+message(SOURCES="${SOURCES}")
+
+# Create the sensorycloud library
+add_library(sensorycloud STATIC)
+target_sources(sensorycloud PRIVATE ${INCLUDES} ${SOURCES})
+target_include_directories(sensorycloud PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+target_compile_features(sensorycloud PUBLIC cxx_std_11)
+set_target_properties(sensorycloud PROPERTIES
+    PUBLIC_HEADER include/sensorycloud/sensorycloud.hpp
+)
+# Link with the protobuff library
+target_link_libraries(sensorycloud PRIVATE ${Protobuf_LIBRARIES})
+# Link with the GRPC library
+# target_link_libraries(sensorycloud PRIVATE grpc++)
+# target_link_libraries(sensorycloud PRIVATE gRPC::grpc++)
+
+add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
+
+# --- Test Cases -------------------------------------------------------------
+
+# target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+
+# TODO
+
+# --- Benchmarks -------------------------------------------------------------
+
+# TODO
+
+# --- Examples ---------------------------------------------------------------
+
+add_executable(hello examples/hello.cpp)
+target_link_libraries(hello PRIVATE sensorycloud)
