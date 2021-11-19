@@ -18,7 +18,8 @@ sudo apt-get install build-essential autoconf libtool pkg-config cmake
 #### MacOS
 
 ```shell
-brew install cmake
+xcode-select --install
+brew install autoconf automake libtool shtool cmake
 ```
 
 ### Protocol Buffer Compiler
