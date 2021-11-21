@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <chrono>
 #include <string>
 #include <sstream>
 
@@ -138,6 +139,14 @@ class Config {
     /// the highest quality.
     ///
     inline const double& getJpegCompression() const { return jpegCompression; }
+
+    /// @brief Create a new deadline based on the RPC timeout time.
+    ///
+    /// @returns the deadline for the next unary RPC call.
+    ///
+    inline std::chrono::system_clock::time_point getDeadline() const {
+        return std::chrono::system_clock::now() + std::chrono::seconds(grpcTimeout);
+    }
 };
 
 }  // namespace sensory
