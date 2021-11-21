@@ -29,12 +29,10 @@
 #include <algorithm>
 #include <cstdint>
 #include <string>
+#include <sstream>
 
 /// @brief The Sensory Cloud C++ SDK.
 namespace sensory {
-
-/// @brief Configuration structures for setting up the Sensory Cloud SDK.
-namespace config {
 
 /// @brief A structure for providing information about a cloud host.
 struct CloudHost {
@@ -44,6 +42,16 @@ struct CloudHost {
     uint32_t port;
     /// Says if the cloud host is setup for secure communication
     bool isSecure;
+
+    /// @brief Return a formatted gRPC hostname and port combination.
+    ///
+    /// @returns a formatted string in `"{host}:{port}"` format
+    ///
+    std::string getGRPCHost() const {
+        std::stringstream stream;
+        stream << host << ":" << port;
+        return stream.str();
+    }
 };
 
 /// @brief A configuration endpoint for Sensory Cloud.
@@ -131,8 +139,6 @@ class Config {
     ///
     inline const double& getJpegCompression() const { return jpegCompression; }
 };
-
-}  // namespace config
 
 }  // namespace sensory
 

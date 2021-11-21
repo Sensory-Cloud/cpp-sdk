@@ -1,4 +1,4 @@
-// Test cases for types and structures for the structures in sensory::config.
+// Test cases for types and structures for the structures in sensory.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -27,15 +27,15 @@
 #include <catch2/catch.hpp>
 #include "sensorycloud/config.hpp"
 
-// --- sensory::config::CloudHost Unit Tests ---------------------------------
+// --- sensory::CloudHost Unit Tests ---------------------------------
 
 SCENARIO("A user wants to initialize a CloudHost") {
     GIVEN("a hostname, port number, and security flag") {
-        std::string host = "rpc://localhost";
+        std::string host = "localhost";
         uint32_t port = 443;
         bool isSecure = false;
         WHEN("a CloudHost is initialized") {
-            sensory::config::CloudHost cloudHost{host, port, isSecure};
+            sensory::CloudHost cloudHost{host, port, isSecure};
             THEN("the data is stored") {
                 REQUIRE_THAT(host, Catch::Equals(cloudHost.host));
                 REQUIRE(port == cloudHost.port);
@@ -45,12 +45,12 @@ SCENARIO("A user wants to initialize a CloudHost") {
     }
 }
 
-// --- sensory::config::Config Unit Tests ------------------------------------
+// --- sensory::Config Unit Tests ------------------------------------
 
 SCENARIO("A user wants to initialization a Config") {
     GIVEN("no config parameters") {
         WHEN("a Config is initialized") {
-            sensory::config::Config config;
+            sensory::Config config;
             THEN("the default values are stored in the struct") {
                 REQUIRE(nullptr == config.getCloudHost());
                 REQUIRE_THAT(config.tenantID, Catch::Equals(""));
@@ -68,7 +68,7 @@ SCENARIO("A user wants to initialization a Config") {
 
 SCENARIO("A user wants to use a different JPEG Quality factor") {
     GIVEN("An initialized Config object") {
-        sensory::config::Config config;
+        sensory::Config config;
         WHEN("The JPEG Quality factor is set to an arbitrary value") {
             config.setJpegCompression(0.25);
             THEN("The JPEG Quality factor is set to an arbitrary value") {
@@ -92,9 +92,9 @@ SCENARIO("A user wants to use a different JPEG Quality factor") {
 
 SCENARIO("A user wants to create a secure connection to a secure cloud host") {
     GIVEN("An initialized Config object") {
-        sensory::config::Config config;
+        sensory::Config config;
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "rpc://localhost";
+            std::string host = "localhost";
             uint32_t port = 443;
             config.setCloudHost(host, port);
             THEN("The cloud host is set") {
@@ -102,21 +102,26 @@ SCENARIO("A user wants to create a secure connection to a secure cloud host") {
                 REQUIRE(host == config.getCloudHost()->host);
                 REQUIRE(port == config.getCloudHost()->port);
                 REQUIRE(true == config.getCloudHost()->isSecure);
-
+            }
+            THEN("The gRPC host-name is set") {
+                REQUIRE_THAT("localhost:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
             }
         }
     }
     GIVEN("An initialized Config object with an existing connection") {
-        sensory::config::Config config;
-        config.setCloudHost("rpc://localhost", 8080);
+        sensory::Config config;
+        config.setCloudHost("localhost", 8080);
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "rpc://cloud.sensory.com/test";
+            std::string host = "cloud.sensory.com";
             uint32_t port = 443;
             config.setCloudHost(host, port);
             THEN("The cloud host is set") {
                 REQUIRE(nullptr != config.getCloudHost());
                 REQUIRE(host == config.getCloudHost()->host);
                 REQUIRE(port == config.getCloudHost()->port);
+            }
+            THEN("The gRPC host-name is set") {
+                REQUIRE_THAT("cloud.sensory.com:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
             }
         }
     }
@@ -124,9 +129,9 @@ SCENARIO("A user wants to create a secure connection to a secure cloud host") {
 
 SCENARIO("A user wants to create an insecure connection to a secure cloud host") {
     GIVEN("An initialized Config object") {
-        sensory::config::Config config;
+        sensory::Config config;
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "rpc://localhost";
+            std::string host = "localhost";
             uint32_t port = 443;
             config.setInsecureCloudHost(host, port);
             THEN("The cloud host is set") {
@@ -134,21 +139,26 @@ SCENARIO("A user wants to create an insecure connection to a secure cloud host")
                 REQUIRE(host == config.getCloudHost()->host);
                 REQUIRE(port == config.getCloudHost()->port);
                 REQUIRE(false == config.getCloudHost()->isSecure);
-
+            }
+            THEN("The gRPC host-name is set") {
+                REQUIRE_THAT("localhost:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
             }
         }
     }
     GIVEN("An initialized Config object with an existing connection") {
-        sensory::config::Config config;
-        config.setInsecureCloudHost("rpc://localhost", 8080);
+        sensory::Config config;
+        config.setInsecureCloudHost("localhost", 8080);
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "rpc://cloud.sensory.com/test";
+            std::string host = "cloud.sensory.com";
             uint32_t port = 443;
             config.setCloudHost(host, port);
             THEN("The cloud host is set") {
                 REQUIRE(nullptr != config.getCloudHost());
                 REQUIRE(host == config.getCloudHost()->host);
                 REQUIRE(port == config.getCloudHost()->port);
+            }
+            THEN("The gRPC host-name is set") {
+                REQUIRE_THAT("cloud.sensory.com:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
             }
         }
     }
