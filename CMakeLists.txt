@@ -14,30 +14,41 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build")
 
 # --- Dependencies -----------------------------------------------------------
 
-# Find the Protobuf dependency
-find_package(Protobuf REQUIRED)
-include_directories(${Protobuf_INCLUDE_DIRS})
-# Find the gRPC dependency
-find_package(OpenSSL REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
-
 include(FetchContent)
 
-# # Install the protobuf dependency
-# FetchContent_Declare(Protobuf
-#     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-#     GIT_TAG        v3.13.0
-# )
-# set(FETCHCONTENT_QUIET OFF)
-# FetchContent_MakeAvailable(Protobuf)
+# Find/Fetch the ProtoBuf dependency
+option(USE_SYSTEM_PROTO "Use system-level ProtoBuf" OFF)
+if(USE_SYSTEM_PROTO)  # Use the system-wide ProtoBuf installation
+    message("-- Using system-level ProtoBuf")
+    find_package(Protobuf REQUIRED)
+    include_directories(${Protobuf_INCLUDE_DIRS})
+else()  # Install a local copy of ProtoBuf
+    message("-- Using local ProtoBuf")
+    FetchContent_Declare(Protobuf
+        GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+        GIT_TAG        v3.13.0
+    )
+    set(FETCHCONTENT_QUIET OFF)
+    FetchContent_MakeAvailable(Protobuf)
+endif()
 
-# # Install the gRPC dependency
-# FetchContent_Declare(gRPC
-#     GIT_REPOSITORY https://github.com/grpc/grpc
-#     GIT_TAG        v1.42.0
-# )
-# set(FETCHCONTENT_QUIET OFF)
-# FetchContent_MakeAvailable(gRPC)
+# Find SSL, which must be installed externally (it has no CMake script support)
+find_package(OpenSSL REQUIRED)
+
+# Find/Fetch the gRPC dependency
+option(USE_SYSTEM_GRPC "Use system-level gRPC" OFF)
+if(USE_SYSTEM_GRPC)  # Use the system-wide gRPC installation
+    message("-- Using system-level gRPC")
+    find_package(gRPC CONFIG REQUIRED)
+else()  # Install a local copy of gRPC
+    message("-- Using local gRPC")
+    FetchContent_Declare(gRPC
+        GIT_REPOSITORY https://github.com/grpc/grpc
+        GIT_TAG        v1.42.0
+    )
+    set(FETCHCONTENT_QUIET OFF)
+    FetchContent_MakeAvailable(gRPC)
+endif()
 
 # --- Library ----------------------------------------------------------------
 
