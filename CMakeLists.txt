@@ -17,9 +17,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build")
 include(FetchContent)
 
 # Find/Fetch the ProtoBuf dependency
-option(USE_SYSTEM_PROTO "Use system-level ProtoBuf" OFF)
+option(USE_SYSTEM_PROTO "Use system-installed ProtoBuf" OFF)
 if(USE_SYSTEM_PROTO)  # Use the system-wide ProtoBuf installation
-    message("-- Using system-level ProtoBuf")
+    message("-- Using system-installed ProtoBuf")
     find_package(Protobuf REQUIRED)
     include_directories(${Protobuf_INCLUDE_DIRS})
 else()  # Install a local copy of ProtoBuf
@@ -36,9 +36,9 @@ endif()
 find_package(OpenSSL REQUIRED)
 
 # Find/Fetch the gRPC dependency
-option(USE_SYSTEM_GRPC "Use system-level gRPC" OFF)
+option(USE_SYSTEM_GRPC "Use system-installed gRPC" OFF)
 if(USE_SYSTEM_GRPC)  # Use the system-wide gRPC installation
-    message("-- Using system-level gRPC")
+    message("-- Using system-installed gRPC")
     find_package(gRPC CONFIG REQUIRED)
     # Create an alias to match how grpc++ will be namespaced when installed
     # locally using FetchContent.
