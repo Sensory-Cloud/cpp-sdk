@@ -153,6 +153,12 @@ class Config {
         cloudHost = new CloudHost(host, port, false);
     }
 
+    /// @brief Return a flag indicating whether a cloud host has been specified.
+    ///
+    /// @returns true if the cloud host exists, false otherwise
+    ///
+    inline const bool hasCloudHost() const { return cloudHost != nullptr; }
+
     /// @brief Returns the currently configured cloud host.
     ///
     /// @returns the cloud host or `nullptr` if a host has not been configured
