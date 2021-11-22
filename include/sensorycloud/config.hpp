@@ -88,8 +88,6 @@ struct CloudHost {
     }
 };
 
-// TODO: make CloudHost* a shared or unique pointer.
-
 /// @brief A configuration endpoint for Sensory Cloud.
 class Config {
  private:
