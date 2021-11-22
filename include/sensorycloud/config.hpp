@@ -32,7 +32,7 @@
 #include <string>
 #include <sstream>
 
-/// @brief The Sensory Cloud C++ SDK.
+/// @brief The Sensory Cloud SDK.
 namespace sensory {
 
 /// @brief A structure for providing information about a cloud host.
