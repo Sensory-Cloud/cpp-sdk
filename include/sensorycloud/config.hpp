@@ -163,6 +163,14 @@ class Config {
     ///
     inline const CloudHost* getCloudHost() const { return cloudHost; }
 
+    /// @brief Return true if the configuration represents a valid connection.
+    ///
+    /// @returns true if the tenant ID and device ID are specified
+    ///
+    inline bool isValid() const {
+        return strcmp(tenantID.c_str(), "") && strcmp(deviceID.c_str(), "");
+    }
+
     /// @brief Set the JPEG compression level to a new value.
     ///
     /// @param jpegCompression the compression factor to use. A value

@@ -170,3 +170,34 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
         }
     }
 }
+
+SCENARIO("A user wants to determine if a configured connection is valid") {
+    GIVEN("An initialized config with default values") {
+        sensory::Config config;
+        WHEN("the validity of the configuration is queried") {
+            THEN("the validity is reported as invalid") {
+                REQUIRE_FALSE(config.isValid());
+            }
+        }
+        WHEN("a tenant ID is assigned to the configuration with no device ID") {
+            config.tenantID = "foo";
+            THEN("the validity is reported as invalid") {
+                REQUIRE_FALSE(config.isValid());
+            }
+        }
+        WHEN("a device ID is assigned to the configuration with no tenant ID") {
+            config.deviceID = "bar";
+            THEN("the validity is reported as invalid") {
+                REQUIRE_FALSE(config.isValid());
+            }
+        }
+        WHEN("both tenant ID and device ID are assigned to the configuration") {
+            config.tenantID = "foo";
+            config.deviceID = "bar";
+            THEN("the validity is reported as valid") {
+                REQUIRE(config.isValid());
+            }
+        }
+    }
+}
+
