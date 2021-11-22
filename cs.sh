@@ -51,7 +51,7 @@ gen_proto() {
     protoc \
       --proto_path="./proto" \
       --cpp_out=${PROTOC_OUTPUT_PATH} \
-      --plugin=protoc-gen-grpc=/usr/local/bin/grpc_cpp_plugin \
+      --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin) \
       --grpc_out=${PROTOC_OUTPUT_PATH} \
       $x;
     echo "Generated grpc code for $x";
