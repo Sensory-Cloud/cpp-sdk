@@ -48,36 +48,38 @@ struct NetworkError : public std::runtime_error {
     /// @param code the code to get the error message for
     /// @returns a text error message associated with the given error code
     ///
-    static std::string message(const Code& code) {
+    static inline const std::string getMessage(const Code& code) {
         switch (code) {  // switch over the possible code type cases
-            case Code::NotInitialized: return "the cloud host has not been initialized!";
+        case Code::NotInitialized:
+            return "the cloud host has not been initialized!";
         }
     }
 
     /// @brief Initialize a new network error.
     ///
-    /// @param code_ the reason for the network error
-    /// @param message_ the message to provide through the `what()` call.
+    /// @param code the reason for the network error
     ///
-    NetworkError(
-        const Code& code_,
-        const std::string& message_
-    ) : std::runtime_error(message_), err_code(code_) { }
+    explicit NetworkError(const Code& code) :
+        std::runtime_error(getMessage(code)),
+        err_code(code) { }
 
     /// @brief Initialize a new network error.
     ///
-    /// @param code_ the reason for the network error
+    /// @param code the reason for the network error
+    /// @param message the message to provide through the `what()` call.
     ///
-    NetworkError(const Code& code_) : std::runtime_error(message(code_)), err_code(code_) { }
+    explicit NetworkError(const Code& code, const std::string& message) :
+        std::runtime_error(message),
+        err_code(code) { }
 
     /// Destroy an instance of a network error.
-    virtual ~NetworkError() throw () {}
+    ~NetworkError() throw() {}
 
     /// @brief Return the reason the exception occurred.
     ///
     /// @returns the reason for the network error
     ///
-    virtual inline const Code& code() const throw () { return err_code; }
+    inline const Code& code() const throw() { return err_code; }
 
  private:
     /// the reason the network error occurred
