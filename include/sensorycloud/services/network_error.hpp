@@ -27,6 +27,7 @@
 #define SENSORY_CLOUD_SERVICES_NETWORK_ERROR_HPP_
 
 #include <string>
+#include <exception>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
