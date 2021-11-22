@@ -62,12 +62,13 @@ struct CloudHost {
         const bool& isSecure_
     ) : host(host_), port(port_), isSecure(isSecure_) { }
 
-    /// @brief Return a formatted gRPC hostname and port combination.
+    /// @brief Return a formatted gRPC host-name and port combination.
     ///
     /// @returns a formatted string in `"{host}:{port}"` format
     ///
     inline std::string getGRPCHost() const {
         std::stringstream stream;
+        // RPC addresses are formatted as "host:port"
         stream << host << ":" << port;
         return stream.str();
     }
@@ -77,8 +78,9 @@ struct CloudHost {
     /// @returns a new gRPC channel to connect a service to
     ///
     inline std::shared_ptr<grpc::Channel> getGRPCChannel() const {
-        // Create the credentials for the channel based on the security setting
-        // in the global configuration. Use TLS (SSL) is `isSecure` is true.
+        // Create the credentials for the channel based on the security setting.
+        // Use TLS (SSL) if `isSecure` is true, otherwise default to insecure
+        // channel credentials.
         return grpc::CreateChannel(getGRPCHost(), isSecure ?
             grpc::SslCredentials(grpc::SslCredentialsOptions()) :
             grpc::InsecureChannelCredentials()
@@ -94,7 +96,7 @@ class Config {
     /// the cloud host to interact with
     CloudHost* cloudHost = nullptr;
 
-    /// Jpeg Compression factor used, a value between 0 and 1 where 0 is most
+    /// JPEG Compression factor used, a value between 0 and 1 where 0 is most
     /// compressed, and 1 is highest quality
     double jpegCompression = 0.5;
 
