@@ -37,9 +37,9 @@ SCENARIO("A user wants to initialize a CloudHost") {
         WHEN("a CloudHost is initialized") {
             sensory::CloudHost cloudHost{host, port, isSecure};
             THEN("the data is stored") {
-                REQUIRE_THAT(host, Catch::Equals(cloudHost.host));
-                REQUIRE(port == cloudHost.port);
-                REQUIRE(isSecure == cloudHost.isSecure);
+                REQUIRE_THAT(host, Catch::Equals(cloudHost.getHost()));
+                REQUIRE(port == cloudHost.getPort());
+                REQUIRE(isSecure == cloudHost.getIsSecure());
             }
         }
     }
@@ -101,9 +101,9 @@ SCENARIO("A user wants to create a secure connection to a cloud host") {
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
                 REQUIRE(nullptr != config.getCloudHost());
-                REQUIRE(host == config.getCloudHost()->host);
-                REQUIRE(port == config.getCloudHost()->port);
-                REQUIRE(config.getCloudHost()->isSecure);
+                REQUIRE(host == config.getCloudHost()->getHost());
+                REQUIRE(port == config.getCloudHost()->getPort());
+                REQUIRE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
                 REQUIRE_THAT("localhost:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
@@ -120,9 +120,9 @@ SCENARIO("A user wants to create a secure connection to a cloud host") {
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
                 REQUIRE(nullptr != config.getCloudHost());
-                REQUIRE(host == config.getCloudHost()->host);
-                REQUIRE(port == config.getCloudHost()->port);
-                REQUIRE(config.getCloudHost()->isSecure);
+                REQUIRE(host == config.getCloudHost()->getHost());
+                REQUIRE(port == config.getCloudHost()->getPort());
+                REQUIRE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
                 REQUIRE_THAT("cloud.sensory.com:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
@@ -137,13 +137,13 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
         WHEN("The cloud host is set to its initial value") {
             std::string host = "localhost";
             uint32_t port = 443;
-            config.setInsecureCloudHost(host, port);
+            config.setCloudHost(host, port, false);
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
                 REQUIRE(nullptr != config.getCloudHost());
-                REQUIRE(host == config.getCloudHost()->host);
-                REQUIRE(port == config.getCloudHost()->port);
-                REQUIRE_FALSE(config.getCloudHost()->isSecure);
+                REQUIRE(host == config.getCloudHost()->getHost());
+                REQUIRE(port == config.getCloudHost()->getPort());
+                REQUIRE_FALSE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
                 REQUIRE_THAT("localhost:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
@@ -152,17 +152,17 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
     }
     GIVEN("An initialized Config object with an existing connection") {
         sensory::Config config;
-        config.setInsecureCloudHost("localhost", 8080);
+        config.setCloudHost("localhost", 8080, false);
         WHEN("The cloud host is set to another value") {
             std::string host = "cloud.sensory.com";
             uint32_t port = 443;
-            config.setInsecureCloudHost(host, port);
+            config.setCloudHost(host, port, false);
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
                 REQUIRE(nullptr != config.getCloudHost());
-                REQUIRE(host == config.getCloudHost()->host);
-                REQUIRE(port == config.getCloudHost()->port);
-                REQUIRE_FALSE(config.getCloudHost()->isSecure);
+                REQUIRE(host == config.getCloudHost()->getHost());
+                REQUIRE(port == config.getCloudHost()->getPort());
+                REQUIRE_FALSE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
                 REQUIRE_THAT("cloud.sensory.com:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));

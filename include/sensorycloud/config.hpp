@@ -42,7 +42,8 @@
 namespace sensory {
 
 /// @brief A structure for providing information about a cloud host.
-struct CloudHost {
+class CloudHost {
+ private:
     /// Cloud DNS Host
     std::string host;
     /// Cloud port
@@ -50,17 +51,36 @@ struct CloudHost {
     /// Says if the cloud host is setup for secure communication
     bool isSecure;
 
+ public:
     /// @brief Initialize a new cloud host.
     ///
     /// @param host_ the host-name of the RPC service
     /// @param port_ the port number of the RPC service
     /// @param isSecure_ whether to use SSL/TLS for message encryption
     ///
-    CloudHost(
+    explicit CloudHost(
         const std::string& host_,
         const uint16_t& port_,
         const bool& isSecure_
     ) : host(host_), port(port_), isSecure(isSecure_) { }
+
+    /// @brief Return the name of the remote host.
+    ///
+    /// @returns the name of the remote host to connect to
+    ///
+    inline const std::string& getHost() const { return host; }
+
+    /// @brief Return the port number of the remote host.
+    ///
+    /// @returns the port number of the remote host to connect to
+    ///
+    inline const uint16_t& getPort() const { return port; }
+
+    /// @brief Return the security policy of the remote host.
+    ///
+    /// @returns true if the connection is secured with TLS, false otherwise
+    ///
+    inline const bool& getIsSecure() const { return isSecure; }
 
     /// @brief Return a formatted gRPC host-name and port combination.
     ///
@@ -93,7 +113,6 @@ class Config {
  private:
     /// the cloud host to interact with
     CloudHost* cloudHost = nullptr;
-
     /// JPEG Compression factor used, a value between 0 and 1 where 0 is most
     /// compressed, and 1 is highest quality
     double jpegCompression = 0.5;
@@ -114,42 +133,11 @@ class Config {
 
     /// User's preferred language/region code (ex: en-US, used for audio
     /// enrollments. Defaults to the system Locale
-    // std::string languageCode = "\(Locale.current.languageCode ?? "en")-\(Locale.current.regionCode ?? "US")";
     std::string languageCode = "en-US";
 
     /// Number of seconds to wait on a unary gRPC call before timing out,
     /// defaults to 10 seconds.
     uint32_t grpcTimeout = 10;
-
-    /// Sets a secure host for transacting with Sensory cloud.
-    ///
-    /// @param host cloud host to use
-    /// @param port optional port (443 is used by default)
-    ///
-    inline void setCloudHost(
-        const std::string& host,
-        const uint16_t& port = 443
-    ) {
-        if (cloudHost != nullptr) delete cloudHost;
-        cloudHost = new CloudHost(host, port, true);
-    }
-
-    /// Sets an insecure host for transacting with Sensory Cloud.
-    ///
-    /// @param host cloud host to use
-    /// @param port optional port (443 is used by default)
-    ///
-    /// @details
-    /// This should only be used for testing against a test cloud instance and
-    /// not used in production.
-    ///
-    inline void setInsecureCloudHost(
-        const std::string& host,
-        const uint16_t& port = 443
-    ) {
-        if (cloudHost != nullptr) delete cloudHost;
-        cloudHost = new CloudHost(host, port, false);
-    }
 
     /// @brief Return a flag indicating whether a cloud host has been specified.
     ///
@@ -157,19 +145,26 @@ class Config {
     ///
     inline const bool hasCloudHost() const { return cloudHost != nullptr; }
 
+    /// @brief Set a host for transacting with Sensory cloud.
+    ///
+    /// @param host cloud host to use
+    /// @param port optional port (443 is used by default)
+    /// @param isSecure whether to use a secure connection with SSL
+    ///
+    inline void setCloudHost(
+        const std::string& host,
+        const uint16_t& port = 443,
+        const bool& isSecure = true
+    ) {
+        if (cloudHost != nullptr) delete cloudHost;
+        cloudHost = new CloudHost(host, port, isSecure);
+    }
+
     /// @brief Returns the currently configured cloud host.
     ///
     /// @returns the cloud host or `nullptr` if a host has not been configured
     ///
     inline const CloudHost* getCloudHost() const { return cloudHost; }
-
-    /// @brief Return true if the configuration represents a valid connection.
-    ///
-    /// @returns true if the tenant ID and device ID are specified
-    ///
-    inline bool isValid() const {
-        return strcmp(tenantID.c_str(), "") && strcmp(deviceID.c_str(), "");
-    }
 
     /// @brief Set the JPEG compression level to a new value.
     ///
@@ -186,6 +181,14 @@ class Config {
     /// the highest quality.
     ///
     inline const double& getJpegCompression() const { return jpegCompression; }
+
+    /// @brief Return true if the configuration represents a valid connection.
+    ///
+    /// @returns true if the tenant ID and device ID are specified
+    ///
+    inline bool isValid() const {
+        return strcmp(tenantID.c_str(), "") && strcmp(deviceID.c_str(), "");
+    }
 
     /// @brief Create a new deadline based on the RPC timeout time.
     ///
