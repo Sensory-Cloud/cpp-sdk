@@ -26,11 +26,17 @@
 #ifndef SENSORY_CLOUD_CONFIG_HPP_
 #define SENSORY_CLOUD_CONFIG_HPP_
 
+#include <memory>
 #include <algorithm>
 #include <cstdint>
 #include <chrono>
 #include <string>
 #include <sstream>
+#include <grpc/grpc.h>
+#include <grpc++/channel.h>
+#include <grpc++/client_context.h>
+#include <grpc++/create_channel.h>
+#include <grpc++/security/credentials.h>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -40,20 +46,47 @@ struct CloudHost {
     /// Cloud DNS Host
     std::string host;
     /// Cloud port
-    uint32_t port;
+    uint16_t port;
     /// Says if the cloud host is setup for secure communication
     bool isSecure;
+
+    /// @brief Initialize a new cloud host.
+    ///
+    /// @param host_ the host-name of the RPC service
+    /// @param port_ the port number of the RPC service
+    /// @param isSecure_ whether to use SSL/TLS for message encryption
+    ///
+    CloudHost(
+        const std::string& host_,
+        const uint16_t& port_,
+        const bool& isSecure_
+    ) : host(host_), port(port_), isSecure(isSecure_) { }
 
     /// @brief Return a formatted gRPC hostname and port combination.
     ///
     /// @returns a formatted string in `"{host}:{port}"` format
     ///
-    std::string getGRPCHost() const {
+    inline std::string getGRPCHost() const {
         std::stringstream stream;
         stream << host << ":" << port;
         return stream.str();
     }
+
+    /// @brief Create a new gRPC channel.
+    ///
+    /// @returns a new gRPC channel to connect a service to
+    ///
+    inline std::shared_ptr<grpc::Channel> getGRPCChannel() const {
+        // Create the credentials for the channel based on the security setting
+        // in the global configuration. Use TLS (SSL) is `isSecure` is true.
+        return grpc::CreateChannel(getGRPCHost(), isSecure ?
+            grpc::SslCredentials(grpc::SslCredentialsOptions()) :
+            grpc::InsecureChannelCredentials()
+        );
+    }
 };
+
+// TODO: make CloudHost* a shared or unique pointer.
 
 /// @brief A configuration endpoint for Sensory Cloud.
 class Config {
@@ -82,7 +115,7 @@ class Config {
     /// User's preferred language/region code (ex: en-US, used for audio
     /// enrollments. Defaults to the system Locale
     // std::string languageCode = "\(Locale.current.languageCode ?? "en")-\(Locale.current.regionCode ?? "US")";
-    std::string languageCode = "";
+    std::string languageCode = "en-US";
 
     /// Number of seconds to wait on a unary gRPC call before timing out,
     /// defaults to 10 seconds.
@@ -95,10 +128,10 @@ class Config {
     ///
     inline void setCloudHost(
         const std::string& host,
-        const uint32_t& port = 443
+        const uint16_t& port = 443
     ) {
         if (cloudHost != nullptr) delete cloudHost;
-        cloudHost = new CloudHost{host, port, true};
+        cloudHost = new CloudHost(host, port, true);
     }
 
     /// Sets an insecure host for transacting with Sensory Cloud.
@@ -112,10 +145,10 @@ class Config {
     ///
     inline void setInsecureCloudHost(
         const std::string& host,
-        const uint32_t& port = 443
+        const uint16_t& port = 443
     ) {
         if (cloudHost != nullptr) delete cloudHost;
-        cloudHost = new CloudHost{host, port, false};
+        cloudHost = new CloudHost(host, port, false);
     }
 
     /// @brief Returns the currently configured cloud host.
