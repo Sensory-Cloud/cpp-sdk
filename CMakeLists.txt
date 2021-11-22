@@ -40,6 +40,9 @@ option(USE_SYSTEM_GRPC "Use system-level gRPC" OFF)
 if(USE_SYSTEM_GRPC)  # Use the system-wide gRPC installation
     message("-- Using system-level gRPC")
     find_package(gRPC CONFIG REQUIRED)
+    # Create an alias to match how grpc++ will be namespaced when installed
+    # locally using FetchContent.
+    add_library(grpc++ ALIAS gRPC::grpc++)
 else()  # Install a local copy of gRPC
     message("-- Using local gRPC")
     FetchContent_Declare(gRPC
@@ -86,7 +89,7 @@ target_link_libraries(sensorycloud PRIVATE ${Protobuf_LIBRARIES})
 target_link_libraries(sensorycloud PRIVATE OpenSSL::SSL)
 target_link_libraries(sensorycloud PRIVATE OpenSSL::Crypto)
 # Link with the gRPC library
-target_link_libraries(sensorycloud PRIVATE gRPC::grpc++)
+target_link_libraries(sensorycloud PRIVATE grpc++)
 
 # add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
