@@ -105,7 +105,7 @@ endif()
 
 # --- Test Cases -------------------------------------------------------------
 
-option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" ON)
+option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" OFF)
 
 if (BUILD_TESTS)
 
@@ -136,7 +136,7 @@ endif()
 
 # --- Benchmarks -------------------------------------------------------------
 
-option(BUILD_BENCHMARKS "Build benchmarks for ${PROJECT_NAME}" ON)
+option(BUILD_BENCHMARKS "Build benchmarks for ${PROJECT_NAME}" OFF)
 
 if (BUILD_BENCHMARKS)
 
@@ -146,7 +146,7 @@ endif()
 
 # --- Examples ---------------------------------------------------------------
 
-option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" ON)
+option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" OFF)
 
 if (BUILD_EXAMPLES)
 
