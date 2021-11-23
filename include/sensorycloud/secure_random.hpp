@@ -1,4 +1,4 @@
-// Functions for cryptographicaly secure RNG for the Sensory Cloud C++ SDK.
+// Functions for cryptographically secure RNG for the Sensory Cloud C++ SDK.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
