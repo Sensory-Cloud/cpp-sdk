@@ -146,7 +146,7 @@ class CloudHost {
         // Get the OAuth token and write it to the metadata header
         std::stringstream stream;
         stream << "Bearer " << credentialProvider.getAccessToken();
-        context->AddMetadata("authorization", stream.str());
+        context->AddMetadata("Authorization", stream.str());
         if (isUnary)  // Set the deadline for the RPC call
             context->set_deadline(getDeadline());
 
