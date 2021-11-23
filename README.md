@@ -31,7 +31,7 @@ command depending on your deployment target.
 #### Debian
 
 ```shell
-apt install -y protobuf-compiler
+apt install -y protobuf-compiler protobuf-compiler-grpc
 ```
 
 #### MacOS
@@ -48,7 +48,7 @@ execute the following command depending on your deployment target.
 #### Debian
 
 ```shell
-sudo apt-get install openssl grpc
+sudo apt-get install openssl libgrpc++-dev
 ```
 
 #### MacOS
@@ -56,7 +56,10 @@ sudo apt-get install openssl grpc
 ```shell
 brew install openssl grpc
 export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
+export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
 ```
+
+<!-- sudo apt install libopencv-dev -->
 
 ## Usage
 
@@ -75,6 +78,20 @@ The generated header files and definition files will be in
 [src/sensorycloud/protoc](src/sensorycloud/protoc), respectively.
 
 ### Library Compilation
+
+```shell
+cmake -DUSE_SYSTEM_GRPC=ON -DUSE_SYSTEM_PROTO=ON .
+```
+
+```shell
+cmake -DUSE_SYSTEM_GRPC=OFF -DUSE_SYSTEM_PROTO=OFF .
+```
+
+#### Debian
+
+TODO
+
+#### MacOS
 
 TODO
 
