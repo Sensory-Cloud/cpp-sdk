@@ -1,4 +1,4 @@
-// Test cases for types and structures for the structures in sensory.
+// Test cases for SDK configuration structures in the sensory namespace.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
