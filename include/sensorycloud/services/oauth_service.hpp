@@ -119,21 +119,21 @@ class OAuthService {
         return response;
     }
 
-    api::v1::management::DeviceResponse getWhoAmI(const Config& config) {
-        // NSLog("Getting WhoAmI")
-        if (config.getCloudHost() == nullptr) {
-            throw "NetworkError.notInitialized";
-        }
-        grpc::ClientContext context;
-        api::v1::management::DeviceGetWhoAmIRequest request;
-        api::v1::management::DeviceResponse response;
-        grpc::Status status = device_stub->GetWhoAmI(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "WhoAmI failure";
-        }
-        return response;
-    }
+    // api::v1::management::DeviceResponse getWhoAmI(const Config& config) {
+    //     // NSLog("Getting WhoAmI")
+    //     if (config.getCloudHost() == nullptr) {
+    //         throw "NetworkError.notInitialized";
+    //     }
+    //     grpc::ClientContext context;
+    //     api::v1::management::DeviceGetWhoAmIRequest request;
+    //     api::v1::management::DeviceResponse response;
+    //     grpc::Status status = device_stub->GetWhoAmI(&context, request, &response);
+    //     if (!status.ok()) {  // an error occurred in the RPC
+    //         std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+    //         throw "WhoAmI failure";
+    //     }
+    //     return response;
+    // }
 
     /// @brief Request a new OAuth token from the server.
     ///
