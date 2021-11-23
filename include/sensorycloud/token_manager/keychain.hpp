@@ -75,7 +75,7 @@ class Keychain{
     /// @param key the plain-text ID of the value to store
     /// @param value the secure value to store
     ///
-    void insert(const std::string& key, const std::string& value) {
+    inline void insert(const std::string& key, const std::string& value) const {
         OSStatus status = SecKeychainAddGenericPassword(
             NULL,  // default key-chain
             static_cast<UInt32>(package.length()),
@@ -99,7 +99,7 @@ class Keychain{
     /// @param key the plain-text ID of the value to update
     /// @param value the new secure value to store
     ///
-    void update(const std::string& key, const std::string& value) {
+    inline void update(const std::string& key, const std::string& value) const {
         SecKeychainItemRef item = NULL;
         OSStatus status = SecKeychainFindGenericPassword(
             NULL,  // default key-chain
@@ -126,12 +126,32 @@ class Keychain{
             throw std::runtime_error("failed to update value");
     }
 
+    /// @brief Return true if the key exists in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to check for existence of
+    ///
+    inline bool has(const std::string& key) const {
+        SecKeychainItemRef item = NULL;
+        OSStatus status = SecKeychainFindGenericPassword(
+            NULL,  // default key-chain
+            static_cast<UInt32>(package.length()),
+            package.data(),
+            static_cast<UInt32>(key.length()),
+            key.data(),
+            NULL,  // unused output parameter
+            NULL,  // unused output parameter
+            NULL
+        );
+
+        return status == errSecSuccess;
+    }
+
     /// @brief Look-up a secret value in the key-chain.
     ///
     /// @param key the plain-text ID of the value to return the secure value of
     /// @returns the secret value indexed by the given key
     ///
-    std::string get(const std::string& key) {
+    inline std::string get(const std::string& key) const {
         void *data;
         UInt32 length;
         OSStatus status = SecKeychainFindGenericPassword(
@@ -161,7 +181,7 @@ class Keychain{
     ///
     /// @param key the plain-text ID of the key to remove from the keychain
     ///
-    void remove(const std::string& key) {
+    inline void remove(const std::string& key) const {
         SecKeychainItemRef item = NULL;
         OSStatus status = SecKeychainFindGenericPassword(
             NULL,  // default key-chain
