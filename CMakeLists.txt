@@ -14,16 +14,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build")
 
 # --- Dependencies -----------------------------------------------------------
 
+# Find SSL, which must be installed externally (it has no CMake script support)
+find_package(OpenSSL REQUIRED)
+message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
+
 include(FetchContent)
 
 # Find/Fetch the ProtoBuf dependency
 option(USE_SYSTEM_PROTO "Use system-installed ProtoBuf" OFF)
 if(USE_SYSTEM_PROTO)  # Use the system-wide ProtoBuf installation
-    message("-- Using system-installed ProtoBuf")
+    message(STATUS "Using system-installed ProtoBuf")
     find_package(Protobuf REQUIRED)
     include_directories(${Protobuf_INCLUDE_DIRS})
 else()  # Install a local copy of ProtoBuf
-    message("-- Using local ProtoBuf")
+    message(STATUS "Using local ProtoBuf")
     FetchContent_Declare(Protobuf
         GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
         GIT_TAG        v3.13.0
@@ -32,19 +36,16 @@ else()  # Install a local copy of ProtoBuf
     FetchContent_MakeAvailable(Protobuf)
 endif()
 
-# Find SSL, which must be installed externally (it has no CMake script support)
-find_package(OpenSSL REQUIRED)
-
 # Find/Fetch the gRPC dependency
 option(USE_SYSTEM_GRPC "Use system-installed gRPC" OFF)
 if(USE_SYSTEM_GRPC)  # Use the system-wide gRPC installation
-    message("-- Using system-installed gRPC")
+    message(STATUS "Using system-installed gRPC")
     find_package(gRPC CONFIG REQUIRED)
     # Create an alias to match how grpc++ will be namespaced when installed
     # locally using FetchContent.
     add_library(grpc++ ALIAS gRPC::grpc++)
 else()  # Install a local copy of gRPC
-    message("-- Using local gRPC")
+    message(STATUS "Using local gRPC")
     FetchContent_Declare(gRPC
         GIT_REPOSITORY https://github.com/grpc/grpc
         GIT_TAG        v1.42.0
@@ -86,8 +87,8 @@ set_target_properties(sensorycloud PROPERTIES
 # Link with the Protobuf library
 target_link_libraries(sensorycloud PRIVATE ${Protobuf_LIBRARIES})
 # Link with the OpenSSL library
-target_link_libraries(sensorycloud PRIVATE OpenSSL::SSL)
-target_link_libraries(sensorycloud PRIVATE OpenSSL::Crypto)
+target_link_libraries(sensorycloud PUBLIC OpenSSL::SSL)
+target_link_libraries(sensorycloud PUBLIC OpenSSL::Crypto)
 # Link with the gRPC library
 target_link_libraries(sensorycloud PRIVATE grpc++)
 
