@@ -32,6 +32,9 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
+/// @brief Modules for generating and storing secure credentials.
+namespace token_manager {
+
 // TODO: benchmark this function.
 // TODO: refactor to minimize random number generation.
 
@@ -83,6 +86,8 @@ std::string uuid_v4() {
     }
     return uuid;
 }
+
+}  // namespace token_manager
 
 }  // namespace sensory
 

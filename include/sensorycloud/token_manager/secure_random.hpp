@@ -33,6 +33,9 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
+/// @brief Modules for generating and storing secure credentials.
+namespace token_manager {
+
 /// @brief Generate a cryptographically secure random number.
 ///
 /// @tparam kLength the length of the hex string to generate
@@ -52,6 +55,8 @@ std::string secure_random() {
     // Flush the stream to a std::string object
     return stream.str();
 }
+
+}  // namespace token_manager
 
 }  // namespace sensory
 
