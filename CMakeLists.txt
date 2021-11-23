@@ -94,7 +94,20 @@ target_link_libraries(sensorycloud PRIVATE grpc++)
 
 # add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
+if (APPLE)
+    target_compile_definitions(sensorycloud PUBLIC -DKEYCHAIN_MACOS=1)
+
+    find_library(COREFOUNDATION_LIBRARY CoreFoundation REQUIRED)
+    find_library(SECURITY_LIBRARY Security REQUIRED)
+
+    target_link_libraries(sensorycloud PRIVATE ${COREFOUNDATION_LIBRARY} ${SECURITY_LIBRARY})
+endif()
+
 # --- Test Cases -------------------------------------------------------------
+
+option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" ON)
+
+if (BUILD_TESTS)
 
 # Install the Catch2 development dependency
 FetchContent_Declare(Catch2
@@ -119,11 +132,23 @@ endforeach()
 # Create a combined target to compile all of the test codes
 add_custom_target(tests ALL DEPENDS ${TEST_BINARIES})
 
+endif()
+
 # --- Benchmarks -------------------------------------------------------------
+
+option(BUILD_BENCHMARKS "Build benchmarks for ${PROJECT_NAME}" ON)
+
+if (BUILD_BENCHMARKS)
 
 # TODO
 
+endif()
+
 # --- Examples ---------------------------------------------------------------
+
+option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" ON)
+
+if (BUILD_EXAMPLES)
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -149,3 +174,5 @@ target_link_libraries(opencv_face_auth PRIVATE ${OpenCV_LIBS})
 # endforeach()
 # # Create a combined target to compile all of the test codes
 # add_custom_target(examples ALL DEPENDS ${EXAMPLE_BINARIES})
+
+endif()
