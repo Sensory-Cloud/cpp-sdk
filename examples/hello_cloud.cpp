@@ -31,7 +31,6 @@
 // #include <grpc++/security/credentials.h>
 // #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/config.hpp>
-#include <sensorycloud/services/service.hpp>
 // #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
 // #include <sensorycloud/services/audio_service.hpp>
@@ -46,10 +45,8 @@ int main() {
     // Set the Tenant ID for the default tenant
     config->tenantID = "cabb7700-206f-4cc7-8e79-cd7f288aa78d";
 
-    // Create the base service
-    sensory::service::Service service(config);
     // Create an OAuth service from the base service
-    auto oauthService = sensory::service::OAuthService(service.getGRPCChannel());
+    auto oauthService = sensory::service::OAuthService(config->getCloudHost()->getChannel());
 
     auto response = oauthService.getWhoAmI(*config);
 

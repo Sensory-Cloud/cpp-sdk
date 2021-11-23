@@ -29,7 +29,6 @@
 #include "sensorycloud/generated/v1/audio/audio.pb.h"
 #include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/services/service.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {

@@ -36,7 +36,6 @@
 #include "sensorycloud/generated/v1/management/device.pb.h"
 #include "sensorycloud/generated/v1/management/device.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/services/service.hpp"
 #include "sensorycloud/services/network_error.hpp"
 
 /// @brief The Sensory Cloud SDK.

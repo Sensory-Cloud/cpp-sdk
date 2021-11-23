@@ -68,7 +68,7 @@ int main(int argc, const char** argv) {
     sensory::Config config;
     config.setCloudHost(host, port);
     std::shared_ptr<grpc::Channel> channel = grpc::CreateChannel(
-        config.getCloudHost()->getGRPCHost(),
+        config.getCloudHost()->getFullyQualifiedDomainName(),
         grpc::InsecureChannelCredentials()
     );
 

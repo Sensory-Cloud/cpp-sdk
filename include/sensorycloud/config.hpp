@@ -50,6 +50,8 @@ class CloudHost {
     uint16_t port;
     /// Says if the cloud host is setup for secure communication
     bool isSecure;
+    /// Number of seconds to wait on a unary gRPC call before timing out
+    uint32_t timeout = 10;
 
  public:
     /// @brief Initialize a new cloud host.
@@ -82,11 +84,31 @@ class CloudHost {
     ///
     inline const bool& getIsSecure() const { return isSecure; }
 
+    /// @brief Set the timeout for gRPC unary calls to a new value.
+    ///
+    /// @param timeout the timeout for gRPC unary calls in seconds
+    ///
+    inline void setTimeout(const uint32_t& timeout) { this->timeout = timeout; }
+
+    /// @brief Return the timeout for gRPC unary calls.
+    ///
+    /// @returns the timeout for gRPC unary calls in seconds
+    ///
+    inline const uint32_t getTimeout() const { return timeout; }
+
+    /// @brief Create a new deadline based on the RPC timeout time.
+    ///
+    /// @returns the deadline for the next unary RPC call.
+    ///
+    inline std::chrono::system_clock::time_point getDeadline() const {
+        return std::chrono::system_clock::now() + std::chrono::seconds(timeout);
+    }
+
     /// @brief Return a formatted gRPC host-name and port combination.
     ///
     /// @returns a formatted string in `"{host}:{port}"` format
     ///
-    inline std::string getGRPCHost() const {
+    inline std::string getFullyQualifiedDomainName() const {
         std::stringstream stream;
         // RPC addresses are formatted as "host:port"
         stream << host << ":" << port;
@@ -97,14 +119,32 @@ class CloudHost {
     ///
     /// @returns a new gRPC channel to connect a service to
     ///
-    inline std::shared_ptr<grpc::Channel> getGRPCChannel() const {
+    inline std::shared_ptr<grpc::Channel> getChannel() const {
         // Create the credentials for the channel based on the security setting.
         // Use TLS (SSL) if `isSecure` is true, otherwise default to insecure
         // channel credentials.
-        return grpc::CreateChannel(getGRPCHost(), isSecure ?
+        return grpc::CreateChannel(getFullyQualifiedDomainName(), isSecure ?
             grpc::SslCredentials(grpc::SslCredentialsOptions()) :
             grpc::InsecureChannelCredentials()
         );
+    }
+
+    /// @brief Create a new gRPC client context for gRPC calls.
+    ///
+    /// @param isUnary whether the connection is unary
+    /// @returns a new client context for gRPC calls
+    ///
+    std::unique_ptr<grpc::ClientContext> getClientContext(
+        const bool& isUnary=false
+    ) {
+        // Create a new client context.
+        std::unique_ptr<grpc::ClientContext> context(new grpc::ClientContext);
+        // let token = try credentialProvider.getAccessToken()
+        // let headers: HPACKHeaders = ["authorization": "Bearer \(token)"]
+        if (isUnary)  // Set the deadline for the RPC call
+            context->set_deadline(getDeadline());
+
+        return context;
     }
 };
 
@@ -134,10 +174,6 @@ class Config {
     /// User's preferred language/region code (ex: en-US, used for audio
     /// enrollments. Defaults to the system Locale
     std::string languageCode = "en-US";
-
-    /// Number of seconds to wait on a unary gRPC call before timing out,
-    /// defaults to 10 seconds.
-    uint32_t grpcTimeout = 10;
 
     /// @brief Return a flag indicating whether a cloud host has been specified.
     ///
@@ -188,14 +224,6 @@ class Config {
     ///
     inline bool isValid() const {
         return strcmp(tenantID.c_str(), "") && strcmp(deviceID.c_str(), "");
-    }
-
-    /// @brief Create a new deadline based on the RPC timeout time.
-    ///
-    /// @returns the deadline for the next unary RPC call.
-    ///
-    inline std::chrono::system_clock::time_point getDeadline() const {
-        return std::chrono::system_clock::now() + std::chrono::seconds(grpcTimeout);
     }
 };
 

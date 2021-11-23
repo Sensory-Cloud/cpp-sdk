@@ -29,7 +29,6 @@
 #include "sensorycloud/generated/v1/video/video.pb.h"
 #include "sensorycloud/generated/v1/video/video.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/services/service.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {

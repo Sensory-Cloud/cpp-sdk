@@ -31,15 +31,31 @@
 
 SCENARIO("A user wants to initialize a CloudHost") {
     GIVEN("a hostname, port number, and security flag") {
-        std::string host = "localhost";
-        uint32_t port = 443;
-        bool isSecure = false;
+        const std::string host = "localhost";
+        const uint32_t port = 50051;
+        const bool isSecure = false;
         WHEN("a CloudHost is initialized") {
-            sensory::CloudHost cloudHost{host, port, isSecure};
+            sensory::CloudHost cloudHost(host, port, isSecure);
             THEN("the data is stored") {
                 REQUIRE_THAT(host, Catch::Equals(cloudHost.getHost()));
                 REQUIRE(port == cloudHost.getPort());
                 REQUIRE(isSecure == cloudHost.getIsSecure());
+            }
+            THEN("the default gRPC timeout is 10 seconds") {
+                REQUIRE(10 == cloudHost.getTimeout());
+            }
+        }
+    }
+}
+
+SCENARIO("A user wants to change the gRPC timeout") {
+    GIVEN("an initialized cloud host") {
+        sensory::CloudHost cloudHost("localhost", 50051, false);
+        WHEN("the gRPC timeout is set") {
+            const uint32_t timeout = 50;
+            cloudHost.setTimeout(timeout);
+            THEN("the gRPC timeout is stored") {
+                REQUIRE(timeout == cloudHost.getTimeout());
             }
         }
     }
@@ -60,7 +76,6 @@ SCENARIO("A user wants to initialization a Config") {
                 REQUIRE(480 == config.photoWidth);
                 REQUIRE(0.5 == config.getJpegCompression());
                 REQUIRE_THAT(config.languageCode, Catch::Equals("en-US"));
-                REQUIRE(10 == config.grpcTimeout);
                 REQUIRE_FALSE(config.hasCloudHost());
             }
         }
@@ -95,8 +110,8 @@ SCENARIO("A user wants to create a secure connection to a cloud host") {
     GIVEN("An initialized Config object") {
         sensory::Config config;
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "localhost";
-            uint32_t port = 443;
+            const std::string host = "localhost";
+            const uint32_t port = 50051;
             config.setCloudHost(host, port);
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
@@ -106,7 +121,7 @@ SCENARIO("A user wants to create a secure connection to a cloud host") {
                 REQUIRE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
-                REQUIRE_THAT("localhost:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
+                REQUIRE_THAT("localhost:50051", Catch::Equals(config.getCloudHost()->getFullyQualifiedDomainName()));
             }
         }
     }
@@ -114,8 +129,8 @@ SCENARIO("A user wants to create a secure connection to a cloud host") {
         sensory::Config config;
         config.setCloudHost("localhost", 8080);
         WHEN("The cloud host is set to another value") {
-            std::string host = "cloud.sensory.com";
-            uint32_t port = 443;
+            const std::string host = "cloud.sensory.com";
+            const uint32_t port = 50051;
             config.setCloudHost(host, port);
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
@@ -125,7 +140,7 @@ SCENARIO("A user wants to create a secure connection to a cloud host") {
                 REQUIRE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
-                REQUIRE_THAT("cloud.sensory.com:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
+                REQUIRE_THAT("cloud.sensory.com:50051", Catch::Equals(config.getCloudHost()->getFullyQualifiedDomainName()));
             }
         }
     }
@@ -135,8 +150,8 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
     GIVEN("An initialized Config object") {
         sensory::Config config;
         WHEN("The cloud host is set to its initial value") {
-            std::string host = "localhost";
-            uint32_t port = 443;
+            const std::string host = "localhost";
+            const uint32_t port = 50051;
             config.setCloudHost(host, port, false);
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
@@ -146,7 +161,7 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
                 REQUIRE_FALSE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
-                REQUIRE_THAT("localhost:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
+                REQUIRE_THAT("localhost:50051", Catch::Equals(config.getCloudHost()->getFullyQualifiedDomainName()));
             }
         }
     }
@@ -154,8 +169,8 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
         sensory::Config config;
         config.setCloudHost("localhost", 8080, false);
         WHEN("The cloud host is set to another value") {
-            std::string host = "cloud.sensory.com";
-            uint32_t port = 443;
+            const std::string host = "cloud.sensory.com";
+            const uint32_t port = 50051;
             config.setCloudHost(host, port, false);
             THEN("The cloud host is set") {
                 REQUIRE(config.hasCloudHost());
@@ -165,7 +180,7 @@ SCENARIO("A user wants to create an insecure connection to a cloud host") {
                 REQUIRE_FALSE(config.getCloudHost()->getIsSecure());
             }
             THEN("The gRPC host-name is set") {
-                REQUIRE_THAT("cloud.sensory.com:443", Catch::Equals(config.getCloudHost()->getGRPCHost()));
+                REQUIRE_THAT("cloud.sensory.com:50051", Catch::Equals(config.getCloudHost()->getFullyQualifiedDomainName()));
             }
         }
     }
