@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_HPP_
+#ifndef SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
+#define SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -36,4 +36,4 @@ namespace token_manager {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_HPP_
+#endif  // SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_

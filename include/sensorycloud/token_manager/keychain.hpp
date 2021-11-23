@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_KEYCHAIN_HPP_
-#define SENSORY_CLOUD_KEYCHAIN_HPP_
+#ifndef SENSORY_CLOUD_TOKEN_MANAGER_KEYCHAIN_HPP_
+#define SENSORY_CLOUD_TOKEN_MANAGER_KEYCHAIN_HPP_
 
 #include <exception>
 #include <string>
@@ -267,7 +267,7 @@ inline void Keychain::remove(const std::string& key) const {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_KEYCHAIN_HPP_
+#endif  // SENSORY_CLOUD_TOKEN_MANAGER_KEYCHAIN_HPP_
 
 
 

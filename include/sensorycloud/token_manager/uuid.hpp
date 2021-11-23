@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_UUID_HPP_
-#define SENSORY_CLOUD_UUID_HPP_
+#ifndef SENSORY_CLOUD_TOKEN_MANAGER_UUID_HPP_
+#define SENSORY_CLOUD_TOKEN_MANAGER_UUID_HPP_
 
 #include <random>
 #include <chrono>
@@ -70,7 +70,7 @@ namespace token_manager {
 /// Reference: https://datatracker.ietf.org/doc/html/rfc4122#section-4.4
 ///
 std::string uuid_v4() {
-    // Create a random number generator conditioned on the current time
+    // Create a random number generator conditioned on the system RNG
     std::mt19937_64 generator(std::random_device("/dev/random")());
     // Create the UUID from randomly generated digits
     std::string uuid(36, '-');
@@ -91,4 +91,4 @@ std::string uuid_v4() {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_UUID_HPP_
+#endif  // SENSORY_CLOUD_TOKEN_MANAGER_UUID_HPP_

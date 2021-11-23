@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_SECURE_RANDOM_HPP_
-#define SENSORY_CLOUD_SECURE_RANDOM_HPP_
+#ifndef SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
+#define SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
 
 #include <openssl/rand.h>
 #include <iomanip>
@@ -60,4 +60,4 @@ std::string secure_random() {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_SECURE_RANDOM_HPP_
+#endif  // SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
