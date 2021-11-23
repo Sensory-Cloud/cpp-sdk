@@ -131,16 +131,22 @@ class CloudHost {
 
     /// @brief Create a new gRPC client context for gRPC calls.
     ///
+    /// @tparam CredentialProvider the type of the credential provider
+    /// @param credentialProvider the credential provider for retrieving tokens
     /// @param isUnary whether the connection is unary
     /// @returns a new client context for gRPC calls
     ///
+    template<typename CredentialProvider>
     std::unique_ptr<grpc::ClientContext> getClientContext(
+        const CredentialProvider& credentialProvider,
         const bool& isUnary=false
     ) {
         // Create a new client context.
         std::unique_ptr<grpc::ClientContext> context(new grpc::ClientContext);
-        // let token = try credentialProvider.getAccessToken()
-        // let headers: HPACKHeaders = ["authorization": "Bearer \(token)"]
+        // Get the OAuth token and write it to the metadata header
+        std::stringstream stream;
+        stream << "Bearer " << credentialProvider.getAccessToken();
+        context->AddMetadata("authorization", stream.str());
         if (isUnary)  // Set the deadline for the RPC call
             context->set_deadline(getDeadline());
 
@@ -155,13 +161,17 @@ class Config {
     CloudHost* cloudHost = nullptr;
     /// JPEG Compression factor used, a value between 0 and 1 where 0 is most
     /// compressed, and 1 is highest quality
-    double jpegCompression = 0.5;
+    float jpegCompression = 0.5;
 
  public:
     /// Tenant ID to use during device enrollment
     std::string tenantID = "";
     /// Unique device identifier that model enrollments are associated to
     std::string deviceID = "";
+
+    /// User's preferred language/region code (ex: en-US, used for audio
+    /// enrollments. Defaults to the system Locale
+    std::string languageCode = "en-US";
 
     /// Sample rate to record audio at, defaults to 16kHz
     float audioSampleRate = 16000.f;
@@ -170,10 +180,6 @@ class Config {
     uint32_t photoHeight = 720;
     /// Photo pixel width, defaults to 480 pixels
     uint32_t photoWidth = 480;
-
-    /// User's preferred language/region code (ex: en-US, used for audio
-    /// enrollments. Defaults to the system Locale
-    std::string languageCode = "en-US";
 
     /// @brief Return a flag indicating whether a cloud host has been specified.
     ///
@@ -184,12 +190,12 @@ class Config {
     /// @brief Set a host for transacting with Sensory cloud.
     ///
     /// @param host cloud host to use
-    /// @param port optional port (443 is used by default)
+    /// @param port optional port (50051 is used by default)
     /// @param isSecure whether to use a secure connection with SSL
     ///
     inline void setCloudHost(
         const std::string& host,
-        const uint16_t& port = 443,
+        const uint16_t& port = 50051,
         const bool& isSecure = true
     ) {
         if (cloudHost != nullptr) delete cloudHost;
@@ -207,8 +213,8 @@ class Config {
     /// @param jpegCompression the compression factor to use. A value
     /// between 0 and 1 where 0 is most compressed, and 1 is highest quality.
     ///
-    inline void setJpegCompression(const double& jpegCompression = 0.5) {
-        this->jpegCompression = std::min(std::max(jpegCompression, 0.0), 1.0);
+    inline void setJpegCompression(const float& jpegCompression = 0.5f) {
+        this->jpegCompression = std::min(std::max(jpegCompression, 0.0f), 1.0f);
     }
 
     /// @brief Return the compression factor for JPEG compression.
@@ -216,14 +222,14 @@ class Config {
     /// @returns A value between 0 and 1 where 0 is most compressed, and 1 is
     /// the highest quality.
     ///
-    inline const double& getJpegCompression() const { return jpegCompression; }
+    inline const float& getJpegCompression() const { return jpegCompression; }
 
     /// @brief Return true if the configuration represents a valid connection.
     ///
     /// @returns true if the tenant ID and device ID are specified
     ///
     inline bool isValid() const {
-        return strcmp(tenantID.c_str(), "") && strcmp(deviceID.c_str(), "");
+        return !tenantID.empty() && !deviceID.empty();
     }
 };
 
