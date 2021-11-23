@@ -123,11 +123,6 @@ class Keychain {
 
 #elif defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 
-/// @brief Insert / Update a key/value pair in the key-chain.
-///
-/// @param key the plain-text ID of the value to store
-/// @param value the secure value to store
-///
 inline void Keychain::insert(const std::string& key, const std::string& value) const {
     OSStatus status = SecKeychainAddGenericPassword(
         NULL,  // default key-chain
@@ -147,11 +142,6 @@ inline void Keychain::insert(const std::string& key, const std::string& value) c
         throw std::runtime_error("failed to set value");
 }
 
-/// @brief Update a key/value pair in the key-chain.
-///
-/// @param key the plain-text ID of the value to update
-/// @param value the new secure value to store
-///
 inline void Keychain::update(const std::string& key, const std::string& value) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
@@ -179,10 +169,6 @@ inline void Keychain::update(const std::string& key, const std::string& value) c
         throw std::runtime_error("failed to update value");
 }
 
-/// @brief Return true if the key exists in the key-chain.
-///
-/// @param key the plain-text ID of the value to check for existence of
-///
 inline bool Keychain::has(const std::string& key) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
@@ -199,11 +185,6 @@ inline bool Keychain::has(const std::string& key) const {
     return status == errSecSuccess;
 }
 
-/// @brief Look-up a secret value in the key-chain.
-///
-/// @param key the plain-text ID of the value to return the secure value of
-/// @returns the secret value indexed by the given key
-///
 inline std::string Keychain::get(const std::string& key) const {
     void *data;
     UInt32 length;
@@ -230,10 +211,6 @@ inline std::string Keychain::get(const std::string& key) const {
     return value;
 }
 
-/// @brief Remove a secret key-value pair in the key-chain.
-///
-/// @param key the plain-text ID of the key to remove from the keychain
-///
 inline void Keychain::remove(const std::string& key) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
