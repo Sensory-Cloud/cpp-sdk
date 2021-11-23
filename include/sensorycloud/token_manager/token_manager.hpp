@@ -1,4 +1,4 @@
-// An OAuth Token manager Sensory Cloud C++ SDK.
+// An OAuth Token manager for the Sensory Cloud C++ SDK.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -26,10 +26,11 @@
 #ifndef SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 #define SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 
-#include "uuid.hpp"
-#include "secure_random.hpp"
-#include "time.hpp"
-#include "keychain.hpp"
+#include "sensorycloud/token_manager/uuid.hpp"
+#include "sensorycloud/token_manager/secure_random.hpp"
+#include "sensorycloud/token_manager/time.hpp"
+#include "sensorycloud/token_manager/keychain.hpp"
+#include "sensorycloud/services/oauth_service.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -50,6 +51,8 @@ struct AccessTokenCredentials {
 template<typename SecureCredentialStore>
 class TokenManager {
  private:
+    /// the OAuth service to get secure tokens from the remote host
+    service::OAuthService& service;
     /// the key-chain to interact with to store / query key-value pairs
     SecureCredentialStore& keychain;
 
@@ -68,10 +71,13 @@ class TokenManager {
 
     /// @brief Initialize a new token manager.
     ///
+    /// @param service_ the OAuth service for requesting new tokens
     /// @param keychain_ the key-chain to query secure credentials from
     ///
-    explicit TokenManager(SecureCredentialStore& keychain_) :
-        keychain(keychain_) { }
+    explicit TokenManager(
+        service::OAuthService& service_,
+        SecureCredentialStore& keychain_
+    ) : service(service_), keychain(keychain_) { }
 
     /// @brief Generate and store a new set of OAuth credentials.
     ///
@@ -86,7 +92,8 @@ class TokenManager {
         // Generate a new client ID and secure random secrete string
         const auto clientID = uuid_v4();
         const auto secret = secure_random<16>();
-        // Insert the clientID and secret into the persistent credential store
+        // Insert the clientID and secret into the persistent credential store.
+        // If any key-value pair already exists, overwrite it.
         keychain.insert(KeychainTag::ClientID, clientID);
         keychain.insert(KeychainTag::ClientSecret, secret);
         // Return a new access token with the credentials
@@ -137,9 +144,7 @@ class TokenManager {
     }
 
     /// @brief Delete any credentials stored for requesting access tokens, as
-    /// well as any cached access tokens on device
-    ///
-    /// @returns An error if one occurs during deletion
+    /// well as any cached access tokens on device.
     ///
     inline void deleteCredentials() const {
         keychain.remove(KeychainTag::AccessToken);
@@ -148,7 +153,10 @@ class TokenManager {
         keychain.remove(KeychainTag::ClientSecret);
     }
 
-    /// Fetches a new access token from a remote server
+    /// @brief Fetch a new access token from a remote server.
+    ///
+    /// @returns the new token as a string
+    ///
     std::string fetchNewAccessToken() const {
         if (!keychain.has(KeychainTag::ClientID)) {
             // TODO: raise exception
@@ -159,16 +167,17 @@ class TokenManager {
         // Get the ID of the client and the secret from the secure store.
         const auto clientID = keychain.get(KeychainTag::ClientID);
         const auto secret = keychain.get(KeychainTag::ClientSecret);
-        // // Synchronously request a new token from the server.
-        // const auto result = service.getToken(clientID, secret);
-        // // Insert the OAuth access token for the client in the secure store
-        // keychain.insert(KeychainTag::AccessToken, result.accessToken);
-        // // Determine when the token will expire and store this time
-        // const auto expiration = std::chrono::system_clock::now() + std::chrono::seconds(result.expiresIn);
-        // const auto expirationDate = timepoint_to_timestamp(expiration);
-        // try keychain.insert(KeychainTag::Expiration, expirationDate);
-        // // Return the newly created OAuth token
-        // return result.accessToken;
+        // Synchronously request a new token from the server.
+        const auto result = service.getToken(clientID, secret);
+        // Insert the OAuth access token for the client in the secure store
+        keychain.insert(KeychainTag::AccessToken, result.accessToken);
+        // Determine when the token will expire and store this time
+        const auto expirationDate =
+            std::chrono::system_clock::now() + std::chrono::seconds(result.expiresIn);
+        const auto expiration = timepoint_to_timestamp(expirationDate);
+        keychain.insert(KeychainTag::Expiration, expiration);
+        // Return the newly created OAuth token
+        return result.accessToken;
     }
 };
 
