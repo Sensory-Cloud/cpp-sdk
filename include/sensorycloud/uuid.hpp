@@ -68,7 +68,6 @@ namespace sensory {
 ///
 std::string uuid_v4() {
     // Create a random number generator conditioned on the current time
-    // unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937_64 generator(std::random_device("/dev/random")());
     // Create the UUID from randomly generated digits
     std::string uuid(36, '-');
