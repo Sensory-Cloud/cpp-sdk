@@ -37,6 +37,7 @@ namespace token_manager {
 
 // TODO: benchmark this function.
 // TODO: refactor to minimize random number generation.
+// TODO: use cryptographically secure RNG from openSSL
 
 /// @brief Generate a pseudo-random UUID compliant with RFC-4122 Version 4.
 ///
