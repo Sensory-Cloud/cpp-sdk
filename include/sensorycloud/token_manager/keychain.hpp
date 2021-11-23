@@ -29,13 +29,29 @@
 #include <exception>
 #include <string>
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)  // Windows
 #include <windows.h>
 #include <wincred.h>
 #include <intsafe.h>
-#elif defined(__APPLE__)
+#elif defined(__CYGWIN__) && !defined(_WIN32)  // Cygwin POSIX Windows
+
+#elif defined(__ANDROID__)  // Android flavored Linux
+
+#elif defined(__linux__)  // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
+
+#elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)  // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
+
+#elif defined(__hpux)  // HP-UX
+
+#elif defined(_AIX)  // IBM AIX
+
+#elif defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <CoreFoundation/CoreFoundation.h>
 #include <Security/Security.h>
+#elif defined(__sun) && defined(__SVR4)  // Oracle Solaris, Open Indiana
+
+#else  // Unrecognized system architecture
+
 #endif
 
 /// @brief The Sensory Cloud SDK.
@@ -44,322 +60,207 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
+/// @brief A keychain manager for interacting with the OS credential manager.
+class Keychain {
+ private:
+    /// the package name that identifies the owner of the keys
+    std::string package;
+
+ public:
+    /// @brief Initialize a new Apple Keychain interface.
+    ///
+    /// @param package_ the package identifier in "com.package.product" format
+    ///
+    explicit Keychain(const std::string& package_) : package(package_) { }
+
+    /// @brief Insert / Update a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to store
+    /// @param value the secure value to store
+    ///
+    inline void insert(const std::string& key, const std::string& value) const;
+
+    /// @brief Update a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to update
+    /// @param value the new secure value to store
+    ///
+    inline void update(const std::string& key, const std::string& value) const;
+
+    /// @brief Return true if the key exists in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to check for existence of
+    ///
+    inline bool has(const std::string& key) const;
+
+    /// @brief Look-up a secret value in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to return the secure value of
+    /// @returns the secret value indexed by the given key
+    ///
+    inline std::string get(const std::string& key) const;
+
+    /// @brief Remove a secret key-value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the key to remove from the keychain
+    ///
+    inline void remove(const std::string& key) const;
+};
+
 #if defined(_WIN32) || defined(_WIN64)  // Windows
-/// @brief A keychain manager for interacting with the Windows Credential Manager.
-/// @details
-/// #### References
-///
-/// 1. https://github.com/hrantzsch/keychain/blob/master/src/keychain_windows.cpp
-///
-class Keychain {
- private:
-    /// the package name that identifies the owner of the keys
-    std::string package;
 
- public:
-    /// @brief Initialize a new Apple Keychain interface.
-    ///
-    /// @param package_ the package identifier in "com.package.product" format
-    ///
-    explicit Keychain(const std::string& package_) : package(package_) { }
+#elif defined(__CYGWIN__) && !defined(_WIN32)  // Cygwin POSIX Windows
 
-    /// @brief Insert / Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to store
-    /// @param value the secure value to store
-    ///
-    inline void insert(const std::string& key, const std::string& value) const {
+#elif defined(__ANDROID__)  // Android flavored Linux
 
-    }
-
-    /// @brief Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to update
-    /// @param value the new secure value to store
-    ///
-    inline void update(const std::string& key, const std::string& value) const {
-
-    }
-
-    /// @brief Return true if the key exists in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to check for existence of
-    ///
-    inline bool has(const std::string& key) const {
-        return false;
-    }
-
-    /// @brief Look-up a secret value in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to return the secure value of
-    /// @returns the secret value indexed by the given key
-    ///
-    inline std::string get(const std::string& key) const {
-        return "";
-    }
-
-    /// @brief Remove a secret key-value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the key to remove from the keychain
-    ///
-    inline void remove(const std::string& key) const {
-
-    }
-};
-#elif defined(__CYGWIN__) && !defined(_WIN32)
-    // #define PLATFORM_NAME "windows" // Windows (Cygwin POSIX under Microsoft Window)
-#elif defined(__ANDROID__)
-    // #define PLATFORM_NAME "android" // Android (implies Linux, so it must come first)
 #elif defined(__linux__)  // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
-/// @brief A keychain manager for interacting with the Linux Keyring.
-/// @details
-/// #### References
-///
-/// 1. https://github.com/hrantzsch/keychain/blob/master/src/keychain_linux.cpp
-///
-class Keychain {
- private:
-    /// the package name that identifies the owner of the keys
-    std::string package;
 
- public:
-    /// @brief Initialize a new Apple Keychain interface.
-    ///
-    /// @param package_ the package identifier in "com.package.product" format
-    ///
-    explicit Keychain(const std::string& package_) : package(package_) { }
+#elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)  // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
 
-    /// @brief Insert / Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to store
-    /// @param value the secure value to store
-    ///
-    inline void insert(const std::string& key, const std::string& value) const {
+#elif defined(__hpux)  // HP-UX
 
-    }
+#elif defined(_AIX)  // IBM AIX
 
-    /// @brief Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to update
-    /// @param value the new secure value to store
-    ///
-    inline void update(const std::string& key, const std::string& value) const {
-
-    }
-
-    /// @brief Return true if the key exists in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to check for existence of
-    ///
-    inline bool has(const std::string& key) const {
-        return false;
-    }
-
-    /// @brief Look-up a secret value in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to return the secure value of
-    /// @returns the secret value indexed by the given key
-    ///
-    inline std::string get(const std::string& key) const {
-        return "";
-    }
-
-    /// @brief Remove a secret key-value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the key to remove from the keychain
-    ///
-    inline void remove(const std::string& key) const {
-
-    }
-};
-#elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)
-    // #define PLATFORM_NAME "bsd" // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
-#elif defined(__hpux)
-    // #define PLATFORM_NAME "hp-ux" // HP-UX
-#elif defined(_AIX)
-    // #define PLATFORM_NAME "aix" // IBM AIX
 #elif defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
-/// @brief A keychain manager for interacting with the MacOS Keychain.
-/// @details
-/// #### References
+
+/// @brief Insert / Update a key/value pair in the key-chain.
 ///
-/// 1. https://github.com/hrantzsch/keychain/blob/master/src/keychain_mac.cpp
+/// @param key the plain-text ID of the value to store
+/// @param value the secure value to store
 ///
-class Keychain{
- private:
-    /// the package name that identifies the owner of the keys
-    std::string package;
+inline void Keychain::insert(const std::string& key, const std::string& value) const {
+    OSStatus status = SecKeychainAddGenericPassword(
+        NULL,  // default key-chain
+        static_cast<UInt32>(package.length()),
+        package.data(),
+        static_cast<UInt32>(key.length()),
+        key.data(),
+        static_cast<UInt32>(value.length()),
+        value.data(),
+        NULL  // unused output parameter
+    );
 
-    // std::string CFStringToStdString(const CFStringRef cfstring) const {
-    //     const char* ccstr = CFStringGetCStringPtr(cfstring, kCFStringEncodingUTF8);
-    //     if (ccstr != nullptr) return std::string(ccstr);
-    //
-    //     auto utf16Pairs = CFStringGetLength(cfstring);
-    //     auto maxUtf8Bytes = CFStringGetMaximumSizeForEncoding(utf16Pairs, kCFStringEncodingUTF8);
-    //
-    //     std::vector<char> cstr(maxUtf8Bytes, '\0');
-    //     auto result = CFStringGetCString(cfstring, cstr.data(), cstr.size(), kCFStringEncodingUTF8);
-    //
-    //     return result ? std::string(cstr.data()) : std::string();
-    // }
+    if (status == errSecDuplicateItem)  // password exists, overwrite
+        return update(key, value);
 
-    // std::string errorStatusToString(const OSStatus& status) const {
-    //     const auto sec_message = SecCopyErrorMessageString(status, NULL);
-    //     std::string message;
-    //
-    //     if (sec_message) {
-    //         message = CFStringToStdString(sec_message);
-    //         CFRelease(sec_message);
-    //     }
-    //
-    //     return message;
-    // }
+    if (status != errSecSuccess)
+        throw std::runtime_error("failed to set value");
+}
 
- public:
-    /// @brief Initialize a new Apple Keychain interface.
-    ///
-    /// @param package_ the package identifier in "com.package.product" format
-    ///
-    explicit Keychain(const std::string& package_) : package(package_) { }
+/// @brief Update a key/value pair in the key-chain.
+///
+/// @param key the plain-text ID of the value to update
+/// @param value the new secure value to store
+///
+inline void Keychain::update(const std::string& key, const std::string& value) const {
+    SecKeychainItemRef item = NULL;
+    OSStatus status = SecKeychainFindGenericPassword(
+        NULL,  // default key-chain
+        static_cast<UInt32>(package.length()),
+        package.data(),
+        static_cast<UInt32>(key.length()),
+        key.data(),
+        NULL,  // unused output parameter
+        NULL,  // unused output parameter
+        &item
+    );
 
-    /// @brief Insert / Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to store
-    /// @param value the secure value to store
-    ///
-    inline void insert(const std::string& key, const std::string& value) const {
-        OSStatus status = SecKeychainAddGenericPassword(
-            NULL,  // default key-chain
-            static_cast<UInt32>(package.length()),
-            package.data(),
-            static_cast<UInt32>(key.length()),
-            key.data(),
+    if (status == errSecSuccess) {
+        status = SecKeychainItemModifyContent(item, NULL,
             static_cast<UInt32>(value.length()),
-            value.data(),
-            NULL  // unused output parameter
+            value.data()
         );
-
-        if (status == errSecDuplicateItem)  // password exists, overwrite
-            return update(key, value);
-
-        if (status != errSecSuccess)
-            throw std::runtime_error("failed to set value");
     }
 
-    /// @brief Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to update
-    /// @param value the new secure value to store
-    ///
-    inline void update(const std::string& key, const std::string& value) const {
-        SecKeychainItemRef item = NULL;
-        OSStatus status = SecKeychainFindGenericPassword(
-            NULL,  // default key-chain
-            static_cast<UInt32>(package.length()),
-            package.data(),
-            static_cast<UInt32>(key.length()),
-            key.data(),
-            NULL,  // unused output parameter
-            NULL,  // unused output parameter
-            &item
-        );
+    if (item)
+        CFRelease(item);
 
-        if (status == errSecSuccess) {
-            status = SecKeychainItemModifyContent(item, NULL,
-                static_cast<UInt32>(value.length()),
-                value.data()
-            );
-        }
+    if (status != errSecSuccess)
+        throw std::runtime_error("failed to update value");
+}
 
-        if (item)
-            CFRelease(item);
+/// @brief Return true if the key exists in the key-chain.
+///
+/// @param key the plain-text ID of the value to check for existence of
+///
+inline bool Keychain::has(const std::string& key) const {
+    SecKeychainItemRef item = NULL;
+    OSStatus status = SecKeychainFindGenericPassword(
+        NULL,  // default key-chain
+        static_cast<UInt32>(package.length()),
+        package.data(),
+        static_cast<UInt32>(key.length()),
+        key.data(),
+        NULL,  // unused output parameter
+        NULL,  // unused output parameter
+        NULL
+    );
 
-        if (status != errSecSuccess)
-            throw std::runtime_error("failed to update value");
+    return status == errSecSuccess;
+}
+
+/// @brief Look-up a secret value in the key-chain.
+///
+/// @param key the plain-text ID of the value to return the secure value of
+/// @returns the secret value indexed by the given key
+///
+inline std::string Keychain::get(const std::string& key) const {
+    void *data;
+    UInt32 length;
+    OSStatus status = SecKeychainFindGenericPassword(
+        NULL,  // default key-chain
+        static_cast<UInt32>(package.length()),
+        package.data(),
+        static_cast<UInt32>(key.length()),
+        key.data(),
+        &length,
+        &data,
+        NULL  // unused output parameter
+    );
+
+    std::string value = "";
+
+    if (status != errSecSuccess) {
+        throw std::runtime_error("failed to get value");
+    } else if (data != NULL) {
+        value = std::string(reinterpret_cast<const char*>(data), length);
+        SecKeychainItemFreeContent(NULL, data);
     }
 
-    /// @brief Return true if the key exists in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to check for existence of
-    ///
-    inline bool has(const std::string& key) const {
-        SecKeychainItemRef item = NULL;
-        OSStatus status = SecKeychainFindGenericPassword(
-            NULL,  // default key-chain
-            static_cast<UInt32>(package.length()),
-            package.data(),
-            static_cast<UInt32>(key.length()),
-            key.data(),
-            NULL,  // unused output parameter
-            NULL,  // unused output parameter
-            NULL
-        );
+    return value;
+}
 
-        return status == errSecSuccess;
-    }
+/// @brief Remove a secret key-value pair in the key-chain.
+///
+/// @param key the plain-text ID of the key to remove from the keychain
+///
+inline void Keychain::remove(const std::string& key) const {
+    SecKeychainItemRef item = NULL;
+    OSStatus status = SecKeychainFindGenericPassword(
+        NULL,  // default key-chain
+        static_cast<UInt32>(package.length()),
+        package.data(),
+        static_cast<UInt32>(key.length()),
+        key.data(),
+        NULL,  // unused output parameter
+        NULL,  // unused output parameter
+        &item
+    );
 
-    /// @brief Look-up a secret value in the key-chain.
-    ///
-    /// @param key the plain-text ID of the value to return the secure value of
-    /// @returns the secret value indexed by the given key
-    ///
-    inline std::string get(const std::string& key) const {
-        void *data;
-        UInt32 length;
-        OSStatus status = SecKeychainFindGenericPassword(
-            NULL,  // default key-chain
-            static_cast<UInt32>(package.length()),
-            package.data(),
-            static_cast<UInt32>(key.length()),
-            key.data(),
-            &length,
-            &data,
-            NULL  // unused output parameter
-        );
+    if (status == errSecSuccess)
+        status = SecKeychainItemDelete(item);
 
-        std::string value = "";
+    if (item)
+        CFRelease(item);
 
-        if (status != errSecSuccess) {
-            throw std::runtime_error("failed to get value");
-        } else if (data != NULL) {
-            value = std::string(reinterpret_cast<const char*>(data), length);
-            SecKeychainItemFreeContent(NULL, data);
-        }
+    if (status != errSecSuccess)
+        std::runtime_error("failed to find key to delete");
+}
 
-        return value;
-    }
+#elif defined(__sun) && defined(__SVR4)  // Oracle Solaris, Open Indiana
 
-    /// @brief Remove a secret key-value pair in the key-chain.
-    ///
-    /// @param key the plain-text ID of the key to remove from the keychain
-    ///
-    inline void remove(const std::string& key) const {
-        SecKeychainItemRef item = NULL;
-        OSStatus status = SecKeychainFindGenericPassword(
-            NULL,  // default key-chain
-            static_cast<UInt32>(package.length()),
-            package.data(),
-            static_cast<UInt32>(key.length()),
-            key.data(),
-            NULL,  // unused output parameter
-            NULL,  // unused output parameter
-            &item
-        );
+#else  // Unrecognized system architecture
 
-        if (status == errSecSuccess)
-            status = SecKeychainItemDelete(item);
-
-        if (item)
-            CFRelease(item);
-
-        if (status != errSecSuccess)
-            std::runtime_error("failed to find key to delete");
-    }
-};
-#elif defined(__sun) && defined(__SVR4)
-    // #define PLATFORM_NAME "solaris" // Oracle Solaris, Open Indiana
-#else
-    // #define PLATFORM_NAME NULL
 #endif
 
 }  // namespace token_manager
