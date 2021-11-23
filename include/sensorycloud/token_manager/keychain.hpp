@@ -57,11 +57,41 @@ namespace token_manager {
 #elif defined(_AIX)
     // #define PLATFORM_NAME "aix" // IBM AIX
 #elif defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
-/// @brief A keychain manager for interacting with the keychain.
+/// @brief A keychain manager for interacting with the MacOS Keychain.
+/// @details
+/// #### References
+///
+/// 1. https://github.com/hrantzsch/keychain/blob/master/src/keychain_mac.cpp
+///
 class Keychain{
  private:
     /// the package name that identifies the owner of the keys
     std::string package;
+
+    // std::string CFStringToStdString(const CFStringRef cfstring) const {
+    //     const char* ccstr = CFStringGetCStringPtr(cfstring, kCFStringEncodingUTF8);
+    //     if (ccstr != nullptr) return std::string(ccstr);
+    //
+    //     auto utf16Pairs = CFStringGetLength(cfstring);
+    //     auto maxUtf8Bytes = CFStringGetMaximumSizeForEncoding(utf16Pairs, kCFStringEncodingUTF8);
+    //
+    //     std::vector<char> cstr(maxUtf8Bytes, '\0');
+    //     auto result = CFStringGetCString(cfstring, cstr.data(), cstr.size(), kCFStringEncodingUTF8);
+    //
+    //     return result ? std::string(cstr.data()) : std::string();
+    // }
+
+    // std::string errorStatusToString(const OSStatus& status) const {
+    //     const auto sec_message = SecCopyErrorMessageString(status, NULL);
+    //     std::string message;
+    //
+    //     if (sec_message) {
+    //         message = CFStringToStdString(sec_message);
+    //         CFRelease(sec_message);
+    //     }
+    //
+    //     return message;
+    // }
 
  public:
     /// @brief Initialize a new Apple Keychain interface.
