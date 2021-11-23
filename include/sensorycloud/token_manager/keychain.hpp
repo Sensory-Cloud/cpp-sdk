@@ -29,7 +29,11 @@
 #include <exception>
 #include <string>
 
-#if defined(__APPLE__)
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+#include <wincred.h>
+#include <intsafe.h>
+#elif defined(__APPLE__)
 #include <CoreFoundation/CoreFoundation.h>
 #include <Security/Security.h>
 #endif
@@ -40,16 +44,134 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
-#if defined(_WIN32)
-    // #define PLATFORM_NAME "windows" // Windows
-#elif defined(_WIN64)
-    // #define PLATFORM_NAME "windows" // Windows
+#if defined(_WIN32) || defined(_WIN64)  // Windows
+/// @brief A keychain manager for interacting with the Windows Credential Manager.
+/// @details
+/// #### References
+///
+/// 1. https://github.com/hrantzsch/keychain/blob/master/src/keychain_windows.cpp
+///
+class Keychain {
+ private:
+    /// the package name that identifies the owner of the keys
+    std::string package;
+
+ public:
+    /// @brief Initialize a new Apple Keychain interface.
+    ///
+    /// @param package_ the package identifier in "com.package.product" format
+    ///
+    explicit Keychain(const std::string& package_) : package(package_) { }
+
+    /// @brief Insert / Update a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to store
+    /// @param value the secure value to store
+    ///
+    inline void insert(const std::string& key, const std::string& value) const {
+
+    }
+
+    /// @brief Update a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to update
+    /// @param value the new secure value to store
+    ///
+    inline void update(const std::string& key, const std::string& value) const {
+
+    }
+
+    /// @brief Return true if the key exists in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to check for existence of
+    ///
+    inline bool has(const std::string& key) const {
+        return false;
+    }
+
+    /// @brief Look-up a secret value in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to return the secure value of
+    /// @returns the secret value indexed by the given key
+    ///
+    inline std::string get(const std::string& key) const {
+        return "";
+    }
+
+    /// @brief Remove a secret key-value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the key to remove from the keychain
+    ///
+    inline void remove(const std::string& key) const {
+
+    }
+};
 #elif defined(__CYGWIN__) && !defined(_WIN32)
     // #define PLATFORM_NAME "windows" // Windows (Cygwin POSIX under Microsoft Window)
 #elif defined(__ANDROID__)
     // #define PLATFORM_NAME "android" // Android (implies Linux, so it must come first)
-#elif defined(__linux__)
-    // #define PLATFORM_NAME "linux" // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
+#elif defined(__linux__)  // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
+/// @brief A keychain manager for interacting with the Linux Keyring.
+/// @details
+/// #### References
+///
+/// 1. https://github.com/hrantzsch/keychain/blob/master/src/keychain_linux.cpp
+///
+class Keychain {
+ private:
+    /// the package name that identifies the owner of the keys
+    std::string package;
+
+ public:
+    /// @brief Initialize a new Apple Keychain interface.
+    ///
+    /// @param package_ the package identifier in "com.package.product" format
+    ///
+    explicit Keychain(const std::string& package_) : package(package_) { }
+
+    /// @brief Insert / Update a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to store
+    /// @param value the secure value to store
+    ///
+    inline void insert(const std::string& key, const std::string& value) const {
+
+    }
+
+    /// @brief Update a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to update
+    /// @param value the new secure value to store
+    ///
+    inline void update(const std::string& key, const std::string& value) const {
+
+    }
+
+    /// @brief Return true if the key exists in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to check for existence of
+    ///
+    inline bool has(const std::string& key) const {
+        return false;
+    }
+
+    /// @brief Look-up a secret value in the key-chain.
+    ///
+    /// @param key the plain-text ID of the value to return the secure value of
+    /// @returns the secret value indexed by the given key
+    ///
+    inline std::string get(const std::string& key) const {
+        return "";
+    }
+
+    /// @brief Remove a secret key-value pair in the key-chain.
+    ///
+    /// @param key the plain-text ID of the key to remove from the keychain
+    ///
+    inline void remove(const std::string& key) const {
+
+    }
+};
 #elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)
     // #define PLATFORM_NAME "bsd" // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
 #elif defined(__hpux)
