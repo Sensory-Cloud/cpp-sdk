@@ -168,12 +168,9 @@ class TokenManager {
     /// @returns the new token as a string
     ///
     std::string fetchNewAccessToken() const {
-        if (!keychain.has(TAGS.ClientID)) {
-            // TODO: raise exception
-        }
-        if (!keychain.has(TAGS.ClientSecret)) {
-            // TODO: raise exception
-        }
+        // Check if credentials have been generated already, otherwise create
+        // new credentials.
+        if (!hasSavedCredentials()) generateCredentials();
         // Get the ID of the client and the secret from the secure store.
         const auto clientID = keychain.get(TAGS.ClientID);
         const auto secret = keychain.get(TAGS.ClientSecret);
