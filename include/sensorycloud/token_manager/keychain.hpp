@@ -67,42 +67,46 @@ class Keychain {
     std::string package;
 
  public:
-    /// @brief Initialize a new Apple Keychain interface.
+    /// @brief Initialize a new Keychain interface.
     ///
-    /// @param package_ the package identifier in "com.package.product" format
+    /// @param package_ the package identifier in `"com.package.product"` format
+    ///
+    /// @details
+    /// The value of `package_` should remain constant among compatible versions
+    /// of the calling application.
     ///
     explicit Keychain(const std::string& package_) : package(package_) { }
 
     /// @brief Insert / Update a key/value pair in the key-chain.
     ///
-    /// @param key the plain-text ID of the value to store
+    /// @param key the plain-text key of the value to store
     /// @param value the secure value to store
     ///
     inline void insert(const std::string& key, const std::string& value) const;
 
     /// @brief Update a key/value pair in the key-chain.
     ///
-    /// @param key the plain-text ID of the value to update
+    /// @param key the plain-text key of the value to update
     /// @param value the new secure value to store
     ///
     inline void update(const std::string& key, const std::string& value) const;
 
     /// @brief Return true if the key exists in the key-chain.
     ///
-    /// @param key the plain-text ID of the value to check for existence of
+    /// @param key the plain-text key to check for the existence of
     ///
     inline bool has(const std::string& key) const;
 
     /// @brief Look-up a secret value in the key-chain.
     ///
-    /// @param key the plain-text ID of the value to return the secure value of
+    /// @param key the plain-text key of the value to return
     /// @returns the secret value indexed by the given key
     ///
     inline std::string get(const std::string& key) const;
 
     /// @brief Remove a secret key-value pair in the key-chain.
     ///
-    /// @param key the plain-text ID of the key to remove from the keychain
+    /// @param key the plain-text key of the pair to remove from the keychain
     ///
     inline void remove(const std::string& key) const;
 };
