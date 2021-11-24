@@ -845,6 +845,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = vendor \
                          tests \
+                         examples \
                          include/sensorycloud/generated \
                          src/sensorycloud/generated
 
