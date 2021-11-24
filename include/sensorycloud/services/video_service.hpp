@@ -37,7 +37,7 @@ namespace sensory {
 /// @brief Sensory Cloud Services.
 namespace service {
 
-/// @brief A service for video services.
+/// @brief A service for video data.
 class VideoService {
  private:
     /// the gRPC stub for the video models service
