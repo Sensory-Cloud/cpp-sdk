@@ -343,7 +343,7 @@ class AudioService {
             ::sensory::api::v1::audio::TranscribeRequest,
             ::sensory::api::v1::audio::TranscribeResponse
         >
-    > TranscribeStream;
+    > TranscribeAudioStream;
 
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
@@ -362,7 +362,7 @@ class AudioService {
     /// the server
     ///
     template<typename T>
-    TranscribeStream transcribeAudio(
+    TranscribeAudioStream transcribeAudio(
         const Config& config,
         const std::string& modelName,
         const int32_t& sampleRate,
