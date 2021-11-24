@@ -46,6 +46,23 @@ struct AccessTokenCredentials {
     std::string secret;
 };
 
+// #define ClientID "clientID"
+// #define ClientSecret "clientSecret"
+// #define AccessToken "accessToken"
+// #define Expiration "expiration"
+
+/// @brief Keychain tags used to store OAuth credentials for Sensory Cloud.
+static const struct {
+    /// the ID of the client device (A RFC-4122v4 UUID)
+    const std::string ClientID     = "clientID";
+    /// the client secret (a cryptographically secure random number)
+    const std::string ClientSecret = "clientSecret";
+    /// the OAuth token from the server
+    const std::string AccessToken  = "accessToken";
+    /// the expiration time of the OAuth token
+    const std::string Expiration   = "expiration";
+} TAGS;
+
 /// @brief A token manager class for generating OAuth tokens.
 /// @tparam SecureCredentialStore a secure CRUD class for storing credentials.
 template<typename SecureCredentialStore>
@@ -57,18 +74,6 @@ class TokenManager {
     SecureCredentialStore& keychain;
 
  public:
-    /// @brief String keys for accessing secure values in the keychain
-    enum class KeychainTag {
-        /// the ID of the client device (A RFC-4122v4 UUID)
-        ClientID     = "clientID",
-        /// the client secret (a cryptographically secure random number)
-        ClientSecret = "clientSecret",
-        /// the OAuth token from the server
-        AccessToken  = "accessToken",
-        /// the expiration time of the OAuth token
-        Expiration   = "expiration"
-    };
-
     /// @brief Initialize a new token manager.
     ///
     /// @param service_ the OAuth service for requesting new tokens
@@ -94,8 +99,8 @@ class TokenManager {
         const auto secret = secure_random<16>();
         // Insert the clientID and secret into the persistent credential store.
         // If any key-value pair already exists, overwrite it.
-        keychain.insert(KeychainTag::ClientID, clientID);
-        keychain.insert(KeychainTag::ClientSecret, secret);
+        keychain.insert(TAGS.ClientID, clientID);
+        keychain.insert(TAGS.ClientSecret, secret);
         // Return a new access token with the credentials
         return AccessTokenCredentials{clientID, secret};
     }
@@ -105,7 +110,7 @@ class TokenManager {
     /// @returns `true` if any credentials are found, `false` otherwise
     ///
     inline bool hasSavedCredentials() const {
-        return keychain.has(KeychainTag::ClientID) && keychain.has(KeychainTag::ClientSecret);
+        return keychain.has(TAGS.ClientID) && keychain.has(TAGS.ClientSecret);
     }
 
     /// @brief Return a valid access token for Sensory Cloud gRPC calls.
@@ -125,13 +130,13 @@ class TokenManager {
         // TODO: Prevent multiple access tokens from being requested at the same time
 
         if (
-            !keychain.has(KeychainTag::AccessToken) ||
-            !keychain.has(KeychainTag::Expiration)
+            !keychain.has(TAGS.AccessToken) ||
+            !keychain.has(TAGS.Expiration)
         )  // no access token has been stored in the credential store
             return fetchNewAccessToken();
         // fetch existing access token and expiration date from the secure store
-        const auto accessToken = keychain.get(KeychainTag::AccessToken);
-        const auto expirationDate = keychain.get(KeychainTag::Expiration);
+        const auto accessToken = keychain.get(TAGS.AccessToken);
+        const auto expirationDate = keychain.get(TAGS.Expiration);
         // check for expiration of the token
         const auto now = std::chrono::system_clock::now();
         const auto expiration = timestamp_to_timepoint(expirationDate);
@@ -147,10 +152,10 @@ class TokenManager {
     /// well as any cached access tokens on device.
     ///
     inline void deleteCredentials() const {
-        keychain.remove(KeychainTag::AccessToken);
-        keychain.remove(KeychainTag::Expiration);
-        keychain.remove(KeychainTag::ClientID);
-        keychain.remove(KeychainTag::ClientSecret);
+        keychain.remove(TAGS.AccessToken);
+        keychain.remove(TAGS.Expiration);
+        keychain.remove(TAGS.ClientID);
+        keychain.remove(TAGS.ClientSecret);
     }
 
     /// @brief Fetch a new access token from a remote server.
@@ -158,24 +163,24 @@ class TokenManager {
     /// @returns the new token as a string
     ///
     std::string fetchNewAccessToken() const {
-        if (!keychain.has(KeychainTag::ClientID)) {
+        if (!keychain.has(TAGS.ClientID)) {
             // TODO: raise exception
         }
-        if (!keychain.has(KeychainTag::ClientSecret)) {
+        if (!keychain.has(TAGS.ClientSecret)) {
             // TODO: raise exception
         }
         // Get the ID of the client and the secret from the secure store.
-        const auto clientID = keychain.get(KeychainTag::ClientID);
-        const auto secret = keychain.get(KeychainTag::ClientSecret);
+        const auto clientID = keychain.get(TAGS.ClientID);
+        const auto secret = keychain.get(TAGS.ClientSecret);
         // Synchronously request a new token from the server.
         const auto result = service.getToken(clientID, secret);
         // Insert the OAuth access token for the client in the secure store
-        keychain.insert(KeychainTag::AccessToken, result.accessToken);
+        keychain.insert(TAGS.AccessToken, result.accessToken);
         // Determine when the token will expire and store this time
         const auto expirationDate =
             std::chrono::system_clock::now() + std::chrono::seconds(result.expiresIn);
         const auto expiration = timepoint_to_timestamp(expirationDate);
-        keychain.insert(KeychainTag::Expiration, expiration);
+        keychain.insert(TAGS.Expiration, expiration);
         // Return the newly created OAuth token
         return result.accessToken;
     }
