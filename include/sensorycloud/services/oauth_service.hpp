@@ -143,14 +143,9 @@ class OAuthService {
     ///     network error that occurred
     ///
     api::common::TokenResponse getToken(
-        const Config& config,
         const std::string& clientID,
         const std::string& secret
     ) {
-        // NSLog("Requesting OAuth Token with clientID %@", clientID)
-        if (config.getCloudHost() == nullptr) {
-            throw "NetworkError.notInitialized";
-        }
         // Create a context for the client.
         grpc::ClientContext context;
         // Create the token request from the function parameters.
