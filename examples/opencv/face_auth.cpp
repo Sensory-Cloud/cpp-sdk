@@ -63,14 +63,7 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
-    std::string host = "io.stage.cloud.sensory.com";
-    uint16_t port = 50051;
-    sensory::Config config;
-    config.setCloudHost(host, port);
-    std::shared_ptr<grpc::Channel> channel = grpc::CreateChannel(
-        config.getCloudHost()->getFullyQualifiedDomainName(),
-        grpc::InsecureChannelCredentials()
-    );
+    sensory::Config config("io.stage.cloud.sensory.com", 443);
 
     // Create an image capture object
     cv::VideoCapture capture;

@@ -37,15 +37,12 @@
 
 int main() {
     // Initialize the configuration to the host for given address and port
-    std::string host = "io.stage.cloud.sensory.com";
-    uint16_t port = 443;
-    std::shared_ptr<sensory::Config> config(new sensory::Config);
-    config->setCloudHost(host, port);
-    std::cout << config->getCloudHost()->getFullyQualifiedDomainName() << std::endl;
+    sensory::Config config("io.stage.cloud.sensory.com", 443);
+    std::cout << config.getFullyQualifiedDomainName() << std::endl;
     // Set the Tenant ID for the default tenant
-    config->tenantID = "cabb7700-206f-4cc7-8e79-cd7f288aa78d";
+    config.tenantID = "cabb7700-206f-4cc7-8e79-cd7f288aa78d";
     // a dummy device ID for enrolling in the cloud
-    config->deviceID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
+    config.deviceID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
 
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
     //
@@ -58,10 +55,7 @@ int main() {
     // keychain.insert("clientSecret", sensory::token_manager::secure_random<16>());
     // std::cout << keychain.get("clientSecret") << std::endl;
 
-    // Create an OAuth service from the base service
-    auto oauthService = sensory::service::OAuthService(config->getCloudHost()->getChannel());
-
-    // oauthService.getWhoAmI(*config);
+    auto oauthService = sensory::service::OAuthService(config);
 
     std::string userID = "";
     std::cout << "user ID: ";
@@ -77,7 +71,7 @@ int main() {
     std::cout << "Hello, Sensory Cloud C++ SDK!" << std::endl;
 
     if (false) {
-        const auto rsp = oauthService.enrollDevice(*config, userID, password, clientID, clientSecret);
+        const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
         std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
         std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
     }

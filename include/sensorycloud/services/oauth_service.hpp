@@ -26,6 +26,8 @@
 #ifndef SENSORY_CLOUD_SERVICES_OAUTH_SERVICE_HPP_
 #define SENSORY_CLOUD_SERVICES_OAUTH_SERVICE_HPP_
 
+#include <memory>
+#include <string>
 #include <grpc/grpc.h>
 #include <grpc++/channel.h>
 #include <grpc++/client_context.h>
@@ -47,6 +49,8 @@ namespace service {
 /// @brief A service for handling device and user authentication.
 class OAuthService {
  private:
+    /// the global configuration for the remote connection
+    const Config& config;
     /// The gRPC stub for the device service
     std::unique_ptr<api::v1::management::DeviceService::Stub> device_stub;
     /// The gRPC stub for the OAuth service
@@ -55,11 +59,11 @@ class OAuthService {
  public:
     /// @brief Initialize a new OAuth service.
     ///
-    /// @param channel TODO
+    /// @param config the global configuration for the remote connection
     ///
-    OAuthService(std::shared_ptr<grpc::Channel> channel) :
-        device_stub(api::v1::management::DeviceService::NewStub(channel)),
-        oauth_stub(api::oauth::OauthService::NewStub(channel)) { }
+    explicit OAuthService(const Config& config_) : config(config_),
+        device_stub(api::v1::management::DeviceService::NewStub(config.getChannel())),
+        oauth_stub(api::oauth::OauthService::NewStub(config.getChannel())) { }
 
     /// @brief Create a new device enrollment.
     ///
@@ -83,10 +87,9 @@ class OAuthService {
     /// clientSecret for this call
     ///
     /// This call will fail with `NetworkError.notInitialized` if
-    /// `Config.deviceID` or `Config.tenantID` has not been set
+    /// `config.deviceID` or `config.tenantID` has not been set
     ///
     api::v1::management::DeviceResponse enrollDevice(
-        const Config& config,
         const std::string& name,
         const std::string& credential,
         const std::string& clientID,
@@ -95,7 +98,7 @@ class OAuthService {
         // std::cout << "Enrolling device: " << name << std::endl;
         // Ensure that the configuration specifies a cloud host and has a valid
         // tenant ID and device ID before proceeding with the RPC.
-        if (!config.hasCloudHost() || !config.isValid())
+        if (!config.isValid())
             throw NetworkError(NetworkError::Code::NotInitialized);
         // Create a context for the client.
         grpc::ClientContext context;
@@ -119,11 +122,8 @@ class OAuthService {
         return response;
     }
 
-    // api::v1::management::DeviceResponse getWhoAmI(const Config& config) {
-    //     // NSLog("Getting WhoAmI")
-    //     if (config.getCloudHost() == nullptr) {
-    //         throw "NetworkError.notInitialized";
-    //     }
+    // api::v1::management::DeviceResponse getWhoAmI() {
+    //     // std::cout << "Getting WhoAmI" << std::endl;
     //     grpc::ClientContext context;
     //     api::v1::management::DeviceGetWhoAmIRequest request;
     //     api::v1::management::DeviceResponse response;

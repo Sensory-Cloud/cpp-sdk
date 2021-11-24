@@ -41,8 +41,8 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
-/// @brief A structure for providing information about a cloud host.
-class CloudHost {
+/// @brief A configuration endpoint for Sensory Cloud.
+class Config {
  private:
     /// the name of the cloud host, i.e., DNS name
     const std::string host;
@@ -52,18 +52,38 @@ class CloudHost {
     const bool isSecure;
     /// the number of seconds to wait on a unary gRPC call before timing out
     uint32_t timeout = 10;
+    /// JPEG Compression factor used, a value between 0 and 1 where 0 is most
+    /// compressed, and 1 is highest quality
+    float jpegCompression = 0.5;
 
  public:
-    /// @brief Initialize a new cloud host.
+    /// Tenant ID to use during device enrollment
+    std::string tenantID = "";
+    /// Unique device identifier that model enrollments are associated to
+    std::string deviceID = "";
+
+    /// User's preferred language/region code (ex: en-US, used for audio
+    /// enrollments. Defaults to the system Locale
+    std::string languageCode = "en-US";
+
+    /// Sample rate to record audio at, defaults to 16kHz
+    float audioSampleRate = 16000.f;
+
+    /// Photo pixel height, defaults to 720 pixels
+    uint32_t photoHeight = 720;
+    /// Photo pixel width, defaults to 480 pixels
+    uint32_t photoWidth = 480;
+
+    /// @brief Initialize a new Sensory Cloud configuration object.
     ///
     /// @param host_ the host-name of the RPC service
     /// @param port_ the port number of the RPC service
     /// @param isSecure_ whether to use SSL/TLS for message encryption
     ///
-    CloudHost(
+    Config(
         const std::string& host_,
         const uint16_t& port_,
-        const bool& isSecure_
+        const bool& isSecure_ = true
     ) : host(host_), port(port_), isSecure(isSecure_) { }
 
     /// @brief Return the name of the remote host.
@@ -149,61 +169,6 @@ class CloudHost {
 
         return context;
     }
-};
-
-/// @brief A configuration endpoint for Sensory Cloud.
-class Config {
- private:
-    /// the cloud host to interact with
-    CloudHost* cloudHost = nullptr;
-    /// JPEG Compression factor used, a value between 0 and 1 where 0 is most
-    /// compressed, and 1 is highest quality
-    float jpegCompression = 0.5;
-
- public:
-    /// Tenant ID to use during device enrollment
-    std::string tenantID = "";
-    /// Unique device identifier that model enrollments are associated to
-    std::string deviceID = "";
-
-    /// User's preferred language/region code (ex: en-US, used for audio
-    /// enrollments. Defaults to the system Locale
-    std::string languageCode = "en-US";
-
-    /// Sample rate to record audio at, defaults to 16kHz
-    float audioSampleRate = 16000.f;
-
-    /// Photo pixel height, defaults to 720 pixels
-    uint32_t photoHeight = 720;
-    /// Photo pixel width, defaults to 480 pixels
-    uint32_t photoWidth = 480;
-
-    /// @brief Return a flag indicating whether a cloud host has been specified.
-    ///
-    /// @returns true if the cloud host exists, false otherwise
-    ///
-    inline const bool hasCloudHost() const { return cloudHost != nullptr; }
-
-    /// @brief Set a host for transacting with Sensory cloud.
-    ///
-    /// @param host cloud host to use
-    /// @param port optional port (50051 is used by default)
-    /// @param isSecure whether to use a secure connection with SSL
-    ///
-    inline void setCloudHost(
-        const std::string& host,
-        const uint16_t& port = 50051,
-        const bool& isSecure = true
-    ) {
-        if (cloudHost != nullptr) delete cloudHost;
-        cloudHost = new CloudHost(host, port, isSecure);
-    }
-
-    /// @brief Returns the currently configured cloud host.
-    ///
-    /// @returns the cloud host or `nullptr` if a host has not been configured
-    ///
-    inline const CloudHost* getCloudHost() const { return cloudHost; }
 
     /// @brief Set the JPEG compression level to a new value.
     ///
