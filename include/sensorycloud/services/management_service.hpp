@@ -45,16 +45,18 @@ namespace service {
 /// @brief A service for managing enrollments.
 class ManagementService {
  private:
+    /// the global configuration for the remote connection
+    const Config& config;
     /// The gRPC stub for the enrollment service
     std::unique_ptr<api::v1::management::EnrollmentService::Stub> stub;
 
  public:
     /// @brief Initialize a new management service.
     ///
-    /// @param channel TODO
+    /// @param config the global configuration for the remote connection
     ///
-    ManagementService(std::shared_ptr<grpc::Channel> channel) :
-        stub(api::v1::management::EnrollmentService::NewStub(channel)) { }
+    explicit ManagementService(const Config& config_) : config(config_),
+        stub(api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the current enrollments for the given userID
     ///

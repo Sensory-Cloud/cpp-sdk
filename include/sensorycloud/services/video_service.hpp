@@ -41,6 +41,8 @@ namespace service {
 /// @brief A service for video data.
 class VideoService {
  private:
+    /// the global configuration for the remote connection
+    const Config& config;
     /// the gRPC stub for the video models service
     std::unique_ptr<api::v1::video::VideoModels::Stub> models_stub;
     /// the gRPC stub for the video bio-metrics service
@@ -51,12 +53,12 @@ class VideoService {
  public:
     /// @brief Initialize a new video service.
     ///
-    /// @param channel TODO
+    /// @param config the global configuration for the remote connection
     ///
-    VideoService(std::shared_ptr<grpc::Channel> channel) :
-        models_stub(api::v1::video::VideoModels::NewStub(channel)),
-        biometrics_stub(api::v1::video::VideoBiometrics::NewStub(channel)),
-        recognition_stub(api::v1::video::VideoRecognition::NewStub(channel)) { }
+    explicit VideoService(const Config& config_) : config(config_),
+        models_stub(api::v1::video::VideoModels::NewStub(config.getChannel())),
+        biometrics_stub(api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
+        recognition_stub(api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     /// @returns A future to be fulfilled with either a list of available
@@ -110,7 +112,6 @@ class VideoService {
     ///
     template<typename T>
     CreateEnrollmentStream createEnrollment(
-        const Config& config,
         const std::string& modelName,
         const std::string& userID,
         const T& onStreamReceive,
@@ -120,9 +121,6 @@ class VideoService {
             api::v1::video::RecognitionThreshold::LOW
     ) {
         std::cout << "Starting video enrollment stream" << std::endl;
-        // guard let deviceID = Config.deviceID else {
-        //     throw NetworkError.notInitialized
-        // }
 
         // Create a context for the client.
         grpc::ClientContext context;
@@ -189,16 +187,16 @@ class VideoService {
         const auto call = biometrics_stub->Authenticate(&context, onStreamReceive);
 
         // Send initial config message
-        api::v1::video::AuthenticateConfig config;
-        config.set_enrollmentid(enrollmentID);
-        config.set_islivenessenabled(isLivenessEnabled);
-        config.set_livenessthreshold(livenessThreshold);
+        api::v1::video::AuthenticateConfig authenticate_config;
+        authenticate_config.set_enrollmentid(enrollmentID);
+        authenticate_config.set_islivenessenabled(isLivenessEnabled);
+        authenticate_config.set_livenessthreshold(livenessThreshold);
 
         api::v1::video::AuthenticateRequest request;
         // TODO: is it better to use a dynamic allocation? Since the scope of
         // this function will end before the scope of the "call" resolves, the
         // config will be de-allocated and may result in a segmentation fault.
-        request.set_allocated_config(&config);
+        request.set_allocated_config(&authenticate_config);
 
         call.Write(request);
         return call;

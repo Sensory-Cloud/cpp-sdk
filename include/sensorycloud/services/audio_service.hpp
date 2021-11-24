@@ -41,6 +41,8 @@ namespace service {
 /// @brief A service for audio data.
 class AudioService {
  private:
+    /// the global configuration for the remote connection
+    const Config& config;
     /// the gRPC stub for the audio models service
     std::unique_ptr<api::v1::audio::AudioModels::Stub> models_stub;
     /// the gRPC stub for the audio bio-metrics service
@@ -53,13 +55,13 @@ class AudioService {
  public:
     /// @brief Initialize a new audio service.
     ///
-    /// @param channel TODO
+    /// @param config the global configuration for the remote connection
     ///
-    AudioService(std::shared_ptr<grpc::Channel> channel) :
-        models_stub(api::v1::audio::AudioModels::NewStub(channel)),
-        biometrics_stub(api::v1::audio::AudioBiometrics::NewStub(channel)),
-        events_stub(api::v1::audio::AudioEvents::NewStub(channel)),
-        transcriptions_stub(api::v1::audio::AudioTranscriptions::NewStub(channel)) { }
+    explicit AudioService(const Config& config_) : config(config_),
+        models_stub(api::v1::audio::AudioModels::NewStub(config.getChannel())),
+        biometrics_stub(api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
+        events_stub(api::v1::audio::AudioEvents::NewStub(config.getChannel())),
+        transcriptions_stub(api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the audio models supported by the cloud host.
     /// @returns A future to be fulfilled with either a list of available
@@ -118,7 +120,6 @@ class AudioService {
     ///
     template<typename T>
     CreateEnrollmentStream createEnrollment(
-        const Config& config,
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& userID,
@@ -129,9 +130,6 @@ class AudioService {
         const float* enrollmentDuration = nullptr
     ) {
         std::cout << "Starting audio enrollment stream" << std::endl;
-        // guard let deviceID = Config.deviceID else {
-        //     throw NetworkError.notInitialized
-        // }
 
         // Create a context for the client.
         grpc::ClientContext context;
@@ -187,7 +185,6 @@ class AudioService {
     ///
     template<typename T>
     AuthenticateStream streamAuthenticate(
-        const Config& config,
         const std::string& enrollmentID,
         const std::string& groupID,
         const int32_t& sampleRate,
@@ -302,7 +299,6 @@ class AudioService {
     ///
     template<typename T>
     ValidateTriggerStream validateTrigger(
-        const Config& config,
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& userID,
@@ -363,7 +359,6 @@ class AudioService {
     ///
     template<typename T>
     TranscribeAudioStream transcribeAudio(
-        const Config& config,
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& userID,
