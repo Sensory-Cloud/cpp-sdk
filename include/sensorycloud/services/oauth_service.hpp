@@ -166,22 +166,6 @@ class OAuthService {
         }
         return response;
     }
-
-    /// TODO
-    ///
-    /// @returns TODO
-    ///
-    // std::unique_ptr<api::oauth::OauthService::Stub> getOAuthClient() {
-    //     return oauth_stub;
-    // }
-
-    /// TODO
-    ///
-    /// @returns TODO
-    ///
-    // std::unique_ptr<api::v1::management::DeviceService::Stub> getEnrollmentClient() {
-    //     return device_stub;
-    // }
 };
 
 }  // namespace service
