@@ -38,19 +38,19 @@ namespace token_manager {
 
 /// @brief Generate a cryptographically secure random number.
 ///
-/// @tparam kLength the length of the hex string to generate
+/// @tparam length the length of the hex string to generate
 /// @returns a cryptographically random hex string
 ///
-template<std::size_t kLength>
+template<std::size_t length>
 std::string secure_random() {
     // Generate a buffer of bytes half the size of the requested string.
-    uint8_t data[kLength / 2];
+    uint8_t data[length / 2];
     RAND_bytes((unsigned char*) data, sizeof(data));
     // Create a stream to write the string data to
     std::stringstream stream;
     stream << std::hex;
     // Iterate over the random numbers and convert them to hex characters
-    for (int i = 0; i < kLength / 2; i++)
+    for (int i = 0; i < length / 2; i++)
         stream << std::setw(2) << std::setfill('0') << static_cast<int>(data[i]);
     // Flush the stream to a std::string object
     return stream.str();
