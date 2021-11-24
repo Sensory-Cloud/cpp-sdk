@@ -36,9 +36,11 @@
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 int main() {
+    std::cout << "Hello, Sensory Cloud C++ SDK!" << std::endl;
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config("io.stage.cloud.sensory.com", 443);
-    std::cout << config.getFullyQualifiedDomainName() << std::endl;
+    std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
     // Set the Tenant ID for the default tenant
     config.tenantID = "cabb7700-206f-4cc7-8e79-cd7f288aa78d";
     // a dummy device ID for enrolling in the cloud
@@ -68,8 +70,6 @@ int main() {
     const auto clientID = keychain.get("clientID");
     const auto clientSecret = keychain.get("clientSecret");
 
-    std::cout << "Hello, Sensory Cloud C++ SDK!" << std::endl;
-
     if (false) {
         const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
         std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
@@ -79,6 +79,6 @@ int main() {
     const auto rsp = oauthService.getToken(clientID, clientSecret);
     std::cout << "Your current token is " << rsp.accesstoken() << std::endl;
 
-    // sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();
 }
