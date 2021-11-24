@@ -105,12 +105,20 @@ class TokenManager {
         return AccessTokenCredentials{clientID, secret};
     }
 
-    /// @brief Determine if any credentials are stored on device.
+    /// @brief Determine if a credentials pair is stored on the device.
     ///
-    /// @returns `true` if any credentials are found, `false` otherwise
+    /// @returns `true` if a credential pair is found, `false` otherwise
     ///
     inline bool hasSavedCredentials() const {
         return keychain.has(TAGS.ClientID) && keychain.has(TAGS.ClientSecret);
+    }
+
+    /// @brief Determine if any token is stored on the device.
+    ///
+    /// @returns `true` if a token is found, `false` otherwise
+    ///
+    inline bool hasToken() const {
+        return keychain.has(TAGS.AccessToken) && keychain.has(TAGS.Expiration);
     }
 
     /// @brief Return a valid access token for Sensory Cloud gRPC calls.
@@ -129,10 +137,7 @@ class TokenManager {
 
         // TODO: Prevent multiple access tokens from being requested at the same time
 
-        if (
-            !keychain.has(TAGS.AccessToken) ||
-            !keychain.has(TAGS.Expiration)
-        )  // no access token has been stored in the credential store
+        if (!hasToken())  // no access token has been generated and stored
             return fetchNewAccessToken();
         // fetch existing access token and expiration date from the secure store
         const auto accessToken = keychain.get(TAGS.AccessToken);
