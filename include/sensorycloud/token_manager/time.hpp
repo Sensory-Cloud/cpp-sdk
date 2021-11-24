@@ -37,10 +37,10 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
-/// @brief Convert a time points to a UTC ISO8601 timestamp string.
+/// @brief Convert a time point to a UTC ISO8601 timestamp.
 ///
-/// @param time the time point to convert the a UTC ISO8601 timestamp
-/// @returns the input time point converted to a UTC ISO8601 timestamp
+/// @param time the time point to convert to a UTC ISO8601 timestamp
+/// @returns the UTC ISO8601 timestamp representation of the time point
 ///
 inline std::string timepoint_to_timestamp(const std::chrono::system_clock::time_point& time_point) {
     // Convert the time point to a time_t object
@@ -51,7 +51,7 @@ inline std::string timepoint_to_timestamp(const std::chrono::system_clock::time_
     return stream.str();
 }
 
-/// @brief Convert a timestamp from UTC ISO8601 format to a time point.
+/// @brief Convert a UTC ISO8601 timestamp to a time point.
 ///
 /// @param time the UTC ISO8601 timestamp to convert to a time point
 /// @returns the input timestamp converted to a native time point
