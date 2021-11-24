@@ -41,26 +41,28 @@ namespace token_manager {
 
 /// @brief Generate a pseudo-random UUID compliant with RFC-4122 Version 4.
 ///
-/// @returns a 36-character UUID string based on Mersinne
+/// @returns a 36-character UUID string based on Mersinne Twister RNG
 ///
 /// @details
 ///
+/// RFC-4122 states, with regard to version 4 of the standard:
+///
 /// > 4.4.  Algorithms for Creating a UUID from Truly Random or
-///         Pseudo-Random Numbers
-/// The version 4 UUID is meant for generating UUIDs from truly-random or
-/// pseudo-random numbers. The algorithm is as follows:
-/// 1.  Set the two most significant bits (bits 6 and 7) of the
-///     clock_seq_hi_and_reserved to zero and one, respectively.
-/// 2.  Set the four most significant bits (bits 12 through 15) of the
-///     time_hi_and_version field to the 4-bit version number from
-///     Section 4.1.3.
-/// 3.  Set all the other bits to randomly (or pseudo-randomly) chosen
-///     values.
+/// >       Pseudo-Random Numbers
+/// > The version 4 UUID is meant for generating UUIDs from truly-random or
+/// > pseudo-random numbers. The algorithm is as follows:
+/// > 1.  Set the two most significant bits (bits 6 and 7) of the
+/// >     clock_seq_hi_and_reserved to zero and one, respectively.
+/// > 2.  Set the four most significant bits (bits 12 through 15) of the
+/// >     time_hi_and_version field to the 4-bit version number from
+/// >     Section 4.1.3.
+/// > 3.  Set all the other bits to randomly (or pseudo-randomly) chosen
+/// >     values.
 ///
 /// The resulting code is in the following format where the character at
-/// position (1) is statically 'A' and the character at position (2) is randomly
-/// selected from {'8', '9', 'A', 'B'}. The remaining characters are randomly
-/// selected without condition.
+/// position (1) is statically `4` and the character at position (2) is randomly
+/// selected from {`8`, `9`, `A`, `B`}. The remaining characters are randomly
+/// selected without condition (see below for example code).
 ///
 /// ```
 /// AA97B177-9383-4934-8543-0F91A7A02836
