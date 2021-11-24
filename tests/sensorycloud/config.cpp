@@ -35,7 +35,7 @@ SCENARIO("A user wants to initialize a CloudHost") {
         const uint32_t port = 50051;
         const bool isSecure = false;
         WHEN("a CloudHost is initialized") {
-            sensory::CloudHost cloudHost(host, port, isSecure);
+            const sensory::CloudHost cloudHost(host, port, isSecure);
             THEN("the data is stored") {
                 REQUIRE_THAT(host, Catch::Equals(cloudHost.getHost()));
                 REQUIRE(port == cloudHost.getPort());
@@ -43,6 +43,11 @@ SCENARIO("A user wants to initialize a CloudHost") {
             }
             THEN("the default gRPC timeout is 10 seconds") {
                 REQUIRE(10 == cloudHost.getTimeout());
+            }
+            THEN("the fully qualified domain name is correct") {
+                const auto expected = "localhost:50051";
+                const auto actual = cloudHost.getFullyQualifiedDomainName();
+                REQUIRE_THAT(expected, Catch::Equals(actual));
             }
         }
     }

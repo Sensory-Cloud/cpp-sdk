@@ -44,13 +44,13 @@ namespace sensory {
 /// @brief A structure for providing information about a cloud host.
 class CloudHost {
  private:
-    /// Cloud DNS Host
-    std::string host;
-    /// Cloud port
-    uint16_t port;
-    /// Says if the cloud host is setup for secure communication
-    bool isSecure;
-    /// Number of seconds to wait on a unary gRPC call before timing out
+    /// the name of the cloud host, i.e., DNS name
+    const std::string host;
+    /// the port that the cloud service is running on
+    const uint16_t port;
+    /// whether the connection to the remote host should be secured by TLS/SSL
+    const bool isSecure;
+    /// the number of seconds to wait on a unary gRPC call before timing out
     uint32_t timeout = 10;
 
  public:
@@ -60,7 +60,7 @@ class CloudHost {
     /// @param port_ the port number of the RPC service
     /// @param isSecure_ whether to use SSL/TLS for message encryption
     ///
-    explicit CloudHost(
+    CloudHost(
         const std::string& host_,
         const uint16_t& port_,
         const bool& isSecure_
@@ -109,10 +109,7 @@ class CloudHost {
     /// @returns a formatted string in `"{host}:{port}"` format
     ///
     inline std::string getFullyQualifiedDomainName() const {
-        std::stringstream stream;
-        // RPC addresses are formatted as "host:port"
-        stream << host << ":" << port;
-        return stream.str();
+        return host + std::string(":") + std::to_string(port);
     }
 
     /// @brief Create a new gRPC channel.
@@ -137,7 +134,7 @@ class CloudHost {
     /// @returns a new client context for gRPC calls
     ///
     template<typename TokenManager>
-    std::unique_ptr<grpc::ClientContext> getClientContext(
+    inline std::unique_ptr<grpc::ClientContext> getClientContext(
         const TokenManager& tokenManager,
         const bool& isUnary=false
     ) {
