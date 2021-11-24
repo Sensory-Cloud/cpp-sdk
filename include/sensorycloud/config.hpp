@@ -131,21 +131,21 @@ class CloudHost {
 
     /// @brief Create a new gRPC client context for gRPC calls.
     ///
-    /// @tparam CredentialProvider the type of the credential provider
-    /// @param credentialProvider the credential provider for retrieving tokens
+    /// @tparam TokenManager the type of the token manager
+    /// @param tokenManager the token manager for retrieving tokens
     /// @param isUnary whether the connection is unary
     /// @returns a new client context for gRPC calls
     ///
-    template<typename CredentialProvider>
+    template<typename TokenManager>
     std::unique_ptr<grpc::ClientContext> getClientContext(
-        const CredentialProvider& credentialProvider,
+        const TokenManager& tokenManager,
         const bool& isUnary=false
     ) {
         // Create a new client context.
         std::unique_ptr<grpc::ClientContext> context(new grpc::ClientContext);
         // Get the OAuth token and write it to the metadata header
         std::ostringstream stream;
-        stream << "Bearer " << credentialProvider.getAccessToken();
+        stream << "Bearer " << tokenManager.getAccessToken();
         context->AddMetadata("Authorization", stream.str());
         if (isUnary)  // Set the deadline for the RPC call
             context->set_deadline(getDeadline());
