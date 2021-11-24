@@ -100,7 +100,8 @@ class OAuthService {
         // tenant ID and device ID before proceeding with the RPC.
         if (!config.isValid())
             throw NetworkError(NetworkError::Code::NotInitialized);
-        // Create a context for the client.
+        // Create a context for the client. Most requests require the existence
+        // of a authorization Bearer token, but this request does not.
         grpc::ClientContext context;
         // Create the request from the parameters.
         api::v1::management::EnrollDeviceRequest request;
@@ -122,6 +123,34 @@ class OAuthService {
         return response;
     }
 
+    /// @brief Request a new OAuth token from the server.
+    ///
+    /// @param clientID: Client id to use in token request
+    /// @param secret: Client secret to use in token request
+    /// @returns Future to be fulfilled with the new access token, or the
+    ///     network error that occurred
+    ///
+    api::common::TokenResponse getToken(
+        const std::string& clientID,
+        const std::string& secret
+    ) {
+        // Create a context for the client. Most requests require the existence
+        // of a authorization Bearer token, but this request does not.
+        grpc::ClientContext context;
+        // Create the token request from the function parameters.
+        api::oauth::TokenRequest request;
+        request.set_clientid(clientID);
+        request.set_secret(secret);
+        // Execute the remote procedure call synchronously
+        api::common::TokenResponse response;
+        grpc::Status status = oauth_stub->GetToken(&context, request, &response);
+        if (!status.ok()) {  // an error occurred in the RPC
+            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+            throw "GetToken failure";
+        }
+        return response;
+    }
+
     // api::v1::management::DeviceResponse getWhoAmI() {
     //     // std::cout << "Getting WhoAmI" << std::endl;
     //     grpc::ClientContext context;
@@ -134,33 +163,6 @@ class OAuthService {
     //     }
     //     return response;
     // }
-
-    /// @brief Request a new OAuth token from the server.
-    ///
-    /// @param clientID: Client id to use in token request
-    /// @param secret: Client secret to use in token request
-    /// @returns Future to be fulfilled with the new access token, or the
-    ///     network error that occurred
-    ///
-    api::common::TokenResponse getToken(
-        const std::string& clientID,
-        const std::string& secret
-    ) {
-        // Create a context for the client.
-        grpc::ClientContext context;
-        // Create the token request from the function parameters.
-        api::oauth::TokenRequest request;
-        request.set_clientid(clientID);
-        request.set_secret(secret);
-        // Execute the remote procedure call
-        api::common::TokenResponse response;
-        grpc::Status status = oauth_stub->GetToken(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "GetToken failure";
-        }
-        return response;
-    }
 };
 
 }  // namespace service
