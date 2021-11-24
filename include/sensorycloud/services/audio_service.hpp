@@ -221,59 +221,59 @@ class AudioService {
         return call;
     }
 
-    // /// @brief Open a bidirectional stream to the server for the purpose of
-    // /// authentication against an audio enrollment.
-    // ///
-    // /// @param enrollmentID Enrollment to authenticate against
-    // /// @param sampleRate Sample rate of model to validate
-    // /// @param isLivenessEnabled Specifies if the authentication should also
-    // /// include a liveness check
-    // /// @param onStreamReceive Handler function to handle response sent form
-    // /// the server
-    // /// @throws `NetworkError` if an error occurs while processing the cached
-    // /// server url
-    // /// @returns Bidirectional stream that can be used to send audio data to
-    // /// the server
-    // /// @details
-    // /// This call will automatically send the initial `AudioConfig` message to
-    // /// the server
-    // ///
-    // template<typename T>
-    // inline AuthenticateStream authenticate(
-    //     const std::string& enrollmentID,
-    //     const int32_t& sampleRate,
-    //     const bool& isLivenessEnabled,
-    //     const T& onStreamReceive
-    // ) {
-    //     return streamAuthenticate(enrollmentID, "", sampleRate, isLivenessEnabled, onStreamReceive);
-    // }
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// authentication against an audio enrollment.
+    ///
+    /// @param enrollmentID Enrollment to authenticate against
+    /// @param sampleRate Sample rate of model to validate
+    /// @param isLivenessEnabled Specifies if the authentication should also
+    /// include a liveness check
+    /// @param onStreamReceive Handler function to handle response sent form
+    /// the server
+    /// @throws `NetworkError` if an error occurs while processing the cached
+    /// server url
+    /// @returns Bidirectional stream that can be used to send audio data to
+    /// the server
+    /// @details
+    /// This call will automatically send the initial `AudioConfig` message to
+    /// the server
+    ///
+    template<typename T>
+    inline AuthenticateStream authenticateEnrollment(
+        const std::string& enrollmentID,
+        const int32_t& sampleRate,
+        const bool& isLivenessEnabled,
+        const T& onStreamReceive
+    ) {
+        return streamAuthenticate(enrollmentID, "", sampleRate, isLivenessEnabled, onStreamReceive);
+    }
 
-    // /// @brief Open a bidirectional stream to the server for the purpose of
-    // /// authentication against an audio enrollment group
-    // ///
-    // /// @param groupID Enrollment group to authenticate against
-    // /// @param sampleRate Sample rate of model to validate
-    // /// @param isLivenessEnabled Specifies if the authentication should also
-    // /// include a liveness check
-    // /// @param onStreamReceive Handler function to handle response sent form
-    // /// the server
-    // /// @throws `NetworkError` if an error occurs while processing the cached
-    // /// server url
-    // /// @returns Bidirectional stream that can be used to send audio data to
-    // /// the server
-    // /// @details
-    // /// This call will automatically send the initial `AudioConfig` message to
-    // /// the server
-    // ///
-    // template<typename T>
-    // inline AuthenticateStream authenticate(
-    //     const std::string& groupID,
-    //     const int32_t& sampleRate,
-    //     const bool& isLivenessEnabled,
-    //     const T& onStreamReceive
-    // ) {
-    //     return streamAuthenticate("", groupID, sampleRate, isLivenessEnabled, onStreamReceive);
-    // }
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// authentication against an audio enrollment group
+    ///
+    /// @param groupID Enrollment group to authenticate against
+    /// @param sampleRate Sample rate of model to validate
+    /// @param isLivenessEnabled Specifies if the authentication should also
+    /// include a liveness check
+    /// @param onStreamReceive Handler function to handle response sent form
+    /// the server
+    /// @throws `NetworkError` if an error occurs while processing the cached
+    /// server url
+    /// @returns Bidirectional stream that can be used to send audio data to
+    /// the server
+    /// @details
+    /// This call will automatically send the initial `AudioConfig` message to
+    /// the server
+    ///
+    template<typename T>
+    inline AuthenticateStream authenticateGroup(
+        const std::string& groupID,
+        const int32_t& sampleRate,
+        const bool& isLivenessEnabled,
+        const T& onStreamReceive
+    ) {
+        return streamAuthenticate("", groupID, sampleRate, isLivenessEnabled, onStreamReceive);
+    }
 
     /// a type for trigger validation streams
     typedef std::unique_ptr<
