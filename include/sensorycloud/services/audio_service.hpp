@@ -161,7 +161,7 @@ class AudioService {
         // TODO: should the config be allocated dynamically?
         request.set_allocated_config(&enrollment_config);
 
-        // call.sendMessage(request, promise: nil)
+        call.Write(request);
         return call;
     }
 
@@ -217,7 +217,7 @@ class AudioService {
         // TODO: should the config be allocated dynamically?
         request.set_allocated_config(&authenticatecConfig);
 
-        // call.sendMessage(request, promise: nil)
+        call.Write(request);
         return call;
     }
 
@@ -333,7 +333,7 @@ class AudioService {
         // TODO: should the config be allocated dynamically?
         request.set_allocated_config(&validateEventConfig);
 
-        // call.sendMessage(request, promise: nil)
+        call.Write(request);
         return call;
     }
 
@@ -392,7 +392,7 @@ class AudioService {
         // TODO: should the config be allocated dynamically?
         request.set_allocated_config(&transcribeConfig);
 
-        // call.sendMessage(request, promise: nil)
+        call.Write(request);
         return call;
     }
 };

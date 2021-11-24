@@ -143,7 +143,7 @@ class VideoService {
         // config will be de-allocated and may result in a segmentation fault.
         request.set_allocated_config(&enrollment_config);
 
-        // call.sendMessage(request, promise: nil);
+        call.Write(request);
         return call;
     }
 
@@ -200,7 +200,7 @@ class VideoService {
         // config will be de-allocated and may result in a segmentation fault.
         request.set_allocated_config(&config);
 
-        // call.sendMessage(request, promise: nil);
+        call.Write(request);
         return call;
     }
 
@@ -255,7 +255,7 @@ class VideoService {
         // config will be de-allocated and may result in a segmentation fault.
         request.set_allocated_config(&recognition_config);
 
-        // call.sendMessage(request, promise: nil);
+        call.Write(request);
         return call;
     }
 };
