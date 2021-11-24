@@ -97,6 +97,10 @@ TODO
 
 ## Development
 
+```
+cmake -DUSE_SYSTEM_GRPC=ON -DUSE_SYSTEM_PROTO=ON -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DBUILD_BENCHMARKS=ON .
+```
+
 ### Testing
 
 To compile and run the unit tests, execute:
