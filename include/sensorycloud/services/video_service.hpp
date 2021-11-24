@@ -27,6 +27,7 @@
 #define SENSORY_CLOUD_SERVICES_VIDEO_SERVICE_HPP_
 
 #include <string>
+#include <memory>
 #include "sensorycloud/generated/v1/video/video.pb.h"
 #include "sensorycloud/generated/v1/video/video.grpc.pb.h"
 #include "sensorycloud/config.hpp"
