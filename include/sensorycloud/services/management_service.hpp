@@ -26,6 +26,8 @@
 #ifndef SENSORY_CLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
 #define SENSORY_CLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
 
+#include <memory>
+#include <string>
 #include <vector>
 #include <grpc/grpc.h>
 #include <grpc++/channel.h>
