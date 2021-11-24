@@ -141,9 +141,9 @@ class CloudHost {
         // Create a new client context.
         std::unique_ptr<grpc::ClientContext> context(new grpc::ClientContext);
         // Get the OAuth token and write it to the metadata header
-        std::ostringstream stream;
-        stream << "Bearer " << tokenManager.getAccessToken();
-        context->AddMetadata("Authorization", stream.str());
+        context->AddMetadata("Authorization",
+            std::string("Bearer ") + tokenManager.getAccessToken()
+        );
         if (isUnary)  // Set the deadline for the RPC call
             context->set_deadline(getDeadline());
 
