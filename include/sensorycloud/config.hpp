@@ -161,7 +161,7 @@ class Config {
         // Create a new client context.
         std::unique_ptr<grpc::ClientContext> context(new grpc::ClientContext);
         // Get the OAuth token and write it to the metadata header
-        context->AddMetadata("Authorization",
+        context->AddMetadata("authorization",
             std::string("Bearer ") + tokenManager.getAccessToken()
         );
         if (isUnary)  // Set the deadline for the RPC call
