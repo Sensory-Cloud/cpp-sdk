@@ -110,8 +110,6 @@ class AudioService {
     /// the server
     /// @throws `NetworkError` if an error occurs while processing the cached
     /// server url
-    /// @throws `NetworkError.notInitialized` if `Config.deviceID` has not
-    /// been set
     /// @returns Bidirectional stream that can be used to send audio data to
     /// the server
     /// @details
@@ -147,7 +145,7 @@ class AudioService {
         enrollment_config.set_allocated_audio(&audioConfig);
         enrollment_config.set_modelname(modelName);
         enrollment_config.set_userid(userID);
-        enrollment_config.set_deviceid(config.deviceID);
+        enrollment_config.set_deviceid(config.getDeviceID());
         enrollment_config.set_description(description);
         enrollment_config.set_islivenessenabled(isLivenessEnabled);
         if (numUtterances != nullptr)

@@ -48,6 +48,10 @@ class Config {
     const std::string host;
     /// the port that the cloud service is running on
     const uint16_t port;
+    /// Tenant ID to use during device enrollment
+    const std::string tenantID;
+    /// Unique device identifier that model enrollments are associated to
+    const std::string deviceID;
     /// whether the connection to the remote host should be secured by TLS/SSL
     const bool isSecure;
     /// the number of seconds to wait on a unary gRPC call before timing out
@@ -57,11 +61,6 @@ class Config {
     float jpegCompression = 0.5;
 
  public:
-    /// Tenant ID to use during device enrollment
-    std::string tenantID = "";
-    /// Unique device identifier that model enrollments are associated to
-    std::string deviceID = "";
-
     /// User's preferred language/region code (ex: en-US, used for audio
     /// enrollments. Defaults to the system Locale
     std::string languageCode = "en-US";
@@ -83,8 +82,22 @@ class Config {
     Config(
         const std::string& host_,
         const uint16_t& port_,
+        const std::string& tenantID_,
+        const std::string& deviceID_,
         const bool& isSecure_ = true
-    ) : host(host_), port(port_), isSecure(isSecure_) { }
+    ) :
+        host(host_),
+        port(port_),
+        tenantID(tenantID_),
+        deviceID(deviceID_),
+        isSecure(isSecure_) {
+        if (host.empty())  // the host name is not valid
+            throw std::runtime_error("hostname is empty!");
+        if (tenantID.empty())  // the tenant ID is not valid
+            throw std::runtime_error("tenantID is empty!");
+        if (deviceID.empty())  // the device ID is not valid
+            throw std::runtime_error("deviceID is empty!");
+    }
 
     /// @brief Return the name of the remote host.
     ///
@@ -97,6 +110,18 @@ class Config {
     /// @returns the port number of the remote host to connect to
     ///
     inline const uint16_t& getPort() const { return port; }
+
+    /// @brief Return the ID of the tenant.
+    ///
+    /// @returns the tenant ID for identifying the customer's account
+    ///
+    inline const std::string& getTenantID() const { return tenantID; }
+
+    /// @brief Return the ID of the device.
+    ///
+    /// @returns the unique ID for identifying a device in a customer network
+    ///
+    inline const std::string& getDeviceID() const { return deviceID; }
 
     /// @brief Return the security policy of the remote host.
     ///
@@ -185,14 +210,6 @@ class Config {
     /// the highest quality.
     ///
     inline const float& getJpegCompression() const { return jpegCompression; }
-
-    /// @brief Return true if the configuration represents a valid connection.
-    ///
-    /// @returns true if the tenant ID and device ID are specified
-    ///
-    inline bool isValid() const {
-        return !tenantID.empty() && !deviceID.empty();
-    }
 };
 
 }  // namespace sensory

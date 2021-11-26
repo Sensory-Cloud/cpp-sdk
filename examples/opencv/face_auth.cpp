@@ -50,12 +50,13 @@ int main(int argc, const char** argv) {
     }
 
     // Initialize the configuration to the host for given address and port
-    sensory::Config config("io.stage.cloud.sensory.com", 443);
+    sensory::Config config(
+        "io.stage.cloud.sensory.com",
+        443,
+        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
+        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+    );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
-    // Set the Tenant ID for the default tenant
-    config.tenantID = "cabb7700-206f-4cc7-8e79-cd7f288aa78d";
-    // a dummy device ID for enrolling in the cloud
-    config.deviceID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
 
     // Create the OAuth and token management structures
     sensory::token_manager::Keychain keychain("com.sensory.cloud");

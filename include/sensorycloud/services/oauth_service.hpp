@@ -96,18 +96,14 @@ class OAuthService {
         const std::string& clientSecret
     ) {
         // std::cout << "Enrolling device: " << name << std::endl;
-        // Ensure that the configuration specifies a cloud host and has a valid
-        // tenant ID and device ID before proceeding with the RPC.
-        if (!config.isValid())
-            throw NetworkError(NetworkError::Code::NotInitialized);
         // Create a context for the client. Most requests require the existence
         // of a authorization Bearer token, but this request does not.
         grpc::ClientContext context;
         // Create the request from the parameters.
         api::v1::management::EnrollDeviceRequest request;
         request.set_name(name);
-        request.set_deviceid(config.deviceID);
-        request.set_tenantid(config.tenantID);
+        request.set_deviceid(config.getDeviceID());
+        request.set_tenantid(config.getTenantID());
         api::common::GenericClient clientRequest;
         clientRequest.set_clientid(clientID);
         clientRequest.set_secret(clientSecret);

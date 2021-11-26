@@ -101,8 +101,6 @@ class VideoService {
     /// check
     /// @throws `NetworkError` if an error occurs while processing the cached
     /// server url
-    /// @throws `NetworkError.notInitialized` if `Config.deviceID` has not
-    /// been set
     /// @returns Bidirectional stream that can be used to send video data to
     /// the server
     ///
@@ -130,7 +128,7 @@ class VideoService {
         api::v1::video::CreateEnrollmentConfig enrollment_config;
         enrollment_config.set_modelname(modelName);
         enrollment_config.set_userid(userID);
-        enrollment_config.set_deviceid(config.deviceID);
+        enrollment_config.set_deviceid(config.getDeviceID());
         enrollment_config.set_description(description);
         enrollment_config.set_islivenessenabled(isLivenessEnabled);
         enrollment_config.set_livenessthreshold(livenessThreshold);

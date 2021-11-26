@@ -31,8 +31,10 @@ SCENARIO("A user wants to initialize a Config") {
     GIVEN("a hostname, port number, and security flag") {
         const std::string host = "localhost";
         const uint32_t port = 50051;
+        const std::string tenantID = "tenantID";
+        const std::string clientID = "clientID";
         WHEN("a Config is initialized") {
-            const sensory::Config config(host, port);
+            const sensory::Config config(host, port, tenantID, clientID);
             THEN("the host data is stored") {
                 REQUIRE_THAT(host, Catch::Equals(config.getHost()));
                 REQUIRE(port == config.getPort());
@@ -45,9 +47,9 @@ SCENARIO("A user wants to initialize a Config") {
                 const auto actual = config.getFullyQualifiedDomainName();
                 REQUIRE_THAT(expected, Catch::Equals(actual));
             }
-            THEN ("the device and tenant information is empty") {
-                REQUIRE_THAT(config.tenantID, Catch::Equals(""));
-                REQUIRE_THAT(config.deviceID, Catch::Equals(""));
+            THEN ("the device and tenant information is set") {
+                REQUIRE_THAT(config.getTenantID(), Catch::Equals(tenantID));
+                REQUIRE_THAT(config.getDeviceID(), Catch::Equals(clientID));
             }
             THEN("the default gRPC timeout is 10 seconds") {
                 REQUIRE(10 == config.getTimeout());
@@ -71,7 +73,7 @@ SCENARIO("A user wants to initialize a Config") {
 
 SCENARIO("A user wants to change the gRPC timeout") {
     GIVEN("an initialized cloud host") {
-        sensory::Config config("localhost", 50051);
+        sensory::Config config("localhost", 50051, "tenantID", "deviceID");
         WHEN("the gRPC timeout is set") {
             const uint32_t timeout = 50;
             config.setTimeout(timeout);
@@ -84,7 +86,7 @@ SCENARIO("A user wants to change the gRPC timeout") {
 
 SCENARIO("A user wants to use a different JPEG Quality factor") {
     GIVEN("An initialized Config object") {
-        sensory::Config config("localhost", 50051);
+        sensory::Config config("localhost", 50051, "tenantID", "deviceID");
         WHEN("The JPEG Quality factor is set to an arbitrary value") {
             config.setJpegCompression(0.25);
             THEN("The JPEG Quality factor is set to an arbitrary value") {
@@ -108,45 +110,15 @@ SCENARIO("A user wants to use a different JPEG Quality factor") {
 
 SCENARIO("A user wants to control the security of the connection to a cloud host") {
     WHEN("The cloud host is initialized with isSecure=true") {
-        sensory::Config config("localhost", 50051, true);
+        sensory::Config config("localhost", 50051, "tenantID", "deviceID", true);
         THEN("The cloud host connection is secured") {
             REQUIRE(config.getIsSecure());
         }
     }
     WHEN("The cloud host is initialized with isSecure=false") {
-        sensory::Config config("localhost", 50051, false);
+        sensory::Config config("localhost", 50051, "tenantID", "deviceID", false);
         THEN("The cloud host connection is not secured") {
             REQUIRE_FALSE(config.getIsSecure());
-        }
-    }
-}
-
-SCENARIO("A user wants to determine if a configured connection is valid") {
-    GIVEN("An initialized config with default values") {
-        sensory::Config config("localhost", 50051);
-        WHEN("the validity of the configuration is queried") {
-            THEN("the validity is reported as invalid") {
-                REQUIRE_FALSE(config.isValid());
-            }
-        }
-        WHEN("a tenant ID is assigned to the configuration with no device ID") {
-            config.tenantID = "foo";
-            THEN("the validity is reported as invalid") {
-                REQUIRE_FALSE(config.isValid());
-            }
-        }
-        WHEN("a device ID is assigned to the configuration with no tenant ID") {
-            config.deviceID = "bar";
-            THEN("the validity is reported as invalid") {
-                REQUIRE_FALSE(config.isValid());
-            }
-        }
-        WHEN("both tenant ID and device ID are assigned to the configuration") {
-            config.tenantID = "foo";
-            config.deviceID = "bar";
-            THEN("the validity is reported as valid") {
-                REQUIRE(config.isValid());
-            }
         }
     }
 }
