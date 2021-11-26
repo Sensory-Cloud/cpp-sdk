@@ -27,8 +27,6 @@
 #include <catch2/catch.hpp>
 #include "sensorycloud/token_manager/time.hpp"
 
-// --- sensory::token_manager::timepoint_to_timestamp Unit Tests -------------
-
 SCENARIO("A user wants to convert a time_point to a timestamp") {
     GIVEN("a valid time point (the epoch time)") {
         std::chrono::system_clock::time_point time_point;
@@ -71,8 +69,6 @@ SCENARIO("A user wants to convert a time_point to a timestamp") {
         }
     }
 }
-
-// --- sensory::token_manager::timestamp_to_timepoint Unit Tests -------------
 
 SCENARIO("A user wants to convert a timestamp to a time_point") {
     GIVEN("a timestamp in UTC ISO8601 format (the epoch time)") {

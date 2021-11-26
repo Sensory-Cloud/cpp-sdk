@@ -71,18 +71,18 @@ int main() {
 
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
     //
-    // keychain.remove("clientID");
-    // keychain.remove("clientSecret");
+    // keychain.erase("clientID");
+    // keychain.erase("clientSecret");
     //
-    // keychain.insert("clientID", sensory::token_manager::uuid_v4());
-    // std::cout << keychain.get("clientID") << std::endl;
+    // keychain.emplace("clientID", sensory::token_manager::uuid_v4());
+    // std::cout << keychain.at("clientID") << std::endl;
     //
-    // keychain.insert("clientSecret", sensory::token_manager::secure_random<16>());
-    // std::cout << keychain.get("clientSecret") << std::endl;
+    // keychain.emplace("clientSecret", sensory::token_manager::secure_random<16>());
+    // std::cout << keychain.at("clientSecret") << std::endl;
     //
     // Get the client ID and client secret from the secure credential store
-    const auto clientID = keychain.get("clientID");
-    const auto clientSecret = keychain.get("clientSecret");
+    const auto clientID = keychain.at("clientID");
+    const auto clientSecret = keychain.at("clientSecret");
 
     // Create an OAuth service
     auto oauthService = sensory::service::OAuthService(config);

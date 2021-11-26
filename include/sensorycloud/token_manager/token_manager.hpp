@@ -40,7 +40,7 @@ namespace token_manager {
 /// @brief A wrapper struct for OAuth token credentials.
 struct AccessTokenCredentials {
     /// The OAuth client id
-    std::string clientID;
+    std::string id;
     /// The OAuth client secret
     std::string secret;
 };
@@ -98,8 +98,8 @@ class TokenManager {
         const auto secret = secure_random<16>();
         // Insert the clientID and secret into the persistent credential store.
         // If any key-value pair already exists, overwrite it.
-        keychain.insert(TAGS.ClientID, clientID);
-        keychain.insert(TAGS.ClientSecret, secret);
+        keychain.emplace(TAGS.ClientID, clientID);
+        keychain.emplace(TAGS.ClientSecret, secret);
         // Return a new access token with the credentials
         return AccessTokenCredentials{clientID, secret};
     }
@@ -109,7 +109,7 @@ class TokenManager {
     /// @returns `true` if a credential pair is found, `false` otherwise
     ///
     inline bool hasSavedCredentials() const {
-        return keychain.has(TAGS.ClientID) && keychain.has(TAGS.ClientSecret);
+        return keychain.contains(TAGS.ClientID) && keychain.contains(TAGS.ClientSecret);
     }
 
     /// @brief Determine if any token is stored on the device.
@@ -117,7 +117,17 @@ class TokenManager {
     /// @returns `true` if a token is found, `false` otherwise
     ///
     inline bool hasToken() const {
-        return keychain.has(TAGS.AccessToken) && keychain.has(TAGS.Expiration);
+        return keychain.contains(TAGS.AccessToken) && keychain.contains(TAGS.Expiration);
+    }
+
+    /// @brief Delete any credentials stored for requesting access tokens, as
+    /// well as any cached access tokens on device.
+    ///
+    inline void deleteCredentials() const {
+        keychain.erase(TAGS.AccessToken);
+        keychain.erase(TAGS.Expiration);
+        keychain.erase(TAGS.ClientID);
+        keychain.erase(TAGS.ClientSecret);
     }
 
     /// @brief Return a valid access token for Sensory Cloud gRPC calls.
@@ -139,8 +149,8 @@ class TokenManager {
         if (!hasToken())  // no access token has been generated and stored
             return fetchNewAccessToken();
         // fetch existing access token and expiration date from the secure store
-        const auto accessToken = keychain.get(TAGS.AccessToken);
-        const auto expirationDate = keychain.get(TAGS.Expiration);
+        const auto accessToken = keychain.at(TAGS.AccessToken);
+        const auto expirationDate = keychain.at(TAGS.Expiration);
         // check for expiration of the token
         const auto now = std::chrono::system_clock::now();
         const auto expiration = timestamp_to_timepoint(expirationDate);
@@ -152,16 +162,6 @@ class TokenManager {
         return accessToken;
     }
 
-    /// @brief Delete any credentials stored for requesting access tokens, as
-    /// well as any cached access tokens on device.
-    ///
-    inline void deleteCredentials() const {
-        keychain.remove(TAGS.AccessToken);
-        keychain.remove(TAGS.Expiration);
-        keychain.remove(TAGS.ClientID);
-        keychain.remove(TAGS.ClientSecret);
-    }
-
     /// @brief Fetch a new access token from a remote server.
     ///
     /// @returns the new token as a string
@@ -171,18 +171,18 @@ class TokenManager {
         // new credentials.
         if (!hasSavedCredentials()) generateCredentials();
         // Get the ID of the client and the secret from the secure store.
-        const auto clientID = keychain.get(TAGS.ClientID);
-        const auto secret = keychain.get(TAGS.ClientSecret);
+        const auto clientID = keychain.at(TAGS.ClientID);
+        const auto secret = keychain.at(TAGS.ClientSecret);
         // Synchronously request a new token from the server.
         api::common::TokenResponse response;
         const auto status = service.getToken(&response, clientID, secret);
         // Insert the OAuth access token for the client in the secure store
-        keychain.insert(TAGS.AccessToken, response.accesstoken());
+        keychain.emplace(TAGS.AccessToken, response.accesstoken());
         // Determine when the token will expire and store this time
         const auto expirationDate =
             std::chrono::system_clock::now() + std::chrono::seconds(response.expiresin());
         const auto expiration = timepoint_to_timestamp(expirationDate);
-        keychain.insert(TAGS.Expiration, expiration);
+        keychain.emplace(TAGS.Expiration, expiration);
         // Return the newly created OAuth token
         return response.accesstoken();
     }

@@ -28,8 +28,6 @@
 #include <catch2/catch.hpp>
 #include "sensorycloud/token_manager/uuid.hpp"
 
-// --- sensory::token_manager::uuid_v4 Unit Tests ----------------------------
-
 // the number of repetitions for sampling UUIDs during testing
 #define REPETITIONS 30
 

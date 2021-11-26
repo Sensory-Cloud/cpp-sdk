@@ -82,33 +82,33 @@ class Keychain {
     /// @param key the plain-text key of the value to store
     /// @param value the secure value to store
     ///
-    inline void insert(const std::string& key, const std::string& value) const;
+    inline void emplace(const std::string& key, const std::string& value) const;
 
     /// @brief Update a key/value pair in the key-chain.
     ///
     /// @param key the plain-text key of the value to update
     /// @param value the new secure value to store
     ///
-    inline void update(const std::string& key, const std::string& value) const;
+    inline void replace(const std::string& key, const std::string& value) const;
 
     /// @brief Return true if the key exists in the key-chain.
     ///
     /// @param key the plain-text key to check for the existence of
     ///
-    inline bool has(const std::string& key) const;
+    inline bool contains(const std::string& key) const;
 
     /// @brief Look-up a secret value in the key-chain.
     ///
     /// @param key the plain-text key of the value to return
     /// @returns the secret value indexed by the given key
     ///
-    inline std::string get(const std::string& key) const;
+    inline std::string at(const std::string& key) const;
 
     /// @brief Remove a secret key-value pair in the key-chain.
     ///
     /// @param key the plain-text key of the pair to remove from the keychain
     ///
-    inline void remove(const std::string& key) const;
+    inline void erase(const std::string& key) const;
 };
 
 #if defined(_WIN32) || defined(_WIN64)  // Windows
@@ -127,7 +127,7 @@ class Keychain {
 
 #elif defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 
-inline void Keychain::insert(const std::string& key, const std::string& value) const {
+inline void Keychain::emplace(const std::string& key, const std::string& value) const {
     OSStatus status = SecKeychainAddGenericPassword(
         NULL,  // default key-chain
         static_cast<UInt32>(package.length()),
@@ -140,13 +140,13 @@ inline void Keychain::insert(const std::string& key, const std::string& value) c
     );
 
     if (status == errSecDuplicateItem)  // password exists, overwrite
-        return update(key, value);
+        return replace(key, value);
 
     if (status != errSecSuccess)
         throw std::runtime_error("failed to set value");
 }
 
-inline void Keychain::update(const std::string& key, const std::string& value) const {
+inline void Keychain::replace(const std::string& key, const std::string& value) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
         NULL,  // default key-chain
@@ -170,10 +170,10 @@ inline void Keychain::update(const std::string& key, const std::string& value) c
         CFRelease(item);
 
     if (status != errSecSuccess)
-        throw std::runtime_error("failed to update value");
+        throw std::runtime_error("failed to replace value");
 }
 
-inline bool Keychain::has(const std::string& key) const {
+inline bool Keychain::contains(const std::string& key) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
         NULL,  // default key-chain
@@ -189,7 +189,7 @@ inline bool Keychain::has(const std::string& key) const {
     return status == errSecSuccess;
 }
 
-inline std::string Keychain::get(const std::string& key) const {
+inline std::string Keychain::at(const std::string& key) const {
     void *data;
     UInt32 length;
     OSStatus status = SecKeychainFindGenericPassword(
@@ -215,7 +215,7 @@ inline std::string Keychain::get(const std::string& key) const {
     return value;
 }
 
-inline void Keychain::remove(const std::string& key) const {
+inline void Keychain::erase(const std::string& key) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
         NULL,  // default key-chain
