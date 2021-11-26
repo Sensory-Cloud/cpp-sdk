@@ -81,6 +81,9 @@ class Keychain {
     ///
     /// @param key the plain-text key of the value to store
     /// @param value the secure value to store
+    /// @details
+    /// Unlike most key-value stored in the STL, this implementation of emplace
+    /// will overwrite existing values in the key-value store.
     ///
     inline void emplace(const std::string& key, const std::string& value) const;
 
