@@ -90,9 +90,10 @@ int main() {
     // Create an OAuth service
     auto oauthService = sensory::service::OAuthService(config);
     if (false) {  // the device is not enrolled yet, enroll it
-        const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
-        std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
-        std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
+        sensory::api::v1::management::DeviceResponse enrollResponse;
+        auto status = oauthService.enrollDevice(&enrollResponse, userID, password, clientID, clientSecret);
+        std::cout << "Your user name is \"" << enrollResponse.name() << "\"" << std::endl;
+        std::cout << "Your device ID is \"" << enrollResponse.deviceid() << "\"" << std::endl;
     }
 
     // Fetch a new OAuth token from the remote service

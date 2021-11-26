@@ -67,13 +67,13 @@ class OAuthService {
 
     /// @brief Create a new device enrollment.
     ///
+    /// @param response the device response to store the result of the RPC into
     /// @param name Name of the enrolling device
     /// @param credential Credential string to authenticate that this device
     /// is allowed to enroll
     /// @param clientID ClientID to use for OAuth token generation
     /// @param clientSecret Client Secret to use for OAuth token generation
-    /// @returns A future to be fulfilled with either the enrolled device, or
-    /// the network error that occurred
+    /// @returns the status of the synchronous gRPC call
     ///
     /// @details
     /// The credential string authenticates that this device is allowed to
@@ -83,19 +83,12 @@ class OAuthService {
     /// -   A shared secret (password)
     /// -   A signed JWT
     ///
-    /// `TokenManager` may be used for securely generating a clientID and
-    /// clientSecret for this call
-    ///
-    /// This call will fail with `NetworkError.notInitialized` if
-    /// `config.deviceID` or `config.tenantID` has not been set
-    ///
-    api::v1::management::DeviceResponse enrollDevice(
+    grpc::Status enrollDevice(api::v1::management::DeviceResponse* response,
         const std::string& name,
         const std::string& credential,
         const std::string& clientID,
         const std::string& clientSecret
     ) {
-        // std::cout << "Enrolling device: " << name << std::endl;
         // Create a context for the client. Most requests require the existence
         // of a authorization Bearer token, but this request does not.
         grpc::ClientContext context;
@@ -110,13 +103,7 @@ class OAuthService {
         request.set_allocated_client(&clientRequest);
         request.set_credential(credential);
         // Execute the RPC synchronously and get the response
-        api::v1::management::DeviceResponse response;
-        grpc::Status status = device_stub->EnrollDevice(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "EnrollDevice failure";
-        }
-        return response;
+        return device_stub->EnrollDevice(&context, request, response);
     }
 
     /// @brief Request a new OAuth token from the server.
@@ -146,19 +133,6 @@ class OAuthService {
         }
         return response;
     }
-
-    // api::v1::management::DeviceResponse getWhoAmI() {
-    //     // std::cout << "Getting WhoAmI" << std::endl;
-    //     grpc::ClientContext context;
-    //     api::v1::management::DeviceGetWhoAmIRequest request;
-    //     api::v1::management::DeviceResponse response;
-    //     grpc::Status status = device_stub->GetWhoAmI(&context, request, &response);
-    //     if (!status.ok()) {  // an error occurred in the RPC
-    //         std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-    //         throw "WhoAmI failure";
-    //     }
-    //     return response;
-    // }
 };
 
 }  // namespace service

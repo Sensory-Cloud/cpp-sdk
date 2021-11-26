@@ -74,11 +74,11 @@ int main(int argc, const char** argv) {
     const auto clientID = keychain.get("clientID");
     const auto clientSecret = keychain.get("clientSecret");
 
-    if (false) {
-        const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
-        std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
-        std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
-    }
+    // if (false) {
+    //     const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
+    //     std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
+    //     std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
+    // }
 
     sensory::service::VideoService videoService(config);
 
