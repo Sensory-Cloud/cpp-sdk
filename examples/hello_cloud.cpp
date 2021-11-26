@@ -47,6 +47,30 @@ int main() {
     // a dummy device ID for enrolling in the cloud
     config.deviceID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
 
+    // Query the health of the remote service.
+    auto healthService = sensory::service::HealthService(config);
+    sensory::api::common::ServerHealthResponse serverHealth;
+    auto status = healthService.getHealth(&serverHealth);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetHealth failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    // Report the health of the remote service
+    std::cout << "Server status:" << std::endl;
+    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
+    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
+    std::cout << "\tid: " << serverHealth.id() << std::endl;
+
+    // Query the user ID
+    std::string userID = "";
+    std::cout << "user ID: ";
+    std::cin >> userID;
+    // Query the shared pass-phrase
+    std::string password = "";
+    std::cout << "password: ";
+    std::cin >> password;
+
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
     //
     // keychain.remove("clientID");
@@ -57,40 +81,20 @@ int main() {
     //
     // keychain.insert("clientSecret", sensory::token_manager::secure_random<16>());
     // std::cout << keychain.get("clientSecret") << std::endl;
-
-    auto oauthService = sensory::service::OAuthService(config);
-    auto healthService = sensory::service::HealthService(config);
-
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
-    if (!status.ok()) {
-        std::cout << "GetHealth failed with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-
-    std::cout << "Server status:" << std::endl;
-    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-    std::cout << "\tid: " << serverHealth.id() << std::endl;
-
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
-
-    std::string password = "";
-    std::cout << "password: ";
-    std::cin >> password;
-
+    //
+    // Get the client ID and client secret from the secure credential store
     const auto clientID = keychain.get("clientID");
     const auto clientSecret = keychain.get("clientSecret");
 
-    if (false) {
+    // Create an OAuth service
+    auto oauthService = sensory::service::OAuthService(config);
+    if (false) {  // the device is not enrolled yet, enroll it
         const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
         std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
         std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
     }
 
+    // Fetch a new OAuth token from the remote service
     const auto rsp = oauthService.getToken(clientID, clientSecret);
     std::cout << "Your current token is " << rsp.accesstoken() << std::endl;
 
