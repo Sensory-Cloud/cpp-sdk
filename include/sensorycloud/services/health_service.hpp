@@ -62,9 +62,10 @@ class HealthService {
 
     /// @brief Get the health status of the remote server.
     ///
-    /// @returns the health condition of the remote server
+    /// @param response the response object to store the result of the call in
+    /// @returns a gRPC status object indicating whether the call succeeded
     ///
-    grpc::Status getHealth(api::common::ServerHealthResponse* response) {
+    inline grpc::Status getHealth(api::common::ServerHealthResponse* response) const {
         // Create a client context to query the health service. This request
         // does not require the "authorization" : "Bearer <token>" for auth.
         grpc::ClientContext context;
