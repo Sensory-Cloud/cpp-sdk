@@ -41,6 +41,66 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
+/// @brief A config error type thrown when configuration parameters are invalid.
+struct ConfigError : public std::runtime_error {
+ public:
+    /// Reasons for configuration errors to occur
+    enum class Code {
+        /// the host name is not valid
+        InvalidHost = 0,
+        /// the tenant ID is not valid
+        InvalidTenantID,
+        /// the device ID is not valid
+        InvalidDeviceID,
+    };
+
+    /// @brief Return a message for the given error code.
+    ///
+    /// @param code the code to get the error message for
+    /// @returns a text error message associated with the given error code
+    ///
+    static inline const std::string getMessage(const Code& code) {
+        switch (code) {  // switch over the possible code type cases
+        case Code::InvalidHost:
+            return "the host name is not valid!";
+        case Code::InvalidTenantID:
+            return "the tenant ID is not valid!";
+        case Code::InvalidDeviceID:
+            return "the device ID is not valid!";
+        }
+    }
+
+    /// @brief Initialize a new configuration error.
+    ///
+    /// @param code the reason for the configuration error
+    ///
+    explicit ConfigError(const Code& code) :
+        std::runtime_error(getMessage(code)),
+        err_code(code) { }
+
+    /// @brief Initialize a new configuration error.
+    ///
+    /// @param code the reason for the configuration error
+    /// @param message the message to provide through the `what()` call.
+    ///
+    explicit ConfigError(const Code& code, const std::string& message) :
+        std::runtime_error(message),
+        err_code(code) { }
+
+    /// Destroy an instance of a configuration error.
+    ~ConfigError() throw() {}
+
+    /// @brief Return the reason the exception occurred.
+    ///
+    /// @returns the reason for the configuration error
+    ///
+    inline const Code& code() const throw() { return err_code; }
+
+ private:
+    /// the reason the configuration error occurred
+    Code err_code;
+};
+
 /// @brief A configuration endpoint for Sensory Cloud.
 class Config {
  private:
@@ -92,11 +152,11 @@ class Config {
         deviceID(deviceID_),
         isSecure(isSecure_) {
         if (host.empty())  // the host name is not valid
-            throw std::runtime_error("hostname is empty!");
+            throw ConfigError(ConfigError::Code::InvalidHost);
         if (tenantID.empty())  // the tenant ID is not valid
-            throw std::runtime_error("tenantID is empty!");
+            throw ConfigError(ConfigError::Code::InvalidTenantID);
         if (deviceID.empty())  // the device ID is not valid
-            throw std::runtime_error("deviceID is empty!");
+            throw ConfigError(ConfigError::Code::InvalidDeviceID);
     }
 
     /// @brief Return the name of the remote host.

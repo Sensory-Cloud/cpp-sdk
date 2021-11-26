@@ -69,6 +69,27 @@ SCENARIO("A user wants to initialize a Config") {
             }
         }
     }
+    GIVEN("an empty host name") {
+        WHEN("the config is initialized") {
+            THEN("an error is thrown") {
+                REQUIRE_THROWS(sensory::Config("", 50051, "foo", "bar"));
+            }
+        }
+    }
+    GIVEN("an empty tenant ID") {
+        WHEN("the config is initialized") {
+            THEN("an error is thrown") {
+                REQUIRE_THROWS(sensory::Config("foo", 50051, "", "bar"));
+            }
+        }
+    }
+    GIVEN("an empty device ID") {
+        WHEN("the config is initialized") {
+            THEN("an error is thrown") {
+                REQUIRE_THROWS(sensory::Config("foo", 50051, "bar", ""));
+            }
+        }
+    }
 }
 
 SCENARIO("A user wants to change the gRPC timeout") {
