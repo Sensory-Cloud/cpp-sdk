@@ -114,6 +114,17 @@ int main() {
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();
 
-    // sensory::service::VideoService videoService(config);
-    // videoService.getModels(config.getClientContext(token_manager));
+    std::cout << "Available video models are" << std::endl;
+    sensory::service::VideoService videoService(config);
+    sensory::api::v1::video::GetModelsResponse videoModelsResponse;
+    videoService.getModels(&videoModelsResponse, token_manager);
+    for (auto& thing : videoModelsResponse.models())
+        std::cout << "\t" << thing.name() << std::endl;
+
+    std::cout << "Available audio models are" << std::endl;
+    sensory::service::AudioService audioService(config);
+    sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
+    audioService.getModels(&audioModelsResponse, token_manager);
+    for (auto& thing : audioModelsResponse.models())
+        std::cout << "\t" << thing.name() << std::endl;
 }

@@ -64,23 +64,23 @@ class AudioService {
         transcriptions_stub(api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the audio models supported by the cloud host.
-    /// @returns A future to be fulfilled with either a list of available
-    /// models, or the network error that occurred
-    api::v1::audio::GetModelsResponse getModels() {
-        // std::cout << "Requesting audio models from server" << std::endl;
-
+    ///
+    /// @param response the get models response to populate from the RPC call
+    /// @param tokenManager the token manager for getting access tokens
+    /// @returns the status of the synchronous gRPC call
+    ///
+    template<typename TokenManager>
+    inline grpc::Status getModels(
+        api::v1::audio::GetModelsResponse* response,
+        TokenManager& tokenManager
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request from the parameters.
         api::v1::audio::GetModelsRequest request;
         // Execute the RPC synchronously and get the response
-        api::v1::audio::GetModelsResponse response;
-        grpc::Status status = models_stub->GetModels(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "GetModels failure";
-        }
-        return response;
+        return models_stub->GetModels(&context, request, response);
     }
 
     /// a type for bio-metric enrollment streams
