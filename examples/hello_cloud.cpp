@@ -34,6 +34,7 @@
 #include <sensorycloud/token_manager/keychain.hpp>
 #include <sensorycloud/token_manager/time.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
+#include <sensorycloud/services/health_service.hpp>
 
 int main() {
     std::cout << "Hello, Sensory Cloud C++ SDK!" << std::endl;
@@ -58,6 +59,13 @@ int main() {
     // std::cout << keychain.get("clientSecret") << std::endl;
 
     auto oauthService = sensory::service::OAuthService(config);
+    auto healthService = sensory::service::HealthService(config);
+
+    auto serverHealth = healthService.getHealth();
+    std::cout << "Server status:" << std::endl;
+    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
+    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
+    std::cout << "\tid: " << serverHealth.id() << std::endl;
 
     std::string userID = "";
     std::cout << "user ID: ";
@@ -81,4 +89,7 @@ int main() {
 
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();
+
+    sensory::service::VideoService videoService(config);
+    videoService.getModels(config.getClientContext(token_manager));
 }
