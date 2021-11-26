@@ -47,6 +47,11 @@ struct SecureCredentialStore : public std::unordered_map<std::string, std::strin
     }
 #endif
 
+    /// @brief Emplace or replace a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text key of the value to store
+    /// @param value the secure value to store
+    ///
     inline void emplace(const std::string& key, const std::string& value) {
         if (contains(key)) erase(key);
         std::unordered_map<std::string, std::string>::emplace(key, value);

@@ -77,22 +77,16 @@ class Keychain {
     ///
     explicit Keychain(const std::string& package_) : package(package_) { }
 
-    /// @brief Insert / Update a key/value pair in the key-chain.
+    /// @brief Emplace or replace a key/value pair in the key-chain.
     ///
     /// @param key the plain-text key of the value to store
     /// @param value the secure value to store
     /// @details
-    /// Unlike most key-value stored in the STL, this implementation of emplace
-    /// will overwrite existing values in the key-value store.
+    /// Unlike most key-value store abstractions in the STL, this
+    /// implementation of emplace will overwrite existing values in the
+    /// key-value store.
     ///
     inline void emplace(const std::string& key, const std::string& value) const;
-
-    /// @brief Update a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text key of the value to update
-    /// @param value the new secure value to store
-    ///
-    inline void replace(const std::string& key, const std::string& value) const;
 
     /// @brief Return true if the key exists in the key-chain.
     ///
@@ -142,38 +136,32 @@ inline void Keychain::emplace(const std::string& key, const std::string& value) 
         NULL  // unused output parameter
     );
 
-    if (status == errSecDuplicateItem)  // password exists, overwrite
-        return replace(key, value);
+    if (status == errSecDuplicateItem) {  // password exists, overwrite
+        SecKeychainItemRef item = NULL;
+        OSStatus status = SecKeychainFindGenericPassword(
+            NULL,  // default key-chain
+            static_cast<UInt32>(package.length()),
+            package.data(),
+            static_cast<UInt32>(key.length()),
+            key.data(),
+            NULL,  // unused output parameter
+            NULL,  // unused output parameter
+            &item
+        );
+
+        if (status == errSecSuccess) {
+            status = SecKeychainItemModifyContent(item, NULL,
+                static_cast<UInt32>(value.length()),
+                value.data()
+            );
+        }
+
+        if (item)
+            CFRelease(item);
+    }
 
     if (status != errSecSuccess)
         throw std::runtime_error("failed to set value");
-}
-
-inline void Keychain::replace(const std::string& key, const std::string& value) const {
-    SecKeychainItemRef item = NULL;
-    OSStatus status = SecKeychainFindGenericPassword(
-        NULL,  // default key-chain
-        static_cast<UInt32>(package.length()),
-        package.data(),
-        static_cast<UInt32>(key.length()),
-        key.data(),
-        NULL,  // unused output parameter
-        NULL,  // unused output parameter
-        &item
-    );
-
-    if (status == errSecSuccess) {
-        status = SecKeychainItemModifyContent(item, NULL,
-            static_cast<UInt32>(value.length()),
-            value.data()
-        );
-    }
-
-    if (item)
-        CFRelease(item);
-
-    if (status != errSecSuccess)
-        throw std::runtime_error("failed to replace value");
 }
 
 inline bool Keychain::contains(const std::string& key) const {
