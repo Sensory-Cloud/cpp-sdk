@@ -92,6 +92,11 @@ int main() {
     if (false) {  // the device is not enrolled yet, enroll it
         sensory::api::v1::management::DeviceResponse enrollResponse;
         auto status = oauthService.enrollDevice(&enrollResponse, userID, password, clientID, clientSecret);
+        if (!status.ok()) {  // the call failed, print a descriptive message
+            std::cout << "EnrollDevice failed with\n\t" <<
+                status.error_code() << ": " << status.error_message() << std::endl;
+            return 1;
+        }
         std::cout << "Your user name is \"" << enrollResponse.name() << "\"" << std::endl;
         std::cout << "Your device ID is \"" << enrollResponse.deviceid() << "\"" << std::endl;
     }
