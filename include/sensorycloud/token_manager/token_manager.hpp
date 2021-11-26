@@ -29,7 +29,6 @@
 #include "sensorycloud/token_manager/uuid.hpp"
 #include "sensorycloud/token_manager/secure_random.hpp"
 #include "sensorycloud/token_manager/time.hpp"
-#include "sensorycloud/token_manager/keychain.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 
 /// @brief The Sensory Cloud SDK.

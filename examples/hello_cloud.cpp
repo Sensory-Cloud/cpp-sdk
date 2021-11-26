@@ -29,10 +29,7 @@
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
-#include <sensorycloud/token_manager/uuid.hpp>
-#include <sensorycloud/token_manager/secure_random.hpp>
 #include <sensorycloud/token_manager/keychain.hpp>
-#include <sensorycloud/token_manager/time.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <sensorycloud/services/health_service.hpp>
 
