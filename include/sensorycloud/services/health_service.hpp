@@ -64,16 +64,13 @@ class HealthService {
     ///
     /// @returns the health condition of the remote server
     ///
-    api::common::ServerHealthResponse getHealth() {
+    grpc::Status getHealth(api::common::ServerHealthResponse* response) {
+        // Create a client context to query the health service. This request
+        // does not require the "authorization" : "Bearer <token>" for auth.
         grpc::ClientContext context;
+        // Create the parameter-less request to execute on the remote server
         api::health::HealthRequest request;
-        api::common::ServerHealthResponse response;
-        grpc::Status status = stub->GetHealth(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "GetHealth failure";
-        }
-        return response;
+        return stub->GetHealth(&context, request, response);
     }
 };
 

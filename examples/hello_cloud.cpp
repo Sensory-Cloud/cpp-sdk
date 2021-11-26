@@ -61,7 +61,14 @@ int main() {
     auto oauthService = sensory::service::OAuthService(config);
     auto healthService = sensory::service::HealthService(config);
 
-    auto serverHealth = healthService.getHealth();
+    sensory::api::common::ServerHealthResponse serverHealth;
+    auto status = healthService.getHealth(&serverHealth);
+    if (!status.ok()) {
+        std::cout << "GetHealth failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+
     std::cout << "Server status:" << std::endl;
     std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
     std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
