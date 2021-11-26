@@ -24,29 +24,15 @@
 //
 
 #include <iostream>
-#include <opencv2/highgui.hpp>
-#include <opencv2/videoio.hpp>
-
-// #include <grpc/grpc.h>
-// #include <grpc++/channel.h>
-// #include <grpc++/client_context.h>
-// #include <grpc++/create_channel.h>
-// #include <grpc++/security/credentials.h>
-
-// #include <sensorycloud/generated/common/common.pb.h>
-// #include <sensorycloud/generated/health/health.pb.h>
-// #include <sensorycloud/generated/oauth/oauth.pb.h>
-// #include <sensorycloud/generated/v1/audio/audio.pb.h>
-// #include <sensorycloud/generated/v1/event/event.pb.h>
-// #include <sensorycloud/generated/v1/file/file.pb.h>
-// #include <sensorycloud/generated/v1/management/enrollment.pb.h>
-// #include <sensorycloud/generated/v1/management/device.pb.h>
-// #include <sensorycloud/generated/v1/video/video.pb.h>
-// #include <sensorycloud/generated/validate/validate.pb.h>
-#include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
+#include <sensorycloud/services/audio_service.hpp>
+#include <sensorycloud/services/video_service.hpp>
+#include <sensorycloud/token_manager/keychain.hpp>
+#include <sensorycloud/token_manager/token_manager.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 
 int main(int argc, const char** argv) {
     cv::CommandLineParser parser(argc, argv, "{help h||}{@device||}");
@@ -63,7 +49,37 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
+    // Initialize the configuration to the host for given address and port
     sensory::Config config("io.stage.cloud.sensory.com", 443);
+    std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
+    // Set the Tenant ID for the default tenant
+    config.tenantID = "cabb7700-206f-4cc7-8e79-cd7f288aa78d";
+    // a dummy device ID for enrolling in the cloud
+    config.deviceID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
+
+    // Create the OAuth and token management structures
+    sensory::token_manager::Keychain keychain("com.sensory.cloud");
+    auto oauthService = sensory::service::OAuthService(config);
+    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
+
+    std::string userID = "";
+    std::cout << "user ID: ";
+    std::cin >> userID;
+
+    std::string password = "";
+    std::cout << "password: ";
+    std::cin >> password;
+
+    const auto clientID = keychain.get("clientID");
+    const auto clientSecret = keychain.get("clientSecret");
+
+    if (false) {
+        const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
+        std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
+        std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
+    }
+
+    sensory::service::VideoService videoService(config);
 
     // Create an image capture object
     cv::VideoCapture capture;

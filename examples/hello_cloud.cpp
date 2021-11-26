@@ -90,6 +90,6 @@ int main() {
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();
 
-    sensory::service::VideoService videoService(config);
-    videoService.getModels(config.getClientContext(token_manager));
+    // sensory::service::VideoService videoService(config);
+    // videoService.getModels(config.getClientContext(token_manager));
 }
