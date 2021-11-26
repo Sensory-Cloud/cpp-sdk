@@ -102,8 +102,14 @@ int main() {
     }
 
     // Fetch a new OAuth token from the remote service
-    const auto rsp = oauthService.getToken(clientID, clientSecret);
-    std::cout << "Your current token is " << rsp.accesstoken() << std::endl;
+    sensory::api::common::TokenResponse tokenResponse;
+    status = oauthService.getToken(&tokenResponse, clientID, clientSecret);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetToken failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    std::cout << "Your current token is " << tokenResponse.accesstoken() << std::endl;
 
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();

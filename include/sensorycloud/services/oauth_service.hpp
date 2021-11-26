@@ -108,12 +108,13 @@ class OAuthService {
 
     /// @brief Request a new OAuth token from the server.
     ///
-    /// @param clientID: Client id to use in token request
-    /// @param secret: Client secret to use in token request
-    /// @returns Future to be fulfilled with the new access token, or the
-    ///     network error that occurred
+    /// @param response the token response to store the result of the RPC into
+    /// @param clientID Client id to use in token request
+    /// @param secret Client secret to use in token request
+    /// @returns the status of the synchronous gRPC call
     ///
-    api::common::TokenResponse getToken(
+    grpc::Status getToken(
+        api::common::TokenResponse* response,
         const std::string& clientID,
         const std::string& secret
     ) {
@@ -125,13 +126,7 @@ class OAuthService {
         request.set_clientid(clientID);
         request.set_secret(secret);
         // Execute the remote procedure call synchronously
-        api::common::TokenResponse response;
-        grpc::Status status = oauth_stub->GetToken(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "GetToken failure";
-        }
-        return response;
+        return oauth_stub->GetToken(&context, request, response);
     }
 };
 

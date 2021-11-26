@@ -175,16 +175,17 @@ class TokenManager {
         const auto clientID = keychain.get(TAGS.ClientID);
         const auto secret = keychain.get(TAGS.ClientSecret);
         // Synchronously request a new token from the server.
-        const auto result = service.getToken(clientID, secret);
+        api::common::TokenResponse response;
+        const auto status = service.getToken(&response, clientID, secret);
         // Insert the OAuth access token for the client in the secure store
-        keychain.insert(TAGS.AccessToken, result.accesstoken());
+        keychain.insert(TAGS.AccessToken, response.accesstoken());
         // Determine when the token will expire and store this time
         const auto expirationDate =
-            std::chrono::system_clock::now() + std::chrono::seconds(result.expiresin());
+            std::chrono::system_clock::now() + std::chrono::seconds(response.expiresin());
         const auto expiration = timepoint_to_timestamp(expirationDate);
         keychain.insert(TAGS.Expiration, expiration);
         // Return the newly created OAuth token
-        return result.accesstoken();
+        return response.accesstoken();
     }
 };
 

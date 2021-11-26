@@ -49,39 +49,6 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
-    );
-    std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
-
-    // Create the OAuth and token management structures
-    sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    auto oauthService = sensory::service::OAuthService(config);
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
-
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
-
-    std::string password = "";
-    std::cout << "password: ";
-    std::cin >> password;
-
-    const auto clientID = keychain.get("clientID");
-    const auto clientSecret = keychain.get("clientSecret");
-
-    // if (false) {
-    //     const auto rsp = oauthService.enrollDevice(userID, password, clientID, clientSecret);
-    //     std::cout << "Your user name is \"" << rsp.name() << "\"" << std::endl;
-    //     std::cout << "Your device ID is \"" << rsp.deviceid() << "\"" << std::endl;
-    // }
-
-    sensory::service::VideoService videoService(config);
-
     // Create an image capture object
     cv::VideoCapture capture;
     // Look for a device ID from the command line
