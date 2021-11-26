@@ -59,7 +59,7 @@ class OAuthService {
  public:
     /// @brief Initialize a new OAuth service.
     ///
-    /// @param config the global configuration for the remote connection
+    /// @param config_ the global configuration for the remote connection
     ///
     explicit OAuthService(const Config& config_) : config(config_),
         device_stub(api::v1::management::DeviceService::NewStub(config.getChannel())),

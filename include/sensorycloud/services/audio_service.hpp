@@ -31,6 +31,7 @@
 #include "sensorycloud/generated/v1/audio/audio.pb.h"
 #include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
 #include "sensorycloud/config.hpp"
+#include "sensorycloud/token_manager/token_manager.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -39,10 +40,14 @@ namespace sensory {
 namespace service {
 
 /// @brief A service for audio data.
+/// @tparam SecureCredentialStore a secure CRUD class for storing credentials.
+template<typename SecureCredentialStore>
 class AudioService {
  private:
     /// the global configuration for the remote connection
     const Config& config;
+    /// the token manager for securing gRPC requests to the server
+    token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the audio models service
     std::unique_ptr<api::v1::audio::AudioModels::Stub> models_stub;
     /// the gRPC stub for the audio bio-metrics service
@@ -55,9 +60,14 @@ class AudioService {
  public:
     /// @brief Initialize a new audio service.
     ///
-    /// @param config the global configuration for the remote connection
+    /// @param config_ the global configuration for the remote connection
+    /// @param tokenManager_ the token manager for requesting Bearer tokens
     ///
-    explicit AudioService(const Config& config_) : config(config_),
+    explicit AudioService(
+        const Config& config_,
+        token_manager::TokenManager<SecureCredentialStore>& tokenManager_
+    ) : config(config_),
+        tokenManager(tokenManager_),
         models_stub(api::v1::audio::AudioModels::NewStub(config.getChannel())),
         biometrics_stub(api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
         events_stub(api::v1::audio::AudioEvents::NewStub(config.getChannel())),
@@ -66,14 +76,9 @@ class AudioService {
     /// @brief Fetch a list of the audio models supported by the cloud host.
     ///
     /// @param response the get models response to populate from the RPC call
-    /// @param tokenManager the token manager for getting access tokens
     /// @returns the status of the synchronous gRPC call
     ///
-    template<typename TokenManager>
-    inline grpc::Status getModels(
-        api::v1::audio::GetModelsResponse* response,
-        TokenManager& tokenManager
-    ) const {
+    inline grpc::Status getModels(api::v1::audio::GetModelsResponse* response) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);

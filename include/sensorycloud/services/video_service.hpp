@@ -31,6 +31,7 @@
 #include "sensorycloud/generated/v1/video/video.pb.h"
 #include "sensorycloud/generated/v1/video/video.grpc.pb.h"
 #include "sensorycloud/config.hpp"
+#include "sensorycloud/token_manager/token_manager.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -39,10 +40,14 @@ namespace sensory {
 namespace service {
 
 /// @brief A service for video data.
+/// @tparam SecureCredentialStore a secure CRUD class for storing credentials.
+template<typename SecureCredentialStore>
 class VideoService {
  private:
     /// the global configuration for the remote connection
     const Config& config;
+    /// the token manager for securing gRPC requests to the server
+    token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the video models service
     std::unique_ptr<api::v1::video::VideoModels::Stub> models_stub;
     /// the gRPC stub for the video bio-metrics service
@@ -53,9 +58,14 @@ class VideoService {
  public:
     /// @brief Initialize a new video service.
     ///
-    /// @param config the global configuration for the remote connection
+    /// @param config_ the global configuration for the remote connection
+    /// @param tokenManager_ the token manager for requesting Bearer tokens
     ///
-    explicit VideoService(const Config& config_) : config(config_),
+    explicit VideoService(
+        const Config& config_,
+        token_manager::TokenManager<SecureCredentialStore>& tokenManager_
+    ) : config(config_),
+        tokenManager(tokenManager_),
         models_stub(api::v1::video::VideoModels::NewStub(config.getChannel())),
         biometrics_stub(api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
         recognition_stub(api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
@@ -63,14 +73,9 @@ class VideoService {
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
     /// @param response the get models response to populate from the RPC call
-    /// @param tokenManager the token manager for getting access tokens
     /// @returns the status of the synchronous gRPC call
     ///
-    template<typename TokenManager>
-    inline grpc::Status getModels(
-        api::v1::video::GetModelsResponse* response,
-        TokenManager& tokenManager
-    ) const {
+    inline grpc::Status getModels(api::v1::video::GetModelsResponse* response) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -119,10 +124,9 @@ class VideoService {
         const api::v1::video::RecognitionThreshold& livenessThreshold =
             api::v1::video::RecognitionThreshold::LOW
     ) {
-        std::cout << "Starting video enrollment stream" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, false);
         const auto call = biometrics_stub->CreateEnrollment(&context, onStreamReceive);
 
         // Send initial config message
@@ -179,10 +183,9 @@ class VideoService {
         const api::v1::video::RecognitionThreshold& livenessThreshold =
             api::v1::video::RecognitionThreshold::LOW
     ) {
-        // std::cout << "Starting video authentication stream" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, false);
         const auto call = biometrics_stub->Authenticate(&context, onStreamReceive);
 
         // Send initial config message
@@ -234,10 +237,9 @@ class VideoService {
         const api::v1::video::RecognitionThreshold& threshold,
         const T& onStreamReceive
     ) {
-        // std::cout << "Requesting Liveness stream from server" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, false);
         const auto call = recognition_stub->ValidateLiveness(&context, onStreamReceive);
 
         // Send initial config message

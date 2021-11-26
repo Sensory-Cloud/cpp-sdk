@@ -114,17 +114,33 @@ int main() {
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();
 
+    // Query the available video models
     std::cout << "Available video models are" << std::endl;
-    sensory::service::VideoService videoService(config);
+    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, token_manager);
     sensory::api::v1::video::GetModelsResponse videoModelsResponse;
-    videoService.getModels(&videoModelsResponse, token_manager);
-    for (auto& thing : videoModelsResponse.models())
-        std::cout << "\t" << thing.name() << std::endl;
+    status = videoService.getModels(&videoModelsResponse);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetVideoModels failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& model : videoModelsResponse.models())
+        std::cout << "\t" << model.name() << std::endl;
 
+    // Query the available audio models
     std::cout << "Available audio models are" << std::endl;
-    sensory::service::AudioService audioService(config);
+    sensory::service::AudioService<sensory::token_manager::Keychain> audioService(config, token_manager);
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
-    audioService.getModels(&audioModelsResponse, token_manager);
-    for (auto& thing : audioModelsResponse.models())
-        std::cout << "\t" << thing.name() << std::endl;
+    status = audioService.getModels(&audioModelsResponse);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetAudioModels failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& model : audioModelsResponse.models())
+        std::cout << "\t" << model.name() << std::endl;
+
+    // Query this user's active enrollments
+    std::cout << "Active enrollments are" << std::endl;
+    sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, token_manager);
 }

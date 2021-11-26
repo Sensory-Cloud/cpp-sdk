@@ -55,7 +55,7 @@ class HealthService {
  public:
     /// @brief Initialize a new health service.
     ///
-    /// @param config the global configuration for the remote connection
+    /// @param config_ the global configuration for the remote connection
     ///
     explicit HealthService(const Config& config_) : config(config_),
         stub(api::health::HealthService::NewStub(config.getChannel())) { }
