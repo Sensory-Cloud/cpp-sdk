@@ -115,24 +115,6 @@ class ManagementService {
         return stub->DeleteEnrollment(&context, request, response);
     }
 
-    /// @brief Request the deletion of multiple enrollments.
-    ///
-    /// @param ids: List of enrollment ids to delete from the server
-    /// @return A future that will either contain a list of all server
-    /// responses, or the first error to occur.
-    ///
-    /// @details
-    /// If an error occurs during the deletion process, already completed
-    /// deletions will not be rolled back. The server will prevent users from
-    /// deleting their last enrollment.
-    ///
-    // std::vector<api::v1::management::EnrollmentResponse> deleteEnrollments(const std::vector<std::string>& ids) {
-    //     // std::cout << "Deleting " << ids.size() << " enrollments" << std::endl;
-    //     std::vector<api::v1::management::EnrollmentResponse> responses;
-    //     for (const auto& id : ids) responses.emplace_back(deleteEnrollment(id));
-    //     return responses;
-    // }
-
     /// @brief Fetch a list of the current enrollment groups owned by a given
     /// userID.
     ///
