@@ -75,7 +75,9 @@ class VideoService {
     /// @param response the get models response to populate from the RPC call
     /// @returns the status of the synchronous gRPC call
     ///
-    inline grpc::Status getModels(api::v1::video::GetModelsResponse* response) const {
+    inline grpc::Status getModels(
+        api::v1::video::GetModelsResponse* response
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -115,7 +117,7 @@ class VideoService {
     /// the server.
     ///
     template<typename T>
-    CreateEnrollmentStream createEnrollment(
+    inline CreateEnrollmentStream createEnrollment(
         const std::string& modelName,
         const std::string& userID,
         const T& onStreamReceive,
@@ -123,7 +125,7 @@ class VideoService {
         const bool& isLivenessEnabled = false,
         const api::v1::video::RecognitionThreshold& livenessThreshold =
             api::v1::video::RecognitionThreshold::LOW
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, false);
@@ -176,13 +178,13 @@ class VideoService {
     /// the server.
     ///
     template<typename T>
-    AuthenticateStream authenticate(
+    inline AuthenticateStream authenticate(
         const std::string& enrollmentID,
         const T& onStreamReceive,
         const bool& isLivenessEnabled = false,
         const api::v1::video::RecognitionThreshold& livenessThreshold =
             api::v1::video::RecognitionThreshold::LOW
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, false);
@@ -231,12 +233,12 @@ class VideoService {
     /// the server.
     ///
     template<typename T>
-    ValidateLivenessStream validateLiveness(
+    inline ValidateLivenessStream validateLiveness(
         const std::string& modelName,
         const std::string& userID,
         const api::v1::video::RecognitionThreshold& threshold,
         const T& onStreamReceive
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, false);

@@ -78,7 +78,9 @@ class AudioService {
     /// @param response the get models response to populate from the RPC call
     /// @returns the status of the synchronous gRPC call
     ///
-    inline grpc::Status getModels(api::v1::audio::GetModelsResponse* response) const {
+    inline grpc::Status getModels(
+        api::v1::audio::GetModelsResponse* response
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -122,7 +124,7 @@ class AudioService {
     /// the server.
     ///
     template<typename T>
-    CreateEnrollmentStream createEnrollment(
+    inline CreateEnrollmentStream createEnrollment(
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& userID,
@@ -131,7 +133,7 @@ class AudioService {
         const bool& isLivenessEnabled = false,
         const uint32_t* numUtterances = nullptr,
         const float* enrollmentDuration = nullptr
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -186,13 +188,13 @@ class AudioService {
     /// This call will automatically send the initial `AudioConfig` message to the server
     ///
     template<typename T>
-    AuthenticateStream streamAuthenticate(
+    inline AuthenticateStream streamAuthenticate(
         const std::string& enrollmentID,
         const std::string& groupID,
         const int32_t& sampleRate,
         const bool& isLivenessEnabled,
         const T& onStreamReceive
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -242,7 +244,7 @@ class AudioService {
         const int32_t& sampleRate,
         const bool& isLivenessEnabled,
         const T& onStreamReceive
-    ) {
+    ) const {
         return streamAuthenticate(enrollmentID, "", sampleRate, isLivenessEnabled, onStreamReceive);
     }
 
@@ -269,7 +271,7 @@ class AudioService {
         const int32_t& sampleRate,
         const bool& isLivenessEnabled,
         const T& onStreamReceive
-    ) {
+    ) const {
         return streamAuthenticate("", groupID, sampleRate, isLivenessEnabled, onStreamReceive);
     }
 
@@ -305,7 +307,7 @@ class AudioService {
         const std::string& userID,
         const api::v1::audio::ThresholdSensitivity& sensitivity,
         const T& onStreamReceive
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -358,12 +360,12 @@ class AudioService {
     /// the server
     ///
     template<typename T>
-    TranscribeAudioStream transcribeAudio(
+    inline TranscribeAudioStream transcribeAudio(
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& userID,
         const T& onStreamReceive
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);

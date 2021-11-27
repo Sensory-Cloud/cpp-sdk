@@ -77,10 +77,10 @@ class ManagementService {
     /// @returns A future to be fulfilled with either a list of enrollments,
     /// or the network error that occurred
     ///
-    grpc::Status getEnrollments(
+    inline grpc::Status getEnrollments(
         api::v1::management::GetEnrollmentsResponse* response,
         const std::string& userID
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -101,10 +101,10 @@ class ManagementService {
     /// @details
     /// The server will prevent users from deleting their last enrollment
     ///
-    grpc::Status deleteEnrollment(
+    inline grpc::Status deleteEnrollment(
         api::v1::management::EnrollmentResponse* response,
         const std::string& enrollmentID
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -123,10 +123,10 @@ class ManagementService {
     /// @returns A future to be fulfilled with either a list of enrollment
     /// groups, or the network error that occurred
     ///
-    grpc::Status getEnrollmentGroups(
+    inline grpc::Status getEnrollmentGroups(
         api::v1::management::GetEnrollmentGroupsResponse* response,
         const std::string& userID
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -156,14 +156,14 @@ class ManagementService {
     /// enrollments `appendEnrollmentGroup()` may be used to add enrollments
     /// to an enrollment group.
     ///
-    grpc::Status createEnrollmentGroup(
+    inline grpc::Status createEnrollmentGroup(
         api::v1::management::EnrollmentGroupResponse* response,
         const std::string& userID,
         const std::string& groupID,
         const std::string& groupName,
         const std::string& description,
         const std::string& modelName
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -187,11 +187,11 @@ class ManagementService {
     /// @returns A future to be fulfilled with either the updated enrollment
     /// group, or the network error that occurred
     ///
-    grpc::Status appendEnrollmentGroup(
+    inline grpc::Status appendEnrollmentGroup(
         api::v1::management::EnrollmentGroupResponse* response,
         const std::string& groupID,
         const std::vector<std::string>& enrollments
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
@@ -211,10 +211,10 @@ class ManagementService {
     /// @return A future to be fulfilled with either the deleted enrollment
     /// group, or the network error that occurred
     ///
-    grpc::Status deleteEnrollmentGroup(
+    inline grpc::Status deleteEnrollmentGroup(
         api::v1::management::EnrollmentGroupResponse* response,
         const std::string& id
-    ) {
+    ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
