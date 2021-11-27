@@ -138,7 +138,7 @@ inline void Keychain::emplace(const std::string& key, const std::string& value) 
 
     if (status == errSecDuplicateItem) {  // password exists, overwrite
         SecKeychainItemRef item = NULL;
-        OSStatus status = SecKeychainFindGenericPassword(
+        status = SecKeychainFindGenericPassword(
             NULL,  // default key-chain
             static_cast<UInt32>(package.length()),
             package.data(),
