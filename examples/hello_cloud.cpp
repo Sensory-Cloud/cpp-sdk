@@ -147,6 +147,14 @@ int main() {
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
-    for (auto& enrollment : enrollmentResponse.enrollments())
-        std::cout << "\t" << enrollment.modelname() << std::endl;
+    for (auto& enrollment : enrollmentResponse.enrollments()) {
+        std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
+        std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
+        std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
+        std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
+        std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
+        // std::cout << "\t\tCreated: "       << enrollment.createdat()    << std::endl;
+        std::cout << "\t\tLiveness: "      << enrollment.didenrollwithliveness()    << std::endl;
+    }
 }
