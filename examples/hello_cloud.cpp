@@ -140,4 +140,13 @@ int main() {
     // Query this user's active enrollments
     std::cout << "Active enrollments are" << std::endl;
     sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, token_manager);
+    sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
+    status = mgmtService.getEnrollments(&enrollmentResponse, userID);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetEnrollments failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& enrollment : enrollmentResponse.enrollments())
+        std::cout << "\t" << enrollment.modelname() << std::endl;
 }
