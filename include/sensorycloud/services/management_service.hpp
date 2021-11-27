@@ -72,29 +72,28 @@ class ManagementService {
 
     /// @brief Fetch a list of the current enrollments for the given userID
     ///
+    /// @param response the response to store the result of the RPC into
     /// @param userID userID to fetch enrollments for
     /// @returns A future to be fulfilled with either a list of enrollments,
     /// or the network error that occurred
     ///
-    api::v1::management::GetEnrollmentsResponse getEnrollments(const std::string& userID) {
-        // std::cout << "Requesting current enrollments from server with userID: " << userID << std::endl;
+    grpc::Status getEnrollments(
+        api::v1::management::GetEnrollmentsResponse* response,
+        const std::string& userID
+    ) {
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request
         api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
-        // Execute the remote procedure call synchronously and return the result
-        api::v1::management::GetEnrollmentsResponse response;
-        grpc::Status status = stub->GetEnrollments(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "GetEnrollments failure";
-        }
-        return response;
+        // Execute the remote procedure call synchronously and return the status
+        return stub->GetEnrollments(&context, request, response);
     }
 
     /// @brief Request the deletion of an enrollment.
     ///
+    /// @param response the response to store the result of the RPC into
     /// @param enrollmentID enrollmentID for the enrollment to delete
     /// @return A future to be fulfilled with either the deleted enrollment,
     /// or the network error that occurred
@@ -102,21 +101,18 @@ class ManagementService {
     /// @details
     /// The server will prevent users from deleting their last enrollment
     ///
-    api::v1::management::EnrollmentResponse deleteEnrollment(const std::string& enrollmentID) {
-        // std::cout << "Requesting to delete enrollment: " << enrollmentID << std::endl;
+    grpc::Status deleteEnrollment(
+        api::v1::management::EnrollmentResponse* response,
+        const std::string& enrollmentID
+    ) {
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request
         api::v1::management::DeleteEnrollmentRequest request;
         request.set_id(enrollmentID);
         // Execute the remote procedure call synchronously and return the result
-        api::v1::management::EnrollmentResponse response;
-        grpc::Status status = stub->DeleteEnrollment(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "DeleteEnrollment failure";
-        }
-        return response;
+        return stub->DeleteEnrollment(&context, request, response);
     }
 
     /// @brief Request the deletion of multiple enrollments.
@@ -140,30 +136,29 @@ class ManagementService {
     /// @brief Fetch a list of the current enrollment groups owned by a given
     /// userID.
     ///
+    /// @param response the response to store the result of the RPC into
     /// @param userID userID to fetch enrollment groups for
     /// @returns A future to be fulfilled with either a list of enrollment
     /// groups, or the network error that occurred
     ///
-    api::v1::management::GetEnrollmentGroupsResponse getEnrollmentGroups(const std::string& userID) {
-        // std::cout << "Requesting current enrollment groups from server with userID: " << userID << std::endl;
+    grpc::Status getEnrollmentGroups(
+        api::v1::management::GetEnrollmentGroupsResponse* response,
+        const std::string& userID
+    ) {
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request
         api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
         // Execute the remote procedure call synchronously and return the result
-        api::v1::management::GetEnrollmentGroupsResponse response;
-        grpc::Status status = stub->GetEnrollmentGroups(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "GetEnrollmentGroups failure";
-        }
-        return response;
+        return stub->GetEnrollmentGroups(&context, request, response);
     }
 
     /// @brief Create a new group of enrollments that can be used for group
     /// authentication.
     ///
+    /// @param response the response to store the result of the RPC into
     /// @param userID userID of the user that owns the enrollment group
     /// @param groupID Unique group identifier for the enrollment group, if
     /// empty an id will be automatically generated
@@ -179,16 +174,17 @@ class ManagementService {
     /// enrollments `appendEnrollmentGroup()` may be used to add enrollments
     /// to an enrollment group.
     ///
-    api::v1::management::EnrollmentGroupResponse createEnrollmentGroup(
+    grpc::Status createEnrollmentGroup(
+        api::v1::management::EnrollmentGroupResponse* response,
         const std::string& userID,
         const std::string& groupID,
         const std::string& groupName,
         const std::string& description,
         const std::string& modelName
     ) {
-        // std::cout << "Requesting enrollment group creation with name: " << groupName << std::endl;
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request
         api::v1::management::CreateEnrollmentGroupRequest request;
         request.set_id(groupID);
@@ -197,68 +193,54 @@ class ManagementService {
         request.set_modelname(modelName);
         request.set_userid(userID);
         // Execute the remote procedure call synchronously and return the result
-        api::v1::management::EnrollmentGroupResponse response;
-        grpc::Status status = stub->CreateEnrollmentGroup(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "CreateEnrollmentGroup failure";
-        }
-        return response;
+        return stub->CreateEnrollmentGroup(&context, request, response);
     }
 
     /// @brief Append enrollments to an existing enrollment group.
     ///
+    /// @param response the response to store the result of the RPC into
     /// @param groupID GroupID of the enrollment group to append enrollments to
     /// @param enrollments A list of enrollment ids to append to the enrollment
     /// group
     /// @returns A future to be fulfilled with either the updated enrollment
     /// group, or the network error that occurred
     ///
-    api::v1::management::EnrollmentGroupResponse appendEnrollmentGroup(
+    grpc::Status appendEnrollmentGroup(
+        api::v1::management::EnrollmentGroupResponse* response,
         const std::string& groupID,
         const std::vector<std::string>& enrollments
     ) {
-        // std::cout << "Requesting to append enrollments to enrollment group: " << groupId << std::endl;
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request
         api::v1::management::AppendEnrollmentGroupRequest request;
         request.set_groupid(groupID);
         for (auto& enrollment: enrollments)
             request.add_enrollmentids(enrollment);
         // Execute the remote procedure call synchronously and return the result
-        api::v1::management::EnrollmentGroupResponse response;
-        grpc::Status status = stub->AppendEnrollmentGroup(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "AppendEnrollmentGroup failure";
-        }
-        return response;
+        return stub->AppendEnrollmentGroup(&context, request, response);
     }
 
     /// @brief Request the deletion of enrollment groups.
     ///
+    /// @param response the response to store the result of the RPC into
     /// @param id: group ID to delete
     /// @return A future to be fulfilled with either the deleted enrollment
     /// group, or the network error that occurred
     ///
-    api::v1::management::EnrollmentGroupResponse deleteEnrollmentGroup(
+    grpc::Status deleteEnrollmentGroup(
+        api::v1::management::EnrollmentGroupResponse* response,
         const std::string& id
     ) {
-        // std::cout << "Requesting to delete enrollment group: " << id << std::endl;
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         // Create the request
         api::v1::management::DeleteEnrollmentGroupRequest request;
         request.set_id(id);
         // Execute the remote procedure call synchronously and return the result
-        api::v1::management::EnrollmentGroupResponse response;
-        grpc::Status status = stub->DeleteEnrollmentGroup(&context, request, &response);
-        if (!status.ok()) {  // an error occurred in the RPC
-            // std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-            throw "DeleteEnrollmentGroup failure";
-        }
-        return response;
+        return stub->DeleteEnrollmentGroup(&context, request, response);
     }
 };
 

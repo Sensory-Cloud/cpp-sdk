@@ -132,10 +132,9 @@ class AudioService {
         const uint32_t* numUtterances = nullptr,
         const float* enrollmentDuration = nullptr
     ) {
-        std::cout << "Starting audio enrollment stream" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         const auto call = biometrics_stub->CreateEnrollment(&context, onStreamReceive);
 
         // Send initial config message
@@ -194,10 +193,9 @@ class AudioService {
         const bool& isLivenessEnabled,
         const T& onStreamReceive
     ) {
-        std::cout << "Starting audio authentication stream" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         const auto call = biometrics_stub->Authenticate(&context, onStreamReceive);
 
         // Send initial config message
@@ -207,15 +205,15 @@ class AudioService {
         audioConfig.set_audiochannelcount(1);
         audioConfig.set_languagecode(config.languageCode);
 
-        api::v1::audio::AuthenticateConfig authenticatecConfig;
+        api::v1::audio::AuthenticateConfig authenticateConfig;
         // TODO: should the config be allocated dynamically?
-        authenticatecConfig.set_allocated_audio(&audioConfig);
-        authenticatecConfig.set_enrollmentid(groupID.empty() ? enrollmentID : groupID);
-        authenticatecConfig.set_islivenessenabled(isLivenessEnabled);
+        authenticateConfig.set_allocated_audio(&audioConfig);
+        authenticateConfig.set_enrollmentid(groupID.empty() ? enrollmentID : groupID);
+        authenticateConfig.set_islivenessenabled(isLivenessEnabled);
 
         api::v1::audio::AuthenticateRequest request;
         // TODO: should the config be allocated dynamically?
-        request.set_allocated_config(&authenticatecConfig);
+        request.set_allocated_config(&authenticateConfig);
 
         call.Write(request);
         return call;
@@ -308,10 +306,9 @@ class AudioService {
         const api::v1::audio::ThresholdSensitivity& sensitivity,
         const T& onStreamReceive
     ) {
-        std::cout << "Requesting validate trigger stream from server" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         const auto call = events_stub->ValidateEvent(&context, onStreamReceive);
 
         // Send initial config message
@@ -367,10 +364,9 @@ class AudioService {
         const std::string& userID,
         const T& onStreamReceive
     ) {
-        std::cout << "Requesting to transcribe audio" << std::endl;
-
         // Create a context for the client.
         grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
         const auto call = transcriptions_stub->Transcribe(&context, onStreamReceive);
 
         // Send initial config message
