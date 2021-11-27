@@ -155,6 +155,6 @@ int main() {
         std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
         std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
         // std::cout << "\t\tCreated: "       << enrollment.createdat()    << std::endl;
-        std::cout << "\t\tLiveness: "      << enrollment.didenrollwithliveness()    << std::endl;
+        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
     }
 }
