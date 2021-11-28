@@ -153,10 +153,8 @@ class TokenManager {
         const auto now = std::chrono::system_clock::now();
         const auto expiration = timestamp_to_timepoint(expirationDate);
         if (now > expiration - std::chrono::minutes(5)) {  // token has expired
-            // std::cout << "Cached access token has expired, requesting new token" << std::endl;
             return fetchNewAccessToken();
         }
-        // std::cout << "Returning cached access token" << std::endl;
         return accessToken;
     }
 
