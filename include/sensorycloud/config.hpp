@@ -217,13 +217,13 @@ class Config {
     ///
     /// @returns a new gRPC channel to connect a service to
     ///
-    inline std::shared_ptr<grpc::Channel> getChannel() const {
+    inline std::shared_ptr<::grpc::Channel> getChannel() const {
         // Create the credentials for the channel based on the security setting.
         // Use TLS (SSL) if `isSecure` is true, otherwise default to insecure
         // channel credentials.
-        return grpc::CreateChannel(getFullyQualifiedDomainName(), isSecure ?
-            grpc::SslCredentials(grpc::SslCredentialsOptions()) :
-            grpc::InsecureChannelCredentials()
+        return ::grpc::CreateChannel(getFullyQualifiedDomainName(), isSecure ?
+            ::grpc::SslCredentials(::grpc::SslCredentialsOptions()) :
+            ::grpc::InsecureChannelCredentials()
         );
     }
 
@@ -237,7 +237,7 @@ class Config {
     ///
     template<typename TokenManager>
     inline void setupClientContext(
-        grpc::ClientContext& context,
+        ::grpc::ClientContext& context,
         TokenManager& tokenManager,
         const bool& isUnary=false
     ) const {
