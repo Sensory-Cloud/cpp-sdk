@@ -83,7 +83,8 @@ class OAuthService {
     /// -   A shared secret (password)
     /// -   A signed JWT
     ///
-    grpc::Status enrollDevice(api::v1::management::DeviceResponse* response,
+    ::grpc::Status enrollDevice(
+        ::sensory::api::v1::management::DeviceResponse* response,
         const std::string& name,
         const std::string& credential,
         const std::string& clientID,
@@ -91,18 +92,18 @@ class OAuthService {
     ) {
         // Create a context for the client. Most requests require the existence
         // of a authorization Bearer token, but this request does not.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         // Create the request from the parameters.
-        api::v1::management::EnrollDeviceRequest request;
-        request.set_name(name);
+        ::sensory::api::v1::management::EnrollDeviceRequest request;
         request.set_deviceid(config.getDeviceID());
         request.set_tenantid(config.getTenantID());
-        api::common::GenericClient clientRequest;
-        clientRequest.set_clientid(clientID);
-        clientRequest.set_secret(clientSecret);
-        request.set_allocated_client(&clientRequest);
+        request.set_name(name);
         request.set_credential(credential);
-        // Execute the RPC synchronously and get the response
+        auto clientRequest = new api::common::GenericClient;
+        clientRequest->set_clientid(clientID);
+        clientRequest->set_secret(clientSecret);
+        request.set_allocated_client(clientRequest);
+        // Execute the RPC synchronously and return the status
         return device_stub->EnrollDevice(&context, request, response);
     }
 
