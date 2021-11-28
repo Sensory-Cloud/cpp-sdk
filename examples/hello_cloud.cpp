@@ -106,13 +106,13 @@ int main() {
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
-    std::cout << "Your current token is " << tokenResponse.accesstoken() << std::endl;
+    // std::cout << "Your current token is " << tokenResponse.accesstoken() << std::endl;
 
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
     // const auto access_token = token_manager.getAccessToken();
 
     // Query the available video models
-    std::cout << "Available video models are" << std::endl;
+    std::cout << "Available video models:" << std::endl;
     sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, token_manager);
     sensory::api::v1::video::GetModelsResponse videoModelsResponse;
     status = videoService.getModels(&videoModelsResponse);
@@ -125,7 +125,7 @@ int main() {
         std::cout << "\t" << model.name() << std::endl;
 
     // Query the available audio models
-    std::cout << "Available audio models are" << std::endl;
+    std::cout << "Available audio models:" << std::endl;
     sensory::service::AudioService<sensory::token_manager::Keychain> audioService(config, token_manager);
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
     status = audioService.getModels(&audioModelsResponse);
@@ -138,7 +138,7 @@ int main() {
         std::cout << "\t" << model.name() << std::endl;
 
     // Query this user's active enrollments
-    std::cout << "Active enrollments are" << std::endl;
+    std::cout << "Active enrollments:" << std::endl;
     sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, token_manager);
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
@@ -154,6 +154,25 @@ int main() {
         std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
         std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
         std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
+        // std::cout << "\t\tCreated: "       << enrollment.createdat()    << std::endl;
+        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+    }
+
+    // Query this user's enrollment groups
+    std::cout << "Active enrollment groups:" << std::endl;
+    sensory::api::v1::management::GetEnrollmentGroupsResponse enrollmentGroupResponse;
+    status = mgmtService.getEnrollmentGroups(&enrollmentGroupResponse, userID);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetEnrollmentGroups failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& enrollment : enrollmentGroupResponse.enrollmentgroups()) {
+        std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
+        std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
+        std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
+        std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
         // std::cout << "\t\tCreated: "       << enrollment.createdat()    << std::endl;
         std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
     }
