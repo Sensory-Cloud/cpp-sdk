@@ -167,23 +167,23 @@ int main(int argc, const char** argv) {
         std::vector<unsigned char> buffer;
         cv::imencode(".jpg", frame, buffer);
 
+        double t = (double) cv::getTickCount();
+
         sensory::api::v1::video::AuthenticateRequest request;
         request.set_imagecontent(buffer.data(), buffer.size());
         stream->Write(request);
         sensory::api::v1::video::AuthenticateResponse response;
         stream->Read(&response);
 
+        t = (double) cv::getTickCount() - t;
+
         std::cout << "Frame Response:" << std::endl;
-        std::cout << "Success:\t"  << response.success() << std::endl;
-        std::cout << "Score:\t"    << response.score() << std::endl;
-        std::cout << "Is Alive:\t" << response.isalive() << std::endl;
+        printf("\tResponse time: %g ms\n", t * 1000.f / cv::getTickFrequency());
+        std::cout << "\tSuccess: "  << response.success() << std::endl;
+        std::cout << "\tScore: "    << response.score() << std::endl;
+        std::cout << "\tIs Alive: " << response.isalive() << std::endl;
 
         if (response.success()) break;
-
-        // double t = 0;
-        // t = (double)getTickCount();
-        // t = (double)getTickCount() - t;
-        // printf("render time = %g ms\n", t*1000/getTickFrequency());
 
         char c = (char) cv::waitKey(10);
         if (c == 27 || c == 'q' || c == 'Q')
