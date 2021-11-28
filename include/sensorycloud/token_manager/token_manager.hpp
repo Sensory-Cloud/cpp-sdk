@@ -79,7 +79,7 @@ class TokenManager {
     /// @param service_ the OAuth service for requesting new tokens
     /// @param keychain_ the key-chain to query secure credentials from
     ///
-    explicit TokenManager(
+    TokenManager(
         ::sensory::service::OAuthService& service_,
         SecureCredentialStore& keychain_
     ) : service(service_), keychain(keychain_) { }
