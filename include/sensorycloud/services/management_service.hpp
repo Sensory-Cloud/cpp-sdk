@@ -63,7 +63,7 @@ class ManagementService {
     /// @param config_ the global configuration for the remote connection
     /// @param tokenManager_ the token manager for requesting Bearer tokens
     ///
-    explicit ManagementService(
+    ManagementService(
         const Config& config_,
         token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
