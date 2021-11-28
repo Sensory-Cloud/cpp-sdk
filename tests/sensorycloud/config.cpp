@@ -64,9 +64,6 @@ SCENARIO("A user wants to initialize a Config") {
                 REQUIRE(720 == config.photoHeight);
                 REQUIRE(480 == config.photoWidth);
             }
-            THEN("the language code is english (US") {
-                REQUIRE_THAT(config.languageCode, Catch::Equals("en-US"));
-            }
         }
     }
     GIVEN("an empty host name") {

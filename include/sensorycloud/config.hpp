@@ -121,10 +121,6 @@ class Config {
     float jpegCompression = 0.5;
 
  public:
-    /// User's preferred language/region code (ex: en-US, used for audio
-    /// enrollments. Defaults to the system Locale
-    std::string languageCode = "en-US";
-
     /// Sample rate to record audio at, defaults to 16kHz
     float audioSampleRate = 16000.f;
 

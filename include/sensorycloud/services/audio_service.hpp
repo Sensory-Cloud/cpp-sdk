@@ -47,15 +47,43 @@ class AudioService {
     /// the global configuration for the remote connection
     const Config& config;
     /// the token manager for securing gRPC requests to the server
-    token_manager::TokenManager<SecureCredentialStore>& tokenManager;
+    ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the audio models service
-    std::unique_ptr<api::v1::audio::AudioModels::Stub> models_stub;
-    /// the gRPC stub for the audio bio-metrics service
-    std::unique_ptr<api::v1::audio::AudioBiometrics::Stub> biometrics_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioModels::Stub> models_stub;
+    /// the gRPC stub for the audio biometrics service
+    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::Stub> biometrics_stub;
     /// the gRPC stub for the audio events service
-    std::unique_ptr<api::v1::audio::AudioEvents::Stub> events_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::Stub> events_stub;
     /// the gRPC stub for the audio transcriptions service
-    std::unique_ptr<api::v1::audio::AudioTranscriptions::Stub> transcriptions_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::Stub> transcriptions_stub;
+
+    /// @brief Create a new audio config for an audio streaming application.
+    ///
+    /// @brief sampleRate The sample rate of the audio stream.
+    /// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
+    ///
+    /// @details
+    /// This function assumes the audio encoding is 16-bit PCM, i.e., linear
+    /// 16 (`::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16`).
+    /// This function also assumed the audio stream has a single channel, i.e.,
+    /// is monophonic.
+    ///
+    static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
+        const float& sampleRate,
+        const std::string& languageCode
+    ) {
+        // Create the audio config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto audioConfig = new ::sensory::api::v1::audio::AudioConfig;
+        audioConfig->set_encoding(
+            ::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16
+        );
+        audioConfig->set_sampleratehertz(sampleRate);
+        audioConfig->set_audiochannelcount(1);
+        audioConfig->set_languagecode(languageCode);
+        return audioConfig;
+    }
 
  public:
     /// @brief Initialize a new audio service.
@@ -63,113 +91,166 @@ class AudioService {
     /// @param config_ the global configuration for the remote connection
     /// @param tokenManager_ the token manager for requesting Bearer tokens
     ///
-    explicit AudioService(
+    AudioService(
         const Config& config_,
-        token_manager::TokenManager<SecureCredentialStore>& tokenManager_
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),
-        models_stub(api::v1::audio::AudioModels::NewStub(config.getChannel())),
-        biometrics_stub(api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
-        events_stub(api::v1::audio::AudioEvents::NewStub(config.getChannel())),
-        transcriptions_stub(api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
+        models_stub(::sensory::api::v1::audio::AudioModels::NewStub(config.getChannel())),
+        biometrics_stub(::sensory::api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
+        events_stub(::sensory::api::v1::audio::AudioEvents::NewStub(config.getChannel())),
+        transcriptions_stub(::sensory::api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the audio models supported by the cloud host.
     ///
-    /// @param response the get models response to populate from the RPC call
-    /// @returns the status of the synchronous gRPC call
+    /// @param response The response to populate from the RPC.
+    /// @returns the status of the synchronous RPC.
     ///
-    inline grpc::Status getModels(
-        api::v1::audio::GetModelsResponse* response
+    inline ::grpc::Status getModels(
+        ::sensory::api::v1::audio::GetModelsResponse* response
     ) const {
-        // Create a context for the client.
-        grpc::ClientContext context;
+        // Create a context for the client for a unary call.
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
-        // Create the request from the parameters.
-        api::v1::audio::GetModelsRequest request;
-        // Execute the RPC synchronously and get the response
-        return models_stub->GetModels(&context, request, response);
+        // Execute the RPC synchronously and return the status
+        return models_stub->GetModels(&context, {}, response);
     }
 
-    /// a type for bio-metric enrollment streams
+    /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriterInterface<
+        ::grpc::ClientReaderWriter<
             ::sensory::api::v1::audio::CreateEnrollmentRequest,
             ::sensory::api::v1::audio::CreateEnrollmentResponse
         >
     > CreateEnrollmentStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
-    /// creating an audio enrollment.
+    /// creating an text-dependent audio enrollment.
     ///
-    /// @param modelName The name of the model to validate
-    /// @param sampleRate Sample rate of model to validate
-    /// @param userID Unique user identifier
-    /// @param description User supplied description of the enrollment
-    /// @param isLivenessEnabled Verifies liveness during the enrollment process
-    /// @param numUtterances Sets how many utterances should be required
-    /// for text-dependent enrollments, defaults to 4 if not specified. This
-    /// parameter should be left `nil` for text-independent enrollments
-    /// @param enrollmentDuration: Sets the duration in seconds for
-    /// text-independent enrollments, defaults to 12.5 without liveness
-    /// enabled and 8 with liveness enabled. This parameter should be left
-    /// `nil` for text-dependent enrollments
-    /// @param onStreamReceive: Handler function to handle response sent from
+    /// @param modelName The name of the model to use to create the enrollment.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param sampleRate The sample rate of the model.
+    /// @param langaugeCode the language code of the audio.
+    /// @param userID The unique user identifier.
+    /// @param description The description of the enrollment
+    /// @param isLivenessEnabled `true` to perform a liveness check in addition
+    /// to an enrollment, `false` to perform the enrollment without the liveness
+    /// check.
+    /// @param numUtterances The number of utterances that should be required
+    /// for text-dependent enrollments, defaults to 4 if not specified.
+    /// @returns A bidirectional stream that can be used to send audio data to
     /// the server
-    /// @throws `NetworkError` if an error occurs while processing the cached
-    /// server url
-    /// @returns Bidirectional stream that can be used to send audio data to
-    /// the server
+    ///
     /// @details
-    /// This call will automatically send the initial `AudioConfig` message to
-    /// the server.
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
     ///
-    template<typename T>
-    inline CreateEnrollmentStream createEnrollment(
+    inline CreateEnrollmentStream createTextDependentEnrollment(
         const std::string& modelName,
         const int32_t& sampleRate,
+        const std::string& languageCode,
         const std::string& userID,
-        const T& onStreamReceive,
         const std::string& description = "",
         const bool& isLivenessEnabled = false,
-        const uint32_t* numUtterances = nullptr,
-        const float* enrollmentDuration = nullptr
+        const uint32_t numUtterances = 4
     ) const {
-        // Create a context for the client.
-        grpc::ClientContext context;
+        // Create a context for the client for a bidirectional stream.
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
-        const auto call = biometrics_stub->CreateEnrollment(&context, onStreamReceive);
 
-        // Send initial config message
-        api::v1::audio::AudioConfig audioConfig;
-        audioConfig.set_encoding(api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-        audioConfig.set_sampleratehertz(sampleRate);
-        audioConfig.set_audiochannelcount(1);
-        audioConfig.set_languagecode(config.languageCode);
+        // Create the enrollment config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto enrollment_config =
+            new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+        enrollment_config->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        enrollment_config->set_modelname(modelName);
+        enrollment_config->set_userid(userID);
+        enrollment_config->set_deviceid(config.getDeviceID());
+        enrollment_config->set_description(description);
+        enrollment_config->set_islivenessenabled(isLivenessEnabled);
+        enrollment_config->set_enrollmentnumutterances(numUtterances);
 
-        api::v1::audio::CreateEnrollmentConfig enrollment_config;
-        // TODO: should the audio config be allocated dynamically?
-        enrollment_config.set_allocated_audio(&audioConfig);
-        enrollment_config.set_modelname(modelName);
-        enrollment_config.set_userid(userID);
-        enrollment_config.set_deviceid(config.getDeviceID());
-        enrollment_config.set_description(description);
-        enrollment_config.set_islivenessenabled(isLivenessEnabled);
-        if (numUtterances != nullptr)
-            enrollment_config.set_enrollmentnumutterances(*numUtterances);
-        else if (enrollmentDuration != nullptr)
-            enrollment_config.set_enrollmentduration(*enrollmentDuration);
+        // Create the request with the pointer to the enrollment config.
+        ::sensory::api::v1::audio::CreateEnrollmentRequest request;
+        request.set_allocated_config(enrollment_config);
 
-        api::v1::audio::CreateEnrollmentRequest request;
-        // TODO: should the config be allocated dynamically?
-        request.set_allocated_config(&enrollment_config);
-
-        call.Write(request);
-        return call;
+        // Create the stream and write the initial configuration request.
+        CreateEnrollmentStream stream =
+            biometrics_stub->CreateEnrollment(&context);
+        stream->Write(request);
+        return stream;
     }
 
-    /// a type for bio-metric authentication streams
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating a text-independent audio enrollment.
+    ///
+    /// @param modelName The name of the model to use to create the enrollment.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param sampleRate The sample rate of the model.
+    /// @param langaugeCode the language code of the audio.
+    /// @param userID The unique user identifier.
+    /// @param description The description of the enrollment
+    /// @param isLivenessEnabled `true` to perform a liveness check in addition
+    /// to an enrollment, `false` to perform the enrollment without the liveness
+    /// check.
+    /// @param enrollmentDuration The duration in seconds for text-independent
+    /// enrollments, defaults to 12.5 without liveness enabled and 8 with
+    /// liveness enabled.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server
+    ///
+    /// @details
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
+    ///
+    inline CreateEnrollmentStream createTextIndependentEnrollment(
+        const std::string& modelName,
+        const int32_t& sampleRate,
+        const std::string& languageCode,
+        const std::string& userID,
+        const std::string& description = "",
+        const bool& isLivenessEnabled = false,
+        const float enrollmentDuration = -1.f
+    ) const {
+        // Create a context for the client for a bidirectional stream.
+        ::grpc::ClientContext context;
+        config.setupClientContext(context, tokenManager, true);
+
+        // Create the enrollment config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto enrollment_config =
+            new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+        enrollment_config->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        enrollment_config->set_modelname(modelName);
+        enrollment_config->set_userid(userID);
+        enrollment_config->set_deviceid(config.getDeviceID());
+        enrollment_config->set_description(description);
+        enrollment_config->set_islivenessenabled(isLivenessEnabled);
+        if (enrollmentDuration < 0.f)
+            enrollment_config->set_enrollmentduration(isLivenessEnabled ? 8.f : 12.5f);
+        else
+            enrollment_config->set_enrollmentduration(enrollmentDuration);
+
+        // Create the request with the pointer to the enrollment config.
+        ::sensory::api::v1::audio::CreateEnrollmentRequest request;
+        request.set_allocated_config(enrollment_config);
+
+        // Create the stream and write the initial configuration request.
+        CreateEnrollmentStream stream =
+            biometrics_stub->CreateEnrollment(&context);
+        stream->Write(request);
+        return stream;
+    }
+
+    /// A type for biometric authentication streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriterInterface<
+        ::grpc::ClientReaderWriter<
             ::sensory::api::v1::audio::AuthenticateRequest,
             ::sensory::api::v1::audio::AuthenticateResponse
         >
@@ -178,166 +259,112 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// authentication.
     ///
-    /// @param enrollmentID Enrollment to authenticate against
-    /// @param groupID enrollment group ID to authenticate against, enrollmentID will overwrite groupID if both are passed in
-    /// @param sampleRate Sample rate of model to validate
-    /// @param isLivenessEnabled Specifies if the authentication should include a liveness check
-    /// @param onStreamReceive Handler function to handle response sent form the server
-    /// @throws `NetworkError` if an error occurs while processing the cached server url
-    /// @returns Bidirectional stream that can be used to send audio data to the server
-    /// This call will automatically send the initial `AudioConfig` message to the server
+    /// @param enrollmentID The enrollment ID to authenticate against. This can
+    /// be either an enrollment ID or a group ID.
+    /// @param sampleRate The sample rate of the model.
+    /// @param langaugeCode the language code of the audio.
+    /// @param isLivenessEnabled `true` to perform a liveness check before the
+    /// authentication, `false` to only perform the authentication.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
     ///
-    template<typename T>
-    inline AuthenticateStream streamAuthenticate(
+    /// @details
+    /// This call will automatically send the initial `AuthenticateConfig`
+    /// message to the server.
+    ///
+    inline AuthenticateStream authenticate(
         const std::string& enrollmentID,
-        const std::string& groupID,
         const int32_t& sampleRate,
-        const bool& isLivenessEnabled,
-        const T& onStreamReceive
+        const std::string& languageCode,
+        const bool& isLivenessEnabled = false
     ) const {
-        // Create a context for the client.
-        grpc::ClientContext context;
+        // Create a context for the client for a bidirectional stream.
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
-        const auto call = biometrics_stub->Authenticate(&context, onStreamReceive);
 
-        // Send initial config message
-        api::v1::audio::AudioConfig audioConfig;
-        audioConfig.set_encoding(api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-        audioConfig.set_sampleratehertz(sampleRate);
-        audioConfig.set_audiochannelcount(1);
-        audioConfig.set_languagecode(config.languageCode);
+        // Create the authenticate config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto authenticateConfig =
+            new ::sensory::api::v1::audio::AuthenticateConfig;
+        authenticateConfig->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        authenticateConfig->set_enrollmentid(enrollmentID);
+        authenticateConfig->set_islivenessenabled(isLivenessEnabled);
 
-        api::v1::audio::AuthenticateConfig authenticateConfig;
-        // TODO: should the config be allocated dynamically?
-        authenticateConfig.set_allocated_audio(&audioConfig);
-        authenticateConfig.set_enrollmentid(groupID.empty() ? enrollmentID : groupID);
-        authenticateConfig.set_islivenessenabled(isLivenessEnabled);
+        // Create the request with the pointer to the enrollment config.
+        ::sensory::api::v1::audio::AuthenticateRequest request;
+        request.set_allocated_config(authenticateConfig);
 
-        api::v1::audio::AuthenticateRequest request;
-        // TODO: should the config be allocated dynamically?
-        request.set_allocated_config(&authenticateConfig);
-
-        call.Write(request);
-        return call;
+        // Create the stream and write the initial configuration request.
+        AuthenticateStream stream =
+            biometrics_stub->Authenticate(&context);
+        stream->Write(request);
+        return stream;
     }
 
-    /// @brief Open a bidirectional stream to the server for the purpose of
-    /// authentication against an audio enrollment.
-    ///
-    /// @param enrollmentID Enrollment to authenticate against
-    /// @param sampleRate Sample rate of model to validate
-    /// @param isLivenessEnabled Specifies if the authentication should also
-    /// include a liveness check
-    /// @param onStreamReceive Handler function to handle response sent form
-    /// the server
-    /// @throws `NetworkError` if an error occurs while processing the cached
-    /// server url
-    /// @returns Bidirectional stream that can be used to send audio data to
-    /// the server
-    /// @details
-    /// This call will automatically send the initial `AudioConfig` message to
-    /// the server
-    ///
-    template<typename T>
-    inline AuthenticateStream authenticateEnrollment(
-        const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const bool& isLivenessEnabled,
-        const T& onStreamReceive
-    ) const {
-        return streamAuthenticate(enrollmentID, "", sampleRate, isLivenessEnabled, onStreamReceive);
-    }
-
-    /// @brief Open a bidirectional stream to the server for the purpose of
-    /// authentication against an audio enrollment group
-    ///
-    /// @param groupID Enrollment group to authenticate against
-    /// @param sampleRate Sample rate of model to validate
-    /// @param isLivenessEnabled Specifies if the authentication should also
-    /// include a liveness check
-    /// @param onStreamReceive Handler function to handle response sent form
-    /// the server
-    /// @throws `NetworkError` if an error occurs while processing the cached
-    /// server url
-    /// @returns Bidirectional stream that can be used to send audio data to
-    /// the server
-    /// @details
-    /// This call will automatically send the initial `AudioConfig` message to
-    /// the server
-    ///
-    template<typename T>
-    inline AuthenticateStream authenticateGroup(
-        const std::string& groupID,
-        const int32_t& sampleRate,
-        const bool& isLivenessEnabled,
-        const T& onStreamReceive
-    ) const {
-        return streamAuthenticate("", groupID, sampleRate, isLivenessEnabled, onStreamReceive);
-    }
-
-    /// a type for trigger validation streams
+    /// A type for trigger validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriterInterface<
+        ::grpc::ClientReaderWriter<
             ::sensory::api::v1::audio::ValidateEventRequest,
             ::sensory::api::v1::audio::ValidateEventResponse
         >
     > ValidateTriggerStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
-    /// audio event validation
+    /// audio event validation.
     ///
-    /// @param modelName Name of model to validate
-    /// @param sampleRate Sample rate of model to validate
-    /// @param userID Unique user identifier
-    /// @param sensitivity How sensitive the model should be to false accepts
-    /// @param onStreamReceive Handler function to handle response sent form
-    /// the server
-    /// @throws `NetworkError` if an error occurs while processing the cached
-    /// server url
-    /// @returns Bidirectional stream that can be used to send audio data to
-    /// the server
+    /// @param modelName The name of the model to use to validate the trigger.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param sampleRate The sample rate of the model.
+    /// @param langaugeCode the language code of the audio.
+    /// @param userID The unique user identifier.
+    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
+    ///
     /// @details
-    /// This call will automatically send the initial `AudioConfig` message
-    /// to the server
+    /// This call will automatically send the initial `ValidateEventConfig`
+    /// message to the server.
     ///
-    template<typename T>
-    ValidateTriggerStream validateTrigger(
+    inline ValidateTriggerStream validateTrigger(
         const std::string& modelName,
         const int32_t& sampleRate,
+        const std::string& languageCode,
         const std::string& userID,
-        const api::v1::audio::ThresholdSensitivity& sensitivity,
-        const T& onStreamReceive
+        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
     ) const {
-        // Create a context for the client.
-        grpc::ClientContext context;
+        // Create a context for the client for a bidirectional stream.
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
-        const auto call = events_stub->ValidateEvent(&context, onStreamReceive);
 
-        // Send initial config message
-        api::v1::audio::AudioConfig audioConfig;
-        audioConfig.set_encoding(api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-        audioConfig.set_sampleratehertz(sampleRate);
-        audioConfig.set_audiochannelcount(1);
-        audioConfig.set_languagecode(config.languageCode);
+        // Create the validate event message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto validateEventConfig =
+            new ::sensory::api::v1::audio::ValidateEventConfig;
+        validateEventConfig->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        validateEventConfig->set_modelname(modelName);
+        validateEventConfig->set_userid(userID);
+        validateEventConfig->set_sensitivity(sensitivity);
 
-        api::v1::audio::ValidateEventConfig validateEventConfig;
-        // TODO: should the config be allocated dynamically?
-        validateEventConfig.set_allocated_audio(&audioConfig);
-        validateEventConfig.set_modelname(modelName);
-        validateEventConfig.set_userid(userID);
-        validateEventConfig.set_sensitivity(sensitivity);
+        // Create the request with the pointer to the enrollment config.
+        ::sensory::api::v1::audio::ValidateEventRequest request;
+        request.set_allocated_config(validateEventConfig);
 
-        api::v1::audio::ValidateEventRequest request;
-        // TODO: should the config be allocated dynamically?
-        request.set_allocated_config(&validateEventConfig);
-
-        call.Write(request);
-        return call;
+        // Create the stream and write the initial configuration request.
+        ValidateTriggerStream stream =
+            events_stub->ValidateEvent(&context);
+        stream->Write(request);
+        return stream;
     }
 
-    /// a type for bio-metric transcription streams
+    /// a type for biometric transcription streams
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriterInterface<
+        ::grpc::ClientReaderWriter<
             ::sensory::api::v1::audio::TranscribeRequest,
             ::sensory::api::v1::audio::TranscribeResponse
         >
@@ -346,50 +373,47 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
     ///
-    /// @param modelName Name of model to validate
-    /// @param sampleRate Sample rate of model to validate
-    /// @param userID Unique user identifier
-    /// @param onStreamReceive Handler function to handle response sent form
-    /// the server
-    /// @throws `NetworkError` if an error occurs while processing the cached
-    /// server url
-    /// @returns Bidirectional stream that can be used to send audio data to
-    /// the server
-    /// @details
-    /// This call will automatically send the initial `AudioConfig` message to
-    /// the server
+    /// @param modelName The name of the model to use to transcribe the audio.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param sampleRate The sample rate of the model.
+    /// @param langaugeCode the language code of the audio.
+    /// @param userID The unique user identifier.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
     ///
-    template<typename T>
+    /// @details
+    /// This call will automatically send the initial `TranscribeConfig`
+    /// message to the server.
+    ///
     inline TranscribeAudioStream transcribeAudio(
         const std::string& modelName,
         const int32_t& sampleRate,
-        const std::string& userID,
-        const T& onStreamReceive
+        const std::string& languageCode,
+        const std::string& userID
     ) const {
-        // Create a context for the client.
-        grpc::ClientContext context;
+        // Create a context for the client for a bidirectional stream.
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
-        const auto call = transcriptions_stub->Transcribe(&context, onStreamReceive);
 
-        // Send initial config message
-        api::v1::audio::AudioConfig audioConfig;
-        audioConfig.set_encoding(api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-        audioConfig.set_sampleratehertz(sampleRate);
-        audioConfig.set_audiochannelcount(1);
-        audioConfig.set_languagecode(config.languageCode);
+        // Create the transcribe audio message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
+        transcribeConfig->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        transcribeConfig->set_modelname(modelName);
+        transcribeConfig->set_userid(userID);
 
-        api::v1::audio::TranscribeConfig transcribeConfig;
-        // TODO: should the config be allocated dynamically?
-        transcribeConfig.set_allocated_audio(&audioConfig);
-        transcribeConfig.set_modelname(modelName);
-        transcribeConfig.set_userid(userID);
+        // Create the request with the pointer to the enrollment config.
+        ::sensory::api::v1::audio::TranscribeRequest request;
+        request.set_allocated_config(transcribeConfig);
 
-        api::v1::audio::TranscribeRequest request;
-        // TODO: should the config be allocated dynamically?
-        request.set_allocated_config(&transcribeConfig);
-
-        call.Write(request);
-        return call;
+        // Create the stream and write the initial configuration request.
+        TranscribeAudioStream stream =
+            transcriptions_stub->Transcribe(&context);
+        stream->Write(request);
+        return stream;
     }
 };
 
