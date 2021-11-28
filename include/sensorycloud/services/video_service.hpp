@@ -88,7 +88,7 @@ class VideoService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriterInterface<
+        ::grpc::ClientReaderWriter<
             ::sensory::api::v1::video::CreateEnrollmentRequest,
             ::sensory::api::v1::video::CreateEnrollmentResponse
         >
@@ -97,7 +97,7 @@ class VideoService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating a video enrollment.
     ///
-    /// @param modelName The name of the model to create the enrollment for.
+    /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
     /// @param userID The unique user identifier.
     /// @param description The description of the enrollment.
@@ -159,7 +159,8 @@ class VideoService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// video authentication.
     ///
-    /// @param enrollmentID The enrollment to authenticate against.
+    /// @param enrollmentID The enrollment ID to authenticate against. This can
+    /// be either an enrollment ID or a group ID.
     /// @param isLivenessEnabled `true` to perform a liveness check before the
     /// authentication, `false` to only perform the authentication.
     /// @param livenessThreshold The liveness threshold for the optional
@@ -202,7 +203,7 @@ class VideoService {
 
     /// A type for face liveness validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriterInterface<
+        ::grpc::ClientReaderWriter<
             ::sensory::api::v1::video::ValidateRecognitionRequest,
             ::sensory::api::v1::video::LivenessRecognitionResponse
         >
