@@ -51,11 +51,11 @@ template<typename SecureCredentialStore>
 class ManagementService {
  private:
     /// the global configuration for the remote connection
-    const Config& config;
+    const ::sensory::Config& config;
     /// the token manager for securing gRPC requests to the server
-    token_manager::TokenManager<SecureCredentialStore>& tokenManager;
+    ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// The gRPC stub for the enrollment service
-    std::unique_ptr<api::v1::management::EnrollmentService::Stub> stub;
+    std::unique_ptr<::sensory::api::v1::management::EnrollmentService::Stub> stub;
 
  public:
     /// @brief Initialize a new management service.
@@ -64,11 +64,11 @@ class ManagementService {
     /// @param tokenManager_ the token manager for requesting Bearer tokens
     ///
     ManagementService(
-        const Config& config_,
-        token_manager::TokenManager<SecureCredentialStore>& tokenManager_
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),
-        stub(api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
+        stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the current enrollments for the given userID
     ///
@@ -77,15 +77,15 @@ class ManagementService {
     /// @returns A future to be fulfilled with either a list of enrollments,
     /// or the network error that occurred
     ///
-    inline grpc::Status getEnrollments(
-        api::v1::management::GetEnrollmentsResponse* response,
+    inline ::grpc::Status getEnrollments(
+        ::sensory::api::v1::management::GetEnrollmentsResponse* response,
         const std::string& userID
     ) const {
         // Create a context for the client.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
         // Create the request
-        api::v1::management::GetEnrollmentsRequest request;
+        ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
         // Execute the remote procedure call synchronously and return the status
         return stub->GetEnrollments(&context, request, response);
@@ -101,15 +101,15 @@ class ManagementService {
     /// @details
     /// The server will prevent users from deleting their last enrollment
     ///
-    inline grpc::Status deleteEnrollment(
-        api::v1::management::EnrollmentResponse* response,
+    inline ::grpc::Status deleteEnrollment(
+        ::sensory::api::v1::management::EnrollmentResponse* response,
         const std::string& enrollmentID
     ) const {
         // Create a context for the client.
         grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
         // Create the request
-        api::v1::management::DeleteEnrollmentRequest request;
+        ::sensory::api::v1::management::DeleteEnrollmentRequest request;
         request.set_id(enrollmentID);
         // Execute the remote procedure call synchronously and return the result
         return stub->DeleteEnrollment(&context, request, response);
@@ -123,15 +123,15 @@ class ManagementService {
     /// @returns A future to be fulfilled with either a list of enrollment
     /// groups, or the network error that occurred
     ///
-    inline grpc::Status getEnrollmentGroups(
-        api::v1::management::GetEnrollmentGroupsResponse* response,
+    inline ::grpc::Status getEnrollmentGroups(
+        ::sensory::api::v1::management::GetEnrollmentGroupsResponse* response,
         const std::string& userID
     ) const {
         // Create a context for the client.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
         // Create the request
-        api::v1::management::GetEnrollmentsRequest request;
+        ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
         // Execute the remote procedure call synchronously and return the result
         return stub->GetEnrollmentGroups(&context, request, response);
@@ -156,8 +156,8 @@ class ManagementService {
     /// enrollments `appendEnrollmentGroup()` may be used to add enrollments
     /// to an enrollment group.
     ///
-    inline grpc::Status createEnrollmentGroup(
-        api::v1::management::EnrollmentGroupResponse* response,
+    inline ::grpc::Status createEnrollmentGroup(
+        ::sensory::api::v1::management::EnrollmentGroupResponse* response,
         const std::string& userID,
         const std::string& groupID,
         const std::string& groupName,
@@ -165,10 +165,10 @@ class ManagementService {
         const std::string& modelName
     ) const {
         // Create a context for the client.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
         // Create the request
-        api::v1::management::CreateEnrollmentGroupRequest request;
+        ::sensory::api::v1::management::CreateEnrollmentGroupRequest request;
         request.set_id(groupID);
         request.set_name(groupName);
         request.set_description(description);
@@ -187,16 +187,16 @@ class ManagementService {
     /// @returns A future to be fulfilled with either the updated enrollment
     /// group, or the network error that occurred
     ///
-    inline grpc::Status appendEnrollmentGroup(
-        api::v1::management::EnrollmentGroupResponse* response,
+    inline ::grpc::Status appendEnrollmentGroup(
+        ::sensory::api::v1::management::EnrollmentGroupResponse* response,
         const std::string& groupID,
         const std::vector<std::string>& enrollments
     ) const {
         // Create a context for the client.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
         // Create the request
-        api::v1::management::AppendEnrollmentGroupRequest request;
+        ::sensory::api::v1::management::AppendEnrollmentGroupRequest request;
         request.set_groupid(groupID);
         for (auto& enrollment: enrollments)
             request.add_enrollmentids(enrollment);
@@ -211,15 +211,15 @@ class ManagementService {
     /// @return A future to be fulfilled with either the deleted enrollment
     /// group, or the network error that occurred
     ///
-    inline grpc::Status deleteEnrollmentGroup(
-        api::v1::management::EnrollmentGroupResponse* response,
+    inline ::grpc::Status deleteEnrollmentGroup(
+        ::sensory::api::v1::management::EnrollmentGroupResponse* response,
         const std::string& id
     ) const {
         // Create a context for the client.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         config.setupClientContext(context, tokenManager, true);
         // Create the request
-        api::v1::management::DeleteEnrollmentGroupRequest request;
+        ::sensory::api::v1::management::DeleteEnrollmentGroupRequest request;
         request.set_id(id);
         // Execute the remote procedure call synchronously and return the result
         return stub->DeleteEnrollmentGroup(&context, request, response);

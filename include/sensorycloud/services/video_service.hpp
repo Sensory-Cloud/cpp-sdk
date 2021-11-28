@@ -46,7 +46,7 @@ template<typename SecureCredentialStore>
 class VideoService {
  private:
     /// the global configuration for the remote connection
-    const Config& config;
+    const ::sensory::Config& config;
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the video models service
@@ -63,7 +63,7 @@ class VideoService {
     /// @param tokenManager_ The token manager for requesting Bearer tokens.
     ///
     VideoService(
-        const Config& config_,
+        const ::sensory::Config& config_,
         ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),

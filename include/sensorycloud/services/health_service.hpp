@@ -48,30 +48,31 @@ namespace service {
 class HealthService {
  private:
     /// the global configuration for the remote connection
-    const Config& config;
+    const ::sensory::Config& config;
     /// The gRPC stub for the health service
-    std::unique_ptr<api::health::HealthService::Stub> stub;
+    std::unique_ptr<::sensory::api::health::HealthService::Stub> stub;
 
  public:
     /// @brief Initialize a new health service.
     ///
     /// @param config_ the global configuration for the remote connection
     ///
-    explicit HealthService(const Config& config_) : config(config_),
-        stub(api::health::HealthService::NewStub(config.getChannel())) { }
+    explicit HealthService(const ::sensory::Config& config_) : config(config_),
+        stub(::sensory::api::health::HealthService::NewStub(config.getChannel())) { }
 
     /// @brief Get the health status of the remote server.
     ///
     /// @param response the response object to store the result of the call in
     /// @returns a gRPC status object indicating whether the call succeeded
     ///
-    inline grpc::Status getHealth(api::common::ServerHealthResponse* response) const {
+    inline ::grpc::Status getHealth(
+      ::sensory::api::common::ServerHealthResponse* response
+   ) const {
         // Create a client context to query the health service. This request
         // does not require the "authorization" : "Bearer <token>" for auth.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         // Create the parameter-less request to execute on the remote server
-        api::health::HealthRequest request;
-        return stub->GetHealth(&context, request, response);
+        return stub->GetHealth(&context, {}, response);
     }
 };
 

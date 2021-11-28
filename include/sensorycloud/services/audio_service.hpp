@@ -45,7 +45,7 @@ template<typename SecureCredentialStore>
 class AudioService {
  private:
     /// the global configuration for the remote connection
-    const Config& config;
+    const ::sensory::Config& config;
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the audio models service
@@ -92,7 +92,7 @@ class AudioService {
     /// @param tokenManager_ the token manager for requesting Bearer tokens
     ///
     AudioService(
-        const Config& config_,
+        const ::sensory::Config& config_,
         ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),

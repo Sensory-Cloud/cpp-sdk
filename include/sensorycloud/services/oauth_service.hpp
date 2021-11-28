@@ -50,20 +50,20 @@ namespace service {
 class OAuthService {
  private:
     /// the global configuration for the remote connection
-    const Config& config;
+    const ::sensory::Config& config;
     /// The gRPC stub for the device service
-    std::unique_ptr<api::v1::management::DeviceService::Stub> device_stub;
+    std::unique_ptr<::sensory::api::v1::management::DeviceService::Stub> device_stub;
     /// The gRPC stub for the OAuth service
-    std::unique_ptr<api::oauth::OauthService::Stub> oauth_stub;
+    std::unique_ptr<::sensory::api::oauth::OauthService::Stub> oauth_stub;
 
  public:
     /// @brief Initialize a new OAuth service.
     ///
     /// @param config_ the global configuration for the remote connection
     ///
-    explicit OAuthService(const Config& config_) : config(config_),
-        device_stub(api::v1::management::DeviceService::NewStub(config.getChannel())),
-        oauth_stub(api::oauth::OauthService::NewStub(config.getChannel())) { }
+    explicit OAuthService(const ::sensory::Config& config_) : config(config_),
+        device_stub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),
+        oauth_stub(::sensory::api::oauth::OauthService::NewStub(config.getChannel())) { }
 
     /// @brief Create a new device enrollment.
     ///
@@ -99,7 +99,7 @@ class OAuthService {
         request.set_tenantid(config.getTenantID());
         request.set_name(name);
         request.set_credential(credential);
-        auto clientRequest = new api::common::GenericClient;
+        auto clientRequest = new ::sensory::api::common::GenericClient;
         clientRequest->set_clientid(clientID);
         clientRequest->set_secret(clientSecret);
         request.set_allocated_client(clientRequest);
@@ -114,16 +114,16 @@ class OAuthService {
     /// @param secret Client secret to use in token request
     /// @returns the status of the synchronous gRPC call
     ///
-    grpc::Status getToken(
-        api::common::TokenResponse* response,
+    ::grpc::Status getToken(
+        ::sensory::api::common::TokenResponse* response,
         const std::string& clientID,
         const std::string& secret
     ) {
         // Create a context for the client. Most requests require the existence
         // of a authorization Bearer token, but this request does not.
-        grpc::ClientContext context;
+        ::grpc::ClientContext context;
         // Create the token request from the function parameters.
-        api::oauth::TokenRequest request;
+        ::sensory::api::oauth::TokenRequest request;
         request.set_clientid(clientID);
         request.set_secret(secret);
         // Execute the remote procedure call synchronously
