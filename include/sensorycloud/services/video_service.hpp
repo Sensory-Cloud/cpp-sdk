@@ -122,7 +122,9 @@ class VideoService {
             ::sensory::api::v1::video::RecognitionThreshold::LOW
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
         config.setupClientContext(context, tokenManager, false);
 
         // Create the initial config message. gRPC expects a dynamically
@@ -143,7 +145,7 @@ class VideoService {
 
         // Create the stream and write the initial configuration request.
         CreateEnrollmentStream stream =
-            biometrics_stub->CreateEnrollment(&context);
+            biometrics_stub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
@@ -179,8 +181,10 @@ class VideoService {
             ::sensory::api::v1::video::RecognitionThreshold::LOW
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, false);
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
+        config.setupClientContext(*context, tokenManager, false);
 
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -196,7 +200,7 @@ class VideoService {
         request.set_allocated_config(authenticate_config);
 
         // Create the stream and write the initial configuration request.
-        AuthenticateStream stream = biometrics_stub->Authenticate(&context);
+        AuthenticateStream stream = biometrics_stub->Authenticate(context);
         stream->Write(request);
         return stream;
     }
@@ -230,7 +234,9 @@ class VideoService {
         const ::sensory::api::v1::video::RecognitionThreshold& threshold
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
         config.setupClientContext(context, tokenManager, false);
 
         // Create the initial config message. gRPC expects a dynamically
@@ -248,7 +254,7 @@ class VideoService {
 
         // Create the stream and write the initial configuration request.
         ValidateLivenessStream stream =
-            recognition_stub->ValidateLiveness(&context);
+            recognition_stub->ValidateLiveness(context);
         stream->Write(request);
         return stream;
     }
