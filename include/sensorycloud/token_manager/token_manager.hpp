@@ -63,7 +63,8 @@ static const struct {
 } TAGS;
 
 /// @brief A token manager class for generating OAuth tokens.
-/// @tparam SecureCredentialStore a secure CRUD class for storing credentials.
+/// @tparam SecureCredentialStore A secure key-value store for storing and
+/// fetching credentials and tokens.
 template<typename SecureCredentialStore>
 class TokenManager {
  private:
