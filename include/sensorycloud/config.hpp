@@ -227,30 +227,6 @@ class Config {
         );
     }
 
-    /// @brief Create a new gRPC client context for gRPC calls.
-    ///
-    /// @tparam TokenManager the type of the token manager
-    /// @param tokenManager the token manager for retrieving tokens
-    /// @param isUnary whether the connection is unary
-    /// @returns a new client context for gRPC calls
-    ///
-    // template<typename TokenManager>
-    // inline std::unique_ptr<grpc::ClientContext> getClientContext(
-    //     const TokenManager& tokenManager,
-    //     const bool& isUnary=false
-    // ) {
-    //     // Create a new client context.
-    //     std::unique_ptr<grpc::ClientContext> context(new grpc::ClientContext);
-    //     // Get the OAuth token and write it to the metadata header
-    //     context->AddMetadata("authorization",
-    //         std::string("Bearer ") + tokenManager.getAccessToken()
-    //     );
-    //     if (isUnary)  // Set the deadline for the RPC call
-    //         context->set_deadline(getDeadline());
-
-    //     return context;
-    // }
-
     /// @brief Setup an existing gRPC client context for gRPC calls.
     ///
     /// @tparam TokenManager the type of the token manager
