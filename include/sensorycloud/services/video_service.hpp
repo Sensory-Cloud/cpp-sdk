@@ -125,7 +125,7 @@ class VideoService {
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
-        config.setupClientContext(context, tokenManager, false);
+        config.setupClientContext(*context, tokenManager, false);
 
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -237,7 +237,7 @@ class VideoService {
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
-        config.setupClientContext(context, tokenManager, false);
+        config.setupClientContext(*context, tokenManager, false);
 
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
