@@ -190,5 +190,13 @@ int main(int argc, const char** argv) {
             break;
     }
 
+    stream->WritesDone();
+    status = stream->Finish();
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Authenticate stream failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+
     return 0;
 }
