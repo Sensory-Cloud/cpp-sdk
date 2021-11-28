@@ -68,7 +68,7 @@ template<typename SecureCredentialStore>
 class TokenManager {
  private:
     /// the OAuth service to get secure tokens from the remote host
-    service::OAuthService& service;
+    ::sensory::service::OAuthService& service;
     /// the key-chain to interact with to store / query key-value pairs
     SecureCredentialStore& keychain;
 
@@ -79,8 +79,8 @@ class TokenManager {
     /// @param keychain_ the key-chain to query secure credentials from
     ///
     explicit TokenManager(
-        service::OAuthService& service_,
-        SecureCredentialStore& keychain_
+        ::sensory::service::OAuthService& service_,
+        ::sensory::SecureCredentialStore& keychain_
     ) : service(service_), keychain(keychain_) { }
 
     /// @brief Generate and store a new set of OAuth credentials.
