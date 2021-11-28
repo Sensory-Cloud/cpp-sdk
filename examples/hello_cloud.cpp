@@ -25,13 +25,13 @@
 
 #include <iostream>
 #include <sensorycloud/config.hpp>
-#include <sensorycloud/services/management_service.hpp>
+#include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
+#include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
 #include <sensorycloud/token_manager/keychain.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
-#include <sensorycloud/services/health_service.hpp>
 
 int main() {
     std::cout << "Hello, Sensory Cloud C++ SDK!" << std::endl;
