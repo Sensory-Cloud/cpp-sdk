@@ -25,14 +25,16 @@
 
 #include <iostream>
 #include <sensorycloud/config.hpp>
-#include <sensorycloud/services/management_service.hpp>
+#include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
+#include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
 #include <sensorycloud/token_manager/keychain.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
+#include <opencv2/imgproc.hpp>
 
 int main(int argc, const char** argv) {
     cv::CommandLineParser parser(argc, argv, "{help h||}{@device||}");
@@ -48,6 +50,95 @@ int main(int argc, const char** argv) {
         parser.printErrors();
         return 0;
     }
+
+
+
+    // Initialize the configuration to the host for given address and port
+    sensory::Config config(
+        "io.stage.cloud.sensory.com",
+        443,
+        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
+        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+    );
+    std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
+
+    // Query the health of the remote service.
+    auto healthService = sensory::service::HealthService(config);
+    sensory::api::common::ServerHealthResponse serverHealth;
+    auto status = healthService.getHealth(&serverHealth);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetHealth failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    // Report the health of the remote service
+    std::cout << "Server status:" << std::endl;
+    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
+    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
+    std::cout << "\tid: " << serverHealth.id() << std::endl;
+
+    // Query the user ID
+    std::string userID = "";
+    std::cout << "user ID: ";
+    std::cin >> userID;
+    // Query the shared pass-phrase
+    std::string password = "";
+    std::cout << "password: ";
+    std::cin >> password;
+
+    // Create an OAuth service
+    auto oauthService = sensory::service::OAuthService(config);
+    sensory::token_manager::Keychain keychain("com.sensory.cloud");
+    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
+
+    // Get the client ID and client secret from the secure credential store
+    const auto clientID = keychain.at("clientID");
+    const auto clientSecret = keychain.at("clientSecret");
+
+    // Query the available video models
+    std::cout << "Available video models:" << std::endl;
+    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, token_manager);
+    sensory::api::v1::video::GetModelsResponse videoModelsResponse;
+    status = videoService.getModels(&videoModelsResponse);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetVideoModels failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& model : videoModelsResponse.models())
+        std::cout << "\t" << model.name() << std::endl;
+
+    std::string videoModel = "";
+    std::cout << "Video model: ";
+    std::cin >> videoModel;
+
+    // Query this user's active enrollments
+    std::cout << "Active enrollments:" << std::endl;
+    sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, token_manager);
+    sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
+    status = mgmtService.getEnrollments(&enrollmentResponse, userID);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "GetEnrollments failed with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& enrollment : enrollmentResponse.enrollments()) {
+        std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
+        std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
+        std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
+        std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
+        std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
+        // std::cout << "\t\tCreated: "       << enrollment.createdat()    << std::endl;
+        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+    }
+
+    std::string enrollmentID = "";
+    std::cout << "Enrollment ID: ";
+    std::cin >> enrollmentID;
+
+    // Create the stream
+    auto stream = videoService.authenticate(enrollmentID);
 
     // Create an image capture object
     cv::VideoCapture capture;
@@ -66,14 +157,31 @@ int main(int argc, const char** argv) {
 
     // Start capturing frames from the device.
     std::cout << "Video capturing has been started ..." << std::endl;
-    cv::Mat frame;
     for (;;) {
+        cv::Mat frame;
         capture >> frame;
         if (frame.empty())
             break;
+
+        cv::imshow("Sensory Cloud C++ SDK OpenCV Face Authentication Example", frame);
+        std::vector<unsigned char> buffer;
+        cv::imencode(".jpg", frame, buffer);
+
+        sensory::api::v1::video::AuthenticateRequest request;
+        request.set_imagecontent(buffer.data(), buffer.size());
+        stream->Write(request);
+        sensory::api::v1::video::AuthenticateResponse response;
+        stream->Read(&response);
+
+        std::cout << "Frame Response:" << std::endl;
+        std::cout << "Success:\t"  << response.success() << std::endl;
+        std::cout << "Score:\t"    << response.score() << std::endl;
+        std::cout << "Is Alive:\t" << response.isalive() << std::endl;
+
+        if (response.success()) break;
+
         // double t = 0;
         // t = (double)getTickCount();
-        cv::imshow("Sensory Cloud C++ SDK OpenCV Face Authentication Example", frame);
         // t = (double)getTickCount() - t;
         // printf("render time = %g ms\n", t*1000/getTickFrequency());
 
