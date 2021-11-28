@@ -80,7 +80,7 @@ class TokenManager {
     ///
     explicit TokenManager(
         ::sensory::service::OAuthService& service_,
-        ::sensory::SecureCredentialStore& keychain_
+        SecureCredentialStore& keychain_
     ) : service(service_), keychain(keychain_) { }
 
     /// @brief Generate and store a new set of OAuth credentials.
@@ -142,8 +142,6 @@ class TokenManager {
     /// the server.
     ///
     std::string getAccessToken() const {
-        static constexpr std::chrono::seconds tokenExpirationBuffer = std::chrono::seconds(300);
-
         // TODO: Prevent multiple access tokens from being requested at the same time
 
         if (!hasToken())  // no access token has been generated and stored
@@ -154,7 +152,7 @@ class TokenManager {
         // check for expiration of the token
         const auto now = std::chrono::system_clock::now();
         const auto expiration = timestamp_to_timepoint(expirationDate);
-        if (now > expiration - tokenExpirationBuffer) {  // token has expired
+        if (now > expiration - std::chrono::minutes(5)) {  // token has expired
             // std::cout << "Cached access token has expired, requesting new token" << std::endl;
             return fetchNewAccessToken();
         }
