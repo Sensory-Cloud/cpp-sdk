@@ -31,8 +31,8 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
-#include "sensorycloud/generated/common/common.pb.h"
-#include "sensorycloud/generated/validate/validate.pb.h"
+#include "common/common.pb.h"
+#include "validate/validate.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_v1_2fmanagement_2fdevice_2eproto

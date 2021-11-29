@@ -6,7 +6,7 @@
 #ifndef GRPC_health_2fhealth_2eproto__INCLUDED
 #define GRPC_health_2fhealth_2eproto__INCLUDED
 
-#include "sensorycloud/generated/health/health.pb.h"
+#include "health/health.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_generic_service.h>

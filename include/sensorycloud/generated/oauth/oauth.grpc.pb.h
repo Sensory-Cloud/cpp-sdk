@@ -6,7 +6,7 @@
 #ifndef GRPC_oauth_2foauth_2eproto__INCLUDED
 #define GRPC_oauth_2foauth_2eproto__INCLUDED
 
-#include "sensorycloud/generated/oauth/oauth.pb.h"
+#include "oauth/oauth.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_generic_service.h>

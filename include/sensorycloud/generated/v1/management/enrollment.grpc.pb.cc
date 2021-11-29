@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: v1/management/enrollment.proto
 
-#include "sensorycloud/generated/v1/management/enrollment.pb.h"
-#include "sensorycloud/generated/v1/management/enrollment.grpc.pb.h"
+#include "v1/management/enrollment.pb.h"
+#include "v1/management/enrollment.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_stream.h>

@@ -6,7 +6,7 @@
 #ifndef GRPC_v1_2fevent_2fevent_2eproto__INCLUDED
 #define GRPC_v1_2fevent_2fevent_2eproto__INCLUDED
 
-#include "sensorycloud/generated/v1/event/event.pb.h"
+#include "v1/event/event.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_generic_service.h>

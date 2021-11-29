@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: health/health.proto
 
-#include "sensorycloud/generated/health/health.pb.h"
-#include "sensorycloud/generated/health/health.grpc.pb.h"
+#include "health/health.pb.h"
+#include "health/health.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_stream.h>

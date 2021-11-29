@@ -6,7 +6,7 @@
 #ifndef GRPC_v1_2fvideo_2fvideo_2eproto__INCLUDED
 #define GRPC_v1_2fvideo_2fvideo_2eproto__INCLUDED
 
-#include "sensorycloud/generated/v1/video/video.pb.h"
+#include "v1/video/video.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_generic_service.h>

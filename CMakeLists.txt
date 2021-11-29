@@ -146,22 +146,26 @@ file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS
 foreach(PROTO IN ITEMS ${PROTOS})
     # Create the proto header file
     string(REPLACE ".proto" ".pb.h" PROTO_HDR ${PROTO})
+    string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_HDR ${PROTO_HDR})
     list(APPEND PROTO_HDRS ${PROTO_HDR})
     # Create the proto definition file
     string(REPLACE ".proto" ".pb.cc" PROTO_SRC ${PROTO})
+    string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_SRC ${PROTO_SRC})
     list(APPEND PROTO_SRCS ${PROTO_SRC})
     # Create the gRPC header file
     string(REPLACE ".proto" ".grpc.pb.h" GRPC_HDR ${PROTO})
+    string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_HDR ${GRPC_HDR})
     list(APPEND GRPC_HDRS ${GRPC_HDR})
     # Create the gRPC definition file
     string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
+    string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_SRC ${GRPC_SRC})
     list(APPEND GRPC_SRCS ${GRPC_SRC})
     # Create the command to generate the protobuff code
     add_custom_command(
         OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
         COMMAND ${_PROTOBUF_PROTOC}
-        ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
-            --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+        ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated"
+            --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated"
             --proto_path="${CMAKE_CURRENT_BINARY_DIR}/proto"
             --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
             "${PROTO}"
@@ -190,6 +194,7 @@ endforeach()
 # --- Library ----------------------------------------------------------------
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated")
 
 # Locate the header files for the sensorycloud library
 file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
@@ -208,7 +213,12 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 
 # Create the sensorycloud library
 add_library(sensorycloud STATIC)
-target_sources(sensorycloud PRIVATE ${INCLUDES} ${SOURCES})
+target_sources(sensorycloud PRIVATE ${INCLUDES} ${SOURCES}
+    ${PROTO_SRCS}
+    ${PROTO_HDRS}
+    ${GRPC_SRCS}
+    ${GRPC_HDRS}
+)
 target_include_directories(sensorycloud PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>

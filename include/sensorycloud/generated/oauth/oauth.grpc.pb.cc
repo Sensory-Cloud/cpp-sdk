@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: oauth/oauth.proto
 
-#include "sensorycloud/generated/oauth/oauth.pb.h"
-#include "sensorycloud/generated/oauth/oauth.grpc.pb.h"
+#include "oauth/oauth.pb.h"
+#include "oauth/oauth.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_stream.h>

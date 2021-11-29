@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: v1/event/event.proto
 
-#include "sensorycloud/generated/v1/event/event.pb.h"
-#include "sensorycloud/generated/v1/event/event.grpc.pb.h"
+#include "v1/event/event.pb.h"
+#include "v1/event/event.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_stream.h>

@@ -2,8 +2,8 @@
 // If you make any local change, they will be lost.
 // source: v1/audio/audio.proto
 
-#include "sensorycloud/generated/v1/audio/audio.pb.h"
-#include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
+#include "v1/audio/audio.pb.h"
+#include "v1/audio/audio.grpc.pb.h"
 
 #include <functional>
 #include <grpcpp/impl/codegen/async_stream.h>
