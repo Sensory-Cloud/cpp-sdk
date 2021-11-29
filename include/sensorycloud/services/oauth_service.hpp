@@ -56,6 +56,14 @@ class OAuthService {
     /// The gRPC stub for the OAuth service
     std::unique_ptr<::sensory::api::oauth::OauthService::Stub> oauth_stub;
 
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    OAuthService(const OAuthService& other);
+
  public:
     /// @brief Initialize a new OAuth service.
     ///

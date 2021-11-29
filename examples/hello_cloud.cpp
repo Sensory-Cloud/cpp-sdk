@@ -46,7 +46,7 @@ int main() {
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
     // Query the health of the remote service.
-    auto healthService = sensory::service::HealthService(config);
+    sensory::service::HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealth;
     auto status = healthService.getHealth(&serverHealth);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -64,52 +64,40 @@ int main() {
     std::string userID = "";
     std::cout << "user ID: ";
     std::cin >> userID;
-    // Query the shared pass-phrase
-    std::string password = "";
-    std::cout << "password: ";
-    std::cin >> password;
-
-    sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    //
-    // keychain.erase("clientID");
-    // keychain.erase("clientSecret");
-    //
-    // keychain.emplace("clientID", sensory::token_manager::uuid_v4());
-    // std::cout << keychain.at("clientID") << std::endl;
-    //
-    // keychain.emplace("clientSecret", sensory::token_manager::secure_random<16>());
-    // std::cout << keychain.at("clientSecret") << std::endl;
-    //
-    // Get the client ID and client secret from the secure credential store
-    const auto clientID = keychain.at("clientID");
-    const auto clientSecret = keychain.at("clientSecret");
 
     // Create an OAuth service
-    auto oauthService = sensory::service::OAuthService(config);
-    if (false) {  // the device is not enrolled yet, enroll it
+    sensory::token_manager::Keychain keychain("com.sensory.cloud");
+    sensory::service::OAuthService oauthService(config);
+    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
+
+    if (!token_manager.hasSavedCredentials()) {  // the device is not registered
+        // Generate a new clientID and clientSecret for this device
+        const auto credentials = token_manager.generateCredentials();
+
+        // Query the shared pass-phrase
+        std::string password = "";
+        std::cout << "password: ";
+        std::cin >> password;
+
+        // Register this device with the remote host
         sensory::api::v1::management::DeviceResponse enrollResponse;
-        auto status = oauthService.enrollDevice(&enrollResponse, userID, password, clientID, clientSecret);
+        auto status = oauthService.enrollDevice(&enrollResponse, userID, password, credentials.id, credentials.secret);
         if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "EnrollDevice failed with\n\t" <<
+            std::cout << "Failed to register device with\n\t" <<
                 status.error_code() << ": " << status.error_message() << std::endl;
             return 1;
         }
-        std::cout << "Your user name is \"" << enrollResponse.name() << "\"" << std::endl;
-        std::cout << "Your device ID is \"" << enrollResponse.deviceid() << "\"" << std::endl;
     }
 
-    // Fetch a new OAuth token from the remote service
-    sensory::api::common::TokenResponse tokenResponse;
-    status = oauthService.getToken(&tokenResponse, clientID, clientSecret);
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetToken failed with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
+    // // Fetch a new OAuth token from the remote service
+    // sensory::api::common::TokenResponse tokenResponse;
+    // status = oauthService.getToken(&tokenResponse, credentials.id, credentials.secret);
+    // if (!status.ok()) {  // the call failed, print a descriptive message
+    //     std::cout << "GetToken failed with\n\t" <<
+    //         status.error_code() << ": " << status.error_message() << std::endl;
+    //     return 1;
+    // }
     // std::cout << "Your current token is " << tokenResponse.accesstoken() << std::endl;
-
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
-    // const auto access_token = token_manager.getAccessToken();
 
     // Query the available video models
     std::cout << "Available video models:" << std::endl;

@@ -58,6 +58,14 @@ class AudioService {
     /// the gRPC stub for the audio transcriptions service
     std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::Stub> transcriptions_stub;
 
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    AudioService(const AudioService& other);
+
     /// @brief Create a new audio config for an audio streaming application.
     ///
     /// @brief sampleRate The sample rate of the audio stream.

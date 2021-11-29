@@ -56,6 +56,14 @@ class VideoService {
     /// the gRPC stub for the video recognition service
     std::unique_ptr<::sensory::api::v1::video::VideoRecognition::Stub> recognition_stub;
 
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    VideoService(const VideoService& other);
+
  public:
     /// @brief Initialize a new video service.
     ///

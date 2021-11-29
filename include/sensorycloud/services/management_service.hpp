@@ -58,6 +58,14 @@ class ManagementService {
     /// The gRPC stub for the enrollment service
     std::unique_ptr<::sensory::api::v1::management::EnrollmentService::Stub> stub;
 
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    ManagementService(const ManagementService& other);
+
  public:
     /// @brief Initialize a new management service.
     ///

@@ -63,7 +63,7 @@ int main(int argc, const char** argv) {
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
     // Query the health of the remote service.
-    auto healthService = sensory::service::HealthService(config);
+    sensory::service::HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealth;
     auto status = healthService.getHealth(&serverHealth);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -87,7 +87,7 @@ int main(int argc, const char** argv) {
     std::cin >> password;
 
     // Create an OAuth service
-    auto oauthService = sensory::service::OAuthService(config);
+    sensory::service::OAuthService oauthService(config);
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
 

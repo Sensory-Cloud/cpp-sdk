@@ -73,6 +73,12 @@ class TokenManager {
     /// the key-chain to interact with to store / query key-value pairs
     SecureCredentialStore& keychain;
 
+    /// @brief Create a copy of this object.
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    TokenManager(const TokenManager& other);
+
  public:
     /// @brief Initialize a new token manager.
     ///
@@ -102,7 +108,15 @@ class TokenManager {
         keychain.emplace(TAGS.ClientID, clientID);
         keychain.emplace(TAGS.ClientSecret, secret);
         // Return a new access token with the credentials
-        return AccessTokenCredentials{clientID, secret};
+        return {clientID, secret};
+    }
+
+    /// @brief Return the stored credentials.
+    ///
+    /// @returns the clientID and clientSecret in a AccessTokenCredentials.
+    ///
+    inline AccessTokenCredentials getCredentials() const {
+        return {keychain.at(TAGS.ClientID), keychain.at(TAGS.ClientSecret)};
     }
 
     /// @brief Determine if a credentials pair is stored on the device.
