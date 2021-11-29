@@ -97,8 +97,13 @@ int main(int argc, const char** argv) {
         std::cin >> password;
 
         // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse enrollResponse;
-        auto status = oauthService.enrollDevice(&enrollResponse, userID, password, credentials.id, credentials.secret);
+        sensory::api::v1::management::DeviceResponse registerResponse;
+        auto status = oauthService.registerDevice(&registerResponse,
+            userID,
+            password,
+            credentials.id,
+            credentials.secret
+        );
         if (!status.ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to register device with\n\t" <<
                 status.error_code() << ": " << status.error_message() << std::endl;

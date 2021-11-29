@@ -91,7 +91,7 @@ class OAuthService {
     /// -   A shared secret (password)
     /// -   A signed JWT
     ///
-    ::grpc::Status enrollDevice(
+    ::grpc::Status registerDevice(
         ::sensory::api::v1::management::DeviceResponse* response,
         const std::string& name,
         const std::string& credential,
