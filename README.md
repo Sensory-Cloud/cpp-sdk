@@ -431,7 +431,7 @@ std::string userID = "user";
 // Create a response for the RPC.
 sensory::api::v1::management::GetEnrollmentsResponse rsp;
 auto status = mgmtService.getEnrollments(&rsp, userID);
-if (!status.ok()) {  // the call failed, print a descriptive message
+if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get enrollments with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
     // Handle error...
@@ -456,7 +456,15 @@ for (auto& enrollment : rsp.enrollments()) {
 ##### Deleting Enrollments
 
 ```c++
-TODO
+// The UUID of the enrollment to delete.
+std::string enrollmentID = "45ad3215-1d4c-42aa-aec4-2724e9ce1d99";
+
+sensory::api::v1::management::EnrollmentResponse rsp;
+auto status = mgmtService.deleteEnrollment(&rsp, enrollmentID);
+if (!status.ok()) {  // The call failed, print a descriptive message.
+    std::cout << "Failed to delete enrollment with\n\t" <<
+        status.error_code() << ": " << status.error_message() << std::endl;
+}
 ```
 
 ##### Fetching Enrollment Groups
@@ -468,7 +476,7 @@ std::string userID = "user";
 // Create a response for the RPC.
 sensory::api::v1::management::GetEnrollmentGroupsResponse rsp;
 status = mgmtService.getEnrollmentGroups(&rsp, userID);
-if (!status.ok()) {  // the call failed, print a descriptive message
+if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get enrollment groups with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
     // Handle error...
@@ -504,7 +512,15 @@ TODO
 ##### Deleting Enrollment Groups
 
 ```c++
-TODO
+// The UUID of the group to delete.
+std::string groupID = "13481e19-5853-47d0-ba61-6819914405bb";
+
+sensory::api::v1::management::EnrollmentGroupResponse rsp;
+auto status = mgmtService.deleteEnrollmentGroup(&rsp, groupID);
+if (!status.ok()) {  // The call failed, print a descriptive message.
+    std::cout << "Failed to delete enrollment group with\n\t" <<
+        status.error_code() << ": " << status.error_message() << std::endl;
+}
 ```
 
 ## Development
