@@ -24,6 +24,7 @@
 //
 
 #include <iostream>
+#include <google/protobuf/util/time_util.h>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
@@ -50,8 +51,6 @@ int main(int argc, const char** argv) {
         parser.printErrors();
         return 0;
     }
-
-
 
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
@@ -145,7 +144,12 @@ int main(int argc, const char** argv) {
         std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
         std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
         std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
-        // std::cout << "\t\tCreated: "       << enrollment.createdat()    << std::endl;
+        std::cout << "\t\tCreated: "
+            << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
+            << std::endl;
+        std::cout << "\t\tUpdated: "
+            << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
+            << std::endl;
         std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
     }
 
