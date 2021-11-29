@@ -163,7 +163,6 @@ foreach(PROTO IN ITEMS ${PROTOS})
             --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated"
             --proto_path="${CMAKE_CURRENT_BINARY_DIR}/proto"
             --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-            # -I="/usr/local/include"
             -I="${protobuf_SOURCE_DIR}/../src"
             "${PROTO}"
         DEPENDS "${PROTO}" always_rebuild
@@ -178,11 +177,16 @@ add_custom_command(
     COMMAND cmake -E echo
 )
 
+# This block is taken from the protobuf CMakeLists.txt and tells the compiler
+# where the header files are located. These are necessary for using google proto
+# dependencies.
 include_directories(
   ${ZLIB_INCLUDE_DIRECTORIES}
   ${protobuf_BINARY_DIR}
   ${protobuf_SOURCE_DIR}/../src)
 
+# TODO Remove these debugging statements
+message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
 message(STATUS protobuf_BINARY_DIR=${protobuf_BINARY_DIR})
 message(STATUS protobuf_source_dir=${protobuf_SOURCE_DIR})
 
