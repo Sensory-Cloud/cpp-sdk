@@ -92,22 +92,22 @@ lint() {
 
 # Compile the unit test suite.
 compile_tests() {
-  make test_sensorycloud_config
+  make tests
 }
 
 # Compile the benchmark suite.
 compile_benchmarks() {
-  echo 'TODO'
+  make benchmarks
 }
 
 # Execute the unit test suite.
 run_tests() {
-  ./build/test_sensorycloud_config
+  find build -name "test*" -exec echo {} \; -exec {} \;
 }
 
 # Execute the benchmark suite.
 run_benchmarks() {
-  echo 'TODO'
+  find build -name "benchmark*" -exec echo {} \; -exec {} \;
 }
 
 # --- Body ---------------------------------------------------------
@@ -136,7 +136,7 @@ case "$1" in
     exit 0;
     ;;
 
-  "bench"|"b")
+  "benchmark"|"b")
     compile
     compile_benchmarks
     run_benchmarks

@@ -476,5 +476,5 @@ To compile and run the unit tests, execute:
 To compile and run the benchmarks, execute:
 
 ```shell
-./cs.sh bench
+./cs.sh benchmark
 ```
