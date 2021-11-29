@@ -248,6 +248,7 @@ if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Failed to register device with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
+        // Handle error...
     }
 }
 ```
@@ -297,6 +298,7 @@ auto status = audioService.getModels(&rsp);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get audio models with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
+    // Handle error...
 }
 ```
 
@@ -369,6 +371,7 @@ auto status = videoService.getModels(&rsp);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get video models with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
+    // Handle error...
 }
 ```
 
@@ -431,7 +434,7 @@ auto status = mgmtService.getEnrollments(&rsp, userID);
 if (!status.ok()) {  // the call failed, print a descriptive message
     std::cout << "Failed to get enrollments with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
-    return 1;
+    // Handle error...
 }
 for (auto& enrollment : rsp.enrollments()) {
     std::cout << "Description: "     << enrollment.description()  << std::endl;
@@ -468,7 +471,7 @@ status = mgmtService.getEnrollmentGroups(&rsp, userID);
 if (!status.ok()) {  // the call failed, print a descriptive message
     std::cout << "Failed to get enrollment groups with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
-    return 1;
+    // Handle error...
 }
 for (auto& enrollment : rsp.enrollmentgroups()) {
     std::cout << "Description: "     << enrollment.description()  << std::endl;
