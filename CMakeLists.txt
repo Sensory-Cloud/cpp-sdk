@@ -82,13 +82,8 @@ elseif(GRPC_FETCHCONTENT)
     # similar to a git submodule.
     message(STATUS "Using gRPC via add_subdirectory (FetchContent).")
     include(FetchContent)
-    FetchContent_Declare(
-        grpc
+    FetchContent_Declare(grpc
         GIT_REPOSITORY https://github.com/grpc/grpc.git
-        # when using gRPC, you will actually set this to an existing tag, such as
-        # v1.25.0, v1.26.0 etc..
-        # For the purpose of testing, we override the tag used to the commit
-        # that's currently under test.
         GIT_TAG        v1.42.0
     )
     FetchContent_MakeAvailable(grpc)
@@ -168,28 +163,28 @@ foreach(PROTO IN ITEMS ${PROTOS})
             --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated"
             --proto_path="${CMAKE_CURRENT_BINARY_DIR}/proto"
             --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+            # -I="/usr/local/include"
+            -I="${protobuf_SOURCE_DIR}/../src"
             "${PROTO}"
-        DEPENDS "${PROTO}"
+        DEPENDS "${PROTO}" always_rebuild
     )
 endforeach()
 
-# message(PROTO_HDRS=${PROTO_HDRS})
-# message(PROTO_SRCS=${PROTO_SRCS})
-# message(GRPC_HDRS=${GRPC_HDRS})
-# message(GRPC_SRCS=${GRPC_SRCS})
+# Dummy output which is never actually produced. Anything that depends on
+# this will always be rebuilt. Stack Overflow Reference:
+# https://stackoverflow.com/questions/13920072/how-to-always-run-command-when-building-regardless-of-any-dependency
+add_custom_command(
+    OUTPUT always_rebuild
+    COMMAND cmake -E echo
+)
 
-# add_library(sensorycloud_proto
-#     ${PROTO_SRCS}
-#     ${PROTO_HDRS}
-#     ${GRPC_SRCS}
-#     ${GRPC_HDRS}
-# )
+include_directories(
+  ${ZLIB_INCLUDE_DIRECTORIES}
+  ${protobuf_BINARY_DIR}
+  ${protobuf_SOURCE_DIR}/../src)
 
-# target_link_libraries(sensorycloud_proto PUBLIC
-#     ${_REFLECTION}
-#     ${_GRPC_GRPCPP}
-#     ${_PROTOBUF_LIBPROTOBUF}
-# )
+message(STATUS protobuf_BINARY_DIR=${protobuf_BINARY_DIR})
+message(STATUS protobuf_source_dir=${protobuf_SOURCE_DIR})
 
 # --- Library ----------------------------------------------------------------
 
