@@ -89,23 +89,13 @@ int main() {
         }
     }
 
-    // // Fetch a new OAuth token from the remote service
-    // sensory::api::common::TokenResponse tokenResponse;
-    // status = oauthService.getToken(&tokenResponse, credentials.id, credentials.secret);
-    // if (!status.ok()) {  // the call failed, print a descriptive message
-    //     std::cout << "GetToken failed with\n\t" <<
-    //         status.error_code() << ": " << status.error_message() << std::endl;
-    //     return 1;
-    // }
-    // std::cout << "Your current token is " << tokenResponse.accesstoken() << std::endl;
-
     // Query the available video models
     std::cout << "Available video models:" << std::endl;
     sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, token_manager);
     sensory::api::v1::video::GetModelsResponse videoModelsResponse;
     status = videoService.getModels(&videoModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetVideoModels failed with\n\t" <<
+        std::cout << "Failed to get video models with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
@@ -118,7 +108,7 @@ int main() {
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
     status = audioService.getModels(&audioModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetAudioModels failed with\n\t" <<
+        std::cout << "Failed to get audio models with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
@@ -131,7 +121,7 @@ int main() {
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetEnrollments failed with\n\t" <<
+        std::cout << "Failed to get enrollments with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
@@ -151,7 +141,7 @@ int main() {
     sensory::api::v1::management::GetEnrollmentGroupsResponse enrollmentGroupResponse;
     status = mgmtService.getEnrollmentGroups(&enrollmentGroupResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetEnrollmentGroups failed with\n\t" <<
+        std::cout << "Failed to get enrollment groups with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }

@@ -81,19 +81,30 @@ int main(int argc, const char** argv) {
     std::string userID = "";
     std::cout << "user ID: ";
     std::cin >> userID;
-    // Query the shared pass-phrase
-    std::string password = "";
-    std::cout << "password: ";
-    std::cin >> password;
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
     sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
 
-    // Get the client ID and client secret from the secure credential store
-    const auto clientID = keychain.at("clientID");
-    const auto clientSecret = keychain.at("clientSecret");
+    if (!token_manager.hasSavedCredentials()) {  // the device is not registered
+        // Generate a new clientID and clientSecret for this device
+        const auto credentials = token_manager.generateCredentials();
+
+        // Query the shared pass-phrase
+        std::string password = "";
+        std::cout << "password: ";
+        std::cin >> password;
+
+        // Register this device with the remote host
+        sensory::api::v1::management::DeviceResponse enrollResponse;
+        auto status = oauthService.enrollDevice(&enrollResponse, userID, password, credentials.id, credentials.secret);
+        if (!status.ok()) {  // the call failed, print a descriptive message
+            std::cout << "Failed to register device with\n\t" <<
+                status.error_code() << ": " << status.error_message() << std::endl;
+            return 1;
+        }
+    }
 
     // Query the available video models
     std::cout << "Available video models:" << std::endl;
