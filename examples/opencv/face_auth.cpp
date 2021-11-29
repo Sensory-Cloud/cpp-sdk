@@ -85,11 +85,11 @@ int main(int argc, const char** argv) {
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> token_manager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> tokenManager(oauthService, keychain);
 
-    if (!token_manager.hasSavedCredentials()) {  // the device is not registered
+    if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
-        const auto credentials = token_manager.generateCredentials();
+        const auto credentials = tokenManager.generateCredentials();
 
         // Query the shared pass-phrase
         std::string password = "";
@@ -113,7 +113,7 @@ int main(int argc, const char** argv) {
 
     // Query the available video models
     std::cout << "Available video models:" << std::endl;
-    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, token_manager);
+    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, tokenManager);
     sensory::api::v1::video::GetModelsResponse videoModelsResponse;
     status = videoService.getModels(&videoModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -130,7 +130,7 @@ int main(int argc, const char** argv) {
 
     // Query this user's active enrollments
     std::cout << "Active enrollments:" << std::endl;
-    sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, token_manager);
+    sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, tokenManager);
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
