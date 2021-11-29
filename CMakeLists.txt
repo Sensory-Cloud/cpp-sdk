@@ -188,7 +188,7 @@ include_directories(
 # TODO Remove these debugging statements
 message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
 message(STATUS protobuf_BINARY_DIR=${protobuf_BINARY_DIR})
-message(STATUS protobuf_source_dir=${protobuf_SOURCE_DIR})
+message(STATUS protobuf_SOURCE_DIR=${protobuf_SOURCE_DIR})
 
 # --- Library ----------------------------------------------------------------
 
