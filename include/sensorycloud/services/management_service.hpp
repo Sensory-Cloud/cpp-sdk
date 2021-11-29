@@ -178,7 +178,9 @@ class ManagementService {
         config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest request;
-        request.set_id(groupID);
+        request.set_id(
+            groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
+        );
         request.set_name(groupName);
         request.set_description(description);
         request.set_modelname(modelName);
@@ -190,7 +192,7 @@ class ManagementService {
     /// @brief Append enrollments to an existing enrollment group.
     ///
     /// @param response the response to store the result of the RPC into
-    /// @param groupID GroupID of the enrollment group to append enrollments to
+    /// @param groupID The ID of the enrollment group to append enrollments to
     /// @param enrollments A list of enrollment ids to append to the enrollment
     /// group
     /// @returns A future to be fulfilled with either the updated enrollment
@@ -216,20 +218,20 @@ class ManagementService {
     /// @brief Request the deletion of enrollment groups.
     ///
     /// @param response the response to store the result of the RPC into
-    /// @param id: group ID to delete
+    /// @param groupID The group ID to delete
     /// @return A future to be fulfilled with either the deleted enrollment
     /// group, or the network error that occurred
     ///
     inline ::grpc::Status deleteEnrollmentGroup(
         ::sensory::api::v1::management::EnrollmentGroupResponse* response,
-        const std::string& id
+        const std::string& groupID
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
         config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest request;
-        request.set_id(id);
+        request.set_id(groupID);
         // Execute the remote procedure call synchronously and return the result
         return stub->DeleteEnrollmentGroup(&context, request, response);
     }
