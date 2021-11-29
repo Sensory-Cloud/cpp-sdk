@@ -1,75 +1,208 @@
-cmake_minimum_required(VERSION 3.2)
+# Copyright 2018 Sensory, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# cmake build file for C++ Sensory Cloud.
+
+cmake_minimum_required(VERSION 3.5.1)
+
 project(sensory-cloud-cpp-sdk)
 
-# Setup the C++ environment
-set(CMAKE_C_STANDARD 99)
+# Log the source directory
+message(CMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}")
+
+# Output built binaries to a `build` directory instead of the project root
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
+
 set(CMAKE_CXX_STANDARD 11)
 add_compile_options(-std=c++11)
 
-# Log the source directory
-message(PROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
-
-# Output built binaries to a `build` directory instead of the project root
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/build")
+if(MSVC)
+  add_definitions(-D_WIN32_WINNT=0x600)
+endif()
 
 # --- Dependencies -----------------------------------------------------------
 
-# Find SSL, which must be installed externally (it has no CMake script support)
-find_package(OpenSSL REQUIRED)
-message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
+find_package(Threads REQUIRED)
 
-include(FetchContent)
+option(GRPC_AS_SUBMODULE "Install with gRPC as a submodule" OFF)
+option(GRPC_FETCHCONTENT "Install with gRPC using FetchContent" OFF)
+option(CMAKE_CROSSCOMPILING "Use system protoc compiler" OFF)
 
-# Find/Fetch the ProtoBuf dependency
-option(USE_SYSTEM_PROTO "Use system-installed ProtoBuf" OFF)
-if(USE_SYSTEM_PROTO)  # Use the system-wide ProtoBuf installation
-    message(STATUS "Using system-installed ProtoBuf")
-    find_package(Protobuf REQUIRED)
-    include_directories(${Protobuf_INCLUDE_DIRS})
-else()  # Install a local copy of ProtoBuf
-    message(STATUS "Using local ProtoBuf")
-    FetchContent_Declare(Protobuf
-        GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-        GIT_TAG        v3.13.0
-    )
-    set(FETCHCONTENT_QUIET OFF)
-    FetchContent_MakeAvailable(Protobuf)
-endif()
+if(GRPC_AS_SUBMODULE)
+    # One way to build a projects that uses gRPC is to just include the
+    # entire gRPC project tree via "add_subdirectory".
+    # This approach is very simple to use, but the are some potential
+    # disadvantages:
+    # * it includes gRPC's CMakeLists.txt directly into your build script
+    #   without and that can make gRPC's internal setting interfere with your
+    #   own build.
+    # * depending on what's installed on your system, the contents of submodules
+    #   in gRPC's third_party/* might need to be available (and there might be
+    #   additional prerequisites required to build them). Consider using
+    #   the gRPC_*_PROVIDER options to fine-tune the expected behavior.
+    #
+    # A more robust approach to add dependency on gRPC is using
+    # cmake's ExternalProject_Add (see cmake_externalproject/CMakeLists.txt).
 
-# Find/Fetch the gRPC dependency
-option(USE_SYSTEM_GRPC "Use system-installed gRPC" OFF)
-if(USE_SYSTEM_GRPC)  # Use the system-wide gRPC installation
-    message(STATUS "Using system-installed gRPC")
-    find_package(gRPC CONFIG REQUIRED)
-    # Create an alias to match how grpc++ will be namespaced when installed
-    # locally using FetchContent.
-    add_library(grpc++ ALIAS gRPC::grpc++)
-else()  # Install a local copy of gRPC
-    message(STATUS "Using local gRPC")
-    FetchContent_Declare(gRPC
-        GIT_REPOSITORY https://github.com/grpc/grpc
+    # Include the gRPC's cmake build (normally grpc source code would live
+    # in a git submodule called "third_party/grpc", but this example lives in
+    # the same repository as gRPC sources, so we just look a few directories up)
+    add_subdirectory(../../.. ${CMAKE_CURRENT_BINARY_DIR}/grpc EXCLUDE_FROM_ALL)
+    message(STATUS "Using gRPC via add_subdirectory.")
+
+    # After using add_subdirectory, we can now use the grpc targets directly from
+    # this build.
+    set(_PROTOBUF_LIBPROTOBUF libprotobuf)
+    set(_REFLECTION grpc++_reflection)
+    if(CMAKE_CROSSCOMPILING)
+        find_program(_PROTOBUF_PROTOC protoc)
+    else()
+        set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+    endif()
+    set(_GRPC_GRPCPP grpc++)
+    if(CMAKE_CROSSCOMPILING)
+        find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+    else()
+        set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+    endif()
+elseif(GRPC_FETCHCONTENT)
+    # Another way is to use CMake's FetchContent module to clone gRPC at
+    # configure time. This makes gRPC's source code available to your project,
+    # similar to a git submodule.
+    message(STATUS "Using gRPC via add_subdirectory (FetchContent).")
+    include(FetchContent)
+    FetchContent_Declare(
+        grpc
+        GIT_REPOSITORY https://github.com/grpc/grpc.git
+        # when using gRPC, you will actually set this to an existing tag, such as
+        # v1.25.0, v1.26.0 etc..
+        # For the purpose of testing, we override the tag used to the commit
+        # that's currently under test.
         GIT_TAG        v1.42.0
     )
-    set(FETCHCONTENT_QUIET OFF)
-    FetchContent_MakeAvailable(gRPC)
+    FetchContent_MakeAvailable(grpc)
+
+    # Since FetchContent uses add_subdirectory under the hood, we can use
+    # the grpc targets directly from this build.
+    set(_PROTOBUF_LIBPROTOBUF libprotobuf)
+    set(_REFLECTION grpc++_reflection)
+    set(_PROTOBUF_PROTOC $<TARGET_FILE:protoc>)
+    set(_GRPC_GRPCPP grpc++)
+    if(CMAKE_CROSSCOMPILING)
+        find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+    else()
+        set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+    endif()
+else()
+    # This branch assumes that gRPC and all its dependencies are already installed
+    # on this system, so they can be located by find_package().
+
+    # Find Protobuf installation
+    # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
+    set(protobuf_MODULE_COMPATIBLE TRUE)
+    find_package(Protobuf REQUIRED)
+    message(STATUS "Using protobuf ${Protobuf_VERSION}")
+
+    set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
+    set(_REFLECTION gRPC::grpc++_reflection)
+    if(CMAKE_CROSSCOMPILING)
+        find_program(_PROTOBUF_PROTOC protoc)
+    else()
+        set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+    endif()
+
+    # Find gRPC installation
+    # Looks for gRPCConfig.cmake file installed by gRPC's cmake installation.
+    find_package(gRPC CONFIG REQUIRED)
+    message(STATUS "Using gRPC ${gRPC_VERSION}")
+
+    set(_GRPC_GRPCPP gRPC::grpc++)
+    if(CMAKE_CROSSCOMPILING)
+        find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+    else()
+        set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+    endif()
 endif()
+
+# message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
+# message(STATUS _GRPC_CPP_PLUGIN_EXECUTABLE=${_GRPC_CPP_PLUGIN_EXECUTABLE})
+
+# Locate the proto files for the sensorycloud library
+file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/proto/*.proto
+)
+
+foreach(PROTO IN ITEMS ${PROTOS})
+    # Create the proto header file
+    string(REPLACE ".proto" ".pb.h" PROTO_HDR ${PROTO})
+    list(APPEND PROTO_HDRS ${PROTO_HDR})
+    # Create the proto definition file
+    string(REPLACE ".proto" ".pb.cc" PROTO_SRC ${PROTO})
+    list(APPEND PROTO_SRCS ${PROTO_SRC})
+    # Create the gRPC header file
+    string(REPLACE ".proto" ".grpc.pb.h" GRPC_HDR ${PROTO})
+    list(APPEND GRPC_HDRS ${GRPC_HDR})
+    # Create the gRPC definition file
+    string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
+    list(APPEND GRPC_SRCS ${GRPC_SRC})
+    # Create the command to generate the protobuff code
+    add_custom_command(
+        OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
+        COMMAND ${_PROTOBUF_PROTOC}
+        ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+            --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+            --proto_path="${CMAKE_CURRENT_BINARY_DIR}/proto"
+            --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+            "${PROTO}"
+        DEPENDS "${PROTO}"
+    )
+endforeach()
+
+# message(PROTO_HDRS=${PROTO_HDRS})
+# message(PROTO_SRCS=${PROTO_SRCS})
+# message(GRPC_HDRS=${GRPC_HDRS})
+# message(GRPC_SRCS=${GRPC_SRCS})
+
+# add_library(sensorycloud_proto
+#     ${PROTO_SRCS}
+#     ${PROTO_HDRS}
+#     ${GRPC_SRCS}
+#     ${GRPC_HDRS}
+# )
+
+# target_link_libraries(sensorycloud_proto PUBLIC
+#     ${_REFLECTION}
+#     ${_GRPC_GRPCPP}
+#     ${_PROTOBUF_LIBPROTOBUF}
+# )
 
 # --- Library ----------------------------------------------------------------
 
-# include_directories("${PROJECT_SOURCE_DIR}/include/sensorycloud")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud")
 
 # Locate the header files for the sensorycloud library
 file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
-    ${PROJECT_SOURCE_DIR}/include/*.h
-    ${PROJECT_SOURCE_DIR}/include/*.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/include/*.h
+    ${CMAKE_CURRENT_BINARY_DIR}/include/*.hpp
 )
 # message(INCLUDES="${INCLUDES}")
 
 # Locate the definition files for the sensorycloud library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
-    ${PROJECT_SOURCE_DIR}/src/*.c
-    ${PROJECT_SOURCE_DIR}/src/*.cc
-    ${PROJECT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/src/*.c
+    ${CMAKE_CURRENT_BINARY_DIR}/src/*.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/src/*.cpp
 )
 # message(SOURCES="${SOURCES}")
 
@@ -84,24 +217,22 @@ target_compile_features(sensorycloud PUBLIC cxx_std_11)
 set_target_properties(sensorycloud PROPERTIES
     PUBLIC_HEADER include/sensorycloud/sensorycloud.hpp
 )
-# Link with the Protobuf library
-target_link_libraries(sensorycloud PRIVATE ${Protobuf_LIBRARIES})
-# Link with the OpenSSL library
-target_link_libraries(sensorycloud PUBLIC OpenSSL::SSL)
-target_link_libraries(sensorycloud PUBLIC OpenSSL::Crypto)
-# Link with the gRPC library
-target_link_libraries(sensorycloud PRIVATE grpc++)
-
-# add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
+target_link_libraries(sensorycloud PUBLIC
+    ${_REFLECTION}
+    ${_GRPC_GRPCPP}
+    ${_PROTOBUF_LIBPROTOBUF})
 
 if (APPLE)
+    # Target the Keychain library for using the MacOS keychain
     target_compile_definitions(sensorycloud PUBLIC -DKEYCHAIN_MACOS=1)
-
+    # Target the mandatory libraries for using the Keychain in MacOS
     find_library(COREFOUNDATION_LIBRARY CoreFoundation REQUIRED)
     find_library(SECURITY_LIBRARY Security REQUIRED)
-
+    # Target the link libraries for Keychain usage on MacOS
     target_link_libraries(sensorycloud PRIVATE ${COREFOUNDATION_LIBRARY} ${SECURITY_LIBRARY})
 endif()
+
+# add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
 # --- Test Cases -------------------------------------------------------------
 
@@ -110,6 +241,7 @@ option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" OFF)
 if (BUILD_TESTS)
 
 # Install the Catch2 development dependency
+include(FetchContent)
 FetchContent_Declare(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG        v2.13.7
@@ -117,10 +249,10 @@ FetchContent_Declare(Catch2
 FetchContent_MakeAvailable(Catch2)
 
 # Find the source files for the test code to compile iteratively
-file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tests/*.cpp)
 foreach(TEST_SOURCE IN ITEMS ${TEST_SOURCES})
     # Convert the path name to an executable name to build.
-    string(REPLACE "${PROJECT_SOURCE_DIR}/tests/" "test_" BINARY_NAME ${TEST_SOURCE})
+    string(REPLACE "${CMAKE_CURRENT_BINARY_DIR}/tests/" "test_" BINARY_NAME ${TEST_SOURCE})
     string(REPLACE "/" "_" BINARY_NAME ${BINARY_NAME})
     string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
     # Create the binary and link it with the required libraries
@@ -156,15 +288,18 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 add_executable(hello_cloud examples/hello_cloud.cpp)
 target_link_libraries(hello_cloud PRIVATE sensorycloud)
 
+add_executable(management_demo examples/management_demo.cpp)
+target_link_libraries(management_demo PRIVATE sensorycloud)
+
 add_executable(opencv_face_auth examples/opencv/face_auth.cpp)
 target_link_libraries(opencv_face_auth PRIVATE sensorycloud)
 target_link_libraries(opencv_face_auth PRIVATE ${OpenCV_LIBS})
 
 # # Find the source files for the test code to compile iteratively
-# file(GLOB_RECURSE EXAMPLE_SOURCES CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/examples/*.cpp)
+# file(GLOB_RECURSE EXAMPLE_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/examples/*.cpp)
 # foreach(EXAMPLE_SOURCE IN ITEMS ${EXAMPLE_SOURCES})
 #     # Convert the path name to an executable name to build.
-#     string(REPLACE "${PROJECT_SOURCE_DIR}/examples/" "example_" BINARY_NAME ${EXAMPLE_SOURCE})
+#     string(REPLACE "${CMAKE_CURRENT_BINARY_DIR}/examples/" "example_" BINARY_NAME ${EXAMPLE_SOURCE})
 #     string(REPLACE "/" "_" BINARY_NAME ${BINARY_NAME})
 #     string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
 #     # Create the binary and link it with the required libraries
