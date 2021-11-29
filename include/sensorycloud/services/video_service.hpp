@@ -89,7 +89,7 @@ class VideoService {
     ) const {
         // Create a context for the client for a unary call.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Execute the RPC synchronously and return the status
         return models_stub->GetModels(&context, {}, response);
     }
@@ -133,7 +133,7 @@ class VideoService {
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
-        config.setupClientContext(*context, tokenManager, false);
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -192,7 +192,7 @@ class VideoService {
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
-        config.setupClientContext(*context, tokenManager, false);
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -245,7 +245,7 @@ class VideoService {
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
-        config.setupClientContext(*context, tokenManager, false);
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope

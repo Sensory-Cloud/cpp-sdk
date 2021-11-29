@@ -92,7 +92,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
@@ -116,7 +116,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentRequest request;
         request.set_id(enrollmentID);
@@ -138,7 +138,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
@@ -175,7 +175,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest request;
         request.set_id(groupID);
@@ -203,7 +203,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest request;
         request.set_groupid(groupID);
@@ -226,7 +226,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest request;
         request.set_id(id);

@@ -120,7 +120,7 @@ class AudioService {
     ) const {
         // Create a context for the client for a unary call.
         ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        config.setupUnaryClientContext(context, tokenManager);
         // Execute the RPC synchronously and return the status
         return models_stub->GetModels(&context, {}, response);
     }
@@ -164,8 +164,10 @@ class AudioService {
         const uint32_t numUtterances = 4
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the enrollment config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -225,8 +227,10 @@ class AudioService {
         const float enrollmentDuration = -1.f
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the enrollment config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -288,8 +292,10 @@ class AudioService {
         const bool& isLivenessEnabled = false
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the authenticate config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -345,8 +351,10 @@ class AudioService {
         const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the validate event message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
@@ -401,8 +409,10 @@ class AudioService {
         const std::string& userID
     ) const {
         // Create a context for the client for a bidirectional stream.
-        ::grpc::ClientContext context;
-        config.setupClientContext(context, tokenManager, true);
+        // TODO: will the stream automatically free this dynamically allocated
+        // context?
+        auto context = new ::grpc::ClientContext;
+        config.setupBidiClientContext(*context, tokenManager);
 
         // Create the transcribe audio message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope

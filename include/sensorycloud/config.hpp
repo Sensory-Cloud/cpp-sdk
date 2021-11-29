@@ -227,26 +227,37 @@ class Config {
         );
     }
 
-    /// @brief Setup an existing gRPC client context for gRPC calls.
+    /// @brief Setup an existing client context for unary gRPC calls.
     ///
     /// @tparam TokenManager the type of the token manager
     /// @param context the context to setup with a Bearer token and deadline
     /// @param tokenManager the token manager for retrieving tokens
-    /// @param isUnary whether the connection is unary
-    /// @returns a new client context for gRPC calls
     ///
     template<typename TokenManager>
-    inline void setupClientContext(
+    inline void setupUnaryClientContext(
         ::grpc::ClientContext& context,
-        TokenManager& tokenManager,
-        const bool& isUnary=false
+        TokenManager& tokenManager
     ) const {
-        // Get the OAuth token and write it to the metadata header
         context.AddMetadata("authorization",
             std::string("Bearer ") + tokenManager.getAccessToken()
         );
-        if (isUnary)  // Set the deadline for the RPC call
-            context.set_deadline(getDeadline());
+        context.set_deadline(getDeadline());
+    }
+
+    /// @brief Setup an existing client context for bidirectional gRPC calls.
+    ///
+    /// @tparam TokenManager the type of the token manager
+    /// @param context the context to setup with a Bearer token and deadline
+    /// @param tokenManager the token manager for retrieving tokens
+    ///
+    template<typename TokenManager>
+    inline void setupBidiClientContext(
+        ::grpc::ClientContext& context,
+        TokenManager& tokenManager
+    ) const {
+        context.AddMetadata("authorization",
+            std::string("Bearer ") + tokenManager.getAccessToken()
+        );
     }
 
     /// @brief Set the JPEG compression level to a new value.
