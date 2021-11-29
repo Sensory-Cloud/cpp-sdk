@@ -239,6 +239,10 @@ if (APPLE)
     find_library(SECURITY_LIBRARY Security REQUIRED)
     # Target the link libraries for Keychain usage on MacOS
     target_link_libraries(sensorycloud PRIVATE ${COREFOUNDATION_LIBRARY} ${SECURITY_LIBRARY})
+elseif (UNIX)
+    message(STATUS Unix)
+elseif(MSVC)
+    message(STATUS Windows)
 endif()
 
 # add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
