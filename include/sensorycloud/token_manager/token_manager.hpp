@@ -45,11 +45,6 @@ struct AccessTokenCredentials {
     std::string secret;
 };
 
-// #define ClientID "clientID"
-// #define ClientSecret "clientSecret"
-// #define AccessToken "accessToken"
-// #define Expiration "expiration"
-
 /// @brief Keychain tags used to store OAuth credentials for Sensory Cloud.
 static const struct {
     /// the ID of the client device (A RFC-4122v4 UUID)
@@ -76,28 +71,32 @@ class TokenManager {
     /// @brief Create a copy of this object.
     ///
     /// @details
-    /// This copy constructor is private to prevent the copying of this object
+    /// This copy constructor is private to prevent the copying of this object.
+    ///
     TokenManager(const TokenManager& other);
 
  public:
     /// @brief Initialize a new token manager.
     ///
-    /// @param service_ the OAuth service for requesting new tokens
-    /// @param keychain_ the key-chain to query secure credentials from
+    /// @param service_ The OAuth service for requesting new tokens.
+    /// @param keychain_ The keychain to query secure credentials from.
     ///
     TokenManager(
         ::sensory::service::OAuthService& service_,
         SecureCredentialStore& keychain_
     ) : service(service_), keychain(keychain_) { }
 
-    /// @brief Generate and store a new set of OAuth credentials.
+    /// @brief Generate a new set of OAuth credentials and store them in the
+    /// keychain.
     ///
-    /// @returns The generated OAuth credentials
+    /// @returns The generated OAuth credentials.
     /// @throws An error if credentials cannot be securely generated or if the
-    /// credentials cannot be stored in the Keychain.
+    /// credentials cannot be stored in the keychain.
+    ///
     /// @details
     /// This function will overwrite any other credentials that have been
-    /// generated using this function.
+    /// generated using this function, i.e., the `clientID` and `clientSecret`
+    /// in the keychain.
     ///
     inline AccessTokenCredentials generateCredentials() const {
         // Generate a new client ID and secure random secrete string
@@ -113,30 +112,45 @@ class TokenManager {
 
     /// @brief Return the stored credentials.
     ///
-    /// @returns the clientID and clientSecret in a AccessTokenCredentials.
+    /// @returns The `clientID` and `clientSecret` from the keychain in an
+    /// `AccessTokenCredentials` instance.
     ///
-    inline AccessTokenCredentials getCredentials() const {
+    inline AccessTokenCredentials getSavedCredentials() const {
         return {keychain.at(TAGS.ClientID), keychain.at(TAGS.ClientSecret)};
     }
 
-    /// @brief Determine if a credentials pair is stored on the device.
+    /// @brief Determine if client ID and client secret are stored on device.
     ///
-    /// @returns `true` if a credential pair is found, `false` otherwise
+    /// @returns `true` if a credential pair is found, `false` otherwise.
+    ///
+    /// @details
+    /// This function checks for the existence of the `clientID` and
+    /// `clientSecret` keys in the keychain.
     ///
     inline bool hasSavedCredentials() const {
-        return keychain.contains(TAGS.ClientID) && keychain.contains(TAGS.ClientSecret);
+        return keychain.contains(TAGS.ClientID) &&
+            keychain.contains(TAGS.ClientSecret);
     }
 
     /// @brief Determine if any token is stored on the device.
     ///
     /// @returns `true` if a token is found, `false` otherwise
     ///
+    /// @details
+    /// This function checks for the existence of the `accessToken` and
+    /// `expiration` keys in the keychain.
+    ///
     inline bool hasToken() const {
-        return keychain.contains(TAGS.AccessToken) && keychain.contains(TAGS.Expiration);
+        return keychain.contains(TAGS.AccessToken) &&
+            keychain.contains(TAGS.Expiration);
     }
 
     /// @brief Delete any credentials stored for requesting access tokens, as
     /// well as any cached access tokens on device.
+    ///
+    /// @details
+    /// This will erase the `clientID`, `clientSecret`, `accessToken`, and
+    /// `expiration` keys-value pairs from the secure credential store.
     ///
     inline void deleteCredentials() const {
         keychain.erase(TAGS.AccessToken);
@@ -147,9 +161,9 @@ class TokenManager {
 
     /// @brief Return a valid access token for Sensory Cloud gRPC calls.
     ///
-    /// @throws An error if one occurs while retrieving the saved token, or if
-    /// an error occurs while requesting a new one
     /// @returns A valid access token
+    /// @throws An error if one occurs while retrieving the saved token, or if
+    /// an error occurs while requesting a new one.
     /// @details
     /// This function will immediately return if the cached access token is
     /// still valid. If a new token needs to be requested, this function will
@@ -167,9 +181,8 @@ class TokenManager {
         // check for expiration of the token
         const auto now = std::chrono::system_clock::now();
         const auto expiration = timestamp_to_timepoint(expirationDate);
-        if (now > expiration - std::chrono::minutes(5)) {  // token has expired
+        if (now > expiration - std::chrono::minutes(5))  // token has expired
             return fetchNewAccessToken();
-        }
         return accessToken;
     }
 
