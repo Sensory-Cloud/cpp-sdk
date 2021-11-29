@@ -236,10 +236,10 @@ if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
     // Use a shared secret, i.e., pass-phrase to authenticate the device.
     std::string insecureSharedSecret = "password";
     // Create a response for the RPC.
-    sensory::api::v1::management::DeviceResponse registerResponse;
+    sensory::api::v1::management::DeviceResponse rsp;
     // Perform the RPC and check the status for errors.
     auto status = oauthService.registerDevice(
-        &registerResponse,
+        &rsp,
         userID,
         insecureSharedSecret,
         credentials.id,
@@ -291,9 +291,9 @@ which audio models are accessible to you, you can execute the below code.
 
 ```c++
 // Create a response for the RPC.
-sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
+sensory::api::v1::audio::GetModelsResponse rsp;
 // Execute the RPC and check the status for errors.
-status = audioService.getModels(&audioModelsResponse);
+auto status = audioService.getModels(&rsp);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get audio models with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
@@ -363,9 +363,9 @@ which video models are accessible to you, you can execute the below code.
 
 ```c++
 // Create a response for the RPC.
-sensory::api::v1::video::GetModelsResponse videoModelsResponse;
+sensory::api::v1::video::GetModelsResponse rsp;
 // Execute the RPC and check the status for errors.
-status = videoService.getModels(&videoModelsResponse);
+auto status = videoService.getModels(&rsp);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get video models with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
@@ -422,7 +422,32 @@ sensory::service::ManagementService<sensory::token_manager::Keychain>
 ##### Fetching Enrollments
 
 ```c++
-TODO
+// The name of the user to fetch enrollments for.
+std::string userID = "user";
+
+// Create a response for the RPC.
+sensory::api::v1::management::GetEnrollmentsResponse rsp;
+auto status = mgmtService.getEnrollments(&rsp, userID);
+if (!status.ok()) {  // the call failed, print a descriptive message
+    std::cout << "Failed to get enrollments with\n\t" <<
+        status.error_code() << ": " << status.error_message() << std::endl;
+    return 1;
+}
+for (auto& enrollment : rsp.enrollments()) {
+    std::cout << "Description: "     << enrollment.description()  << std::endl;
+    std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
+    std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
+    std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
+    std::cout << "\tUser ID: "       << enrollment.userid()       << std::endl;
+    std::cout << "\tDevice ID: "     << enrollment.deviceid()     << std::endl;
+    std::cout << "\tCreated: "
+        << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
+        << std::endl;
+    std::cout << "\tUpdated: "
+        << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
+        << std::endl;
+    std::cout << "\tID: "            << enrollment.id()    << std::endl;
+}
 ```
 
 ##### Deleting Enrollments
@@ -434,7 +459,31 @@ TODO
 ##### Fetching Enrollment Groups
 
 ```c++
-TODO
+// The name of the user to fetch enrollment groups for.
+std::string userID = "user";
+
+// Create a response for the RPC.
+sensory::api::v1::management::GetEnrollmentGroupsResponse rsp;
+status = mgmtService.getEnrollmentGroups(&rsp, userID);
+if (!status.ok()) {  // the call failed, print a descriptive message
+    std::cout << "Failed to get enrollment groups with\n\t" <<
+        status.error_code() << ": " << status.error_message() << std::endl;
+    return 1;
+}
+for (auto& enrollment : rsp.enrollmentgroups()) {
+    std::cout << "Description: "     << enrollment.description()  << std::endl;
+    std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
+    std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
+    std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
+    std::cout << "\tUser ID: "       << enrollment.userid()       << std::endl;
+    std::cout << "\tCreated: "
+        << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
+        << std::endl;
+    std::cout << "\tUpdated: "
+        << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
+        << std::endl;
+    std::cout << "\tID: "            << enrollment.id()    << std::endl;
+}
 ```
 
 ##### Creating Enrollment Groups
