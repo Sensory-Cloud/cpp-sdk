@@ -256,7 +256,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         CreateEnrollmentStream stream =
-            biometrics_stub->CreateEnrollment(&context);
+            biometrics_stub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
@@ -314,7 +314,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         AuthenticateStream stream =
-            biometrics_stub->Authenticate(&context);
+            biometrics_stub->Authenticate(context);
         stream->Write(request);
         return stream;
     }
@@ -374,7 +374,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         ValidateTriggerStream stream =
-            events_stub->ValidateEvent(&context);
+            events_stub->ValidateEvent(context);
         stream->Write(request);
         return stream;
     }
@@ -430,7 +430,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         TranscribeAudioStream stream =
-            transcriptions_stub->Transcribe(&context);
+            transcriptions_stub->Transcribe(context);
         stream->Write(request);
         return stream;
     }
