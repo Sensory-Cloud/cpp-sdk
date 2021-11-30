@@ -1,4 +1,4 @@
-// An example of wake word audio based on PortAudio input streams.
+// An example of wake word audio based on PortAudio blocking input streams.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -112,115 +112,119 @@ int main(int argc, const char** argv) {
     std::cout << "Audio model: ";
     std::cin >> audioModel;
 
-    // Create the stream
+    // the maximal duration of the recording in seconds
+    static constexpr auto DURATION = 10;
+    // the sample rate of the input audio stream. This should match the sample
+    // rate of the selected model
+    static constexpr auto SAMPLE_RATE = 16000;
+    // The number of input channels from the microphone. This should always be
+    // mono.
+    static constexpr auto NUM_CHANNELS = 1;
+    // The size of the audio sample blocks, i.e., the number of samples to read
+    // from the ADC per step and send to Sensory, Cloud.
+    static constexpr auto FRAMES_PER_BLOCK = 4096;
+    // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
+    static constexpr auto SAMPLE_SIZE = 2;
+    // The number of bytes in a given chunk of samples.
+    static constexpr auto BYTES_PER_BLOCK = FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
+
+    // Create the network stream
     auto stream = audioService.validateTrigger(
         audioModel,
-        16000,
+        SAMPLE_RATE,
         "en-US",
         userID,
         sensory::api::v1::audio::ThresholdSensitivity::LOW
     );
 
+    // Initialize the portaudio driver.
     PaError err = paNoError;
-
     err = Pa_Initialize();
-    if (err != paNoError) {
-        std::cout << "failed to initialize portaudio" << std::endl;
+    if (err != paNoError) {  // An error occurred while initialing the driver.
+        fprintf(stderr, "An error occured while using the portaudio stream\n");
+        fprintf(stderr, "Error number: %d\n", err);
+        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
         return 1;
     }
 
+    // Setup the input parameters for the port audio stream.
     PaStreamParameters inputParameters;
-    inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
+    inputParameters.device = Pa_GetDefaultInputDevice();
     if (inputParameters.device == paNoDevice) {
         fprintf(stderr,"Error: No default input device.\n");
         return 1;
     }
     inputParameters.channelCount = 1;
     inputParameters.sampleFormat = paInt16;
-    inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
+    inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
-    PaStreamParameters outputParameters;
-    outputParameters.device = Pa_GetDefaultOutputDevice();
-    outputParameters.channelCount = 1;
-    outputParameters.sampleFormat = paInt16;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowInputLatency;
-    outputParameters.hostApiSpecificStreamInfo = NULL;
-
+    // Open the portaudio stream with the input device.
     PaStream* audioStream;
-
-    // typedef struct {
-    //     int    frameIndex;  /* Index into sample array. */
-    //     int    maxFrameIndex;
-    //     short* recordedSamples;
-    // }
-    // paTestData;
-    // paTestData data;
-
-    static constexpr auto DURATION = 10;
-    static constexpr auto SAMPLE_RATE = 16000;
-    static constexpr auto NUM_CHANNELS = 1;
-    static constexpr auto FRAMES_PER_BLOCK = 4096;
-    static constexpr auto SAMPLE_SIZE = 2;
-
     err = Pa_OpenStream(
         &audioStream,
         &inputParameters,
-        NULL,//&outputParameters,  // no output parameters for input stream
+        NULL,  // no output parameters for input stream
         SAMPLE_RATE,
         FRAMES_PER_BLOCK,
         paClipOff,  // we won't output out of range samples so don't bother clipping them
         NULL,
         NULL
     );
-    if (err != paNoError) {
-        std::cout << "failed to open stream" << std::endl;
-        return 1;
-    };
-
-    err = Pa_StartStream(audioStream);
-    if (err != paNoError) {
+    if (err != paNoError) {  // An error occurred while opening the audio stream.
         fprintf(stderr, "An error occured while using the portaudio stream\n");
         fprintf(stderr, "Error number: %d\n", err);
         fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
+        return 1;
+    };
+
+    // Start the audio input stream.
+    err = Pa_StartStream(audioStream);
+    if (err != paNoError) {  // An error occurred while starting the stream.
+        fprintf(stderr, "An error occured while using the portaudio stream\n");
+        fprintf(stderr, "Error number: %d\n", err);
+        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
+        return 1;
     }
 
-    const auto numBytes = FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
-    char* sampleBlock = (char *) malloc(numBytes);
-
+    // Create a buffer for the audio samples based on the number of bytes in
+    // a block of samples.
+    uint8_t sampleBlock[BYTES_PER_BLOCK];
     for (int i = 0; i < (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK; ++i) {
+        // Read a block of samples from the ADC.
         err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
-        if (err) {
-            fprintf( stderr, "An error occured while using the portaudio stream\n" );
-            fprintf( stderr, "Error number: %d\n", err );
-            fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
+        if (err) {  // An error occurred while reading a block of samples.
+            fprintf(stderr, "An error occured while using the portaudio stream\n");
+            fprintf(stderr, "Error number: %d\n", err);
+            fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
             break;
         }
 
+        // Create a new validate event request with the audio content.
         sensory::api::v1::audio::ValidateEventRequest request;
         request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
+        // Send the data to the server to validate the trigger.
         stream->Write(request);
         sensory::api::v1::audio::ValidateEventResponse response;
         stream->Read(&response);
+        // Log the result of the request to the terminal.
         std::cout << "Response" << std::endl;
         std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
         std::cout << "\tSuccess:      " << response.success()     << std::endl;
         std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
         std::cout << "\tScore:        " << response.score()       << std::endl;
-
-        // err = Pa_WriteStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
-        // if (err) {
-        //     fprintf( stderr, "An error occured while using the portaudio stream\n" );
-        //     fprintf( stderr, "Error number: %d\n", err );
-        //     fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
-        //     break;
-        // }
     }
+
+    // Stop the audio stream.
     err = Pa_StopStream(audioStream);
-    // if( err != paNoError ) goto error;
+    if (err != paNoError) {  // An error occurred while stopping the stream.
+        fprintf(stderr, "An error occured while using the portaudio stream\n");
+        fprintf(stderr, "Error number: %d\n", err);
+        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
+        return 1;
+    }
 
-    free( sampleBlock );
-
+    // Terminate the port audio session.
     Pa_Terminate();
 
     return 0;
