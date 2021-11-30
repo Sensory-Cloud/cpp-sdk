@@ -185,9 +185,10 @@ int main(int argc, const char** argv) {
     // boolean to control the internal thread loop.
     std::atomic<bool> isRunning(true);
     std::thread receipt_thread([&stream, &isRunning](){
-        while (isRunning) {
+        bool didRead = true;
+        while (isRunning && didRead) {
             sensory::api::v1::audio::TranscribeResponse response;
-            stream->Read(&response);
+            didRead = stream->Read(&response);
             std::cout << "Response" << std::endl;
             std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
             std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
@@ -207,12 +208,20 @@ int main(int argc, const char** argv) {
         sensory::api::v1::audio::TranscribeRequest request;
         request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
         // Send the data to the server to validate the trigger.
-        stream->Write(request);
+        if (!stream->Write(request)) break;
     }
 
     // Stop the background receipt process and join the thread back in.
     isRunning = false;
     receipt_thread.join();
+
+    // Close the stream and check the status code in case the stream broke.
+    status = stream->Finish();
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Transcription stream broke with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
 
     // Stop the audio stream.
     err = Pa_StopStream(audioStream);
