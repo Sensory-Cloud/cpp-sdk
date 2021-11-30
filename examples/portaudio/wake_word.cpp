@@ -142,12 +142,7 @@ int main(int argc, const char** argv) {
     // Initialize the portaudio driver.
     PaError err = paNoError;
     err = Pa_Initialize();
-    if (err != paNoError) {  // An error occurred while initialing the driver.
-        fprintf(stderr, "An error occured while using the portaudio stream\n");
-        fprintf(stderr, "Error number: %d\n", err);
-        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-        return 1;
-    }
+    if (err != paNoError) goto paerror;
 
     // Setup the input parameters for the port audio stream.
     PaStreamParameters inputParameters;
@@ -173,21 +168,11 @@ int main(int argc, const char** argv) {
         NULL,       // using the blocking interface (no callback)
         NULL        // no data for the callback since there is none
     );
-    if (err != paNoError) {  // An error occurred while opening the audio stream.
-        fprintf(stderr, "An error occured while using the portaudio stream\n");
-        fprintf(stderr, "Error number: %d\n", err);
-        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-        return 1;
-    };
+    if (err != paNoError) goto paerror;
 
     // Start the audio input stream.
     err = Pa_StartStream(audioStream);
-    if (err != paNoError) {  // An error occurred while starting the stream.
-        fprintf(stderr, "An error occured while using the portaudio stream\n");
-        fprintf(stderr, "Error number: %d\n", err);
-        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-        return 1;
-    }
+    if (err != paNoError) goto paerror;
 
     // Create a buffer for the audio samples based on the number of bytes in
     // a block of samples.
@@ -195,12 +180,7 @@ int main(int argc, const char** argv) {
     for (int i = 0; i < (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK; ++i) {
         // Read a block of samples from the ADC.
         err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
-        if (err) {  // An error occurred while reading a block of samples.
-            fprintf(stderr, "An error occured while using the portaudio stream\n");
-            fprintf(stderr, "Error number: %d\n", err);
-            fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-            break;
-        }
+        if (err) goto paerror;
 
         // Create a new validate event request with the audio content.
         sensory::api::v1::audio::ValidateEventRequest request;
@@ -219,15 +199,16 @@ int main(int argc, const char** argv) {
 
     // Stop the audio stream.
     err = Pa_StopStream(audioStream);
-    if (err != paNoError) {  // An error occurred while stopping the stream.
-        fprintf(stderr, "An error occured while using the portaudio stream\n");
-        fprintf(stderr, "Error number: %d\n", err);
-        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-        return 1;
-    }
+    if (err != paNoError) goto paerror;
 
     // Terminate the port audio session.
     Pa_Terminate();
 
     return 0;
+
+paerror:
+    fprintf(stderr, "An error occured while using the portaudio stream\n");
+    fprintf(stderr, "Error number: %d\n", err);
+    fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
+    return 1;
 }
