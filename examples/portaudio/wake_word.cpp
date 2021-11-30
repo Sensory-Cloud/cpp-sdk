@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#include <iostream>
 #include <portaudio.h>
+#include <iostream>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
@@ -41,7 +41,6 @@ int main(int argc, const char** argv) {
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
         "D895F447-91E8-486F-A783-6E3A33E4C7C5"
     );
-    std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
@@ -66,7 +65,8 @@ int main(int argc, const char** argv) {
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
     sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> tokenManager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+        tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -94,7 +94,8 @@ int main(int argc, const char** argv) {
 
     // Query the available audio models
     std::cout << "Available audio models:" << std::endl;
-    sensory::service::AudioService<sensory::token_manager::Keychain> audioService(config, tokenManager);
+    sensory::service::AudioService<sensory::token_manager::Keychain>
+        audioService(config, tokenManager);
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
     status = audioService.getModels(&audioModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -126,7 +127,8 @@ int main(int argc, const char** argv) {
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
     static constexpr auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
-    static constexpr auto BYTES_PER_BLOCK = FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
+    static constexpr auto BYTES_PER_BLOCK =
+        FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Create the network stream
     auto stream = audioService.validateTrigger(
@@ -155,21 +157,21 @@ int main(int argc, const char** argv) {
         return 1;
     }
     inputParameters.channelCount = 1;
-    inputParameters.sampleFormat = paInt16;
-    inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
+    inputParameters.sampleFormat = paInt16;  // Sensory expects 16-bit audio
+    inputParameters.suggestedLatency =
+        Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
     // Open the portaudio stream with the input device.
     PaStream* audioStream;
-    err = Pa_OpenStream(
-        &audioStream,
+    err = Pa_OpenStream(&audioStream,
         &inputParameters,
-        NULL,  // no output parameters for input stream
+        NULL,       // no output parameters for an input stream
         SAMPLE_RATE,
         FRAMES_PER_BLOCK,
-        paClipOff,  // we won't output out of range samples so don't bother clipping them
-        NULL,
-        NULL
+        paClipOff,  // we won't output out-of-range samples so don't clip them
+        NULL,       // using the blocking interface (no callback)
+        NULL        // no data for the callback since there is none
     );
     if (err != paNoError) {  // An error occurred while opening the audio stream.
         fprintf(stderr, "An error occured while using the portaudio stream\n");
