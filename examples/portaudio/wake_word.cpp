@@ -1,4 +1,4 @@
-// An example of wake word audio based on PortAudio blocking input streams.
+// An example of wake word triggers based on PortAudio blocking input streams.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
