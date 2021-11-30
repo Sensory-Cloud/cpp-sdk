@@ -328,6 +328,10 @@ add_executable(portaudio_wakeword examples/portaudio/wake_word.cpp)
 target_link_libraries(portaudio_wakeword PRIVATE sensorycloud)
 target_link_libraries(portaudio_wakeword PRIVATE portaudio)
 
+add_executable(portaudio_sound_id examples/portaudio/sound_id.cpp)
+target_link_libraries(portaudio_sound_id PRIVATE sensorycloud)
+target_link_libraries(portaudio_sound_id PRIVATE portaudio)
+
 add_executable(paex_record examples/portaudio/paex_record.c)
 target_link_libraries(paex_record PRIVATE portaudio)
 
