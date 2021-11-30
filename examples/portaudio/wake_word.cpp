@@ -157,9 +157,10 @@ int main(int argc, const char** argv) {
     // paTestData;
     // paTestData data;
 
+    static constexpr auto DURATION = 10;
     static constexpr auto SAMPLE_RATE = 16000;
     static constexpr auto NUM_CHANNELS = 1;
-    static constexpr auto FRAMES_PER_BLOCK = 1024;
+    static constexpr auto FRAMES_PER_BLOCK = 4096;
     static constexpr auto SAMPLE_SIZE = 2;
 
     err = Pa_OpenStream(
@@ -187,8 +188,8 @@ int main(int argc, const char** argv) {
     const auto numBytes = FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
     char* sampleBlock = (char *) malloc(numBytes);
 
-    for (int i = 0; i < (100 * 16000) / 1024.f; ++i) {
-        err = Pa_ReadStream(audioStream, sampleBlock, 1024);
+    for (int i = 0; i < (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK; ++i) {
+        err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
         if (err) {
             fprintf( stderr, "An error occured while using the portaudio stream\n" );
             fprintf( stderr, "Error number: %d\n", err );
@@ -197,7 +198,7 @@ int main(int argc, const char** argv) {
         }
 
         sensory::api::v1::audio::ValidateEventRequest request;
-        request.set_audiocontent(sampleBlock, 1024);
+        request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
         stream->Write(request);
         sensory::api::v1::audio::ValidateEventResponse response;
         stream->Read(&response);
@@ -207,7 +208,7 @@ int main(int argc, const char** argv) {
         std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
         std::cout << "\tScore:        " << response.score()       << std::endl;
 
-        // err = Pa_WriteStream(audioStream, sampleBlock, 1024);
+        // err = Pa_WriteStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
         // if (err) {
         //     fprintf( stderr, "An error occured while using the portaudio stream\n" );
         //     fprintf( stderr, "Error number: %d\n", err );
