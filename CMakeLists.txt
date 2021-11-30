@@ -25,7 +25,7 @@ message(CMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
 
 set(CMAKE_CXX_STANDARD 11)
-add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 if(MSVC)
   add_definitions(-D_WIN32_WINNT=0x600)
@@ -165,7 +165,7 @@ foreach(PROTO IN ITEMS ${PROTOS})
             --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
             -I="${protobuf_SOURCE_DIR}/../src"
             "${PROTO}"
-        DEPENDS "${PROTO}" always_rebuild
+        DEPENDS "${PROTO}" #always_rebuild
     )
 endforeach()
 
@@ -295,8 +295,7 @@ option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" OFF)
 
 if (BUILD_EXAMPLES)
 
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
+# ----- Basic Examples -------------------------------------------------------
 
 add_executable(hello_cloud examples/hello_cloud.cpp)
 target_link_libraries(hello_cloud PRIVATE sensorycloud)
@@ -304,23 +303,38 @@ target_link_libraries(hello_cloud PRIVATE sensorycloud)
 add_executable(management_demo examples/management_demo.cpp)
 target_link_libraries(management_demo PRIVATE sensorycloud)
 
+# ----- Video Examples -------------------------------------------------------
+
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 add_executable(opencv_face_auth examples/opencv/face_auth.cpp)
 target_link_libraries(opencv_face_auth PRIVATE sensorycloud)
 target_link_libraries(opencv_face_auth PRIVATE ${OpenCV_LIBS})
 
-# # Find the source files for the test code to compile iteratively
-# file(GLOB_RECURSE EXAMPLE_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/examples/*.cpp)
-# foreach(EXAMPLE_SOURCE IN ITEMS ${EXAMPLE_SOURCES})
-#     # Convert the path name to an executable name to build.
-#     string(REPLACE "${CMAKE_CURRENT_BINARY_DIR}/examples/" "example_" BINARY_NAME ${EXAMPLE_SOURCE})
-#     string(REPLACE "/" "_" BINARY_NAME ${BINARY_NAME})
-#     string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
-#     # Create the binary and link it with the required libraries
-#     add_executable(${BINARY_NAME} ${EXAMPLE_SOURCE})
-#     target_link_libraries(${BINARY_NAME} PRIVATE sensorycloud)
-#     list(APPEND EXAMPLE_BINARIES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BINARY_NAME})
-# endforeach()
-# # Create a combined target to compile all of the test codes
-# add_custom_target(examples ALL DEPENDS ${EXAMPLE_BINARIES})
+# ----- Audio Examples -------------------------------------------------------
+
+FetchContent_Declare(portaudio
+    GIT_REPOSITORY https://github.com/PortAudio/portaudio.git
+    GIT_TAG        v19.7.0
+)
+FetchContent_MakeAvailable(portaudio)
+
+include_directories(
+  ${portaudio_BINARY_DIR}
+  ${portaudio_SOURCE_DIR})
+
+add_executable(portaudio_wakeword examples/portaudio/wake_word.cpp)
+target_link_libraries(portaudio_wakeword PRIVATE sensorycloud)
+target_link_libraries(portaudio_wakeword PRIVATE portaudio)
+
+add_executable(paex_record examples/portaudio/paex_record.c)
+target_link_libraries(paex_record PRIVATE portaudio)
+
+add_executable(paex_read_write_wire examples/portaudio/paex_read_write_wire.c)
+target_link_libraries(paex_read_write_wire PRIVATE portaudio)
+
+add_executable(pa_devs examples/portaudio/pa_devs.c)
+target_link_libraries(pa_devs PRIVATE portaudio)
 
 endif()
