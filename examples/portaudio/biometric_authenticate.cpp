@@ -120,13 +120,13 @@ int main(int argc, const char** argv) {
             enrollment.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD &&
             enrollment.modeltype() != sensory::api::common::SOUND_EVENT_ENROLLABLE
         ) continue;
-        std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
-        std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
-        std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\tDescription:     " << enrollment.description()  << std::endl;
+        std::cout << "\t\tModel Name:    " << enrollment.modelname()    << std::endl;
+        std::cout << "\t\tModel Type:    " << enrollment.modeltype()    << std::endl;
         std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
-        std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
-        std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
-        std::cout << "\t\tCreated: "
+        std::cout << "\t\tUser ID:       " << enrollment.userid()       << std::endl;
+        std::cout << "\t\tDevice ID:     " << enrollment.deviceid()     << std::endl;
+        std::cout << "\t\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
         std::cout << "\t\tUpdated: "
