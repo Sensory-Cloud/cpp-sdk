@@ -182,10 +182,15 @@ int main(int argc, const char** argv) {
         std::cout << "Device ID \"" << device << "\" is not a valid integer!" << std::endl;
     }
 
+    // A flag determining whether the last sent frame was authentication. This
+    // flag is atomic to support thread safe reads and writes.
     std::atomic<bool> isAuthenticated(false);
+    // An OpenCV matrix containing the frame data from the camera.
     cv::Mat frame;
-
+    // A mutual exclusion for locking access to the frame between foreground
+    // (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
+
     // Create a thread to poll read requests in the background. Audio
     // transcription has a bursty response pattern, so a locked read-write loop
     // will not work with this service.
@@ -222,7 +227,7 @@ int main(int argc, const char** argv) {
         // If the frame is empty, something went wrong, exit the capture loop.
         if (frame.empty()) break;
         // Show the frame in a viewfinder window.
-        cv::imshow("Sensory Cloud C++ SDK OpenCV Face Authentication Example", frame);
+        cv::imshow("Sensory Cloud Face Authentication Demo", frame);
         // Listen for keyboard interrupts to terminate the capture.
         char c = (char) cv::waitKey(10);
         if (c == 27 || c == 'q' || c == 'Q') break;
@@ -234,7 +239,7 @@ int main(int argc, const char** argv) {
     // Wait for the network thread to join back in.
     networkThread.join();
 
-    if (!status.ok()) {  // the stream failed, print a descriptive message
+    if (!status.ok()) {  // The stream failed, print a descriptive message.
         std::cout << "Authentication stream failed with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
