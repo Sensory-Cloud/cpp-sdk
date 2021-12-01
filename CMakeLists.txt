@@ -305,9 +305,9 @@ target_link_libraries(management_demo PRIVATE sensorycloud)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(opencv_face_auth examples/opencv/face_auth.cpp)
-target_link_libraries(opencv_face_auth PRIVATE sensorycloud)
-target_link_libraries(opencv_face_auth PRIVATE ${OpenCV_LIBS})
+add_executable(opencv_biometric_authenticate examples/opencv/biometric_authenticate.cpp)
+target_link_libraries(opencv_biometric_authenticate PRIVATE sensorycloud)
+target_link_libraries(opencv_biometric_authenticate PRIVATE ${OpenCV_LIBS})
 
 # ----- Audio Examples -------------------------------------------------------
 

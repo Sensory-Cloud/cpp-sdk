@@ -66,7 +66,7 @@ int main(int argc, const char** argv) {
     sensory::api::common::ServerHealthResponse serverHealth;
     auto status = healthService.getHealth(&serverHealth);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetHealth failed with\n\t" <<
+        std::cout << "Failed to get server health with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
@@ -116,12 +116,15 @@ int main(int argc, const char** argv) {
     sensory::api::v1::video::GetModelsResponse videoModelsResponse;
     status = videoService.getModels(&videoModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetVideoModels failed with\n\t" <<
+        std::cout << "Failed to get video models with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
-    for (auto& model : videoModelsResponse.models())
+    for (auto& model : videoModelsResponse.models()) {
+        if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
+            continue;
         std::cout << "\t" << model.name() << std::endl;
+    }
 
     std::string videoModel = "";
     std::cout << "Video model: ";
@@ -133,11 +136,13 @@ int main(int argc, const char** argv) {
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetEnrollments failed with\n\t" <<
+        std::cout << "Failed to get server health with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
     for (auto& enrollment : enrollmentResponse.enrollments()) {
+        if (enrollment.modeltype() != sensory::api::common::FACE_BIOMETRIC)
+            continue;
         std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
         std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
         std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
@@ -213,7 +218,7 @@ int main(int argc, const char** argv) {
     stream->WritesDone();
     status = stream->Finish();
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Authenticate stream failed with\n\t" <<
+        std::cout << "Authentication stream failed with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
