@@ -147,7 +147,7 @@ int main(int argc, const char** argv) {
     // Get the description of the model.
     std::string description;
     std::cout << "Description: ";
-    std::cin >> description;
+    std::getline(std::cin, description);
 
     // Determine whether to conduct a voice liveness check.
     sensory::service::AudioService<sensory::token_manager::Keychain>::CreateEnrollmentStream stream;
