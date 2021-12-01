@@ -269,6 +269,7 @@ class AudioService {
         >
     > AuthenticateStream;
 
+    // TODO: isTokenEnabled option?
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// authentication.
     ///
@@ -289,7 +290,11 @@ class AudioService {
         const std::string& enrollmentID,
         const int32_t& sampleRate,
         const std::string& languageCode,
-        const bool& isLivenessEnabled = false
+        const bool& isLivenessEnabled = false,
+        const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
+            ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
+        const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security =
+            ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
     ) const {
         // Create a context for the client for a bidirectional stream.
         // TODO: will the stream automatically free this dynamically allocated
@@ -307,6 +312,8 @@ class AudioService {
         );
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
+        authenticateConfig->set_sensitivity(sensitivity);
+        authenticateConfig->set_security(security);
 
         // Create the request with the pointer to the enrollment config.
         ::sensory::api::v1::audio::AuthenticateRequest request;
