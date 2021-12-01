@@ -297,8 +297,8 @@ if (BUILD_EXAMPLES)
 add_executable(hello_cloud examples/hello_cloud.cpp)
 target_link_libraries(hello_cloud PRIVATE sensorycloud)
 
-add_executable(management_demo examples/management_demo.cpp)
-target_link_libraries(management_demo PRIVATE sensorycloud)
+add_executable(management examples/management.cpp)
+target_link_libraries(management PRIVATE sensorycloud)
 
 # ----- Video Examples -------------------------------------------------------
 

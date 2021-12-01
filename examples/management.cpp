@@ -36,11 +36,12 @@
 /// @brief Print help about the application to the console.
 void print_help() {
     std::cout << "Sensory Cloud Management Shell" << std::endl;
-    std::cout << "getEnrollments <username>\tList the enrollments for the given user" << std::endl;
-    std::cout << "deleteEnrollment <ID>\tDelete the enrollment with the given ID" << std::endl;
-    std::cout << "getGroups <username>\tList the enrollment groups for the given user" << std::endl;
-    std::cout << "deleteEnrollmentGroup <ID>\tDelete the enrollment group with the given ID" << std::endl;
-    std::cout << "quit\tExit the shell" << std::endl;
+    std::cout << "health                      Display information about the server's health" << std::endl;
+    std::cout << "getEnrollments <username>   List the enrollments for the given user" << std::endl;
+    std::cout << "deleteEnrollment <ID>       Delete the enrollment with the given ID" << std::endl;
+    std::cout << "getGroups <username>        List the enrollment groups for the given user" << std::endl;
+    std::cout << "deleteEnrollmentGroup <ID>  Delete the enrollment group with the given ID" << std::endl;
+    std::cout << "quit                        Exit the shell" << std::endl;
 }
 
 /// @brief Check the health of the remote server.
@@ -59,10 +60,9 @@ int check_health(const sensory::Config& config) {
         return 1;
     }
     // Report the health of the remote service
-    std::cout << "Server status:" << std::endl;
-    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-    std::cout << "\tid: " << serverHealth.id() << std::endl;
+    std::cout << "Is Healthy:      " << serverHealth.ishealthy() << std::endl;
+    std::cout << "Server Version:  " << serverHealth.serverversion() << std::endl;
+    std::cout << "ID:              " << serverHealth.id() << std::endl;
     return 0;
 }
 
@@ -89,6 +89,9 @@ int login(
         std::string password = "";
         std::cout << "password: ";
         std::cin >> password;
+
+        // Flush anything that may still be in the input buffer.
+        std::cin.ignore();
 
         // Register this device with the remote host
         sensory::api::v1::management::DeviceResponse rsp;
@@ -129,18 +132,18 @@ int get_enrollments(
     }
     for (auto& enrollment : rsp.enrollments()) {
         std::cout << "Description: "     << enrollment.description()  << std::endl;
-        std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
-        std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
+        std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
         std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-        std::cout << "\tUser ID: "       << enrollment.userid()       << std::endl;
-        std::cout << "\tDevice ID: "     << enrollment.deviceid()     << std::endl;
-        std::cout << "\tCreated: "
+        std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
+        std::cout << "\tDevice ID:     " << enrollment.deviceid()     << std::endl;
+        std::cout << "\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
-        std::cout << "\tUpdated: "
+        std::cout << "\tUpdated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
             << std::endl;
-        std::cout << "\tID: "            << enrollment.id()    << std::endl;
+        std::cout << "\tID:            " << enrollment.id()    << std::endl;
     }
     return 0;
 }
@@ -187,17 +190,17 @@ int get_enrollment_groups(
     }
     for (auto& enrollment : rsp.enrollmentgroups()) {
         std::cout << "Description: "     << enrollment.description()  << std::endl;
-        std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
-        std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
+        std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
         std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-        std::cout << "\tUser ID: "       << enrollment.userid()       << std::endl;
-        std::cout << "\tCreated: "
+        std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
+        std::cout << "\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
-        std::cout << "\tUpdated: "
+        std::cout << "\tUpdated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
             << std::endl;
-        std::cout << "\tID: "            << enrollment.id()    << std::endl;
+        std::cout << "\tID:            " << enrollment.id()    << std::endl;
     }
     return 0;
 }
