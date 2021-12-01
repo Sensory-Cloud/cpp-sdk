@@ -129,10 +129,10 @@ int main(int argc, const char** argv) {
         std::cout << "\t\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
-        std::cout << "\t\tUpdated: "
+        std::cout << "\t\tUpdated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
             << std::endl;
-        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+        std::cout << "\t\tID:            " << enrollment.id()    << std::endl;
     }
 
     std::string enrollmentID = "";

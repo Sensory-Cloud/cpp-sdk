@@ -141,10 +141,10 @@ int main() {
         std::cout << "\t\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
-        std::cout << "\t\tUpdated: "
+        std::cout << "\t\tUpdated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
             << std::endl;
-        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+        std::cout << "\t\tID:            " << enrollment.id()    << std::endl;
     }
 
     // Query this user's enrollment groups
@@ -165,9 +165,9 @@ int main() {
         std::cout << "\t\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
-        std::cout << "\t\tUpdated: "
+        std::cout << "\t\tUpdated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
             << std::endl;
-        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+        std::cout << "\t\tID:            " << enrollment.id()    << std::endl;
     }
 }
