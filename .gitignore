@@ -6,6 +6,7 @@ cmake_install.cmake
 build*/
 _deps/
 DartConfiguration.tcl
+cmake/
 
 # C extensions
 # TODO: this might not need ignored for this package
