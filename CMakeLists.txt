@@ -18,14 +18,11 @@ cmake_minimum_required(VERSION 3.5.1)
 
 project(sensory-cloud-cpp-sdk)
 
-# Log the source directory
-message(CMAKE_CURRENT_BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}")
-
-# Output built binaries to a `build` directory instead of the project root
+# Output built binaries to a `build` directory instead of the project root.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
 
+# C++11 with gcc >4.9 is required to compile this code-base.
 set(CMAKE_CXX_STANDARD 11)
-# add_compile_options(-std=c++11)
 
 if(MSVC)
   add_definitions(-D_WIN32_WINNT=0x600)
@@ -212,7 +209,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 
 # Create the sensorycloud library
 add_library(sensorycloud STATIC)
-target_sources(sensorycloud PRIVATE ${INCLUDES} ${SOURCES}
+target_sources(sensorycloud PUBLIC ${INCLUDES} ${SOURCES}
     ${PROTO_SRCS}
     ${PROTO_HDRS}
     ${GRPC_SRCS}
