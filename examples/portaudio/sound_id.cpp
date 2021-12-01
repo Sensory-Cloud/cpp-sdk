@@ -99,7 +99,7 @@ int main(int argc, const char** argv) {
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
     status = audioService.getModels(&audioModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "GetAudioModels failed with\n\t" <<
+        std::cout << "Failed to get audio models with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }

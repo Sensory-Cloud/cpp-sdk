@@ -1,4 +1,4 @@
-// An example of wake word triggers based on PortAudio blocking input streams.
+// An example of Sound ID triggers based on PortAudio blocking input streams.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -24,6 +24,7 @@
 //
 
 #include <portaudio.h>
+#include <google/protobuf/util/time_util.h>
 #include <iostream>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
@@ -32,6 +33,100 @@
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/token_manager/keychain.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
+
+int authenticate(
+    const sensory::service::ManagementService<sensory::token_manager::Keychain>& mgmtService,
+    const sensory::service::AudioService<sensory::token_manager::Keychain>& audioService,
+    const std::string& userID
+) {
+    // Query this user's active enrollments
+    std::cout << "Active enrollments:" << std::endl;
+    sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
+    auto status = mgmtService.getEnrollments(&enrollmentResponse, userID);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to get enrollments with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& enrollment : enrollmentResponse.enrollments()) {
+        if (enrollment.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_DEPENDENT &&
+            enrollment.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_INDEPENDENT &&
+            enrollment.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD
+        ) continue;
+        std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
+        std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
+        std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
+        std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
+        std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
+        std::cout << "\t\tCreated: "
+            << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
+            << std::endl;
+        std::cout << "\t\tUpdated: "
+            << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
+            << std::endl;
+        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+    }
+
+    return 0;
+}
+
+int enroll(
+    const sensory::service::AudioService<sensory::token_manager::Keychain>& audioService,
+    const std::string& userID
+) {
+    // // Get the name of the model to enroll with
+    // std::string model;
+    // while (true) {
+    //     std::cout << "Text [independent|i, dependent|d]: " << std::endl;
+    //     std::cin >> model;
+    //     if (model == "independent" || model == "i") {
+    //         model = "independent";
+    //         break;
+    //     } else if (model == "dependent" || model == "d") {
+    //         model = "dependent";
+    //         break;
+    //     } else {
+    //         continue;
+    //     }
+    // }
+
+    // // Determine whether to conduct a voice liveness check.
+    // bool isLivenessEnabled(false);
+    // std::string liveness;
+    // while (true) {
+    //     std::cout << "Liveness Check [yes|y, no|n]: " << std::endl;
+    //     std::cin >> liveness;
+    //     if (liveness == "yes" || liveness == "y") {
+    //         isLivenessEnabled = true;
+    //         break;
+    //     } else if (liveness == "no" || liveness == "n") {
+    //         isLivenessEnabled = false;
+    //         break;
+    //     } else {
+    //         continue;
+    //     }
+    // }
+
+    // Query the available audio models
+    std::cout << "Available audio models:" << std::endl;
+    sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
+    auto status = audioService.getModels(&audioModelsResponse);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to get audio models with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
+    for (auto& model : audioModelsResponse.models()) {
+        std::cout << "\t" << model.name() << std::endl;
+    }
+
+    std::string audioModel = "";
+    std::cout << "Audio model: ";
+    std::cin >> audioModel;
+
+    return 0;
+}
 
 int main(int argc, const char** argv) {
     // Initialize the configuration to the host for given address and port
@@ -92,29 +187,25 @@ int main(int argc, const char** argv) {
         }
     }
 
-    // Query the available audio models
-    std::cout << "Available audio models:" << std::endl;
+    sensory::service::ManagementService<sensory::token_manager::Keychain>
+        mgmtService(config, tokenManager);
     sensory::service::AudioService<sensory::token_manager::Keychain>
         audioService(config, tokenManager);
-    sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
-    status = audioService.getModels(&audioModelsResponse);
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get audio models with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-    for (auto& model : audioModelsResponse.models()) {
-        if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
-            continue;
-        std::cout << "\t" << model.name() << std::endl;
+
+    if (argc == 1 || std::string(argv[1]) == "authenticate") {
+        authenticate(mgmtService, audioService, userID);
+    } else if (std::string(argv[1]) == "enroll") {
+        enroll(audioService, userID);
+    } else {
+        // std::cout << HELP << std::endl;
     }
 
-    std::string audioModel = "";
-    std::cout << "Audio model: ";
-    std::cin >> audioModel;
+    return 0;
+
+
 
     // the maximal duration of the recording in seconds
-    static constexpr auto DURATION = 10;
+    static constexpr auto DURATION = 60;
     // the sample rate of the input audio stream. This should match the sample
     // rate of the selected model
     static constexpr auto SAMPLE_RATE = 16000;
@@ -130,14 +221,14 @@ int main(int argc, const char** argv) {
     static constexpr auto BYTES_PER_BLOCK =
         FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
 
-    // Create the network stream
-    auto stream = audioService.validateTrigger(
-        audioModel,
-        SAMPLE_RATE,
-        "en-US",
-        userID,
-        sensory::api::v1::audio::ThresholdSensitivity::LOW
-    );
+    // // Create the network stream
+    // auto stream = audioService.validateTrigger(
+    //     audioModel,
+    //     SAMPLE_RATE,
+    //     "en-US",
+    //     userID,
+    //     sensory::api::v1::audio::ThresholdSensitivity::LOW
+    // );
 
     // Initialize the portaudio driver.
     PaError err = paNoError;
@@ -174,28 +265,28 @@ int main(int argc, const char** argv) {
     err = Pa_StartStream(audioStream);
     if (err != paNoError) goto paerror;
 
-    // Create a buffer for the audio samples based on the number of bytes in
-    // a block of samples.
-    uint8_t sampleBlock[BYTES_PER_BLOCK];
-    for (int i = 0; i < (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK; ++i) {
-        // Read a block of samples from the ADC.
-        err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
-        if (err) goto paerror;
+    // // Create a buffer for the audio samples based on the number of bytes in
+    // // a block of samples.
+    // uint8_t sampleBlock[BYTES_PER_BLOCK];
+    // for (int i = 0; i < (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK; ++i) {
+    //     // Read a block of samples from the ADC.
+    //     err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
+    //     if (err) goto paerror;
 
-        // Create a new validate event request with the audio content.
-        sensory::api::v1::audio::ValidateEventRequest request;
-        request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
-        // Send the data to the server to validate the trigger.
-        stream->Write(request);
-        sensory::api::v1::audio::ValidateEventResponse response;
-        stream->Read(&response);
-        // Log the result of the request to the terminal.
-        std::cout << "Response" << std::endl;
-        std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
-        std::cout << "\tSuccess:      " << response.success()     << std::endl;
-        std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
-        std::cout << "\tScore:        " << response.score()       << std::endl;
-    }
+    //     // Create a new validate event request with the audio content.
+    //     sensory::api::v1::audio::ValidateEventRequest request;
+    //     request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
+    //     // Send the data to the server to validate the trigger.
+    //     stream->Write(request);
+    //     sensory::api::v1::audio::ValidateEventResponse response;
+    //     stream->Read(&response);
+    //     // Log the result of the request to the terminal.
+    //     std::cout << "Response" << std::endl;
+    //     std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
+    //     std::cout << "\tSuccess:      " << response.success()     << std::endl;
+    //     std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
+    //     std::cout << "\tScore:        " << response.score()       << std::endl;
+    // }
 
     // Stop the audio stream.
     err = Pa_StopStream(audioStream);
