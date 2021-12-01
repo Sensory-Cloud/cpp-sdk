@@ -144,9 +144,31 @@ int main(int argc, const char** argv) {
     std::cout << "Enrollment ID: ";
     std::cin >> enrollmentID;
 
+    // Determine whether to conduct a liveness check.
+    std::string liveness;
+    bool isLivenessEnabled(false);
+    while (true) {
+        std::cout << "Liveness Check [yes|y, no|n]: ";
+        std::cin >> liveness;
+        if (liveness == "yes" || liveness == "y") {
+            isLivenessEnabled = true;
+            break;
+        } else if (liveness == "no" || liveness == "n") {
+            isLivenessEnabled = false;
+            break;
+        } else {
+            continue;
+        }
+    }
+
     // Create the stream
-    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, tokenManager);
-    auto stream = videoService.authenticate(enrollmentID);
+    sensory::service::VideoService<sensory::token_manager::Keychain>
+        videoService(config, tokenManager);
+    auto stream = videoService.authenticate(
+        enrollmentID,
+        isLivenessEnabled,
+        sensory::api::v1::video::RecognitionThreshold::LOW
+    );
 
     // Create an image capture object
     cv::VideoCapture capture;
