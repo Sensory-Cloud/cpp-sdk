@@ -181,10 +181,15 @@ int main(int argc, const char** argv) {
     err = Pa_StartStream(audioStream);
     if (err != paNoError) return describe_pa_error(err);
 
+    // Create a thread to poll read requests in the background. Audio
+    // transcription has a bursty response pattern, so a locked read-write loop
+    // will not work with this service.
     std::thread receipt_thread([&stream](){
         while (true) {
+            // Read a message and break out of the loop if the read fails.
             sensory::api::v1::audio::TranscribeResponse response;
             if (!stream->Read(&response)) break;
+            // Log the current transcription to the terminal.
             std::cout << "Response" << std::endl;
             std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
             std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
