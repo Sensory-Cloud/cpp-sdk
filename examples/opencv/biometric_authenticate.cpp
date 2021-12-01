@@ -24,6 +24,8 @@
 //
 
 #include <iostream>
+#include <thread>
+#include <mutex>
 #include <google/protobuf/util/time_util.h>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
@@ -180,44 +182,59 @@ int main(int argc, const char** argv) {
         std::cout << "Device ID \"" << device << "\" is not a valid integer!" << std::endl;
     }
 
+    std::atomic<bool> isAuthenticated(false);
+    cv::Mat frame;
+
+    std::mutex frameMutex;
+    // Create a thread to poll read requests in the background. Audio
+    // transcription has a bursty response pattern, so a locked read-write loop
+    // will not work with this service.
+    std::thread networkThread([&stream, &isAuthenticated, &frame, &frameMutex](){
+        while (!isAuthenticated) {
+            // Lock the mutual exclusion to the frame and encode it into JPEG
+            std::vector<unsigned char> buffer;
+            frameMutex.lock();
+            cv::imencode(".jpg", frame, buffer);
+            frameMutex.unlock();
+            // Create the request from the encoded image data.
+            sensory::api::v1::video::AuthenticateRequest request;
+            request.set_imagecontent(buffer.data(), buffer.size());
+            stream->Write(request);
+            sensory::api::v1::video::AuthenticateResponse response;
+            stream->Read(&response);
+            // Log information about the response to the terminal.
+            std::cout << "Frame Response:" << std::endl;
+            std::cout << "\tSuccess: "  << response.success() << std::endl;
+            std::cout << "\tScore: "    << response.score() << std::endl;
+            std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+            // Set the authentication flag to the success of the response.
+            isAuthenticated = response.success();
+        }
+    });
+
     // Start capturing frames from the device.
     std::cout << "Video capturing has been started ..." << std::endl;
-    for (;;) {
-        cv::Mat frame;
+    while (!isAuthenticated) {
+        // Lock the mutual exclusion to the frame buffer and fetch a new frame.
+        frameMutex.lock();
         capture >> frame;
-        if (frame.empty())
-            break;
-
+        frameMutex.unlock();
+        // If the frame is empty, something went wrong, exit the capture loop.
+        if (frame.empty()) break;
+        // Show the frame in a viewfinder window.
         cv::imshow("Sensory Cloud C++ SDK OpenCV Face Authentication Example", frame);
-        std::vector<unsigned char> buffer;
-        cv::imencode(".jpg", frame, buffer);
-
-        double t = (double) cv::getTickCount();
-
-        sensory::api::v1::video::AuthenticateRequest request;
-        request.set_imagecontent(buffer.data(), buffer.size());
-        stream->Write(request);
-        sensory::api::v1::video::AuthenticateResponse response;
-        stream->Read(&response);
-
-        t = (double) cv::getTickCount() - t;
-
-        std::cout << "Frame Response:" << std::endl;
-        printf("\tResponse time: %g ms\n", t * 1000.f / cv::getTickFrequency());
-        std::cout << "\tSuccess: "  << response.success() << std::endl;
-        std::cout << "\tScore: "    << response.score() << std::endl;
-        std::cout << "\tIs Alive: " << response.isalive() << std::endl;
-
-        if (response.success()) break;
-
+        // Listen for keyboard interrupts to terminate the capture.
         char c = (char) cv::waitKey(10);
-        if (c == 27 || c == 'q' || c == 'Q')
-            break;
+        if (c == 27 || c == 'q' || c == 'Q') break;
     }
 
+    // Terminate the stream
     stream->WritesDone();
     status = stream->Finish();
-    if (!status.ok()) {  // the call failed, print a descriptive message
+    // Wait for the network thread to join back in.
+    networkThread.join();
+
+    if (!status.ok()) {  // the stream failed, print a descriptive message
         std::cout << "Authentication stream failed with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
