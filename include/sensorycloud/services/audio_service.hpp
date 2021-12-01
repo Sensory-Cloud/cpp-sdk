@@ -190,7 +190,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         CreateEnrollmentStream stream =
-            biometrics_stub->CreateEnrollment(&context);
+            biometrics_stub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
