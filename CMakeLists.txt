@@ -324,6 +324,15 @@ include_directories(
   ${portaudio_BINARY_DIR}
   ${portaudio_SOURCE_DIR})
 
+add_executable(paex_record examples/portaudio/paex_record.c)
+target_link_libraries(paex_record PRIVATE portaudio)
+
+add_executable(paex_read_write_wire examples/portaudio/paex_read_write_wire.c)
+target_link_libraries(paex_read_write_wire PRIVATE portaudio)
+
+add_executable(pa_devs examples/portaudio/pa_devs.c)
+target_link_libraries(pa_devs PRIVATE portaudio)
+
 add_executable(portaudio_wakeword examples/portaudio/wake_word.cpp)
 target_link_libraries(portaudio_wakeword PRIVATE sensorycloud)
 target_link_libraries(portaudio_wakeword PRIVATE portaudio)
@@ -336,13 +345,12 @@ add_executable(portaudio_transcribe examples/portaudio/transcribe.cpp)
 target_link_libraries(portaudio_transcribe PRIVATE sensorycloud)
 target_link_libraries(portaudio_transcribe PRIVATE portaudio)
 
-add_executable(paex_record examples/portaudio/paex_record.c)
-target_link_libraries(paex_record PRIVATE portaudio)
+add_executable(portaudio_biometric_enroll examples/portaudio/biometric_enroll.cpp)
+target_link_libraries(portaudio_biometric_enroll PRIVATE sensorycloud)
+target_link_libraries(portaudio_biometric_enroll PRIVATE portaudio)
 
-add_executable(paex_read_write_wire examples/portaudio/paex_read_write_wire.c)
-target_link_libraries(paex_read_write_wire PRIVATE portaudio)
-
-add_executable(pa_devs examples/portaudio/pa_devs.c)
-target_link_libraries(pa_devs PRIVATE portaudio)
+add_executable(portaudio_biometric_authenticate examples/portaudio/biometric_authenticate.cpp)
+target_link_libraries(portaudio_biometric_authenticate PRIVATE sensorycloud)
+target_link_libraries(portaudio_biometric_authenticate PRIVATE portaudio)
 
 endif()
