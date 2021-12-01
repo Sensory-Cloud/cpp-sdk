@@ -309,6 +309,14 @@ add_executable(opencv_biometric_authenticate examples/opencv/biometric_authentic
 target_link_libraries(opencv_biometric_authenticate PRIVATE sensorycloud)
 target_link_libraries(opencv_biometric_authenticate PRIVATE ${OpenCV_LIBS})
 
+add_executable(opencv_biometric_enroll examples/opencv/biometric_enroll.cpp)
+target_link_libraries(opencv_biometric_enroll PRIVATE sensorycloud)
+target_link_libraries(opencv_biometric_enroll PRIVATE ${OpenCV_LIBS})
+
+add_executable(opencv_liveness examples/opencv/liveness.cpp)
+target_link_libraries(opencv_liveness PRIVATE sensorycloud)
+target_link_libraries(opencv_liveness PRIVATE ${OpenCV_LIBS})
+
 # ----- Audio Examples -------------------------------------------------------
 
 FetchContent_Declare(portaudio
