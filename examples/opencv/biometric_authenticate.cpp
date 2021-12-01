@@ -112,26 +112,6 @@ int main(int argc, const char** argv) {
         }
     }
 
-    // Query the available video models
-    std::cout << "Available video models:" << std::endl;
-    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, tokenManager);
-    sensory::api::v1::video::GetModelsResponse videoModelsResponse;
-    status = videoService.getModels(&videoModelsResponse);
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get video models with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-    for (auto& model : videoModelsResponse.models()) {
-        if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
-            continue;
-        std::cout << "\t" << model.name() << std::endl;
-    }
-
-    std::string videoModel = "";
-    std::cout << "Video model: ";
-    std::cin >> videoModel;
-
     // Query this user's active enrollments
     std::cout << "Active enrollments:" << std::endl;
     sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, tokenManager);
@@ -145,19 +125,19 @@ int main(int argc, const char** argv) {
     for (auto& enrollment : enrollmentResponse.enrollments()) {
         if (enrollment.modeltype() != sensory::api::common::FACE_BIOMETRIC)
             continue;
-        std::cout << "\tDesc: "            << enrollment.description()  << std::endl;
-        std::cout << "\t\tModel Name: "    << enrollment.modelname()    << std::endl;
-        std::cout << "\t\tModel Type: "    << enrollment.modeltype()    << std::endl;
+        std::cout << "\tDescription:     " << enrollment.description()  << std::endl;
+        std::cout << "\t\tModel Name:    " << enrollment.modelname()    << std::endl;
+        std::cout << "\t\tModel Type:    " << enrollment.modeltype()    << std::endl;
         std::cout << "\t\tModel Version: " << enrollment.modelversion() << std::endl;
-        std::cout << "\t\tUser ID: "       << enrollment.userid()       << std::endl;
-        std::cout << "\t\tDevice ID: "     << enrollment.deviceid()     << std::endl;
-        std::cout << "\t\tCreated: "
+        std::cout << "\t\tUser ID:       " << enrollment.userid()       << std::endl;
+        std::cout << "\t\tDevice ID:     " << enrollment.deviceid()     << std::endl;
+        std::cout << "\t\tCreated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
             << std::endl;
-        std::cout << "\t\tUpdated: "
+        std::cout << "\t\tUpdated:       "
             << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
             << std::endl;
-        std::cout << "\t\tID: "            << enrollment.id()    << std::endl;
+        std::cout << "\t\tID:            " << enrollment.id()    << std::endl;
     }
 
     std::string enrollmentID = "";
@@ -165,6 +145,7 @@ int main(int argc, const char** argv) {
     std::cin >> enrollmentID;
 
     // Create the stream
+    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, tokenManager);
     auto stream = videoService.authenticate(enrollmentID);
 
     // Create an image capture object
@@ -218,7 +199,6 @@ int main(int argc, const char** argv) {
     });
 
     // Start capturing frames from the device.
-    std::cout << "Video capturing has been started ..." << std::endl;
     while (!isAuthenticated) {
         // Lock the mutual exclusion to the frame buffer and fetch a new frame.
         frameMutex.lock();
@@ -233,7 +213,7 @@ int main(int argc, const char** argv) {
         if (c == 27 || c == 'q' || c == 'Q') break;
     }
 
-    // Terminate the stream
+    // Terminate the stream.
     stream->WritesDone();
     status = stream->Finish();
     // Wait for the network thread to join back in.
