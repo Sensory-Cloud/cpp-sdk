@@ -236,10 +236,10 @@ if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
     // Use a shared secret, i.e., pass-phrase to authenticate the device.
     std::string insecureSharedSecret = "password";
     // Create a response for the RPC.
-    sensory::api::v1::management::DeviceResponse rsp;
+    sensory::api::v1::management::DeviceResponse response;
     // Perform the RPC and check the status for errors.
     auto status = oauthService.registerDevice(
-        &rsp,
+        &response,
         userID,
         insecureSharedSecret,
         credentials.id,
@@ -292,9 +292,9 @@ which audio models are accessible to you, you can execute the below code.
 
 ```c++
 // Create a response for the RPC.
-sensory::api::v1::audio::GetModelsResponse rsp;
+sensory::api::v1::audio::GetModelsResponse response;
 // Execute the RPC and check the status for errors.
-auto status = audioService.getModels(&rsp);
+auto status = audioService.getModels(&response);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get audio models with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
@@ -365,9 +365,9 @@ which video models are accessible to you, you can execute the below code.
 
 ```c++
 // Create a response for the RPC.
-sensory::api::v1::video::GetModelsResponse rsp;
+sensory::api::v1::video::GetModelsResponse response;
 // Execute the RPC and check the status for errors.
-auto status = videoService.getModels(&rsp);
+auto status = videoService.getModels(&response);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get video models with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
@@ -383,9 +383,13 @@ The synchronous API provides a blocking interface for streaming data to the
 server.
 
 ```c++
+// The name of the biometric model to enroll the user with.
 std::string modelName("face_biometric_hektor");
+// The unique ID of the user that is being enrolled.
 std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+// A human readable description of the enrollment.
 std::string enrollmentDescription("My Enrollment");
+// Whether to perform a liveness check while executing the enrollment.
 bool isLivenessEnabled(false);
 
 // Create the gRPC stream for a certain enroll-able model for a particular user.
@@ -489,9 +493,8 @@ server.
 ```c++
 // The particular model to use for liveness detection.
 std::string videoModel("face_recognition_mathilde");
-// a flag determining whether a liveness check should be conducted before
-// authenticating against the enrollment.
-bool isLivenessEnabled(false);
+// The unique user ID of the user being validated for liveness
+std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
 // The security threshold for the optional liveness check.
 auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
@@ -561,14 +564,14 @@ sensory::service::ManagementService<sensory::token_manager::Keychain>
 std::string userID = "user";
 
 // Create a response for the RPC.
-sensory::api::v1::management::GetEnrollmentsResponse rsp;
-auto status = mgmtService.getEnrollments(&rsp, userID);
+sensory::api::v1::management::GetEnrollmentsResponse response;
+auto status = mgmtService.getEnrollments(&response, userID);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get enrollments with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
     // Handle error...
 }
-for (auto& enrollment : rsp.enrollments()) {
+for (auto& enrollment : response.enrollments()) {
     std::cout << "Description: "     << enrollment.description()  << std::endl;
     std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
     std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
@@ -591,8 +594,8 @@ for (auto& enrollment : rsp.enrollments()) {
 // The UUID of the enrollment to delete.
 std::string enrollmentID = "45ad3215-1d4c-42aa-aec4-2724e9ce1d99";
 
-sensory::api::v1::management::EnrollmentResponse rsp;
-auto status = mgmtService.deleteEnrollment(&rsp, enrollmentID);
+sensory::api::v1::management::EnrollmentResponse response;
+auto status = mgmtService.deleteEnrollment(&response, enrollmentID);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to delete enrollment with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
@@ -606,14 +609,14 @@ if (!status.ok()) {  // The call failed, print a descriptive message.
 std::string userID = "user";
 
 // Create a response for the RPC.
-sensory::api::v1::management::GetEnrollmentGroupsResponse rsp;
-status = mgmtService.getEnrollmentGroups(&rsp, userID);
+sensory::api::v1::management::GetEnrollmentGroupsResponse response;
+status = mgmtService.getEnrollmentGroups(&response, userID);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to get enrollment groups with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
     // Handle error...
 }
-for (auto& enrollment : rsp.enrollmentgroups()) {
+for (auto& enrollment : response.enrollmentgroups()) {
     std::cout << "Description: "     << enrollment.description()  << std::endl;
     std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
     std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
@@ -647,8 +650,8 @@ TODO
 // The UUID of the group to delete.
 std::string groupID = "13481e19-5853-47d0-ba61-6819914405bb";
 
-sensory::api::v1::management::EnrollmentGroupResponse rsp;
-auto status = mgmtService.deleteEnrollmentGroup(&rsp, groupID);
+sensory::api::v1::management::EnrollmentGroupResponse response;
+auto status = mgmtService.deleteEnrollmentGroup(&response, groupID);
 if (!status.ok()) {  // The call failed, print a descriptive message.
     std::cout << "Failed to delete enrollment group with\n\t" <<
         status.error_code() << ": " << status.error_message() << std::endl;
