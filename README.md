@@ -377,17 +377,149 @@ if (!status.ok()) {  // The call failed, print a descriptive message.
 
 ##### Enrolling With Video
 
+###### Synchronous
+
+The synchronous API provides a blocking interface for streaming data to the
+server.
+
+```c++
+std::string modelName("face_biometric_hektor");
+std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string enrollmentDescription("My Enrollment");
+bool isLivenessEnabled(false);
+
+// Create the gRPC stream for a certain enroll-able model for a particular user.
+auto stream = videoService.createEnrollment(
+    modelName,
+    userId,
+    enrollmentDescription,
+    isLivenessEnabled);
+
+// Encode your image data using JPEG compression.
+std::vector<unsigned char> buffer;
+encodeJPEG(yourImageData, buffer);
+// Create the request from the encoded image data and write it to the stream.
+// This call will block the running thread until completion.
+sensory::api::v1::video::CreateEnrollmentRequest request;
+request.set_imagecontent(buffer.data(), buffer.size());
+stream->Write(request);
+// Read a response from the server. This call will block the running thread
+// until completion.
+sensory::api::v1::video::CreateEnrollmentResponse response;
+stream->Read(&response);
+```
+
+Instances of `CreateEnrollmentResponse` will have the following attributes:
+
+-   `percentcomplete()` the completion percentage of the enrollment procedure.
+-   `isalive()` a boolean determining whether a live face was detected in the
+    frame. This attribute can only be true when creating an enrollment stream
+    with liveness enabled.
+-   `enrollmentid()` The ID of the enrollment _if_ it was created. This value
+    is populated upon successful enrollment with the model.
+-   `modelname()` The name of the model being used to perform the enrollment
+-   `modelversion()` The version of the model being used to perform the
+    enrollment
+
+###### Aynchronous
+
 ```c++
 TODO
 ```
 
 ##### Authenticating With Video
 
+###### Synchronous
+
+The synchronous API provides a blocking interface for streaming data to the
+server.
+
+```c++
+// The ID for the enrollment for a particular user
+std::string enrollmentID("72f286b8-173f-436a-8869-6f7887789ee9");
+// a flag determining whether a liveness check should be conducted before
+// authenticating against the enrollment.
+bool isLivenessEnabled(false);
+// The security threshold for the optional liveness check.
+auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
+
+// Create the gRPC stream for to authenticate an enrollment for a particular
+// user based on enrollment ID.
+auto stream = videoService.authenticate(
+    enrollmentID,
+    isLivenessEnabled,
+    threshold);
+
+// Encode your image data using JPEG compression.
+std::vector<unsigned char> buffer;
+encodeJPEG(yourImageData, buffer);
+// Create the request from the encoded image data and write it to the stream.
+// This call will block the running thread until completion.
+sensory::api::v1::video::AuthenticateRequest request;
+request.set_imagecontent(buffer.data(), buffer.size());
+stream->Write(request);
+// Read a response from the server. This call will block the running thread
+// until completion.
+sensory::api::v1::video::AuthenticateResponse response;
+stream->Read(&response);
+```
+
+Instances of `AuthenticateResponse` will have the following attributes:
+
+-   `response.success()` a boolean determining whether the authentication was
+    successful. The stream will terminate if/when this flag goes to `true`.
+-   `response.score()` The score from the liveness model.
+-   `response.isalive()` A boolean determining whether the last frame was
+    detected as being live based on the score and selected threshold. This can
+    only be `true` when liveness was enabled from the call to create the stream.
+
+###### Aynchronous
+
 ```c++
 TODO
 ```
 
 ##### Video Liveness
+
+###### Synchronous
+
+The synchronous API provides a blocking interface for streaming data to the
+server.
+
+```c++
+// The particular model to use for liveness detection.
+std::string videoModel("face_recognition_mathilde");
+// a flag determining whether a liveness check should be conducted before
+// authenticating against the enrollment.
+bool isLivenessEnabled(false);
+// The security threshold for the optional liveness check.
+auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
+
+// Create the gRPC stream for to authenticate an enrollment for a particular
+// user based on enrollment ID.
+auto stream = videoService.validateLiveness(videoModel, userID, threshold);
+
+// Encode your image data using JPEG compression.
+std::vector<unsigned char> buffer;
+encodeJPEG(yourImageData, buffer);
+// Create the request from the encoded image data and write it to the stream.
+// This call will block the running thread until completion.
+sensory::api::v1::video::ValidateRecognitionRequest request;
+request.set_imagecontent(buffer.data(), buffer.size());
+stream->Write(request);
+// Read a response from the server. This call will block the running thread
+// until completion.
+sensory::api::v1::video::LivenessRecognitionResponse response;
+stream->Read(&response);
+```
+
+Instances of `LivenessRecognitionResponse` will have the following attributes:
+
+-   `response.score()` The score from the liveness model.
+-   `response.isalive()` A boolean determining whether the last frame was
+    detected as being live based on the score and selected threshold.
+
+###### Aynchronous
 
 ```c++
 TODO
