@@ -181,7 +181,10 @@ int main(int argc, const char** argv) {
     // A flag determining whether the last sent frame was enrolled. This flag
     // is atomic to support thread safe reads and writes.
     std::atomic<bool> isEnrolled(false);
+    // The completion percentage of the enrollment request.
     std::atomic<float> percentComplete(0);
+    // A flag determining whether the last sent frame was detected as live.
+    std::atomic<bool> isLive(false);
     // An OpenCV matrix containing the frame data from the camera.
     cv::Mat frame;
     // A mutual exclusion for locking access to the frame between foreground
@@ -191,7 +194,7 @@ int main(int argc, const char** argv) {
     // Create a thread to poll read requests in the background. Audio
     // transcription has a bursty response pattern, so a locked read-write loop
     // will not work with this service.
-    std::thread networkThread([&stream, &isEnrolled, &percentComplete, &frame, &frameMutex](){
+    std::thread networkThread([&stream, &isEnrolled, &percentComplete, &isLive, &frame, &frameMutex](){
         while (!isEnrolled) {
             // Lock the mutual exclusion to the frame and encode it into JPEG
             std::vector<unsigned char> buffer;
@@ -214,6 +217,7 @@ int main(int argc, const char** argv) {
             // Set the authentication flag to the success of the response.
             isEnrolled = !response.enrollmentid().empty();
             percentComplete = response.percentcomplete() / 100.f;
+            isLive = response.isalive();
         }
     });
 
@@ -237,6 +241,17 @@ int main(int argc, const char** argv) {
             cv::Point(0, 0),
             cv::Point(percentComplete * presentationFrame.size().width, 10),
             cv::Scalar(0, 255, 0), -1);
+        // Draw some text indicating the liveness status
+        if (isLivenessEnabled) {  // liveness is enabled
+            cv::putText(presentationFrame,
+                isLive ? "Live" : "Not Live",
+                cv::Point(10, 40),
+                cv::FONT_HERSHEY_SIMPLEX,
+                1,  // font scale
+                isLive ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
+                2   // thickness
+            );
+        }
         // Show the frame in a viewfinder window.
         cv::imshow("Sensory Cloud Face Enrollment Demo", presentationFrame);
         // Listen for keyboard interrupts to terminate the capture.
