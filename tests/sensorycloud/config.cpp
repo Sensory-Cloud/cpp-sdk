@@ -54,16 +54,6 @@ SCENARIO("A user wants to initialize a Config") {
             THEN("the default gRPC timeout is 10 seconds") {
                 REQUIRE(10 == config.getTimeout());
             }
-            THEN("the default JPEG setting is 0.5") {
-                REQUIRE(0.5 == config.getJpegCompression());
-            }
-            THEN("the default audio sample rate is 16000kHz") {
-                REQUIRE(16000.0 == config.audioSampleRate);
-            }
-            THEN("the default image dimensions are 480x720") {
-                REQUIRE(720 == config.photoHeight);
-                REQUIRE(480 == config.photoWidth);
-            }
         }
     }
     GIVEN("an empty host name") {
@@ -97,30 +87,6 @@ SCENARIO("A user wants to change the gRPC timeout") {
             config.setTimeout(timeout);
             THEN("the gRPC timeout is stored") {
                 REQUIRE(timeout == config.getTimeout());
-            }
-        }
-    }
-}
-
-SCENARIO("A user wants to use a different JPEG Quality factor") {
-    GIVEN("An initialized Config object") {
-        sensory::Config config("localhost", 50051, "tenantID", "deviceID");
-        WHEN("The JPEG Quality factor is set to an arbitrary value") {
-            config.setJpegCompression(0.25);
-            THEN("The JPEG Quality factor is set to an arbitrary value") {
-                REQUIRE(0.25 == config.getJpegCompression());
-            }
-        }
-        WHEN("The JPEG Quality factor is set below the minimum value") {
-            config.setJpegCompression(-1.0);
-            THEN("The JPEG Quality factor is set to the minimum value") {
-                REQUIRE(0.0 == config.getJpegCompression());
-            }
-        }
-        WHEN("The JPEG Quality factor is set above the maximum value") {
-            config.setJpegCompression(2.0);
-            THEN("The JPEG Quality factor is set to the maximum value") {
-                REQUIRE(1.0 == config.getJpegCompression());
             }
         }
     }

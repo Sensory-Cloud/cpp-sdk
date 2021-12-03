@@ -116,19 +116,8 @@ class Config {
     const bool isSecure;
     /// the number of seconds to wait on a unary gRPC call before timing out
     uint32_t timeout = 10;
-    /// JPEG Compression factor used, a value between 0 and 1 where 0 is most
-    /// compressed, and 1 is highest quality
-    float jpegCompression = 0.5;
 
  public:
-    /// Sample rate to record audio at, defaults to 16kHz
-    float audioSampleRate = 16000.f;
-
-    /// Photo pixel height, defaults to 720 pixels
-    uint32_t photoHeight = 720;
-    /// Photo pixel width, defaults to 480 pixels
-    uint32_t photoWidth = 480;
-
     /// @brief Initialize a new Sensory Cloud configuration object.
     ///
     /// @param host_ The host-name of the RPC service.
@@ -261,22 +250,6 @@ class Config {
             std::string("Bearer ") + tokenManager.getAccessToken()
         );
     }
-
-    /// @brief Set the JPEG compression level to a new value.
-    ///
-    /// @param jpegCompression the compression factor to use. A value
-    /// between 0 and 1 where 0 is most compressed, and 1 is highest quality.
-    ///
-    inline void setJpegCompression(const float& jpegCompression = 0.5f) {
-        this->jpegCompression = std::min(std::max(jpegCompression, 0.0f), 1.0f);
-    }
-
-    /// @brief Return the compression factor for JPEG compression.
-    ///
-    /// @returns A value between 0 and 1 where 0 is most compressed, and 1 is
-    /// the highest quality.
-    ///
-    inline const float& getJpegCompression() const { return jpegCompression; }
 };
 
 }  // namespace sensory
