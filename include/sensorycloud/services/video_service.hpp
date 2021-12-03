@@ -126,17 +126,17 @@ class VideoService {
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::GetModelsRequest,
         ::sensory::api::v1::video::GetModelsResponse
-    > GetModelsCall;
+    > GetModelsCallData;
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
     /// @tparam Callback the type of the callback function. The callback should
-    /// accept a single pointer of type `GetModelsCall*`.
+    /// accept a single pointer of type `GetModelsCallData*`.
     /// @param callback The callback to execute when the response arrives
     /// @returns A pointer to the asynchronous call spawned by this call
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetModelsCall> asyncGetModels(
+    inline std::shared_ptr<GetModelsCallData> asyncGetModels(
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -145,7 +145,7 @@ class VideoService {
         // in order to reference count between the parent and child context.
         // This also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<GetModelsCall> call(new GetModelsCall);
+        std::shared_ptr<GetModelsCallData> call(new GetModelsCallData);
         config.setupUnaryClientContext(call->context, tokenManager);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
