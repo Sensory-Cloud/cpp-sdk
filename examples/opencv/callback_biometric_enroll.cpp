@@ -125,13 +125,15 @@ int main(int argc, const char** argv) {
     // ------ Query the available video models ---------------------------------
 
     std::cout << "Available video models:" << std::endl;
-    videoService.asyncGetModels([](sensory::service::VideoService<sensory::token_manager::Keychain>::GetModelsCall* call) {
+    videoService.asyncGetModels([](sensory::service::VideoService<sensory::token_manager::Keychain>::GetModelsCallData* call) {
+        if (!call->getStatus().ok()) {  // The call failed.
+            std::cout << "Failed to get video models with\n\t" <<
+                call->getStatus().error_code() << ": " <<
+                call->getStatus().error_message() << std::endl;
+        }
+        // Iterate over the models returned in the response
         for (auto& model : call->getResponse().models()) {
-            if (!call->getStatus().ok()) {  // the call failed
-                std::cout << "Failed to get video models with\n\t" <<
-                    call->getStatus().error_code() << ": " <<
-                    call->getStatus().error_message() << std::endl;
-            }
+            // Ignore models that aren't face biometric models.
             if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
                 continue;
             std::cout << "\t" << model.name() << std::endl;
