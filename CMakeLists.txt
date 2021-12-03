@@ -300,6 +300,9 @@ target_link_libraries(hello_cloud PRIVATE sensorycloud)
 add_executable(management examples/management.cpp)
 target_link_libraries(management PRIVATE sensorycloud)
 
+add_executable(callback_management examples/callback_management.cpp)
+target_link_libraries(callback_management PRIVATE sensorycloud)
+
 # ----- Video Examples -------------------------------------------------------
 
 find_package(OpenCV REQUIRED)

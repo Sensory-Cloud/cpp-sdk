@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 #include <grpc/grpc.h>
 #include <grpc++/channel.h>
@@ -79,6 +80,8 @@ class ManagementService {
         tokenManager(tokenManager_),
         stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
 
+    // ----- Get Enrollments ---------------------------------------------------
+
     /// @brief Fetch a list of the current enrollments for the given userID
     ///
     /// @param response the response to store the result of the RPC into
@@ -99,6 +102,55 @@ class ManagementService {
         // Execute the remote procedure call synchronously and return the status
         return stub->GetEnrollments(&context, request, response);
     }
+
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::GetEnrollmentsRequest,
+        ::sensory::api::v1::management::GetEnrollmentsResponse
+    > GetEnrollmentsCallData;
+
+    /// @brief Fetch a list of the current enrollments for the given userID
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `GetEnrollmentsCallData*`.
+    /// @param userID userID to fetch enrollments for
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<GetEnrollmentsCallData> asyncGetEnrollments(
+        const std::string& userID,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<GetEnrollmentsCallData>
+            call(new GetEnrollmentsCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        call->request.set_userid(userID);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->GetEnrollments(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
+    // ----- Delete Enrollment -------------------------------------------------
 
     /// @brief Request the deletion of an enrollment.
     ///
@@ -124,6 +176,55 @@ class ManagementService {
         return stub->DeleteEnrollment(&context, request, response);
     }
 
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::DeleteEnrollmentRequest,
+        ::sensory::api::v1::management::EnrollmentResponse
+    > DeleteEnrollmentCallData;
+
+    /// @brief Request the deletion of an enrollment.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `DeleteEnrollmentCallData*`.
+    /// @param userID userID to fetch enrollments for
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<DeleteEnrollmentCallData> asyncDeleteEnrollment(
+        const std::string& userID,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<DeleteEnrollmentCallData>
+            call(new DeleteEnrollmentCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        call->request.set_id(userID);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->DeleteEnrollment(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
+    // ----- Get Enrollment Groups ---------------------------------------------
+
     /// @brief Fetch a list of the current enrollment groups owned by a given
     /// userID.
     ///
@@ -145,6 +246,56 @@ class ManagementService {
         // Execute the remote procedure call synchronously and return the result
         return stub->GetEnrollmentGroups(&context, request, response);
     }
+
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::GetEnrollmentsRequest,
+        ::sensory::api::v1::management::GetEnrollmentGroupsResponse
+    > GetEnrollmentGroupsCallData;
+
+    /// @brief Fetch a list of the current enrollment groups owned by a given
+    /// userID.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `GetEnrollmentGroupsCallData*`.
+    /// @param userID userID to fetch enrollments for
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<GetEnrollmentGroupsCallData> asyncGetEnrollmentGroups(
+        const std::string& userID,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<GetEnrollmentGroupsCallData>
+            call(new GetEnrollmentGroupsCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        call->request.set_userid(userID);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->GetEnrollmentGroups(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
+    // ----- Create Enrollment Group -------------------------------------------
 
     /// @brief Create a new group of enrollments that can be used for group
     /// authentication.
@@ -178,16 +329,82 @@ class ManagementService {
         config.setupUnaryClientContext(context, tokenManager);
         // Create the request
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest request;
+        request.set_userid(userID);
         request.set_id(
             groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
         );
         request.set_name(groupName);
         request.set_description(description);
         request.set_modelname(modelName);
-        request.set_userid(userID);
         // Execute the remote procedure call synchronously and return the result
         return stub->CreateEnrollmentGroup(&context, request, response);
     }
+
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
+        ::sensory::api::v1::management::EnrollmentGroupResponse
+    > CreateEnrollmentGroupCallData;
+
+    /// @brief Create a new group of enrollments that can be used for group
+    /// authentication.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `CreateEnrollmentGroupCallData*`.
+    /// @param userID userID of the user that owns the enrollment group
+    /// @param groupID Unique group identifier for the enrollment group, if
+    /// empty an id will be automatically generated
+    /// @param groupName Friendly display name to use for the enrollment group
+    /// @param description Description of the enrollment group
+    /// @param modelName The name of the model that all enrollments in this
+    /// group will use
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<CreateEnrollmentGroupCallData> asyncCreateEnrollmentGroup(
+        const std::string& userID,
+        const std::string& groupID,
+        const std::string& groupName,
+        const std::string& description,
+        const std::string& modelName,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<CreateEnrollmentGroupCallData>
+            call(new CreateEnrollmentGroupCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        call->request.set_userid(userID);
+        call->request.set_id(
+            groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
+        );
+        call->request.set_name(groupName);
+        call->request.set_description(description);
+        call->request.set_modelname(modelName);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->CreateEnrollmentGroup(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
+    // ----- Append Enrollment Group -------------------------------------------
 
     /// @brief Append enrollments to an existing enrollment group.
     ///
@@ -215,6 +432,60 @@ class ManagementService {
         return stub->AppendEnrollmentGroup(&context, request, response);
     }
 
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
+        ::sensory::api::v1::management::EnrollmentGroupResponse
+    > AppendEnrollmentGroupCallData;
+
+    /// @brief Append enrollments to an existing enrollment group.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `AppendEnrollmentGroupCallData*`.
+    /// @param groupID The ID of the enrollment group to append enrollments to
+    /// @param enrollments A list of enrollment ids to append to the enrollment
+    /// group
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<AppendEnrollmentGroupCallData> asyncAppendEnrollmentGroup(
+        const std::string& groupID,
+        const std::vector<std::string>& enrollments,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<AppendEnrollmentGroupCallData>
+            call(new AppendEnrollmentGroupCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        call->request.set_groupid(groupID);
+        for (auto& enrollment: enrollments)
+            call->request.add_enrollmentids(enrollment);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->AppendEnrollmentGroup(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
+    // ----- Delete Enrollment Group -------------------------------------------
+
     /// @brief Request the deletion of enrollment groups.
     ///
     /// @param response the response to store the result of the RPC into
@@ -234,6 +505,53 @@ class ManagementService {
         request.set_id(groupID);
         // Execute the remote procedure call synchronously and return the result
         return stub->DeleteEnrollmentGroup(&context, request, response);
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,
+        ::sensory::api::v1::management::EnrollmentGroupResponse
+    > DeleteEnrollmentGroupCallData;
+
+    /// @brief Request the deletion of enrollment groups.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `DeleteEnrollmentGroupCallData*`.
+    /// @param groupID The group ID to delete
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<DeleteEnrollmentGroupCallData> asyncDeleteEnrollmentGroup(
+        const std::string& groupID,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<DeleteEnrollmentGroupCallData>
+            call(new DeleteEnrollmentGroupCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        call->request.set_id(groupID);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->DeleteEnrollmentGroup(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
     }
 };
 
