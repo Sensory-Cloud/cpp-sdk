@@ -103,7 +103,8 @@ class ManagementService {
         return stub->GetEnrollments(&context, request, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
+    /// calls.
     typedef ::sensory::CallData<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
@@ -176,7 +177,8 @@ class ManagementService {
         return stub->DeleteEnrollment(&context, request, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous
+    /// `DeleteEnrollment` calls.
     typedef ::sensory::CallData<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentRequest,
@@ -247,7 +249,8 @@ class ManagementService {
         return stub->GetEnrollmentGroups(&context, request, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous
+    /// `GetEnrollmentGroups` calls.
     typedef ::sensory::CallData<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
@@ -340,7 +343,8 @@ class ManagementService {
         return stub->CreateEnrollmentGroup(&context, request, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous
+    /// `CreateEnrollmentGroup` calls.
     typedef ::sensory::CallData<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
@@ -432,7 +436,8 @@ class ManagementService {
         return stub->AppendEnrollmentGroup(&context, request, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous
+    /// `AppendEnrollmentGroup` calls.
     typedef ::sensory::CallData<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
@@ -507,7 +512,8 @@ class ManagementService {
         return stub->DeleteEnrollmentGroup(&context, request, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous
+    /// `DeleteEnrollmentGroupRequest` calls.
     typedef ::sensory::CallData<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,

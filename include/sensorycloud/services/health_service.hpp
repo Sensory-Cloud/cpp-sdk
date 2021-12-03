@@ -94,7 +94,7 @@ class HealthService {
         return stub->GetHealth(&context, {}, response);
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous `GetHealth` calls.
     typedef ::sensory::CallData<
         HealthService,
         ::sensory::api::health::HealthRequest,
