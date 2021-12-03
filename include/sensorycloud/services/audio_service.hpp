@@ -125,6 +125,50 @@ class AudioService {
         return models_stub->GetModels(&context, {}, response);
     }
 
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::GetModelsRequest,
+        ::sensory::api::v1::audio::GetModelsResponse
+    > GetModelsCallData;
+
+    /// @brief Fetch a list of the vision models supported by the cloud host.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `GetModelsCallData*`.
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<GetModelsCallData> asyncGetModels(
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. Setup the call as usual with a bearer token and
+        // any application deadlines. This call is initiated as a shared pointer
+        // in order to reference count between the parent and child context.
+        // This also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<GetModelsCallData> call(new GetModelsCallData);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        models_stub->async()->GetModels(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
