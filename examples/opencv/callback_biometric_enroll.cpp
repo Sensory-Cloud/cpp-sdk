@@ -65,20 +65,22 @@ int main(int argc, const char** argv) {
 
     // ------ Check server health ----------------------------------------------
 
-    // Query the health of the remote service.
+    // Create the health service.
     sensory::service::HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get server health with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-    // Report the health of the remote service
-    std::cout << "Server status:" << std::endl;
-    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-    std::cout << "\tid: " << serverHealth.id() << std::endl;
+
+    // Query the health of the remote service.
+    healthService.asyncGetHealth([](sensory::service::HealthService::GetHealthCallData* call) {
+        if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
+            std::cout << "Failed to get server health with\n\t" <<
+                call->getStatus().error_code() << ": " <<
+                call->getStatus().error_message() << std::endl;
+        }
+        // Report the health of the remote service
+        std::cout << "Server status" << std::endl;
+        std::cout << "\tIs Healthy:     " << call->getResponse().ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << call->getResponse().serverversion() << std::endl;
+        std::cout << "\tID:             " << call->getResponse().id()            << std::endl;
+    })->await();
 
     // ------ Authorize the current user ---------------------------------------
 
@@ -273,7 +275,7 @@ int main(int argc, const char** argv) {
 
     // Terminate the stream.
     stream->WritesDone();
-    status = stream->Finish();
+    auto status = stream->Finish();
     // Wait for the network thread to join back in.
     networkThread.join();
 
