@@ -30,7 +30,7 @@
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
-#include <sensorycloud/token_manager/keychain.hpp>
+#include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 int main(int argc, const char** argv) {
@@ -64,8 +64,8 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
+    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
         tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
@@ -94,7 +94,7 @@ int main(int argc, const char** argv) {
 
     // Query the available audio models
     std::cout << "Available audio models:" << std::endl;
-    sensory::service::AudioService<sensory::token_manager::Keychain>
+    sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>
         audioService(config, tokenManager);
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
     status = audioService.getModels(&audioModelsResponse);

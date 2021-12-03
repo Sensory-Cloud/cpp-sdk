@@ -61,7 +61,7 @@ namespace sensory {
 namespace token_manager {
 
 /// @brief A secure credential storage manager.
-class Keychain {
+class SecureCredentialStore {
  private:
     /// The package name that identifies the owner of the keys.
     const std::string package;
@@ -74,9 +74,11 @@ class Keychain {
     /// The value of `package_` should remain constant among compatible versions
     /// of the calling application.
     ///
-    explicit Keychain(const std::string& package_) : package(package_) { }
+    explicit SecureCredentialStore(const std::string& package_) :
+        package(package_) { }
 
-    /// @brief Emplace or replace a key/value pair in the key-chain.
+    /// @brief Emplace or replace a key/value pair in the secure credential
+    /// store.
     ///
     /// @param key The key of the value to store.
     /// @param value The secure value to store.
@@ -87,20 +89,20 @@ class Keychain {
     ///
     inline void emplace(const std::string& key, const std::string& value) const;
 
-    /// @brief Return true if the key exists in the key-chain.
+    /// @brief Return true if the key exists in the secure credential store.
     ///
     /// @param key The key to check for the existence of.
     ///
     inline bool contains(const std::string& key) const;
 
-    /// @brief Look-up a secret value in the key-chain.
+    /// @brief Look-up a secret value in the secure credential store.
     ///
     /// @param key The key of the value to return.
     /// @returns The secret value indexed by the given key.
     ///
     inline std::string at(const std::string& key) const;
 
-    /// @brief Remove a secret key-value pair in the key-chain.
+    /// @brief Remove a secret key-value pair in the secure credential store.
     ///
     /// @param key The key to remove from the secure credential store.
     ///
@@ -123,7 +125,7 @@ class Keychain {
 
 #elif defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 
-inline void Keychain::emplace(const std::string& key, const std::string& value) const {
+inline void SecureCredentialStore::emplace(const std::string& key, const std::string& value) const {
     OSStatus status = SecKeychainAddGenericPassword(
         NULL,  // default key-chain
         static_cast<UInt32>(package.length()),
@@ -163,7 +165,7 @@ inline void Keychain::emplace(const std::string& key, const std::string& value) 
         throw std::runtime_error("failed to set value");
 }
 
-inline bool Keychain::contains(const std::string& key) const {
+inline bool SecureCredentialStore::contains(const std::string& key) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
         NULL,  // default key-chain
@@ -179,7 +181,7 @@ inline bool Keychain::contains(const std::string& key) const {
     return status == errSecSuccess;
 }
 
-inline std::string Keychain::at(const std::string& key) const {
+inline std::string SecureCredentialStore::at(const std::string& key) const {
     void *data;
     UInt32 length;
     OSStatus status = SecKeychainFindGenericPassword(
@@ -205,7 +207,7 @@ inline std::string Keychain::at(const std::string& key) const {
     return value;
 }
 
-inline void Keychain::erase(const std::string& key) const {
+inline void SecureCredentialStore::erase(const std::string& key) const {
     SecKeychainItemRef item = NULL;
     OSStatus status = SecKeychainFindGenericPassword(
         NULL,  // default key-chain

@@ -130,9 +130,9 @@ std::cout << "\tid: " << serverHealth.id() << std::endl;
 
 ### Secure Credential Storage
 
-`Keychain` provides the interface for secure credential storage that must be
-implemented for your specific usage. Included with the SDK are reference
-implementations for certain build platforms including:
+`SecureCredentialStore` provides the interface for secure credential storage
+that must be implemented for your specific usage. Included with the SDK are
+reference implementations for certain build platforms including:
 
 -   MacOS (through [Keychain Services][Keychain-Services]),
 -   Windows (through [Credential Locker][Credential-Locker]), and
@@ -144,8 +144,9 @@ implementations for certain build platforms including:
 
 ```c++
 /// @brief A keychain manager for interacting with the OS credential manager.
-struct Keychain {
-    /// @brief Emplace or replace a key/value pair in the key-chain.
+struct SecureCredentialStore {
+    /// @brief Emplace or replace a key/value pair in the secure credential
+    /// store.
     ///
     /// @param key the plain-text key of the value to store
     /// @param value the secure value to store
@@ -156,20 +157,20 @@ struct Keychain {
     ///
     inline void emplace(const std::string& key, const std::string& value) const;
 
-    /// @brief Return true if the key exists in the key-chain.
+    /// @brief Return true if the key exists in the secure credential store.
     ///
     /// @param key the plain-text key to check for the existence of
     ///
     inline bool contains(const std::string& key) const;
 
-    /// @brief Look-up a secret value in the key-chain.
+    /// @brief Look-up a secret value in the secure credential store.
     ///
     /// @param key the plain-text key of the value to return
     /// @returns the secret value indexed by the given key
     ///
     inline std::string at(const std::string& key) const;
 
-    /// @brief Remove a secret key-value pair in the key-chain.
+    /// @brief Remove a secret key-value pair in the secure credential store.
     ///
     /// @param key the plain-text key of the pair to remove from the keychain
     ///
@@ -181,8 +182,9 @@ struct Keychain {
 
 The `TokenManger` template class handles requesting OAuth tokens when
 necessary. It utilizes an `OAuthService` to request new tokens when the local
-ones expire, and also utilizes a `Keychain` implementation to securely store
-tokens. All secure services require a reference to a token manager.
+ones expire, and also utilizes a `SecureCredentialStore` implementation to
+securely store tokens. All secure services require a reference to a token
+manager.
 
 ```c++
 // Create a configuration specific to your tenant and device.
@@ -195,12 +197,12 @@ sensory::Config config(
 
 // Create the key-chain for the token manager. You may use your own
 // implementation of the `Keychain` interface for your application.
-sensory::token_manager::Keychain keychain("com.product.company");
+sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
 // Create the token manager for handling token requests from the OAuth service
-// and with a reference to the keychain.
-sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+// and with a reference to the secure credential store.
+sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
     tokenManager(oauthService, keychain);
 ```
 
@@ -221,12 +223,12 @@ sensory::Config config(
 
 // Create the key-chain for the token manager. You may use your own
 // implementation of the `Keychain` interface for your application.
-sensory::token_manager::Keychain keychain("com.product.company");
+sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
 // Create the token manager for handling token requests from the OAuth service
-// and with a reference to the keychain.
-sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+// and with a reference to the secure credential store.
+sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
     tokenManager(oauthService, keychain);
 
 if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
@@ -271,16 +273,16 @@ sensory::Config config(
 
 // Create the key-chain for the token manager. You may use your own
 // implementation of the `Keychain` interface for your application.
-sensory::token_manager::Keychain keychain("com.product.company");
+sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
 // Create the token manager for handling token requests from the OAuth service
-// and with a reference to the keychain.
-sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+// and with a reference to the secure credential store.
+sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
     tokenManager(oauthService, keychain);
 
 // Create the audio service based on the configuration and token manager.
-sensory::service::AudioService<sensory::token_manager::Keychain>
+sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>
     audioService(config, tokenManager);
 ```
 
@@ -344,16 +346,16 @@ sensory::Config config(
 
 // Create the key-chain for the token manager. You may use your own
 // implementation of the `Keychain` interface for your application.
-sensory::token_manager::Keychain keychain("com.product.company");
+sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
 // Create the token manager for handling token requests from the OAuth service
-// and with a reference to the keychain.
-sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+// and with a reference to the secure credential store.
+sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
     tokenManager(oauthService, keychain);
 
 // Create the video service based on the configuration and token manager.
-sensory::service::VideoService<sensory::token_manager::Keychain>
+sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
     videoService(config, tokenManager);
 ```
 
@@ -544,16 +546,16 @@ sensory::Config config(
 
 // Create the key-chain for the token manager. You may use your own
 // implementation of the `Keychain` interface for your application.
-sensory::token_manager::Keychain keychain("com.product.company");
+sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
 // Create the token manager for handling token requests from the OAuth service
-// and with a reference to the keychain.
-sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+// and with a reference to the secure credential store.
+sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
     tokenManager(oauthService, keychain);
 
 // Create the management service based on the configuration and token manager.
-sensory::service::ManagementService<sensory::token_manager::Keychain>
+sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>
     mgmtService(config, tokenManager);
 ```
 

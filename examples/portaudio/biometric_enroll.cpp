@@ -31,7 +31,7 @@
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
-#include <sensorycloud/token_manager/keychain.hpp>
+#include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 int main(int argc, const char** argv) {
@@ -65,8 +65,8 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain>
+    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
+    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
         tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
@@ -93,9 +93,9 @@ int main(int argc, const char** argv) {
         }
     }
 
-    sensory::service::ManagementService<sensory::token_manager::Keychain>
+    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>
         mgmtService(config, tokenManager);
-    sensory::service::AudioService<sensory::token_manager::Keychain>
+    sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>
         audioService(config, tokenManager);
 
     // Query the available audio models
@@ -151,7 +151,7 @@ int main(int argc, const char** argv) {
     std::getline(std::cin, description);
 
     // Determine whether to conduct a voice liveness check.
-    sensory::service::AudioService<sensory::token_manager::Keychain>::CreateEnrollmentStream stream;
+    sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>::CreateEnrollmentStream stream;
     if (audioModel.find("independent") != std::string::npos)
         stream = audioService.createTextIndependentEnrollment(
             audioModel,

@@ -33,7 +33,7 @@
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
-#include <sensorycloud/token_manager/keychain.hpp>
+#include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
@@ -85,8 +85,8 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> tokenManager(oauthService, keychain);
+    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
+    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -114,7 +114,7 @@ int main(int argc, const char** argv) {
 
     // Query this user's active enrollments
     std::cout << "Active enrollments:" << std::endl;
-    sensory::service::ManagementService<sensory::token_manager::Keychain> mgmtService(config, tokenManager);
+    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore> mgmtService(config, tokenManager);
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -162,7 +162,7 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream
-    sensory::service::VideoService<sensory::token_manager::Keychain>
+    sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
         videoService(config, tokenManager);
     auto stream = videoService.authenticate(
         enrollmentID,

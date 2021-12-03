@@ -33,7 +33,7 @@
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
-#include <sensorycloud/token_manager/keychain.hpp>
+#include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
@@ -91,8 +91,8 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::Keychain keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::Keychain> tokenManager(oauthService, keychain);
+    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
+    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -121,13 +121,13 @@ int main(int argc, const char** argv) {
     // ------ Create the video service -----------------------------------------
 
     // Create the video service based on the configuration and token manager.
-    sensory::service::VideoService<sensory::token_manager::Keychain>
+    sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
         videoService(config, tokenManager);
 
     // ------ Query the available video models ---------------------------------
 
     std::cout << "Available video models:" << std::endl;
-    videoService.asyncGetModels([](sensory::service::VideoService<sensory::token_manager::Keychain>::GetModelsCallData* call) {
+    videoService.asyncGetModels([](sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>::GetModelsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get video models with\n\t" <<
                 call->getStatus().error_code() << ": " <<
