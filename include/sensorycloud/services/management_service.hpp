@@ -47,7 +47,7 @@ namespace sensory {
 /// @brief Sensory Cloud Services.
 namespace service {
 
-/// @brief A service for managing enrollments.
+/// @brief A service for managing enrollments and enrollment groups.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.
 template<typename SecureCredentialStore>
@@ -71,8 +71,8 @@ class ManagementService {
  public:
     /// @brief Initialize a new management service.
     ///
-    /// @param config_ the global configuration for the remote connection
-    /// @param tokenManager_ the token manager for requesting Bearer tokens
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
     ///
     ManagementService(
         const ::sensory::Config& config_,
@@ -85,10 +85,9 @@ class ManagementService {
 
     /// @brief Fetch a list of the current enrollments for the given userID
     ///
-    /// @param response the response to store the result of the RPC into
-    /// @param userID userID to fetch enrollments for
-    /// @returns A future to be fulfilled with either a list of enrollments,
-    /// or the network error that occurred
+    /// @param response The response to store the result of the RPC into.
+    /// @param userID The ID of the user to fetch enrollments for.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     inline ::grpc::Status getEnrollments(
         ::sensory::api::v1::management::GetEnrollmentsResponse* response,
@@ -114,11 +113,11 @@ class ManagementService {
 
     /// @brief Fetch a list of the current enrollments for the given userID
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `GetEnrollmentsCallData*`.
-    /// @param userID userID to fetch enrollments for
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param userID The ID of the user to fetch enrollments for.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<GetEnrollmentsCallData> asyncGetEnrollments(
@@ -156,13 +155,12 @@ class ManagementService {
 
     /// @brief Request the deletion of an enrollment.
     ///
-    /// @param response the response to store the result of the RPC into
-    /// @param enrollmentID enrollmentID for the enrollment to delete
-    /// @return A future to be fulfilled with either the deleted enrollment,
-    /// or the network error that occurred
+    /// @param response The response to store the result of the RPC into.
+    /// @param enrollmentID The ID of the enrollment to delete.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     /// @details
-    /// The server will prevent users from deleting their last enrollment
+    /// The server will prevent users from deleting their last enrollment.
     ///
     inline ::grpc::Status deleteEnrollment(
         ::sensory::api::v1::management::EnrollmentResponse* response,
@@ -188,11 +186,14 @@ class ManagementService {
 
     /// @brief Request the deletion of an enrollment.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `DeleteEnrollmentCallData*`.
-    /// @param enrollmentID enrollmentID for the enrollment to delete
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param enrollmentID The ID of the enrollment to delete.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
+    ///
+    /// @details
+    /// The server will prevent users from deleting their last enrollment.
     ///
     template<typename Callback>
     inline std::shared_ptr<DeleteEnrollmentCallData> asyncDeleteEnrollment(
@@ -231,10 +232,9 @@ class ManagementService {
     /// @brief Fetch a list of the current enrollment groups owned by a given
     /// userID.
     ///
-    /// @param response the response to store the result of the RPC into
-    /// @param userID userID to fetch enrollment groups for
-    /// @returns A future to be fulfilled with either a list of enrollment
-    /// groups, or the network error that occurred
+    /// @param response The response to store the result of the RPC into.
+    /// @param userID The ID of the user to fetch enrollment groups for.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     inline ::grpc::Status getEnrollmentGroups(
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse* response,
@@ -261,11 +261,11 @@ class ManagementService {
     /// @brief Fetch a list of the current enrollment groups owned by a given
     /// userID.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `GetEnrollmentGroupsCallData*`.
-    /// @param userID userID to fetch enrollments for
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param userID The ID of the user to fetch enrollments for.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<GetEnrollmentGroupsCallData> asyncGetEnrollmentGroups(
@@ -304,16 +304,16 @@ class ManagementService {
     /// @brief Create a new group of enrollments that can be used for group
     /// authentication.
     ///
-    /// @param response the response to store the result of the RPC into
-    /// @param userID userID of the user that owns the enrollment group
-    /// @param groupID Unique group identifier for the enrollment group, if
-    /// empty an id will be automatically generated
-    /// @param groupName Friendly display name to use for the enrollment group
-    /// @param description Description of the enrollment group
+    /// @param response The response to store the result of the RPC into.
+    /// @param userID The ID of the user that owns the enrollment group.
+    /// @param groupID A unique group identifier for the enrollment group. If
+    /// empty, an ID will be automatically generated.
+    /// @param groupName A friendly display name to use for the enrollment
+    /// group.
+    /// @param description A description of the enrollment group.
     /// @param modelName The name of the model that all enrollments in this
-    /// group will use
-    /// @returns A future to be fulfilled with either the newly created
-    /// enrollment group, or the network error that occurred
+    /// group will use.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     /// @details
     /// Enrollment groups are initially created without any associated
@@ -355,17 +355,18 @@ class ManagementService {
     /// @brief Create a new group of enrollments that can be used for group
     /// authentication.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `CreateEnrollmentGroupCallData*`.
-    /// @param userID userID of the user that owns the enrollment group
-    /// @param groupID Unique group identifier for the enrollment group, if
-    /// empty an id will be automatically generated
-    /// @param groupName Friendly display name to use for the enrollment group
-    /// @param description Description of the enrollment group
+    /// @param userID The ID of the user that owns the enrollment group.
+    /// @param groupID A unique group identifier for the enrollment group. If
+    /// empty, an ID will be automatically generated.
+    /// @param groupName A friendly display name to use for the enrollment
+    /// group.
+    /// @param description A description of the enrollment group.
     /// @param modelName The name of the model that all enrollments in this
-    /// group will use
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// group will use.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<CreateEnrollmentGroupCallData> asyncCreateEnrollmentGroup(
@@ -413,12 +414,11 @@ class ManagementService {
 
     /// @brief Append enrollments to an existing enrollment group.
     ///
-    /// @param response the response to store the result of the RPC into
-    /// @param groupID The ID of the enrollment group to append enrollments to
-    /// @param enrollments A list of enrollment ids to append to the enrollment
-    /// group
-    /// @returns A future to be fulfilled with either the updated enrollment
-    /// group, or the network error that occurred
+    /// @param response The response to store the result of the RPC into.
+    /// @param groupID The ID of the enrollment group to append enrollments to.
+    /// @param enrollments A list of enrollment IDs to append to the enrollment
+    /// group.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     inline ::grpc::Status appendEnrollmentGroup(
         ::sensory::api::v1::management::EnrollmentGroupResponse* response,
@@ -447,13 +447,13 @@ class ManagementService {
 
     /// @brief Append enrollments to an existing enrollment group.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `AppendEnrollmentGroupCallData*`.
-    /// @param groupID The ID of the enrollment group to append enrollments to
-    /// @param enrollments A list of enrollment ids to append to the enrollment
-    /// group
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param groupID The ID of the enrollment group to append enrollments to.
+    /// @param enrollments A list of enrollment IDs to append to the enrollment
+    /// group.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<AppendEnrollmentGroupCallData> asyncAppendEnrollmentGroup(
@@ -494,10 +494,9 @@ class ManagementService {
 
     /// @brief Request the deletion of enrollment groups.
     ///
-    /// @param response the response to store the result of the RPC into
-    /// @param groupID The group ID to delete
-    /// @return A future to be fulfilled with either the deleted enrollment
-    /// group, or the network error that occurred
+    /// @param response The response to store the result of the RPC into.
+    /// @param groupID The ID of the group to delete.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     inline ::grpc::Status deleteEnrollmentGroup(
         ::sensory::api::v1::management::EnrollmentGroupResponse* response,
@@ -523,11 +522,11 @@ class ManagementService {
 
     /// @brief Request the deletion of enrollment groups.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `DeleteEnrollmentGroupCallData*`.
-    /// @param groupID The group ID to delete
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param groupID The ID of the group to delete.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<DeleteEnrollmentGroupCallData> asyncDeleteEnrollmentGroup(
