@@ -26,11 +26,13 @@
 #ifndef SENSORY_CLOUD_SERVICES_AUDIO_SERVICE_HPP_
 #define SENSORY_CLOUD_SERVICES_AUDIO_SERVICE_HPP_
 
-#include <string>
 #include <memory>
+#include <string>
+#include <utility>
 #include "sensorycloud/generated/v1/audio/audio.pb.h"
 #include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
 #include "sensorycloud/config.hpp"
+#include "sensorycloud/call_data.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 
 /// @brief The Sensory Cloud SDK.

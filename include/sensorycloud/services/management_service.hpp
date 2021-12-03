@@ -30,11 +30,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <grpc/grpc.h>
-#include <grpc++/channel.h>
-#include <grpc++/client_context.h>
-#include <grpc++/create_channel.h>
-#include <grpc++/security/credentials.h>
 #include "sensorycloud/generated/v1/management/enrollment.pb.h"
 #include "sensorycloud/generated/v1/management/enrollment.grpc.pb.h"
 #include "sensorycloud/config.hpp"

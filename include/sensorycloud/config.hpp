@@ -26,17 +26,17 @@
 #ifndef SENSORY_CLOUD_CONFIG_HPP_
 #define SENSORY_CLOUD_CONFIG_HPP_
 
+#include <grpc/grpc.h>
+#include <grpc++/channel.h>
+#include <grpc++/client_context.h>
+#include <grpc++/create_channel.h>
+#include <grpc++/security/credentials.h>
 #include <memory>
 #include <algorithm>
 #include <cstdint>
 #include <chrono>
 #include <string>
 #include <sstream>
-#include <grpc/grpc.h>
-#include <grpc++/channel.h>
-#include <grpc++/client_context.h>
-#include <grpc++/create_channel.h>
-#include <grpc++/security/credentials.h>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {

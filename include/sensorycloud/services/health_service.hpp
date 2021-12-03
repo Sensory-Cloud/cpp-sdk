@@ -27,13 +27,8 @@
 #define SENSORY_CLOUD_SERVICES_HEALTH_SERVICE_HPP_
 
 #include <memory>
-#include <utility>
 #include <string>
-#include <grpc/grpc.h>
-#include <grpc++/channel.h>
-#include <grpc++/client_context.h>
-#include <grpc++/create_channel.h>
-#include <grpc++/security/credentials.h>
+#include <utility>
 #include "sensorycloud/generated/health/health.pb.h"
 #include "sensorycloud/generated/health/health.grpc.pb.h"
 #include "sensorycloud/config.hpp"
