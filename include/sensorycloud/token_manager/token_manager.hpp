@@ -45,7 +45,7 @@ struct AccessTokenCredentials {
     std::string secret;
 };
 
-/// @brief Keychain tags used to store OAuth credentials for Sensory Cloud.
+/// @brief Key-value tags used to store OAuth credentials for Sensory Cloud.
 static const struct {
     /// the ID of the client device (A RFC-4122v4 UUID)
     const std::string ClientID     = "clientID";
