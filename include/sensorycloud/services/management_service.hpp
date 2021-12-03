@@ -189,13 +189,13 @@ class ManagementService {
     ///
     /// @tparam Callback the type of the callback function. The callback should
     /// accept a single pointer of type `DeleteEnrollmentCallData*`.
-    /// @param userID userID to fetch enrollments for
+    /// @param enrollmentID enrollmentID for the enrollment to delete
     /// @param callback The callback to execute when the response arrives
     /// @returns A pointer to the asynchronous call spawned by this call
     ///
     template<typename Callback>
     inline std::shared_ptr<DeleteEnrollmentCallData> asyncDeleteEnrollment(
-        const std::string& userID,
+        const std::string& enrollmentID,
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -206,7 +206,7 @@ class ManagementService {
         std::shared_ptr<DeleteEnrollmentCallData>
             call(new DeleteEnrollmentCallData);
         config.setupUnaryClientContext(call->context, tokenManager);
-        call->request.set_id(userID);
+        call->request.set_id(enrollmentID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
         stub->async()->DeleteEnrollment(
