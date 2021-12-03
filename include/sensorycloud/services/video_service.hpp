@@ -33,6 +33,7 @@
 #include "sensorycloud/generated/v1/video/video.grpc.pb.h"
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/call_data.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -120,36 +121,23 @@ class VideoService {
         return models_stub->AsyncGetModels(context, {}, queue);
     }
 
-    /// @brief A type for encapsulating data for asynchronous calls.
-    struct GetModelsCall {
-        /// The context that the call is initiated with.
-        ::grpc::ClientContext context;
-        /// The status of the call after the response is processed.
-        ::grpc::Status status;
-        /// The request to execute in the unary call.
-        ::sensory::api::v1::video::GetModelsRequest request;
-        /// The response to process after the RPC completes.
-        ::sensory::api::v1::video::GetModelsResponse response;
-        /// A flag determining whether the asynchronous has terminated.
-        std::atomic<bool> isDone;
-
-        /// @brief Initialize a new call.
-        GetModelsCall() : isDone(false) { }
-
-        /// @brief Wait for the asynchronous call to complete.
-        inline void await() { while (!isDone) continue; }
-    };
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::GetModelsRequest,
+        ::sensory::api::v1::video::GetModelsResponse
+    > GetModelsCall;
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
-    /// @tparam T the type of the callback function. The callback should accept
-    /// a single pointer of type `GetModelsCall*`.
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `GetModelsCall*`.
     /// @param callback The callback to execute when the response arrives
     /// @returns A pointer to the asynchronous call spawned by this call
     ///
-    template<typename T>
+    template<typename Callback>
     inline std::shared_ptr<GetModelsCall> asyncGetModels(
-        const T& callback
+        const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
         // scope of the call. Setup the call as usual with a bearer token and

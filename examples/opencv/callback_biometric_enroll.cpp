@@ -63,6 +63,8 @@ int main(int argc, const char** argv) {
     );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
+    // ------ Check server health ----------------------------------------------
+
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealth;
@@ -77,6 +79,8 @@ int main(int argc, const char** argv) {
     std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
     std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
     std::cout << "\tid: " << serverHealth.id() << std::endl;
+
+    // ------ Authorize the current user ---------------------------------------
 
     // Query the user ID
     std::string userID = "";
@@ -112,29 +116,27 @@ int main(int argc, const char** argv) {
         }
     }
 
-    sensory::service::VideoService<sensory::token_manager::Keychain> videoService(config, tokenManager);
+    // ------ Create the video service -----------------------------------------
+
+    // Create the video service based on the configuration and token manager.
+    sensory::service::VideoService<sensory::token_manager::Keychain>
+        videoService(config, tokenManager);
+
+    // ------ Query the available video models ---------------------------------
 
     std::cout << "Available video models:" << std::endl;
     videoService.asyncGetModels([](sensory::service::VideoService<sensory::token_manager::Keychain>::GetModelsCall* call) {
-        for (auto& model : call->response.models()) {
+        for (auto& model : call->getResponse().models()) {
+            if (!call->getStatus().ok()) {  // the call failed
+                std::cout << "Failed to get video models with\n\t" <<
+                    call->getStatus().error_code() << ": " <<
+                    call->getStatus().error_message() << std::endl;
+            }
             if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
                 continue;
             std::cout << "\t" << model.name() << std::endl;
         }
     })->await();
-
-    // sensory::api::v1::video::GetModelsResponse videoModelsResponse;
-    // status = videoService.getModels(&videoModelsResponse);
-    // if (!status.ok()) {  // the call failed, print a descriptive message
-    //     std::cout << "Failed to get video models with\n\t" <<
-    //         status.error_code() << ": " << status.error_message() << std::endl;
-    //     return 1;
-    // }
-    // for (auto& model : videoModelsResponse.models()) {
-    //     if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
-    //         continue;
-    //     std::cout << "\t" << model.name() << std::endl;
-    // }
 
     std::string videoModel = "";
     std::cout << "Video model: ";
