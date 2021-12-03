@@ -75,6 +75,11 @@ int main() {
         // Generate a new clientID and clientSecret for this device
         const auto credentials = tokenManager.generateCredentials();
 
+        // Query the friendly device name
+        std::string name = "";
+        std::cout << "Device Name: ";
+        std::cin >> name;
+
         // Query the shared pass-phrase
         std::string password = "";
         std::cout << "password: ";
@@ -83,7 +88,7 @@ int main() {
         // Register this device with the remote host
         sensory::api::v1::management::DeviceResponse registerResponse;
         auto status = oauthService.registerDevice(&registerResponse,
-            userID,
+            name,
             password,
             credentials.id,
             credentials.secret
