@@ -38,6 +38,7 @@
 #include "sensorycloud/generated/v1/management/device.pb.h"
 #include "sensorycloud/generated/v1/management/device.grpc.pb.h"
 #include "sensorycloud/config.hpp"
+#include "sensorycloud/call_data.hpp"
 #include "sensorycloud/services/network_error.hpp"
 
 /// @brief The Sensory Cloud SDK.
@@ -73,7 +74,9 @@ class OAuthService {
         device_stub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),
         oauth_stub(::sensory::api::oauth::OauthService::NewStub(config.getChannel())) { }
 
-    /// @brief Create a new device enrollment.
+    // ----- Register Device ---------------------------------------------------
+
+    /// @brief Register a new device with the Sensory Cloud service.
     ///
     /// @param response the device response to store the result of the RPC into
     /// @param name Name of the enrolling device
@@ -115,6 +118,65 @@ class OAuthService {
         return device_stub->EnrollDevice(&context, request, response);
     }
 
+    /// @brief A type for encapsulating data for asynchronous `EnrollDevice`
+    /// calls.
+    typedef ::sensory::CallData<
+        OAuthService,
+        ::sensory::api::v1::management::EnrollDeviceRequest,
+        ::sensory::api::v1::management::DeviceResponse
+    > EnrollDeviceCallData;
+
+    /// @brief Register a new device with the Sensory Cloud service.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `EnrollDeviceCallData*`.
+    /// @param name Name of the enrolling device
+    /// @param credential Credential string to authenticate that this device
+    /// is allowed to enroll
+    /// @param clientID ClientID to use for OAuth token generation
+    /// @param clientSecret Client Secret to use for OAuth token generation
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<EnrollDeviceCallData> asyncRegisterDevice(
+        const std::string& name,
+        const std::string& credential,
+        const std::string& clientID,
+        const std::string& clientSecret,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<EnrollDeviceCallData>
+            call(new EnrollDeviceCallData);
+        call->request.set_deviceid(config.getDeviceID());
+        call->request.set_tenantid(config.getTenantID());
+        call->request.set_name(name);
+        call->request.set_credential(credential);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        device_stub->async()->EnrollDevice(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
+    }
+
+    // ----- Get Token ---------------------------------------------------------
+
     /// @brief Request a new OAuth token from the server.
     ///
     /// @param response the token response to store the result of the RPC into
@@ -136,6 +198,55 @@ class OAuthService {
         request.set_secret(secret);
         // Execute the remote procedure call synchronously
         return oauth_stub->GetToken(&context, request, response);
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `GetToken` calls.
+    typedef ::sensory::CallData<
+        OAuthService,
+        ::sensory::api::oauth::TokenRequest,
+        ::sensory::api::common::TokenResponse
+    > GetTokenCallData;
+
+    /// @brief Register a new device with the Sensory Cloud service.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `GetTokenCallData*`.
+    /// @param clientID Client id to use in token request
+    /// @param secret Client secret to use in token request
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<GetTokenCallData> asyncGetToken(
+        const std::string& clientID,
+        const std::string& secret,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<GetTokenCallData>
+            call(new GetTokenCallData);
+        call->request.set_clientid(clientID);
+        call->request.set_secret(secret);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        oauth_stub->async()->GetToken(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
     }
 };
 
