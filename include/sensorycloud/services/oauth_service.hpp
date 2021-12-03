@@ -78,7 +78,7 @@ class OAuthService {
  public:
     /// @brief Initialize a new OAuth service.
     ///
-    /// @param config_ the global configuration for the remote connection
+    /// @param config_ The global configuration for the remote connection.
     ///
     explicit OAuthService(const ::sensory::Config& config_) : config(config_),
         deviceStub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),

@@ -55,7 +55,7 @@ class HealthService {
 
     /// @brief Create a copy of this object.
     ///
-    /// @param other the other instance to copy data from
+    /// @param other The other instance to copy data from.
     ///
     /// @details
     /// This copy constructor is private to prevent the copying of this object.
@@ -74,15 +74,15 @@ class HealthService {
  public:
     /// @brief Initialize a new health service.
     ///
-    /// @param config_ the global configuration for the remote connection
+    /// @param config_ The global configuration for the remote connection.
     ///
     explicit HealthService(const ::sensory::Config& config_) : config(config_),
         stub(::sensory::api::health::HealthService::NewStub(config.getChannel())) { }
 
     /// @brief Get the health status of the remote server.
     ///
-    /// @param response the response object to store the result of the call in
-    /// @returns a gRPC status object indicating whether the call succeeded
+    /// @param response The response object to store the result of the RPC into.
+    /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     inline ::grpc::Status getHealth(
         ::sensory::api::common::ServerHealthResponse* response
@@ -103,10 +103,10 @@ class HealthService {
 
     /// @brief Get the health status of the remote server.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `GetHealthCallData*`.
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<GetHealthCallData> asyncGetHealth(

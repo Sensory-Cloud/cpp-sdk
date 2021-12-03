@@ -97,8 +97,8 @@ class AudioService {
  public:
     /// @brief Initialize a new audio service.
     ///
-    /// @param config_ the global configuration for the remote connection
-    /// @param tokenManager_ the token manager for requesting Bearer tokens
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
     ///
     AudioService(
         const ::sensory::Config& config_,
