@@ -52,13 +52,13 @@ class AudioService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the audio models service
-    std::unique_ptr<::sensory::api::v1::audio::AudioModels::Stub> models_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioModels::Stub> modelsStub;
     /// the gRPC stub for the audio biometrics service
-    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::Stub> biometrics_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::Stub> biometricStub;
     /// the gRPC stub for the audio events service
-    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::Stub> events_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::Stub> eventsStub;
     /// the gRPC stub for the audio transcriptions service
-    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::Stub> transcriptions_stub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::Stub> transcriptionsStub;
 
     /// @brief Create a copy of this object.
     ///
@@ -107,10 +107,10 @@ class AudioService {
         ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),
-        models_stub(::sensory::api::v1::audio::AudioModels::NewStub(config.getChannel())),
-        biometrics_stub(::sensory::api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
-        events_stub(::sensory::api::v1::audio::AudioEvents::NewStub(config.getChannel())),
-        transcriptions_stub(::sensory::api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
+        modelsStub(::sensory::api::v1::audio::AudioModels::NewStub(config.getChannel())),
+        biometricStub(::sensory::api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
+        eventsStub(::sensory::api::v1::audio::AudioEvents::NewStub(config.getChannel())),
+        transcriptionsStub(::sensory::api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the audio models supported by the cloud host.
     ///
@@ -124,7 +124,7 @@ class AudioService {
         ::grpc::ClientContext context;
         config.setupUnaryClientContext(context, tokenManager);
         // Execute the RPC synchronously and return the status
-        return models_stub->GetModels(&context, {}, response);
+        return modelsStub->GetModels(&context, {}, response);
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
@@ -155,7 +155,7 @@ class AudioService {
         config.setupUnaryClientContext(call->context, tokenManager);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
-        models_stub->async()->GetModels(
+        modelsStub->async()->GetModels(
             &call->context,
             &call->request,
             &call->response,
@@ -236,7 +236,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         CreateEnrollmentStream stream =
-            biometrics_stub->CreateEnrollment(context);
+            biometricStub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
@@ -302,7 +302,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         CreateEnrollmentStream stream =
-            biometrics_stub->CreateEnrollment(context);
+            biometricStub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
@@ -367,7 +367,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         AuthenticateStream stream =
-            biometrics_stub->Authenticate(context);
+            biometricStub->Authenticate(context);
         stream->Write(request);
         return stream;
     }
@@ -427,7 +427,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         ValidateTriggerStream stream =
-            events_stub->ValidateEvent(context);
+            eventsStub->ValidateEvent(context);
         stream->Write(request);
         return stream;
     }
@@ -483,7 +483,7 @@ class AudioService {
 
         // Create the stream and write the initial configuration request.
         TranscribeAudioStream stream =
-            transcriptions_stub->Transcribe(context);
+            transcriptionsStub->Transcribe(context);
         stream->Write(request);
         return stream;
     }

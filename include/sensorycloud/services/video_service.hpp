@@ -52,11 +52,11 @@ class VideoService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the video models service
-    std::unique_ptr<::sensory::api::v1::video::VideoModels::Stub> models_stub;
+    std::unique_ptr<::sensory::api::v1::video::VideoModels::Stub> modelsStub;
     /// the gRPC stub for the video biometrics service
-    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::Stub> biometrics_stub;
+    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::Stub> biometricsStub;
     /// the gRPC stub for the video recognition service
-    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::Stub> recognition_stub;
+    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::Stub> recognitionStub;
 
     /// @brief Create a copy of this object.
     ///
@@ -77,9 +77,9 @@ class VideoService {
         ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),
-        models_stub(::sensory::api::v1::video::VideoModels::NewStub(config.getChannel())),
-        biometrics_stub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
-        recognition_stub(::sensory::api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
+        modelsStub(::sensory::api::v1::video::VideoModels::NewStub(config.getChannel())),
+        biometricsStub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
+        recognitionStub(::sensory::api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
@@ -93,7 +93,7 @@ class VideoService {
         ::grpc::ClientContext context;
         config.setupUnaryClientContext(context, tokenManager);
         // Execute the RPC synchronously and return the status
-        return models_stub->GetModels(&context, {}, response);
+        return modelsStub->GetModels(&context, {}, response);
     }
 
     /// A type for asynchronous model fetching.
@@ -118,7 +118,7 @@ class VideoService {
         auto context(new ::grpc::ClientContext);
         config.setupUnaryClientContext(*context, tokenManager);
         // Execute the RPC synchronously and return the status
-        return models_stub->AsyncGetModels(context, {}, queue);
+        return modelsStub->AsyncGetModels(context, {}, queue);
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
@@ -149,7 +149,7 @@ class VideoService {
         config.setupUnaryClientContext(call->context, tokenManager);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
-        models_stub->async()->GetModels(
+        modelsStub->async()->GetModels(
             &call->context,
             &call->request,
             &call->response,
@@ -224,7 +224,7 @@ class VideoService {
 
         // Create the stream and write the initial configuration request.
         CreateEnrollmentStream stream =
-            biometrics_stub->CreateEnrollment(context);
+            biometricsStub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
@@ -279,7 +279,7 @@ class VideoService {
         request.set_allocated_config(authenticate_config);
 
         // Create the stream and write the initial configuration request.
-        AuthenticateStream stream = biometrics_stub->Authenticate(context);
+        AuthenticateStream stream = biometricsStub->Authenticate(context);
         stream->Write(request);
         return stream;
     }
@@ -333,7 +333,7 @@ class VideoService {
 
         // Create the stream and write the initial configuration request.
         ValidateLivenessStream stream =
-            recognition_stub->ValidateLiveness(context);
+            recognitionStub->ValidateLiveness(context);
         stream->Write(request);
         return stream;
     }
