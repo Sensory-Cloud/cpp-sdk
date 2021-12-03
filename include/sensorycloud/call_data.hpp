@@ -26,6 +26,10 @@
 #ifndef SENSORY_CLOUD_CALL_DATA_HPP_
 #define SENSORY_CLOUD_CALL_DATA_HPP_
 
+#include <atomic>
+#include <grpc/grpc.h>
+#include <grpc++/client_context.h>
+
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
