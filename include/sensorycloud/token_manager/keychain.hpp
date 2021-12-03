@@ -1,4 +1,4 @@
-// A secure credential provider for the Sensory Cloud C++ SDK.
+// A secure credential store interface for the Sensory Cloud C++ SDK.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_KEYCHAIN_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_KEYCHAIN_HPP_
+#ifndef SENSORY_CLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
+#define SENSORY_CLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
 
 #include <exception>
 #include <string>
@@ -60,17 +60,16 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
-/// @brief A keychain manager for interacting with the OS credential manager.
+/// @brief A secure credential storage manager.
 class Keychain {
  private:
-    /// the package name that identifies the owner of the keys
-    std::string package;
+    /// The package name that identifies the owner of the keys.
+    const std::string package;
 
  public:
-    /// @brief Initialize a new Keychain interface.
+    /// @brief Initialize a new secure credential storage interface.
     ///
-    /// @param package_ the package identifier in `"com.package.product"` format
-    ///
+    /// @param package_ A package identifier in `"com.package.product"` format.
     /// @details
     /// The value of `package_` should remain constant among compatible versions
     /// of the calling application.
@@ -79,8 +78,8 @@ class Keychain {
 
     /// @brief Emplace or replace a key/value pair in the key-chain.
     ///
-    /// @param key the plain-text key of the value to store
-    /// @param value the secure value to store
+    /// @param key The key of the value to store.
+    /// @param value The secure value to store.
     /// @details
     /// Unlike most key-value store abstractions in the STL, this
     /// implementation of emplace will overwrite existing values in the
@@ -90,20 +89,20 @@ class Keychain {
 
     /// @brief Return true if the key exists in the key-chain.
     ///
-    /// @param key the plain-text key to check for the existence of
+    /// @param key The key to check for the existence of.
     ///
     inline bool contains(const std::string& key) const;
 
     /// @brief Look-up a secret value in the key-chain.
     ///
-    /// @param key the plain-text key of the value to return
-    /// @returns the secret value indexed by the given key
+    /// @param key The key of the value to return.
+    /// @returns The secret value indexed by the given key.
     ///
     inline std::string at(const std::string& key) const;
 
     /// @brief Remove a secret key-value pair in the key-chain.
     ///
-    /// @param key the plain-text key of the pair to remove from the keychain
+    /// @param key The key to remove from the secure credential store.
     ///
     inline void erase(const std::string& key) const;
 };
@@ -239,7 +238,7 @@ inline void Keychain::erase(const std::string& key) const {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_KEYCHAIN_HPP_
+#endif  // SENSORY_CLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
 
 
 
