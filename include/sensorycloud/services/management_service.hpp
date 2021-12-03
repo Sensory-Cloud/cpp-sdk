@@ -44,7 +44,7 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
-/// @brief Sensory Cloud Services.
+/// @brief Sensory Cloud services.
 namespace service {
 
 /// @brief A service for managing enrollments and enrollment groups.

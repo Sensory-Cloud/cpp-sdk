@@ -42,7 +42,7 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
-/// @brief Sensory Cloud Services.
+/// @brief Sensory Cloud services.
 namespace service {
 
 /// @brief A service for querying the health of the remote server.
