@@ -28,6 +28,7 @@
 
 #include <string>
 #include <memory>
+#include <utility>
 #include "sensorycloud/generated/v1/video/video.pb.h"
 #include "sensorycloud/generated/v1/video/video.grpc.pb.h"
 #include "sensorycloud/config.hpp"
@@ -117,6 +118,63 @@ class VideoService {
         config.setupUnaryClientContext(*context, tokenManager);
         // Execute the RPC synchronously and return the status
         return models_stub->AsyncGetModels(context, {}, queue);
+    }
+
+    /// @brief A type for encapsulating data for asynchronous calls.
+    struct GetModelsCall {
+        /// The context that the call is initiated with.
+        ::grpc::ClientContext context;
+        /// The status of the call after the response is processed.
+        ::grpc::Status status;
+        /// The request to execute in the unary call.
+        ::sensory::api::v1::video::GetModelsRequest request;
+        /// The response to process after the RPC completes.
+        ::sensory::api::v1::video::GetModelsResponse response;
+        /// A flag determining whether the asynchronous has terminated.
+        std::atomic<bool> isDone;
+
+        /// @brief Initialize a new call.
+        GetModelsCall() : isDone(false) { }
+
+        /// @brief Wait for the asynchronous call to complete.
+        inline void await() { while (!isDone) continue; }
+    };
+
+    /// @brief Fetch a list of the vision models supported by the cloud host.
+    ///
+    /// @tparam T the type of the callback function. The callback should accept
+    /// a single pointer of type `GetModelsCall*`.
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename T>
+    inline std::shared_ptr<GetModelsCall> asyncGetModels(
+        const T& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. Setup the call as usual with a bearer token and
+        // any application deadlines. This call is initiated as a shared pointer
+        // in order to reference count between the parent and child context.
+        // This also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<GetModelsCall> call(new GetModelsCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        models_stub->async()->GetModels(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
     }
 
     /// A type for biometric enrollment streams.
