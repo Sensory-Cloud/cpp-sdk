@@ -34,10 +34,10 @@
 namespace sensory {
 
 /// @brief A type for encapsulating data for asynchronous calls.
-/// @tparam Parent the parent service delegating the call
+/// @tparam Factory the factory service delegating the call
 /// @tparam Request the type of the request
 /// @tparam Response the type of the response
-template<typename Parent, typename Request, typename Response>
+template<typename Factory, typename Request, typename Response>
 struct CallData {
  private:
     /// The context that the call is initiated with.
@@ -73,10 +73,10 @@ struct CallData {
     /// @brief Return `true` if the call has resolved, `false` otherwise.
     inline const bool& getIsDone() const { return isDone; }
 
-    // Mark the Parent type as a friend to allow it to have write access to the
-    // internal types. This allows the parent scope to have mutability, but all
-    // other scopes must access data through the immutable `get` interface.
-    friend Parent;
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
 };
 
 }  // namespace sensory
