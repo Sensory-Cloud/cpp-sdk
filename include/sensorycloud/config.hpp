@@ -44,20 +44,20 @@ namespace sensory {
 /// @brief A config error type thrown when configuration parameters are invalid.
 struct ConfigError : public std::runtime_error {
  public:
-    /// Reasons for configuration errors to occur
+    /// @brief Reasons for configuration errors to occur.
     enum class Code {
-        /// the host name is not valid
+        /// The host name is not valid.
         InvalidHost = 0,
-        /// the tenant ID is not valid
+        /// The tenant ID is not valid.
         InvalidTenantID,
-        /// the device ID is not valid
+        /// The device ID is not valid.
         InvalidDeviceID,
     };
 
     /// @brief Return a message for the given error code.
     ///
-    /// @param code the code to get the error message for
-    /// @returns a text error message associated with the given error code
+    /// @param code The code to get the error message for.
+    /// @returns A text error message associated with the given error code.
     ///
     static inline const std::string getMessage(const Code& code) {
         switch (code) {  // switch over the possible code type cases
@@ -72,7 +72,7 @@ struct ConfigError : public std::runtime_error {
 
     /// @brief Initialize a new configuration error.
     ///
-    /// @param code the reason for the configuration error
+    /// @param code The reason for the configuration error.
     ///
     explicit ConfigError(const Code& code) :
         std::runtime_error(getMessage(code)),
@@ -80,8 +80,8 @@ struct ConfigError : public std::runtime_error {
 
     /// @brief Initialize a new configuration error.
     ///
-    /// @param code the reason for the configuration error
-    /// @param message the message to provide through the `what()` call.
+    /// @param code The reason for the configuration error.
+    /// @param message The message to provide through the `what()` call.
     ///
     explicit ConfigError(const Code& code, const std::string& message) :
         std::runtime_error(message),
@@ -92,7 +92,7 @@ struct ConfigError : public std::runtime_error {
 
     /// @brief Return the reason the exception occurred.
     ///
-    /// @returns the reason for the configuration error
+    /// @returns The reason for the configuration error.
     ///
     inline const Code& code() const throw() { return err_code; }
 
@@ -131,9 +131,10 @@ class Config {
 
     /// @brief Initialize a new Sensory Cloud configuration object.
     ///
-    /// @param host_ the host-name of the RPC service
-    /// @param port_ the port number of the RPC service
-    /// @param isSecure_ whether to use SSL/TLS for message encryption
+    /// @param host_ The host-name of the RPC service.
+    /// @param port_ The port number of the RPC service.
+    /// @param isSecure_ `true` to use SSL/TLS for message encryption, `false`
+    /// to use an insecure connection.
     ///
     Config(
         const std::string& host_,
@@ -157,49 +158,50 @@ class Config {
 
     /// @brief Return the name of the remote host.
     ///
-    /// @returns the name of the remote host to connect to
+    /// @returns The name of the remote host to connect to.
     ///
     inline const std::string& getHost() const { return host; }
 
     /// @brief Return the port number of the remote host.
     ///
-    /// @returns the port number of the remote host to connect to
+    /// @returns The port number of the remote host to connect to.
     ///
     inline const uint16_t& getPort() const { return port; }
 
     /// @brief Return the ID of the tenant.
     ///
-    /// @returns the tenant ID for identifying the customer's account
+    /// @returns The tenant ID for identifying the customer's account.
     ///
     inline const std::string& getTenantID() const { return tenantID; }
 
     /// @brief Return the ID of the device.
     ///
-    /// @returns the unique ID for identifying a device in a customer network
+    /// @returns The unique ID for identifying a device in a customer network.
     ///
     inline const std::string& getDeviceID() const { return deviceID; }
 
     /// @brief Return the security policy of the remote host.
     ///
-    /// @returns true if the connection is secured with TLS, false otherwise
+    /// @returns `true` if the connection is secured with TLS/SSL, `false`
+    /// otherwise.
     ///
     inline const bool& getIsSecure() const { return isSecure; }
 
     /// @brief Set the timeout for gRPC unary calls to a new value.
     ///
-    /// @param timeout the timeout for gRPC unary calls in seconds
+    /// @param timeout The timeout for gRPC unary calls in seconds.
     ///
     inline void setTimeout(const uint32_t& timeout) { this->timeout = timeout; }
 
     /// @brief Return the timeout for gRPC unary calls.
     ///
-    /// @returns the timeout for gRPC unary calls in seconds
+    /// @returns The timeout for gRPC unary calls in seconds.
     ///
     inline const uint32_t getTimeout() const { return timeout; }
 
     /// @brief Create a new deadline based on the RPC timeout time.
     ///
-    /// @returns the deadline for the next unary RPC call.
+    /// @returns The deadline for the next unary RPC call.
     ///
     inline std::chrono::system_clock::time_point getDeadline() const {
         return std::chrono::system_clock::now() + std::chrono::seconds(timeout);
@@ -207,7 +209,7 @@ class Config {
 
     /// @brief Return a formatted gRPC host-name and port combination.
     ///
-    /// @returns a formatted string in `"{host}:{port}"` format
+    /// @returns A formatted string in `"{host}:{port}"` format.
     ///
     inline std::string getFullyQualifiedDomainName() const {
         return host + std::string(":") + std::to_string(port);
@@ -215,7 +217,7 @@ class Config {
 
     /// @brief Create a new gRPC channel.
     ///
-    /// @returns a new gRPC channel to connect a service to
+    /// @returns A new gRPC channel to connect a service to.
     ///
     inline std::shared_ptr<::grpc::Channel> getChannel() const {
         // Create the credentials for the channel based on the security setting.
@@ -229,9 +231,9 @@ class Config {
 
     /// @brief Setup an existing client context for unary gRPC calls.
     ///
-    /// @tparam TokenManager the type of the token manager
-    /// @param context the context to setup with a Bearer token and deadline
-    /// @param tokenManager the token manager for retrieving tokens
+    /// @tparam TokenManager The type of the token manager.
+    /// @param context The context to setup with a Bearer token and deadline.
+    /// @param tokenManager The token manager for fetching tokens.
     ///
     template<typename TokenManager>
     inline void setupUnaryClientContext(
@@ -244,11 +246,11 @@ class Config {
         context.set_deadline(getDeadline());
     }
 
-    /// @brief Setup an existing client context for bidirectional gRPC calls.
+    /// @brief Setup an existing client context for bidirectional gRPC streams.
     ///
-    /// @tparam TokenManager the type of the token manager
-    /// @param context the context to setup with a Bearer token and deadline
-    /// @param tokenManager the token manager for retrieving tokens
+    /// @tparam TokenManager The type of the token manager.
+    /// @param context The context to setup with a Bearer token and deadline.
+    /// @param tokenManager The token manager for fetching tokens.
     ///
     template<typename TokenManager>
     inline void setupBidiClientContext(

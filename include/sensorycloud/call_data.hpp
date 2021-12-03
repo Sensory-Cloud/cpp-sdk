@@ -34,9 +34,9 @@
 namespace sensory {
 
 /// @brief A type for encapsulating data for asynchronous calls.
-/// @tparam Factory the factory service delegating the call
-/// @tparam Request the type of the request
-/// @tparam Response the type of the response
+/// @tparam Factory The factory class that will manage the scope of the call.
+/// @tparam Request The type of the request message.
+/// @tparam Response The type of the response message.
 template<typename Factory, typename Request, typename Response>
 struct CallData {
  private:
