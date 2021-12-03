@@ -53,17 +53,27 @@ class OAuthService {
     /// the global configuration for the remote connection
     const ::sensory::Config& config;
     /// The gRPC stub for the device service
-    std::unique_ptr<::sensory::api::v1::management::DeviceService::Stub> device_stub;
+    std::unique_ptr<::sensory::api::v1::management::DeviceService::Stub> deviceStub;
     /// The gRPC stub for the OAuth service
-    std::unique_ptr<::sensory::api::oauth::OauthService::Stub> oauth_stub;
+    std::unique_ptr<::sensory::api::oauth::OauthService::Stub> oauthStub;
 
     /// @brief Create a copy of this object.
     ///
-    /// @param other the other instance to copy data from
+    /// @param other The other instance to copy data from.
     ///
     /// @details
-    /// This copy constructor is private to prevent the copying of this object
+    /// This copy constructor is private to prevent the copying of this object.
+    ///
     OAuthService(const OAuthService& other);
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const OAuthService& other) = delete;
 
  public:
     /// @brief Initialize a new OAuth service.
@@ -71,28 +81,28 @@ class OAuthService {
     /// @param config_ the global configuration for the remote connection
     ///
     explicit OAuthService(const ::sensory::Config& config_) : config(config_),
-        device_stub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),
-        oauth_stub(::sensory::api::oauth::OauthService::NewStub(config.getChannel())) { }
+        deviceStub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),
+        oauthStub(::sensory::api::oauth::OauthService::NewStub(config.getChannel())) { }
 
     // ----- Register Device ---------------------------------------------------
 
     /// @brief Register a new device with the Sensory Cloud service.
     ///
-    /// @param response the device response to store the result of the RPC into
-    /// @param name Name of the enrolling device
-    /// @param credential Credential string to authenticate that this device
-    /// is allowed to enroll
-    /// @param clientID ClientID to use for OAuth token generation
-    /// @param clientSecret Client Secret to use for OAuth token generation
-    /// @returns the status of the synchronous gRPC call
+    /// @param response The device response to store the result of the RPC into.
+    /// @param name The friendly name of the device that is being registered.
+    /// @param credential A credential string to authenticate that this device
+    /// is allowed to register.
+    /// @param clientID The client ID to use for OAuth token generation.
+    /// @param clientSecret The client secret to use for OAuth token generation.
+    /// @returns The status of the synchronous gRPC call.
     ///
     /// @details
     /// The credential string authenticates that this device is allowed to
-    /// enroll. Depending on the server configuration the credential string
+    /// register. Depending on the server configuration the credential string
     /// may be one of multiple values:
-    /// -   An empty string if no authentication is configured on the server
-    /// -   A shared secret (password)
-    /// -   A signed JWT
+    /// -   An empty string if no authentication is configured on the server,
+    /// -   a shared secret (password), or
+    /// -   a signed JWT.
     ///
     ::grpc::Status registerDevice(
         ::sensory::api::v1::management::DeviceResponse* response,
@@ -115,7 +125,7 @@ class OAuthService {
         clientRequest->set_secret(clientSecret);
         request.set_allocated_client(clientRequest);
         // Execute the RPC synchronously and return the status
-        return device_stub->EnrollDevice(&context, request, response);
+        return deviceStub->EnrollDevice(&context, request, response);
     }
 
     /// @brief A type for encapsulating data for asynchronous `EnrollDevice`
@@ -124,22 +134,30 @@ class OAuthService {
         OAuthService,
         ::sensory::api::v1::management::EnrollDeviceRequest,
         ::sensory::api::v1::management::DeviceResponse
-    > EnrollDeviceCallData;
+    > RegisterDeviceCallData;
 
     /// @brief Register a new device with the Sensory Cloud service.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
-    /// accept a single pointer of type `EnrollDeviceCallData*`.
-    /// @param name Name of the enrolling device
-    /// @param credential Credential string to authenticate that this device
-    /// is allowed to enroll
-    /// @param clientID ClientID to use for OAuth token generation
-    /// @param clientSecret Client Secret to use for OAuth token generation
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @tparam Callback The type of the callback function. The callback should
+    /// accept a single pointer of type `RegisterDeviceCallData*`.
+    /// @param name The friendly name of the device that is being registered.
+    /// @param credential A credential string to authenticate that this device
+    /// is allowed to register.
+    /// @param clientID The client ID to use for OAuth token generation.
+    /// @param clientSecret The client secret to use for OAuth token generation.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
+    ///
+    /// @details
+    /// The credential string authenticates that this device is allowed to
+    /// register. Depending on the server configuration the credential string
+    /// may be one of multiple values:
+    /// -   An empty string if no authentication is configured on the server,
+    /// -   a shared secret (password), or
+    /// -   a signed JWT.
     ///
     template<typename Callback>
-    inline std::shared_ptr<EnrollDeviceCallData> asyncRegisterDevice(
+    inline std::shared_ptr<RegisterDeviceCallData> asyncRegisterDevice(
         const std::string& name,
         const std::string& credential,
         const std::string& clientID,
@@ -151,15 +169,15 @@ class OAuthService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<EnrollDeviceCallData>
-            call(new EnrollDeviceCallData);
+        std::shared_ptr<RegisterDeviceCallData>
+            call(new RegisterDeviceCallData);
         call->request.set_deviceid(config.getDeviceID());
         call->request.set_tenantid(config.getTenantID());
         call->request.set_name(name);
         call->request.set_credential(credential);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
-        device_stub->async()->EnrollDevice(
+        deviceStub->async()->EnrollDevice(
             &call->context,
             &call->request,
             &call->response,
@@ -179,15 +197,15 @@ class OAuthService {
 
     /// @brief Request a new OAuth token from the server.
     ///
-    /// @param response the token response to store the result of the RPC into
-    /// @param clientID Client id to use in token request
-    /// @param secret Client secret to use in token request
-    /// @returns the status of the synchronous gRPC call
+    /// @param response The token response to store the result of the RPC into.
+    /// @param clientID The client ID to use for OAuth token generation.
+    /// @param clientSecret The client secret to use for OAuth token generation.
+    /// @returns The status of the synchronous gRPC call.
     ///
     ::grpc::Status getToken(
         ::sensory::api::common::TokenResponse* response,
         const std::string& clientID,
-        const std::string& secret
+        const std::string& clientSecret
     ) {
         // Create a context for the client. Most requests require the existence
         // of a authorization Bearer token, but this request does not.
@@ -195,9 +213,9 @@ class OAuthService {
         // Create the token request from the function parameters.
         ::sensory::api::oauth::TokenRequest request;
         request.set_clientid(clientID);
-        request.set_secret(secret);
+        request.set_secret(clientSecret);
         // Execute the remote procedure call synchronously
-        return oauth_stub->GetToken(&context, request, response);
+        return oauthStub->GetToken(&context, request, response);
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetToken` calls.
@@ -209,17 +227,17 @@ class OAuthService {
 
     /// @brief Register a new device with the Sensory Cloud service.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `GetTokenCallData*`.
-    /// @param clientID Client id to use in token request
-    /// @param secret Client secret to use in token request
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param clientID The client ID to use for OAuth token generation.
+    /// @param clientSecret The client secret to use for OAuth token generation.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<GetTokenCallData> asyncGetToken(
         const std::string& clientID,
-        const std::string& secret,
+        const std::string& clientSecret,
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -230,10 +248,10 @@ class OAuthService {
         std::shared_ptr<GetTokenCallData>
             call(new GetTokenCallData);
         call->request.set_clientid(clientID);
-        call->request.set_secret(secret);
+        call->request.set_secret(clientSecret);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
-        oauth_stub->async()->GetToken(
+        oauthStub->async()->GetToken(
             &call->context,
             &call->request,
             &call->response,
