@@ -27,6 +27,7 @@
 #define SENSORY_CLOUD_SERVICES_HEALTH_SERVICE_HPP_
 
 #include <memory>
+#include <utility>
 #include <string>
 #include <grpc/grpc.h>
 #include <grpc++/channel.h>
@@ -36,7 +37,7 @@
 #include "sensorycloud/generated/health/health.pb.h"
 #include "sensorycloud/generated/health/health.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/services/network_error.hpp"
+#include "sensorycloud/call_data.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -57,8 +58,18 @@ class HealthService {
     /// @param other the other instance to copy data from
     ///
     /// @details
-    /// This copy constructor is private to prevent the copying of this object
-    HealthService(const HealthService& other);
+    /// This copy constructor is private to prevent the copying of this object.
+    ///
+    HealthService(const HealthService& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const HealthService& other) = delete;
 
  public:
     /// @brief Initialize a new health service.
@@ -74,13 +85,55 @@ class HealthService {
     /// @returns a gRPC status object indicating whether the call succeeded
     ///
     inline ::grpc::Status getHealth(
-      ::sensory::api::common::ServerHealthResponse* response
-   ) const {
+        ::sensory::api::common::ServerHealthResponse* response
+    ) const {
         // Create a client context to query the health service. This request
         // does not require the "authorization" : "Bearer <token>" for auth.
         ::grpc::ClientContext context;
         // Create the parameter-less request to execute on the remote server
         return stub->GetHealth(&context, {}, response);
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    typedef ::sensory::CallData<
+        HealthService,
+        ::sensory::api::health::HealthRequest,
+        ::sensory::api::common::ServerHealthResponse
+    > GetHealthCallData;
+
+    /// @brief Get the health status of the remote server.
+    ///
+    /// @tparam Callback the type of the callback function. The callback should
+    /// accept a single pointer of type `GetHealthCallData*`.
+    /// @param callback The callback to execute when the response arrives
+    /// @returns A pointer to the asynchronous call spawned by this call
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<GetHealthCallData> asyncGetHealth(
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<GetHealthCallData> call(new GetHealthCallData);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        stub->async()->GetHealth(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->isDone = true;
+            });
+        return call;
     }
 };
 
