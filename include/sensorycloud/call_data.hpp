@@ -26,9 +26,9 @@
 #ifndef SENSORY_CLOUD_CALL_DATA_HPP_
 #define SENSORY_CLOUD_CALL_DATA_HPP_
 
-#include <atomic>
 #include <grpc/grpc.h>
 #include <grpc++/client_context.h>
+#include <atomic>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -37,12 +37,21 @@ namespace sensory {
 /// @tparam Factory The factory class that will manage the scope of the call.
 /// @tparam Request The type of the request message.
 /// @tparam Response The type of the response message.
+///
+/// @details
+/// The `Factory` is marked as a friend in order to provide mutable access to
+/// private attributes of the structure. This allows instances of `Factory` to
+/// mutate to the structure while all external scopes are limited to the
+/// immutable interface exposed by the public accessor functions. Instances of
+/// `CallData` are mutable within the scope of `Factory`, but immutable outside
+/// of the scope of `Factory`.
+///
 template<typename Factory, typename Request, typename Response>
 struct CallData {
  private:
-    /// The context that the call is initiated with.
+    /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
-    /// The status of the call after the response is processed.
+    /// The status of the RPC after the response is processed.
     ::grpc::Status status;
     /// The request to execute in the unary call.
     Request request;
@@ -54,8 +63,18 @@ struct CallData {
     /// @brief Initialize a new call.
     CallData() : isDone(false) { }
 
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
+
  public:
     /// @brief Wait for the asynchronous call to complete.
+    ///
+    /// @details
+    /// This will block the calling thread until the asynchronous call returns
+    /// with a response.
+    ///
     inline void await() { while (!isDone) continue; }
 
     /// @brief Return the context that the call was created with.
@@ -72,11 +91,6 @@ struct CallData {
 
     /// @brief Return `true` if the call has resolved, `false` otherwise.
     inline const bool& getIsDone() const { return isDone; }
-
-    // Mark the Factory type as a friend to allow it to have write access to
-    // the internal types. This allows the parent scope to have mutability, but
-    // all other scopes must access data through the immutable `get` interface.
-    friend Factory;
 };
 
 }  // namespace sensory
