@@ -38,6 +38,7 @@
 #include "sensorycloud/generated/v1/management/enrollment.pb.h"
 #include "sensorycloud/generated/v1/management/enrollment.grpc.pb.h"
 #include "sensorycloud/config.hpp"
+#include "sensorycloud/call_data.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 
 /// @brief The Sensory Cloud SDK.
