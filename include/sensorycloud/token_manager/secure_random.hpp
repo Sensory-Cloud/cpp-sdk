@@ -38,8 +38,8 @@ namespace token_manager {
 
 /// @brief Generate a cryptographically secure random number.
 ///
-/// @tparam length the length of the hex string to generate
-/// @returns a cryptographically random hex string
+/// @tparam length The length of the hex string to generate.
+/// @returns A cryptographically secure random hex string.
 ///
 template<std::size_t length>
 std::string secure_random() {

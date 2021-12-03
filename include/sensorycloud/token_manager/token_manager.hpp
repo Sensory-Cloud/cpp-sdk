@@ -39,21 +39,21 @@ namespace token_manager {
 
 /// @brief A wrapper struct for OAuth token credentials.
 struct AccessTokenCredentials {
-    /// The OAuth client id
-    std::string id;
-    /// The OAuth client secret
-    std::string secret;
+    /// The OAuth client id.
+    const std::string id;
+    /// The OAuth client secret.
+    const std::string secret;
 };
 
 /// @brief Key-value tags used to store OAuth credentials for Sensory Cloud.
 static const struct {
-    /// the ID of the client device (A RFC-4122v4 UUID)
+    /// The ID of the client device (A RFC-4122v4 UUID).
     const std::string ClientID     = "clientID";
-    /// the client secret (a cryptographically secure random number)
+    /// The client secret (a cryptographically secure random number).
     const std::string ClientSecret = "clientSecret";
-    /// the OAuth token from the server
+    /// The OAuth token from the server.
     const std::string AccessToken  = "accessToken";
-    /// the expiration time of the OAuth token
+    /// The expiration time of the OAuth token.
     const std::string Expiration   = "expiration";
 } TAGS;
 
@@ -188,7 +188,7 @@ class TokenManager {
 
     /// @brief Fetch a new access token from a remote server.
     ///
-    /// @returns the new token as a string
+    /// @returns The new token as a string.
     ///
     std::string fetchNewAccessToken() const {
         // Check if credentials have been generated already, otherwise create

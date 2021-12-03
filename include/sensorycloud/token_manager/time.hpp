@@ -39,8 +39,8 @@ namespace token_manager {
 
 /// @brief Convert a time point to a UTC ISO8601 timestamp.
 ///
-/// @param time the time point to convert to a UTC ISO8601 timestamp
-/// @returns the UTC ISO8601 timestamp representation of the time point
+/// @param time The time point to convert to a UTC ISO8601 timestamp.
+/// @returns The UTC ISO8601 timestamp representation of the time point.
 ///
 inline std::string timepoint_to_timestamp(const std::chrono::system_clock::time_point& time_point) {
     // Convert the time point to a time_t object
@@ -53,8 +53,8 @@ inline std::string timepoint_to_timestamp(const std::chrono::system_clock::time_
 
 /// @brief Convert a UTC ISO8601 timestamp to a time point.
 ///
-/// @param time the UTC ISO8601 timestamp to convert to a time point
-/// @returns the input timestamp converted to a native time point
+/// @param time The UTC ISO8601 timestamp to convert to a time point.
+/// @returns The input timestamp converted to a native time point.
 ///
 inline std::chrono::system_clock::time_point timestamp_to_timepoint(const std::string& timestamp) {
     // Create an input stream from the time string

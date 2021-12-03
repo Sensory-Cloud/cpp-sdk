@@ -35,13 +35,11 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
-// TODO: benchmark this function.
-// TODO: refactor to minimize random number generation.
-// TODO: use cryptographically secure RNG from openSSL
-
-/// @brief Generate a pseudo-random UUID compliant with RFC-4122 Version 4.
+/// @brief Generate a pseudo-random UUID compliant with
+/// [RFC-4122 v4](https://datatracker.ietf.org/doc/html/rfc4122#section-4.4).
 ///
-/// @returns a 36-character UUID string based on Mersinne Twister RNG
+/// @returns A 36-character UUID string based on Mersinne Twister random number
+/// generation.
 ///
 /// @details
 ///
@@ -62,15 +60,13 @@ namespace token_manager {
 /// The resulting code is in the following format where the character at
 /// position (1) is statically `4` and the character at position (2) is randomly
 /// selected from {`8`, `9`, `A`, `B`}. The remaining characters are randomly
-/// selected without condition (see below for example code).
+/// selected without condition (see below for example UUID).
 ///
 /// ```
 /// AA97B177-9383-4934-8543-0F91A7A02836
 ///               ^    ^
 ///               1    2
 /// ```
-///
-/// Reference: https://datatracker.ietf.org/doc/html/rfc4122#section-4.4
 ///
 std::string uuid_v4() {
     // Create a random number generator conditioned on the system RNG
