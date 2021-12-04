@@ -62,11 +62,13 @@ struct ConfigError : public std::runtime_error {
     static inline const std::string getMessage(const Code& code) {
         switch (code) {  // switch over the possible code type cases
         case Code::InvalidHost:
-            return "the host name is not valid!";
+            return "The host name is not valid!";
         case Code::InvalidTenantID:
-            return "the tenant ID is not valid!";
+            return "The tenant ID is not valid!";
         case Code::InvalidDeviceID:
-            return "the device ID is not valid!";
+            return "The device ID is not valid!";
+        default:
+            return "Unrecognized Error Code";
         }
     }
 
