@@ -141,8 +141,8 @@ class VideoService {
     ///
     /// @tparam Callback the type of the callback function. The callback should
     /// accept a single pointer of type `GetModelsCallData*`.
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<GetModelsCallData> asyncGetModels(
@@ -187,7 +187,7 @@ class VideoService {
     ///
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The unique user identifier.
+    /// @param userID The ID of the user performing the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
     /// to an enrollment, `false` to perform the enrollment without the liveness
@@ -306,7 +306,7 @@ class VideoService {
     ///
     /// @param modelName The name of the model to use. Use `getModels()` to
     /// obtain a list of available models.
-    /// @param userID The unique user identifier.
+    /// @param userID The ID of the user performing the request.
     /// @param threshold The threshold of how confident the model has to be to
     /// give a positive liveness result.
     /// @returns A bidirectional stream that can be used to send video data to

@@ -145,10 +145,10 @@ class AudioService {
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
-    /// @tparam Callback the type of the callback function. The callback should
+    /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `GetModelsCallData*`.
-    /// @param callback The callback to execute when the response arrives
-    /// @returns A pointer to the asynchronous call spawned by this call
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
     inline std::shared_ptr<GetModelsCallData> asyncGetModels(
@@ -193,17 +193,17 @@ class AudioService {
     ///
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the model.
-    /// @param langaugeCode the language code of the audio.
-    /// @param userID The unique user identifier.
-    /// @param description The description of the enrollment
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param userID The ID of the user making the request.
+    /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
     /// to an enrollment, `false` to perform the enrollment without the liveness
     /// check.
     /// @param numUtterances The number of utterances that should be required
     /// for text-dependent enrollments, defaults to 4 if not specified.
     /// @returns A bidirectional stream that can be used to send audio data to
-    /// the server
+    /// the server.
     ///
     /// @details
     /// This call will automatically send the initial `CreateEnrollmentConfig`
@@ -255,10 +255,10 @@ class AudioService {
     ///
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the model.
-    /// @param langaugeCode the language code of the audio.
-    /// @param userID The unique user identifier.
-    /// @param description The description of the enrollment
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param userID The ID of the user making the request.
+    /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
     /// to an enrollment, `false` to perform the enrollment without the liveness
     /// check.
@@ -266,7 +266,7 @@ class AudioService {
     /// enrollments, defaults to 12.5 without liveness enabled and 8 with
     /// liveness enabled.
     /// @returns A bidirectional stream that can be used to send audio data to
-    /// the server
+    /// the server.
     ///
     /// @details
     /// This call will automatically send the initial `CreateEnrollmentConfig`
@@ -324,14 +324,13 @@ class AudioService {
         >
     > AuthenticateStream;
 
-    // TODO: isTokenEnabled option?
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// authentication.
     ///
     /// @param enrollmentID The enrollment ID to authenticate against. This can
     /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the model.
-    /// @param langaugeCode the language code of the audio.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
     /// @param isLivenessEnabled `true` to perform a liveness check before the
     /// authentication, `false` to only perform the authentication.
     /// @returns A bidirectional stream that can be used to send audio data to
@@ -394,9 +393,9 @@ class AudioService {
     ///
     /// @param modelName The name of the model to use to validate the trigger.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the model.
-    /// @param langaugeCode the language code of the audio.
-    /// @param userID The unique user identifier.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param userID The ID of the user making the request.
     /// @param sensitivity How sensitive the model should be to false accepts.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
@@ -454,9 +453,9 @@ class AudioService {
     ///
     /// @param modelName The name of the model to use to transcribe the audio.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the model.
-    /// @param langaugeCode the language code of the audio.
-    /// @param userID The unique user identifier.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param userID The ID of the user making the request.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
