@@ -195,8 +195,9 @@ sensory::Config config(
     "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
 );
 
-// Create the key-chain for the token manager. You may use your own
-// implementation of the `Keychain` interface for your application.
+// Create the secure credential store for the token manager. You may use your
+// own implementation of the `SecureCredentialStore` interface for your
+// application.
 sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
@@ -209,8 +210,8 @@ sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialSto
 #### Registering OAuth Credentials
 
 OAuth credentials should be registered once per unique machine. Registration is
-very simple, and provided as part of the SDK. The below example shows how to
-create an `OAuthService` and register a client for the first time.
+very simple and is provided as part of the SDK. The below example shows how to
+create an `OAuthService` and register a device for the first time.
 
 ```c++
 // Create a configuration specific to your tenant and device.
@@ -221,8 +222,9 @@ sensory::Config config(
     "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
 );
 
-// Create the key-chain for the token manager. You may use your own
-// implementation of the `Keychain` interface for your application.
+// Create the secure credential store for the token manager. You may use your
+// own implementation of the `SecureCredentialStore` interface for your
+// application.
 sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
@@ -234,15 +236,16 @@ sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialSto
 if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
     // Generate a new `clientID` and `clientSecret` for this device and store
     // them securely in the keychain.
-    const auto credentials = tokenManager.generateCredentials();
+    auto credentials = tokenManager.generateCredentials();
+    // The name of the device as a human-readable text string
+    std::string deviceName("a device in your system");
     // Use a shared secret, i.e., pass-phrase to authenticate the device.
-    std::string insecureSharedSecret = "password";
+    std::string insecureSharedSecret("password");
     // Create a response for the RPC.
     sensory::api::v1::management::DeviceResponse response;
     // Perform the RPC and check the status for errors.
-    auto status = oauthService.registerDevice(
-        &response,
-        userID,
+    auto status = oauthService.registerDevice(&response,
+        deviceName,
         insecureSharedSecret,
         credentials.id,
         credentials.secret
@@ -271,8 +274,9 @@ sensory::Config config(
     "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
 );
 
-// Create the key-chain for the token manager. You may use your own
-// implementation of the `Keychain` interface for your application.
+// Create the secure credential store for the token manager. You may use your
+// own implementation of the `SecureCredentialStore` interface for your
+// application.
 sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
@@ -344,8 +348,9 @@ sensory::Config config(
     "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
 );
 
-// Create the key-chain for the token manager. You may use your own
-// implementation of the `Keychain` interface for your application.
+// Create the secure credential store for the token manager. You may use your
+// own implementation of the `SecureCredentialStore` interface for your
+// application.
 sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);
@@ -427,7 +432,7 @@ Instances of `CreateEnrollmentResponse` will have the following attributes:
 -   `modelversion()` The version of the model being used to perform the
     enrollment
 
-###### Aynchronous
+###### Asynchronous
 
 ```c++
 TODO
@@ -479,7 +484,7 @@ Instances of `AuthenticateResponse` will have the following attributes:
     detected as being live based on the score and selected threshold. This can
     only be `true` when liveness was enabled from the call to create the stream.
 
-###### Aynchronous
+###### Asynchronous
 
 ```c++
 TODO
@@ -524,7 +529,7 @@ Instances of `LivenessRecognitionResponse` will have the following attributes:
 -   `response.isalive()` A boolean determining whether the last frame was
     detected as being live based on the score and selected threshold.
 
-###### Aynchronous
+###### Asynchronous
 
 ```c++
 TODO
@@ -544,8 +549,9 @@ sensory::Config config(
     "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
 );
 
-// Create the key-chain for the token manager. You may use your own
-// implementation of the `Keychain` interface for your application.
+// Create the secure credential store for the token manager. You may use your
+// own implementation of the `SecureCredentialStore` interface for your
+// application.
 sensory::token_manager::SecureCredentialStore keychain("com.product.company");
 // Create the OAuth service from the configuration.
 sensory::service::OAuthService oauthService(config);

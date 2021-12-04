@@ -8,7 +8,6 @@ USAGE="Usage: ./cs.sh [COMMAND]"
 
 COMMANDS="
     Commands:\n
-    genproto | gp\t\t Compile Proto Files\n
     compile | c\t\t Compile the library\n
     lint | l\t\t Lint source files\n
     test | t\t\t Run unit tests\n
@@ -38,41 +37,6 @@ if [ $# == 0 ] ; then
 fi
 
 # --- Helper Functions ---------------------------------------------
-
-# Generate the protobuf C++ headers and definitions
-gen_proto() {
-  # Generate a build directory for the generated gRPC code
-  PROTOC_OUTPUT_PATH="./build/sensorycloud/generated"
-  rm -rf ${PROTOC_OUTPUT_PATH}
-  mkdir -p ${PROTOC_OUTPUT_PATH}
-  # Generate the C++ source for the protobuff files
-  for x in $(find ./proto -iname "*.proto");
-  do
-    protoc \
-      --proto_path="./proto" \
-      --cpp_out=${PROTOC_OUTPUT_PATH} \
-      --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin) \
-      --grpc_out=${PROTOC_OUTPUT_PATH} \
-      $x;
-    echo "Generated grpc code for $x";
-  done
-  # Iterate over the built files and fix the include paths
-  for x in $(find ${PROTOC_OUTPUT_PATH} -name "*.h" -o -name "*.cc");
-  do
-    sed -i '' "s/#include \"/#include \"sensorycloud\/generated\//g" $x
-    echo "Replace includes $x";
-  done
-  # Move header files into the include directory
-  mkdir -p ${INCLUDE_DIR}
-  rm -rf "${INCLUDE_DIR}/generated"
-  cp -r ${PROTOC_OUTPUT_PATH} "${INCLUDE_DIR}/generated"
-  find "${INCLUDE_DIR}/generated" -name "*.cc" -delete
-  # Move definition files into the src directory
-  mkdir -p ${SRC_DIR}
-  rm -rf "${SRC_DIR}/generated"
-  cp -r ${PROTOC_OUTPUT_PATH} "${SRC_DIR}/generated"
-  find "${SRC_DIR}/generated" -name "*.h" -delete
-}
 
 # Compile the Makefiles and library. Also pull some dependencies.
 compile() {
@@ -113,11 +77,6 @@ run_benchmarks() {
 # --- Body ---------------------------------------------------------
 
 case "$1" in
-
-  "genproto"|"gp")
-    gen_proto
-    exit 0;
-    ;;
 
   "compile"|"c")
     compile
