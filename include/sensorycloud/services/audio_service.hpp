@@ -66,7 +66,16 @@ class AudioService {
     ///
     /// @details
     /// This copy constructor is private to prevent the copying of this object
-    AudioService(const AudioService& other);
+    AudioService(const AudioService& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const AudioService& other) = delete;
 
     /// @brief Create a new audio config for an audio streaming application.
     ///

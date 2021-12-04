@@ -64,7 +64,16 @@ class VideoService {
     ///
     /// @details
     /// This copy constructor is private to prevent the copying of this object
-    VideoService(const VideoService& other);
+    VideoService(const VideoService& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const VideoService& other) = delete;
 
  public:
     /// @brief Initialize a new video service.

@@ -63,6 +63,23 @@ struct CallData {
     /// @brief Initialize a new call.
     CallData() : isDone(false) { }
 
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    CallData(const CallData& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const CallData& other) = delete;
+
     // Mark the Factory type as a friend to allow it to have write access to
     // the internal types. This allows the parent scope to have mutability, but
     // all other scopes must access data through the immutable `get` interface.

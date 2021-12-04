@@ -59,7 +59,7 @@ class OAuthService {
     /// @details
     /// This copy constructor is private to prevent the copying of this object.
     ///
-    OAuthService(const OAuthService& other);
+    OAuthService(const OAuthService& other) = delete;
 
     /// @brief Assign to this object using the `=` operator.
     ///

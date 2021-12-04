@@ -73,7 +73,16 @@ class TokenManager {
     /// @details
     /// This copy constructor is private to prevent the copying of this object.
     ///
-    TokenManager(const TokenManager& other);
+    TokenManager(const TokenManager& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const TokenManager& other) = delete;
 
  public:
     /// @brief Initialize a new token manager.
