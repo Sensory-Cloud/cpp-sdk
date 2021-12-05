@@ -361,6 +361,60 @@ class VideoService {
         return stream;
     }
 
+    /// @brief A type for encapsulating data for asynchronous
+    /// `CreateEnrollment` calls.
+    typedef ::sensory::BidiReactor<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::AuthenticateRequest,
+        ::sensory::api::v1::video::AuthenticateResponse
+    > AuthorizeBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// video authentication.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param enrollmentID The enrollment ID to authenticate against. This can
+    /// be either an enrollment ID or a group ID.
+    /// @param isLivenessEnabled `true` to perform a liveness check before the
+    /// authentication, `false` to only perform the authentication.
+    /// @param livenessThreshold The liveness threshold for the optional
+    /// liveness check.
+    /// @returns A bidirectional stream that can be used to send video data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void asyncAuthenticate(Reactor* reactor,
+        const std::string& enrollmentID,
+        const bool& isLivenessEnabled = false,
+        const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold =
+            ::sensory::api::v1::video::RecognitionThreshold::LOW
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the initial config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto authenticate_config =
+            new ::sensory::api::v1::video::AuthenticateConfig;
+        authenticate_config->set_enrollmentid(enrollmentID);
+        authenticate_config->set_islivenessenabled(isLivenessEnabled);
+        authenticate_config->set_livenessthreshold(livenessThreshold);
+        // Update the request buffer in the reactor with the allocated config.
+        reactor->request.set_allocated_config(authenticate_config);
+        // Start the stream with the context in the reactor and a pointer to
+        // reactor for callbacks.
+        biometricsStub->async()->Authenticate(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
     // ----- Validate Liveness -------------------------------------------------
 
     /// A type for face liveness validation streams.

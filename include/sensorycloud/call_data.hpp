@@ -163,7 +163,7 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
     ///
     inline ::grpc::Status await() {
         while (!isDone) continue;
-        return std::move(status);
+        return status;
     }
 
     /// @brief Return the context that the call was created with.
