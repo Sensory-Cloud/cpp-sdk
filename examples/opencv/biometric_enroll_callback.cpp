@@ -81,9 +81,7 @@ class OpenCVReactor :
         // If the enrollment is complete, there is no more data to write.
         if (isEnrolled) return;
         // If the status is not OK, then an error occurred during the stream.
-        if (!ok) {
-            return;
-        }
+        if (!ok) return;
         // Lock the mutual exclusion to the frame and encode it into JPEG.
         std::vector<unsigned char> buffer;
         frameMutex.lock();
@@ -103,9 +101,7 @@ class OpenCVReactor :
         // If the enrollment is complete, there is no more data to read.
         if (isEnrolled) return;
         // If the status is not OK, then an error occurred during the stream.
-        if (!ok) {
-            return;
-        }
+        if (!ok) return;
         // Log information about the response to the terminal.
         // std::cout << "Frame Response:     " << std::endl;
         // std::cout << "\tPercent Complete: " << response.percentcomplete() << std::endl;
@@ -119,6 +115,10 @@ class OpenCVReactor :
         percentComplete = response.percentcomplete() / 100.f;
         // Set the liveness status of the last frame.
         isLive = response.isalive();
+        if (isEnrolled) {  // Successfully enrolled! Close the stream.
+            StartWritesDone();
+            return;
+        }
         // Start the next read request for the last written frame.
         StartRead(&response);
     }
@@ -127,7 +127,7 @@ class OpenCVReactor :
     ///
     /// @param isLivenessEnabled whether to enable the liveness check interface
     ///
-    void streamVideo(cv::VideoCapture& capture, const bool& isLivenessEnabled) {
+    ::grpc::Status streamVideo(cv::VideoCapture& capture, const bool& isLivenessEnabled) {
         // Start the call to initiate the stream in the background.
         StartCall();
         // Start capturing frames from the device.
@@ -171,9 +171,7 @@ class OpenCVReactor :
             char c = (char) cv::waitKey(10);
             if (c == 27 || c == 'q' || c == 'Q') break;
         }
-        // Let the stream know that there is no more data to write to terminate
-        // the call.
-        StartWritesDone();
+        return await();
     }
 };
 
@@ -329,19 +327,17 @@ int main(int argc, const char** argv) {
 
     // Create the stream.
     OpenCVReactor reactor;
-    videoService.asyncCreateEnrollment(
-        &reactor,
+    videoService.asyncCreateEnrollment(&reactor,
         videoModel,
         userID,
         description,
         isLivenessEnabled
     );
-    reactor.streamVideo(capture, isLivenessEnabled);
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd
     // runtime errors can occur.
-    auto status = reactor.await();
+    auto status = reactor.streamVideo(capture, isLivenessEnabled);
 
     if (!status.ok()) {
         std::cout << "Failed to enroll with\n\t" <<
