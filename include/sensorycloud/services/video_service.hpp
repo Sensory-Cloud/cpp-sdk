@@ -362,7 +362,7 @@ class VideoService {
     }
 
     /// @brief A type for encapsulating data for asynchronous
-    /// `CreateEnrollment` calls.
+    /// `Authenticate` calls.
     typedef ::sensory::BidiReactor<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::AuthenticateRequest,
@@ -469,6 +469,58 @@ class VideoService {
             recognitionStub->ValidateLiveness(context);
         stream->Write(request);
         return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `ValidateLiveness` calls.
+    typedef ::sensory::BidiReactor<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::ValidateRecognitionRequest,
+        ::sensory::api::v1::video::LivenessRecognitionResponse
+    > ValidateLivenessBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// validating the liveness of an image stream.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param modelName The name of the model to use. Use `getModels()` to
+    /// obtain a list of available models.
+    /// @param userID The ID of the user performing the request.
+    /// @param threshold The threshold of how confident the model has to be to
+    /// give a positive liveness result.
+    /// @returns A bidirectional stream that can be used to send video data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void asyncValidateLiveness(Reactor* reactor,
+        const std::string& modelName,
+        const std::string& userID,
+        const ::sensory::api::v1::video::RecognitionThreshold& threshold
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the initial config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto recognition_config =
+            new ::sensory::api::v1::video::ValidateRecognitionConfig;
+        recognition_config->set_modelname(modelName);
+        recognition_config->set_userid(userID);
+        recognition_config->set_threshold(threshold);
+        // Update the request buffer in the reactor with the allocated config.
+        reactor->request.set_allocated_config(recognition_config);
+        // Start the stream with the context in the reactor and a pointer to
+        // reactor for callbacks.
+        recognitionStub->async()->ValidateLiveness(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
     }
 };
 
