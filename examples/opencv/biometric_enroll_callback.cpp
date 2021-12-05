@@ -30,14 +30,152 @@
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
-#include <sensorycloud/services/management_service.hpp>
-#include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
 #include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
+
+using sensory::token_manager::TokenManager;
+using sensory::token_manager::SecureCredentialStore;
+using sensory::service::HealthService;
+using sensory::service::VideoService;
+using sensory::service::OAuthService;
+
+/// @brief A bidirection stream reactor for biometric enrollments from video
+/// stream data.
+///
+/// @details
+/// Input data for the stream is provided by an OpenCV capture device.
+///
+class OpenCVReactor :
+    public VideoService<SecureCredentialStore>::CreateEnrollmentBidiReactor {
+ private:
+    /// A flag determining whether the last sent frame was enrolled. This flag
+    /// is atomic to support thread safe reads and writes.
+    std::atomic<bool> isEnrolled;
+    /// The completion percentage of the enrollment request.
+    std::atomic<float> percentComplete;
+    /// A flag determining whether the last sent frame was detected as live.
+    std::atomic<bool> isLive;
+    /// An OpenCV matrix containing the frame data from the camera.
+    cv::Mat frame;
+    /// A mutual exclusion for locking access to the frame between foreground
+    /// (frame capture) and background (network stream processing) threads.
+    std::mutex frameMutex;
+
+ public:
+    /// @brief Initialize a reactor for streaming video from an OpenCV stream.
+    OpenCVReactor() :
+        VideoService<SecureCredentialStore>::CreateEnrollmentBidiReactor(),
+        isEnrolled(false),
+        percentComplete(0),
+        isLive(false) { }
+
+    /// @brief React to a _write done_ event.
+    ///
+    /// @param ok whether the write succeeded.
+    ///
+    void OnWriteDone(bool ok) override {
+        // If the enrollment is complete, there is no more data to write.
+        if (isEnrolled) return;
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) {
+            return;
+        }
+        // Lock the mutual exclusion to the frame and encode it into JPEG.
+        std::vector<unsigned char> buffer;
+        frameMutex.lock();
+        cv::imencode(".jpg", frame, buffer);
+        frameMutex.unlock();
+        // Create the request from the encoded image data.
+        request.set_imagecontent(buffer.data(), buffer.size());
+        /// Start the next write request with the current frame.
+        StartWrite(&request);
+    }
+
+    /// @brief React to a _read done_ event.
+    ///
+    /// @param ok whether the read succeeded.
+    ///
+    void OnReadDone(bool ok) override {
+        // If the enrollment is complete, there is no more data to read.
+        if (isEnrolled) return;
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) {
+            return;
+        }
+        // Log information about the response to the terminal.
+        // std::cout << "Frame Response:     " << std::endl;
+        // std::cout << "\tPercent Complete: " << response.percentcomplete() << std::endl;
+        // std::cout << "\tIs Alive?:        " << response.isalive() << std::endl;
+        // std::cout << "\tEnrollment ID:    " << response.enrollmentid() << std::endl;
+        // std::cout << "\tModel Name:       " << response.modelname() << std::endl;
+        // std::cout << "\tModel Version:    " << response.modelversion() << std::endl;
+        // If the enrollment ID is not empty, then the enrollment succeeded.
+        isEnrolled = !response.enrollmentid().empty();
+        // Set the completion percentage of the enrollment.
+        percentComplete = response.percentcomplete() / 100.f;
+        // Set the liveness status of the last frame.
+        isLive = response.isalive();
+        // Start the next read request for the last written frame.
+        StartRead(&response);
+    }
+
+    /// @brief Stream video from an OpenCV capture device.
+    ///
+    /// @param isLivenessEnabled whether to enable the liveness check interface
+    ///
+    void streamVideo(cv::VideoCapture& capture, const bool& isLivenessEnabled) {
+        // Start the call to initiate the stream in the background.
+        StartCall();
+        // Start capturing frames from the device.
+        while (!isEnrolled) {
+            // Lock the mutual exclusion to the frame buffer and fetch a new
+            // frame from the stream.
+            frameMutex.lock();
+            capture >> frame;
+            frameMutex.unlock();
+            // If the frame is empty, something went wrong, exit the capture
+            // loop.
+            if (frame.empty()) break;
+            // Draw the progress bar on the frame. Do this on a copy of the
+            // so that the presentation frame is not sent to the server for
+            // enrollment.
+            auto presentationFrame = frame.clone();
+            cv::rectangle(
+                presentationFrame,
+                cv::Point(0, 0),
+                cv::Point(presentationFrame.size().width, 10),
+                cv::Scalar(0, 0, 0), -1);
+            cv::rectangle(
+                presentationFrame,
+                cv::Point(0, 0),
+                cv::Point(percentComplete * presentationFrame.size().width, 10),
+                cv::Scalar(0, 255, 0), -1);
+            // Draw text indicating the liveness status of the last frame.
+            if (isLivenessEnabled) {  // Liveness is enabled.
+                cv::putText(presentationFrame,
+                    isLive ? "Live" : "Not Live",
+                    cv::Point(10, 40),
+                    cv::FONT_HERSHEY_SIMPLEX,
+                    1,  // font scale
+                    isLive ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
+                    2   // thickness
+                );
+            }
+            // Show the frame in a view-finder window.
+            cv::imshow("Sensory Cloud Face Enrollment Demo", presentationFrame);
+            // Listen for keyboard interrupts to terminate the capture.
+            char c = (char) cv::waitKey(10);
+            if (c == 27 || c == 'q' || c == 'Q') break;
+        }
+        // Let the stream know that there is no more data to write to terminate
+        // the call.
+        StartWritesDone();
+    }
+};
 
 int main(int argc, const char** argv) {
     cv::CommandLineParser parser(argc, argv, "{help h||}{@device||}");
@@ -66,10 +204,10 @@ int main(int argc, const char** argv) {
     // ------ Check server health ----------------------------------------------
 
     // Create the health service.
-    sensory::service::HealthService healthService(config);
+    HealthService healthService(config);
 
     // Query the health of the remote service.
-    healthService.asyncGetHealth([](sensory::service::HealthService::GetHealthCallData* call) {
+    healthService.asyncGetHealth([](HealthService::GetHealthCallData* call) {
         if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to get server health with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -90,9 +228,9 @@ int main(int argc, const char** argv) {
     std::cin >> userID;
 
     // Create an OAuth service
-    sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
+    OAuthService oauthService(config);
+    SecureCredentialStore keychain("com.sensory.cloud");
+    TokenManager<SecureCredentialStore> tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -109,30 +247,30 @@ int main(int argc, const char** argv) {
         std::cin >> password;
 
         // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse registerResponse;
-        auto status = oauthService.registerDevice(&registerResponse,
+        oauthService.asyncRegisterDevice(
             name,
             password,
             credentials.id,
-            credentials.secret
-        );
-        if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to register device with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
-        }
+            credentials.secret,
+            [](OAuthService::RegisterDeviceCallData* call) {
+            if (!call->getStatus().ok()) {  // The call failed.
+                std::cout << "Failed to register device with\n\t" <<
+                    call->getStatus().error_code() << ": " <<
+                    call->getStatus().error_message() << std::endl;
+            }
+        })->await();
     }
 
     // ------ Create the video service -----------------------------------------
 
     // Create the video service based on the configuration and token manager.
-    sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
+    VideoService<SecureCredentialStore>
         videoService(config, tokenManager);
 
     // ------ Query the available video models ---------------------------------
 
     std::cout << "Available video models:" << std::endl;
-    videoService.asyncGetModels([](sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>::GetModelsCallData* call) {
+    videoService.asyncGetModels([](VideoService<SecureCredentialStore>::GetModelsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get video models with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -174,14 +312,6 @@ int main(int argc, const char** argv) {
     std::cin.ignore();
     std::getline(std::cin, description);
 
-    // Create the stream
-    auto stream = videoService.createEnrollment(
-        videoModel,
-        userID,
-        description,
-        isLivenessEnabled
-    );
-
     // Create an image capture object
     cv::VideoCapture capture;
     // Look for a device ID from the command line
@@ -197,97 +327,29 @@ int main(int argc, const char** argv) {
         std::cout << "Device ID \"" << device << "\" is not a valid integer!" << std::endl;
     }
 
-    // A flag determining whether the last sent frame was enrolled. This flag
-    // is atomic to support thread safe reads and writes.
-    std::atomic<bool> isEnrolled(false);
-    // The completion percentage of the enrollment request.
-    std::atomic<float> percentComplete(0);
-    // A flag determining whether the last sent frame was detected as live.
-    std::atomic<bool> isLive(false);
-    // An OpenCV matrix containing the frame data from the camera.
-    cv::Mat frame;
-    // A mutual exclusion for locking access to the frame between foreground
-    // (frame capture) and background (network stream processing) threads.
-    std::mutex frameMutex;
+    // Create the stream.
+    OpenCVReactor reactor;
+    videoService.asyncCreateEnrollment(
+        &reactor,
+        videoModel,
+        userID,
+        description,
+        isLivenessEnabled
+    );
+    reactor.streamVideo(capture, isLivenessEnabled);
+    // Wait for the stream to conclude. This is necessary to check the final
+    // status of the call and allow any dynamically allocated data to be cleaned
+    // up. If the stream is destroyed before the final `onDone` callback, odd
+    // runtime errors can occur.
+    auto status = reactor.await();
 
-    // Create a thread to poll read requests in the background. Audio
-    // transcription has a bursty response pattern, so a locked read-write loop
-    // will not work with this service.
-    std::thread networkThread([&stream, &isEnrolled, &percentComplete, &isLive, &frame, &frameMutex](){
-        while (!isEnrolled) {
-            // Lock the mutual exclusion to the frame and encode it into JPEG
-            std::vector<unsigned char> buffer;
-            frameMutex.lock();
-            cv::imencode(".jpg", frame, buffer);
-            frameMutex.unlock();
-            // Create the request from the encoded image data.
-            sensory::api::v1::video::CreateEnrollmentRequest request;
-            request.set_imagecontent(buffer.data(), buffer.size());
-            stream->Write(request);
-            sensory::api::v1::video::CreateEnrollmentResponse response;
-            stream->Read(&response);
-            // Log information about the response to the terminal.
-            // std::cout << "Frame Response:     " << std::endl;
-            // std::cout << "\tPercent Complete: " << response.percentcomplete() << std::endl;
-            // std::cout << "\tIs Alive?:        " << response.isalive() << std::endl;
-            // std::cout << "\tEnrollment ID:    " << response.enrollmentid() << std::endl;
-            // std::cout << "\tModel Name:       " << response.modelname() << std::endl;
-            // std::cout << "\tModel Version:    " << response.modelversion() << std::endl;
-            // Set the authentication flag to the success of the response.
-            isEnrolled = !response.enrollmentid().empty();
-            percentComplete = response.percentcomplete() / 100.f;
-            isLive = response.isalive();
-        }
-    });
-
-    // Start capturing frames from the device.
-    while (!isEnrolled) {
-        // Lock the mutual exclusion to the frame buffer and fetch a new frame.
-        frameMutex.lock();
-        capture >> frame;
-        frameMutex.unlock();
-        // If the frame is empty, something went wrong, exit the capture loop.
-        if (frame.empty()) break;
-        // Draw the progress bar on the frame
-        auto presentationFrame = frame.clone();
-        cv::rectangle(
-            presentationFrame,
-            cv::Point(0, 0),
-            cv::Point(presentationFrame.size().width, 10),
-            cv::Scalar(0, 0, 0), -1);
-        cv::rectangle(
-            presentationFrame,
-            cv::Point(0, 0),
-            cv::Point(percentComplete * presentationFrame.size().width, 10),
-            cv::Scalar(0, 255, 0), -1);
-        // Draw some text indicating the liveness status
-        if (isLivenessEnabled) {  // liveness is enabled
-            cv::putText(presentationFrame,
-                isLive ? "Live" : "Not Live",
-                cv::Point(10, 40),
-                cv::FONT_HERSHEY_SIMPLEX,
-                1,  // font scale
-                isLive ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
-                2   // thickness
-            );
-        }
-        // Show the frame in a viewfinder window.
-        cv::imshow("Sensory Cloud Face Enrollment Demo", presentationFrame);
-        // Listen for keyboard interrupts to terminate the capture.
-        char c = (char) cv::waitKey(10);
-        if (c == 27 || c == 'q' || c == 'Q') break;
-    }
-
-    // Terminate the stream.
-    stream->WritesDone();
-    auto status = stream->Finish();
-    // Wait for the network thread to join back in.
-    networkThread.join();
-
-    if (!status.ok()) {  // The stream failed, print a descriptive message.
-        std::cout << "Authentication stream failed with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
+    if (!status.ok()) {
+        std::cout << "Failed to enroll with\n\t" <<
+            status.error_code() << ": " <<
+            status.error_message() << std::endl;
+    } else {
+        std::cout << "Successful enrollment! Your enrollment ID is:" << std::endl;
+        std::cout << reactor.response.enrollmentid() << std::endl;
     }
 
     return 0;

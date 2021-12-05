@@ -90,6 +90,8 @@ class VideoService {
         biometricsStub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
         recognitionStub(::sensory::api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
 
+    // ----- Get Models --------------------------------------------------------
+
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
     /// @param response The response to populate from the RPC.
@@ -174,6 +176,8 @@ class VideoService {
         return call;
     }
 
+    // ----- Create Enrollment -------------------------------------------------
+
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -238,6 +242,70 @@ class VideoService {
         return stream;
     }
 
+    /// @brief A type for encapsulating data for asynchronous
+    /// `CreateEnrollment` calls.
+    typedef ::sensory::BidiReactor<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::CreateEnrollmentRequest,
+        ::sensory::api::v1::video::CreateEnrollmentResponse
+    > CreateEnrollmentBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating a video enrollment.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param modelName The name of the model to use to create the enrollment.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param userID The ID of the user performing the request.
+    /// @param description The description of the enrollment.
+    /// @param isLivenessEnabled `true` to perform a liveness check in addition
+    /// to an enrollment, `false` to perform the enrollment without the liveness
+    /// check.
+    /// @param livenessThreshold The liveness threshold for the optional
+    /// liveness check.
+    /// @returns A bidirectional stream that can be used to send video data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void asyncCreateEnrollment(Reactor* reactor,
+        const std::string& modelName,
+        const std::string& userID,
+        const std::string& description = "",
+        const bool& isLivenessEnabled = false,
+        const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold =
+            ::sensory::api::v1::video::RecognitionThreshold::LOW
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the initial config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto enrollment_config =
+            new ::sensory::api::v1::video::CreateEnrollmentConfig;
+        enrollment_config->set_deviceid(config.getDeviceID());
+        enrollment_config->set_modelname(modelName);
+        enrollment_config->set_userid(userID);
+        enrollment_config->set_description(description);
+        enrollment_config->set_islivenessenabled(isLivenessEnabled);
+        enrollment_config->set_livenessthreshold(livenessThreshold);
+        // Update the request buffer in the reactor with the allocated config.
+        reactor->request.set_allocated_config(enrollment_config);
+        // Start the stream with the context in the reactor and a pointer to
+        // reactor for callbacks.
+        biometricsStub->async()->CreateEnrollment(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
+    // ----- Authenticate ------------------------------------------------------
+
     /// A type for biometric authentication streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -292,6 +360,8 @@ class VideoService {
         stream->Write(request);
         return stream;
     }
+
+    // ----- Validate Liveness -------------------------------------------------
 
     /// A type for face liveness validation streams.
     typedef std::unique_ptr<

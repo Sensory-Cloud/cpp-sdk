@@ -29,6 +29,7 @@
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
 #include <atomic>
+#include <utility>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -110,8 +111,8 @@ struct CallData {
     inline const bool& getIsDone() const { return isDone; }
 };
 
-/// @brief A type for encapsulating data for asynchronous calls.
-/// @tparam Factory The factory class that will manage the scope of the call.
+/// @brief A type for encapsulating data for asynchronous streaming calls.
+/// @tparam Factory The factory class that will manage the scope of the stream.
 /// @tparam Request The type of the request message.
 /// @tparam Response The type of the response message.
 ///
@@ -120,42 +121,18 @@ struct CallData {
 /// private attributes of the structure. This allows instances of `Factory` to
 /// mutate to the structure while all external scopes are limited to the
 /// immutable interface exposed by the public accessor functions. Instances of
-/// `BidiCallData` are mutable within the scope of `Factory`, but immutable
+/// `BidiReactor` are mutable within the scope of `Factory`, but immutable
 /// outside of the scope of `Factory`.
 ///
 template<typename Factory, typename Request, typename Response>
-struct BidiCallData {
+class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
  private:
-    /// The gPRC context that the call is initiated with.
-    ::grpc::ClientContext context;
     /// The status of the RPC after the response is processed.
     ::grpc::Status status;
-    /// The request to execute in the unary call.
-    Request request;
-    /// The response to process after the RPC completes.
-    Response response;
+    /// The gPRC context that the call is initiated with.
+    ::grpc::ClientContext context;
     /// A flag determining whether the asynchronous has terminated.
     std::atomic<bool> isDone;
-
-    /// @brief Initialize a new call.
-    BidiCallData() : isDone(false) { }
-
-    /// @brief Create a copy of this object.
-    ///
-    /// @param other the other instance to copy data from
-    ///
-    /// @details
-    /// This copy constructor is private to prevent the copying of this object
-    BidiCallData(const BidiCallData& other) = delete;
-
-    /// @brief Assign to this object using the `=` operator.
-    ///
-    /// @param other The other instance to copy data from.
-    ///
-    /// @details
-    /// This assignment operator is private to prevent copying of this object.
-    ///
-    void operator=(const BidiCallData& other) = delete;
 
     // Mark the Factory type as a friend to allow it to have write access to
     // the internal types. This allows the parent scope to have mutability, but
@@ -163,25 +140,37 @@ struct BidiCallData {
     friend Factory;
 
  public:
-    /// @brief Wait for the asynchronous call to complete.
+    /// The request buffer
+    Request request;
+    /// The response buffer
+    Response response;
+
+    /// @brief Create a new bidirectional reactor.
+    BidiReactor() : isDone(false) { }
+
+    /// @brief Respond to the completion of the stream.
     ///
-    /// @details
-    /// This will block the calling thread until the asynchronous call returns
-    /// with a response.
+    /// @param status_ The completion status of the stream.
     ///
-    inline void await() { while (!isDone) continue; }
+    inline void OnDone(const grpc::Status& status_) override {
+        isDone = true;
+        status = status_;
+    }
+
+    /// @brief Block until the `onDone` callback is triggered in the background.
+    ///
+    /// @returns The final status of the stream.
+    ///
+    inline ::grpc::Status await() {
+        while (!isDone) continue;
+        return std::move(status);
+    }
 
     /// @brief Return the context that the call was created with.
     inline const ::grpc::ClientContext& getContext() const { return context; }
 
     /// @brief Return the status of the call.
     inline const ::grpc::Status& getStatus() const { return status; }
-
-    /// @brief Return the request that initiated the call.
-    inline const Request& getRequest() const { return request; }
-
-    /// @brief Return the response of the call.
-    inline const Response& getResponse() const { return response; }
 
     /// @brief Return `true` if the call has resolved, `false` otherwise.
     inline const bool& getIsDone() const { return isDone; }
