@@ -345,9 +345,9 @@ add_executable(opencv_biometric_enroll_callback examples/opencv/biometric_enroll
 target_link_libraries(opencv_biometric_enroll_callback PRIVATE sensorycloud)
 target_link_libraries(opencv_biometric_enroll_callback PRIVATE ${OpenCV_LIBS})
 
-# add_executable(opencv_liveness_callback examples/opencv/liveness_callback.cpp)
-# target_link_libraries(opencv_liveness_callback PRIVATE sensorycloud)
-# target_link_libraries(opencv_liveness_callback PRIVATE ${OpenCV_LIBS})
+add_executable(opencv_liveness_callback examples/opencv/liveness_callback.cpp)
+target_link_libraries(opencv_liveness_callback PRIVATE sensorycloud)
+target_link_libraries(opencv_liveness_callback PRIVATE ${OpenCV_LIBS})
 
 # ----- Audio Examples -------------------------------------------------------
 
