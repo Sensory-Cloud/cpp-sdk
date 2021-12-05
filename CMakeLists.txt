@@ -337,9 +337,9 @@ target_link_libraries(opencv_biometric_enroll_async PRIVATE ${OpenCV_LIBS})
 
 
 
-# add_executable(opencv_biometric_authenticate_callback examples/opencv/biometric_authenticate_callback.cpp)
-# target_link_libraries(opencv_biometric_authenticate_callback PRIVATE sensorycloud)
-# target_link_libraries(opencv_biometric_authenticate_callback PRIVATE ${OpenCV_LIBS})
+add_executable(opencv_biometric_authenticate_callback examples/opencv/biometric_authenticate_callback.cpp)
+target_link_libraries(opencv_biometric_authenticate_callback PRIVATE sensorycloud)
+target_link_libraries(opencv_biometric_authenticate_callback PRIVATE ${OpenCV_LIBS})
 
 add_executable(opencv_biometric_enroll_callback examples/opencv/biometric_enroll_callback.cpp)
 target_link_libraries(opencv_biometric_enroll_callback PRIVATE sensorycloud)
