@@ -29,6 +29,7 @@
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
 #include <atomic>
+#include <thread>
 #include <utility>
 
 /// @brief The Sensory Cloud SDK.
@@ -162,7 +163,7 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
     /// @returns The final status of the stream.
     ///
     inline ::grpc::Status await() {
-        while (!isDone) continue;
+        while (!isDone) std::this_thread::yield();
         return status;
     }
 
