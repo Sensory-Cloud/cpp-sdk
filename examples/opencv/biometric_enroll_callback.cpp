@@ -78,8 +78,10 @@ class OpenCVReactor :
     /// @param ok whether the write succeeded.
     ///
     void OnWriteDone(bool ok) override {
-        // If the enrollment is complete, there is no more data to write.
-        if (isEnrolled) return;
+        if (isEnrolled) {  // Successfully enrolled! Close the stream.
+            StartWritesDone();
+            return;
+        }
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         // Lock the mutual exclusion to the frame and encode it into JPEG.
@@ -115,17 +117,15 @@ class OpenCVReactor :
         percentComplete = response.percentcomplete() / 100.f;
         // Set the liveness status of the last frame.
         isLive = response.isalive();
-        if (isEnrolled) {  // Successfully enrolled! Close the stream.
-            StartWritesDone();
-            return;
-        }
-        // Start the next read request for the last written frame.
-        StartRead(&response);
+        if (!isEnrolled)  // Start the next read request.
+            StartRead(&response);
     }
 
     /// @brief Stream video from an OpenCV capture device.
     ///
-    /// @param isLivenessEnabled whether to enable the liveness check interface
+    /// @param capture The OpenCV capture device.
+    /// @param isLivenessEnabled `true` to enable the liveness check interface,
+    /// `false` to disable the interface.
     ///
     ::grpc::Status streamVideo(cv::VideoCapture& capture, const bool& isLivenessEnabled) {
         // Start the call to initiate the stream in the background.
