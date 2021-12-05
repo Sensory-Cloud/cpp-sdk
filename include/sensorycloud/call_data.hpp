@@ -133,7 +133,11 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
     /// A flag determining whether the asynchronous has terminated.
-    std::atomic<bool> isDone;
+    bool isDone;
+    /// A mutex for guarding access to the `isDone` and `status` variables.
+    std::mutex mutex;
+    /// A condition variable for signalling to an awaiting process.
+    std::condition_variable conditionVariable;
 
     // Mark the Factory type as a friend to allow it to have write access to
     // the internal types. This allows the parent scope to have mutability, but
@@ -154,8 +158,13 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
     /// @param status_ The completion status of the stream.
     ///
     inline void OnDone(const grpc::Status& status_) override {
-        isDone = true;
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::lock_guard<std::mutex> lock(mutex);
         status = status_;
+        isDone = true;
+        // Notify the awaiting thread that the condition variable has changed.
+        conditionVariable.notify_one();
     }
 
     /// @brief Block until the `onDone` callback is triggered in the background.
@@ -163,7 +172,11 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
     /// @returns The final status of the stream.
     ///
     inline ::grpc::Status await() {
-        while (!isDone) std::this_thread::yield();
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::unique_lock<std::mutex> lock(mutex);
+        // Wait for the signal that the `isDone` flag has changed.
+        conditionVariable.wait(lock, [this] { return isDone; });
         return status;
     }
 
