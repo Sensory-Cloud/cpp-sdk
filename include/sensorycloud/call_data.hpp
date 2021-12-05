@@ -128,10 +128,10 @@ struct CallData {
 template<typename Factory, typename Request, typename Response>
 class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
  private:
-    /// The status of the RPC after the response is processed.
-    ::grpc::Status status;
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
+    /// The status of the RPC after the response is processed.
+    ::grpc::Status status;
     /// A flag determining whether the asynchronous has terminated.
     bool isDone;
     /// A mutex for guarding access to the `isDone` and `status` variables.
@@ -169,7 +169,7 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
 
     /// @brief Block until the `onDone` callback is triggered in the background.
     ///
-    /// @returns The final status of the stream.
+    /// @returns The final gRPC status of the stream.
     ///
     inline ::grpc::Status await() {
         // Lock the critical section for updating the `isDone` flag and the
@@ -180,14 +180,25 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
         return status;
     }
 
-    /// @brief Return the context that the call was created with.
-    inline const ::grpc::ClientContext& getContext() const { return context; }
-
     /// @brief Return the status of the call.
-    inline const ::grpc::Status& getStatus() const { return status; }
+    ///
+    /// @returns The gRPC status of the stream after completion.
+    ///
+    inline ::grpc::Status getStatus() const {
+        // Lock the critical section for querying the `status`.
+        std::lock_guard<std::mutex> lock(mutex);
+        return status;
+    }
 
-    /// @brief Return `true` if the call has resolved, `false` otherwise.
-    inline const bool& getIsDone() const { return isDone; }
+    /// @brief Return a flag determining if the stream has concluded.
+    ///
+    /// @returns `true` if the call has resolved, `false` otherwise.
+    ///
+    inline bool getIsDone() const {
+        // Lock the critical section for querying the `isDone` flag.
+        std::lock_guard<std::mutex> lock(mutex);
+        return isDone;
+    }
 };
 
 }  // namespace sensory
