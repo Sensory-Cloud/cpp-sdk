@@ -201,11 +201,11 @@ int main(int argc, const char** argv) {
     // will not work with this service.
     std::thread networkThread([&stream, &isEnrolled, &percentComplete, &isLive, &frame, &frameMutex](){
         while (!isEnrolled) {
-            // Lock the mutual exclusion to the frame and encode it into JPEG
             std::vector<unsigned char> buffer;
-            frameMutex.lock();
-            cv::imencode(".jpg", frame, buffer);
-            frameMutex.unlock();
+            {  // Lock the mutex and encode the frame with JPEG into a buffer.
+                std::lock_guard<std::mutex> lock(frameMutex);
+                cv::imencode(".jpg", frame, buffer);
+            }
             // Create the request from the encoded image data.
             sensory::api::v1::video::CreateEnrollmentRequest request;
             request.set_imagecontent(buffer.data(), buffer.size());
@@ -228,10 +228,10 @@ int main(int argc, const char** argv) {
 
     // Start capturing frames from the device.
     while (!isEnrolled) {
-        // Lock the mutual exclusion to the frame buffer and fetch a new frame.
-        frameMutex.lock();
-        capture >> frame;
-        frameMutex.unlock();
+        {  // Lock the mutex and read a frame.
+            std::lock_guard<std::mutex> lock(frameMutex);
+            capture >> frame;
+        }
         // If the frame is empty, something went wrong, exit the capture loop.
         if (frame.empty()) break;
         // Draw the progress bar on the frame

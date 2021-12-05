@@ -82,11 +82,11 @@ class OpenCVReactor :
         }
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
-        // Lock the mutual exclusion to the frame and encode it into JPEG.
         std::vector<unsigned char> buffer;
-        frameMutex.lock();
-        cv::imencode(".jpg", frame, buffer);
-        frameMutex.unlock();
+        {  // Lock the mutex and encode the frame with JPEG into a buffer.
+            std::lock_guard<std::mutex> lock(frameMutex);
+            cv::imencode(".jpg", frame, buffer);
+        }
         // Create the request from the encoded image data.
         request.set_imagecontent(buffer.data(), buffer.size());
         /// Start the next write request with the current frame.
@@ -125,11 +125,10 @@ class OpenCVReactor :
         StartCall();
         // Start capturing frames from the device.
         while (!isAuthenticated) {
-            // Lock the mutual exclusion to the frame buffer and fetch a new
-            // frame from the stream.
-            frameMutex.lock();
-            capture >> frame;
-            frameMutex.unlock();
+            {  // Lock the mutex and read a frame.
+                std::lock_guard<std::mutex> lock(frameMutex);
+                capture >> frame;
+            }
             // If the frame is empty, something went wrong, exit the capture
             // loop.
             if (frame.empty()) break;
@@ -146,7 +145,7 @@ class OpenCVReactor :
                 );
             }
             // Show the frame in a view-finder window.
-            cv::imshow("Sensory Cloud Face Enrollment Demo", presentationFrame);
+            cv::imshow("Sensory Cloud Face Authentication Demo", presentationFrame);
             // Listen for keyboard interrupts to terminate the capture.
             char c = (char) cv::waitKey(10);
             if (c == 27 || c == 'q' || c == 'Q') break;
@@ -157,13 +156,6 @@ class OpenCVReactor :
 
 int main(int argc, const char** argv) {
     cv::CommandLineParser parser(argc, argv, "{help h||}{@device||}");
-    // if (parser.has("help")) {
-    //     help(argv);
-    //     return 0;
-    // }
-    // double scale = parser.get<double>("scale");
-    // if (scale < 1) scale = 1;
-    // bool tryflip = parser.has("try-flip");
     std::string device = parser.get<std::string>("@device");
     if (!parser.check()) {
         parser.printErrors();
@@ -320,7 +312,7 @@ int main(int argc, const char** argv) {
     status = reactor.streamVideo(capture, isLivenessEnabled);
 
     if (!status.ok()) {
-        std::cout << "Failed to enroll with\n\t" <<
+        std::cout << "Failed to authenticate with\n\t" <<
             status.error_code() << ": " <<
             status.error_message() << std::endl;
     } else {
