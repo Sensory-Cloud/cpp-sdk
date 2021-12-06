@@ -26,6 +26,7 @@
 #ifndef SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 #define SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 
+#include <mutex>
 #include "sensorycloud/token_manager/uuid.hpp"
 #include "sensorycloud/token_manager/secure_random.hpp"
 #include "sensorycloud/token_manager/time.hpp"
@@ -180,7 +181,9 @@ class TokenManager {
     /// the server.
     ///
     std::string getAccessToken() const {
-        // TODO: Prevent multiple access tokens from being requested at the same time
+        // Prevent multiple access tokens from being requested at the same time.
+        static std::mutex mutex;
+        std::lock_guard<std::mutex> lock(mutex);
 
         if (!hasToken())  // no access token has been generated and stored
             return fetchNewAccessToken();
