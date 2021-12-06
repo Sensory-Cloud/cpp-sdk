@@ -244,7 +244,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollment` calls.
-    typedef ::sensory::BidiReactor<
+    typedef ::sensory::AwaitableBidiReactor<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::CreateEnrollmentRequest,
         ::sensory::api::v1::video::CreateEnrollmentResponse
@@ -363,7 +363,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `Authenticate` calls.
-    typedef ::sensory::BidiReactor<
+    typedef ::sensory::AwaitableBidiReactor<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::AuthenticateRequest,
         ::sensory::api::v1::video::AuthenticateResponse
@@ -473,7 +473,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `ValidateLiveness` calls.
-    typedef ::sensory::BidiReactor<
+    typedef ::sensory::AwaitableBidiReactor<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::ValidateRecognitionRequest,
         ::sensory::api::v1::video::LivenessRecognitionResponse

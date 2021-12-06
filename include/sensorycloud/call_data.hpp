@@ -97,18 +97,33 @@ struct CallData {
     inline void await() { while (!isDone) continue; }
 
     /// @brief Return the context that the call was created with.
+    ///
+    /// @returns The gRPC context associated with the call.
+    ///
     inline const ::grpc::ClientContext& getContext() const { return context; }
 
     /// @brief Return the status of the call.
+    ///
+    /// @returns The gRPC status code and message from the call.
+    ///
     inline const ::grpc::Status& getStatus() const { return status; }
 
-    /// @brief Return the request that initiated the call.
+    /// @brief Return the request of the call.
+    ///
+    /// @returns The request message buffer for the call.
+    ///
     inline const Request& getRequest() const { return request; }
 
     /// @brief Return the response of the call.
+    ///
+    /// @returns The response message buffer for the call.
+    ///
     inline const Response& getResponse() const { return response; }
 
-    /// @brief Return `true` if the call has resolved, `false` otherwise.
+    /// @brief Return a flag determining if the call has concluded.
+    ///
+    /// @returns `true` if the stream has resolved, `false` otherwise.
+    ///
     inline const bool& getIsDone() const { return isDone; }
 };
 
@@ -122,11 +137,11 @@ struct CallData {
 /// private attributes of the structure. This allows instances of `Factory` to
 /// mutate to the structure while all external scopes are limited to the
 /// immutable interface exposed by the public accessor functions. Instances of
-/// `BidiReactor` are mutable within the scope of `Factory`, but immutable
-/// outside of the scope of `Factory`.
+/// `AwaitableBidiReactor` are mutable within the scope of `Factory`, but
+/// immutable outside of the scope of `Factory`.
 ///
 template<typename Factory, typename Request, typename Response>
-class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
+class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
  private:
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
@@ -151,7 +166,7 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
     Response response;
 
     /// @brief Create a new bidirectional reactor.
-    BidiReactor() : isDone(false) { }
+    AwaitableBidiReactor() : isDone(false) { }
 
     /// @brief Respond to the completion of the stream.
     ///
@@ -180,7 +195,7 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
         return status;
     }
 
-    /// @brief Return the status of the call.
+    /// @brief Return the status of the stream.
     ///
     /// @returns The gRPC status of the stream after completion.
     ///
@@ -192,7 +207,7 @@ class BidiReactor : public ::grpc::ClientBidiReactor<Request, Response> {
 
     /// @brief Return a flag determining if the stream has concluded.
     ///
-    /// @returns `true` if the call has resolved, `false` otherwise.
+    /// @returns `true` if the stream has resolved, `false` otherwise.
     ///
     inline bool getIsDone() const {
         // Lock the critical section for querying the `isDone` flag.
