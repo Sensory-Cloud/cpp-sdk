@@ -402,4 +402,8 @@ add_executable(portaudio_biometric_authenticate examples/portaudio/biometric_aut
 target_link_libraries(portaudio_biometric_authenticate PRIVATE sensorycloud)
 target_link_libraries(portaudio_biometric_authenticate PRIVATE portaudio)
 
+add_executable(portaudio_biometric_authenticate_callback examples/portaudio/biometric_authenticate_callback.cpp)
+target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE sensorycloud)
+target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE portaudio)
+
 endif()

@@ -411,6 +411,68 @@ class AudioService {
         return stream;
     }
 
+    /// @brief A type for encapsulating data for asynchronous
+    /// `Authenticate` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::AuthenticateRequest,
+        ::sensory::api::v1::audio::AuthenticateResponse
+    > AuthenticateBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// audio event validation.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param enrollmentID The enrollment ID to authenticate against. This can
+    /// be either an enrollment ID or a group ID.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param isLivenessEnabled `true` to perform a liveness check before the
+    /// authentication, `false` to only perform the authentication.
+    ///
+    /// @details
+    /// This call will automatically send the initial `AuthenticateConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void asyncAuthenticate(Reactor* reactor,
+        const std::string& enrollmentID,
+        const int32_t& sampleRate,
+        const std::string& languageCode,
+        const bool& isLivenessEnabled = false,
+        const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
+            ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
+        const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security =
+            ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+
+        // Create the authenticate config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto authenticateConfig =
+            new ::sensory::api::v1::audio::AuthenticateConfig;
+        authenticateConfig->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        authenticateConfig->set_enrollmentid(enrollmentID);
+        authenticateConfig->set_islivenessenabled(isLivenessEnabled);
+        authenticateConfig->set_sensitivity(sensitivity);
+        authenticateConfig->set_security(security);
+
+        // Create the request with the pointer to the enrollment config.
+        reactor->request.set_allocated_config(authenticateConfig);
+
+        // Create the stream and write the initial configuration request.
+        biometricStub->async()->Authenticate(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
     // ----- Validate Trigger --------------------------------------------------
 
     /// A type for trigger validation streams.
