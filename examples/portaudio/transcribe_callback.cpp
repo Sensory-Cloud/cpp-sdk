@@ -122,7 +122,6 @@ class PortAudioReactor :
         const auto bytesPerBlock = framesPerBlock * numChannels * sampleSize;
         // Create a buffer for the audio samples based on the number of bytes in
         // a block of samples.
-        // uint8_t sampleBlock[bytesPerBlock];
         uint8_t* sampleBlock = static_cast<uint8_t*>(malloc(bytesPerBlock));
         for (int i = 0; i < (duration * sampleRate) / framesPerBlock; ++i) {
             // Read a block of samples from the ADC.
