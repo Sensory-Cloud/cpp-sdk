@@ -157,24 +157,14 @@ int main(int argc, const char** argv) {
 
     // Determine whether to conduct a voice liveness check.
     sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>::CreateEnrollmentStream stream;
-    if (audioModel.find("independent") != std::string::npos)
-        stream = audioService.createTextIndependentEnrollment(
-            audioModel,
-            sampleRate,
-            "en-US",
-            userID,
-            description,
-            isLivenessEnabled
-        );
-    else //if (audioModel.find("dependent") != std::string::npos)
-        stream = audioService.createTextDependentEnrollment(
-            audioModel,
-            sampleRate,
-            "en-US",
-            userID,
-            description,
-            isLivenessEnabled
-        );
+    stream = audioService.createEnrollment(
+        audioModel,
+        sampleRate,
+        "en-US",
+        userID,
+        description,
+        isLivenessEnabled
+    );
 
     // the maximal duration of the recording in seconds
     static constexpr auto DURATION = 60;

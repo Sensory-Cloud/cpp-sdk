@@ -218,69 +218,7 @@ class AudioService {
     > CreateEnrollmentStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
-    /// creating an text-dependent audio enrollment.
-    ///
-    /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param description The description of the enrollment.
-    /// @param isLivenessEnabled `true` to perform a liveness check in addition
-    /// to an enrollment, `false` to perform the enrollment without the liveness
-    /// check.
-    /// @param numUtterances The number of utterances that should be required
-    /// for text-dependent enrollments, defaults to 4 if not specified.
-    /// @returns A bidirectional stream that can be used to send audio data to
-    /// the server.
-    ///
-    /// @details
-    /// This call will automatically send the initial `CreateEnrollmentConfig`
-    /// message to the server.
-    ///
-    inline CreateEnrollmentStream createTextDependentEnrollment(
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const std::string& description = "",
-        const bool& isLivenessEnabled = false,
-        const uint32_t numUtterances = 4
-    ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
-        config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the enrollment config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto enrollment_config =
-            new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollment_config->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
-        );
-        enrollment_config->set_modelname(modelName);
-        enrollment_config->set_userid(userID);
-        enrollment_config->set_deviceid(config.getDeviceID());
-        enrollment_config->set_description(description);
-        enrollment_config->set_islivenessenabled(isLivenessEnabled);
-        enrollment_config->set_enrollmentnumutterances(numUtterances);
-
-        // Create the request with the pointer to the enrollment config.
-        ::sensory::api::v1::audio::CreateEnrollmentRequest request;
-        request.set_allocated_config(enrollment_config);
-
-        // Create the stream and write the initial configuration request.
-        CreateEnrollmentStream stream =
-            biometricStub->CreateEnrollment(context);
-        stream->Write(request);
-        return stream;
-    }
-
-    /// @brief Open a bidirectional stream to the server for the purpose of
-    /// creating a text-independent audio enrollment.
+    /// creating an audio enrollment.
     ///
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
@@ -294,6 +232,8 @@ class AudioService {
     /// @param enrollmentDuration The duration in seconds for text-independent
     /// enrollments, defaults to 12.5 without liveness enabled and 8 with
     /// liveness enabled.
+    /// @param numUtterances The number of utterances that should be required
+    /// for text-dependent enrollments, defaults to 4 if not specified.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
@@ -301,14 +241,26 @@ class AudioService {
     /// This call will automatically send the initial `CreateEnrollmentConfig`
     /// message to the server.
     ///
-    inline CreateEnrollmentStream createTextIndependentEnrollment(
+    /// Note that for text-_independent_ models, an enrollment duration can be
+    /// specified, but the number of utterances do not apply. Conversely, for
+    /// text-_dependent_ enrollments, a number of utterances may be provided,
+    /// but an enrollment duration does not apply.
+    ///
+    /// The enrollment duration for text-independent enrollments controls the
+    /// maximal amount of time allowed for authentication.
+    ///
+    /// The number of utterances for text-dependent enrollments controls the
+    /// number of uttered text fragments that must be emitted to authenticate.
+    ///
+    inline CreateEnrollmentStream createEnrollment(
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& languageCode,
         const std::string& userID,
         const std::string& description = "",
         const bool& isLivenessEnabled = false,
-        const float enrollmentDuration = -1.f
+        const float enrollmentDuration = -1.f,
+        const int32_t numUtterances = -1
     ) const {
         // Create a context for the client for a bidirectional stream.
         // TODO: will the stream automatically free this dynamically allocated
@@ -329,10 +281,19 @@ class AudioService {
         enrollment_config->set_deviceid(config.getDeviceID());
         enrollment_config->set_description(description);
         enrollment_config->set_islivenessenabled(isLivenessEnabled);
-        if (enrollmentDuration < 0.f)
+        // Set the model dependent metadata based on the passed in values. The
+        // number of utterances and the enrollment duration cannot both be
+        // specified in the message, so check for sentinel "null" values and if
+        // both are provided, throw an error. Otherwise, only set the parameter
+        // that was specified. The sentinel value for both is any negative
+        // number. If neither is specified, provide neither and fall back on the
+        // default values used on the server.
+        if (enrollmentDuration > 0.f && numUtterances > 0)
+            throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
+        else if (enrollmentDuration > 0.f)
             enrollment_config->set_enrollmentduration(isLivenessEnabled ? 8.f : 12.5f);
-        else
-            enrollment_config->set_enrollmentduration(enrollmentDuration);
+        else if (numUtterances > 0)
+            enrollment_config->set_enrollmentnumutterances(numUtterances);
 
         // Create the request with the pointer to the enrollment config.
         ::sensory::api::v1::audio::CreateEnrollmentRequest request;
