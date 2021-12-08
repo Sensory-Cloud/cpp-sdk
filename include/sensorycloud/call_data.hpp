@@ -29,6 +29,8 @@
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 #include <thread>
 #include <utility>
 
@@ -199,7 +201,7 @@ class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response>
     ///
     /// @returns The gRPC status of the stream after completion.
     ///
-    inline ::grpc::Status getStatus() const {
+    inline ::grpc::Status getStatus() {
         // Lock the critical section for querying the `status`.
         std::lock_guard<std::mutex> lock(mutex);
         return status;
@@ -209,7 +211,7 @@ class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response>
     ///
     /// @returns `true` if the stream has resolved, `false` otherwise.
     ///
-    inline bool getIsDone() const {
+    inline bool getIsDone() {
         // Lock the critical section for querying the `isDone` flag.
         std::lock_guard<std::mutex> lock(mutex);
         return isDone;
