@@ -446,6 +446,64 @@ class AudioService {
         return stream;
     }
 
+    /// @brief A type for encapsulating data for asynchronous
+    /// `ValidateEvent` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::ValidateEventRequest,
+        ::sensory::api::v1::audio::ValidateEventResponse
+    > ValidateEventBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// audio event validation.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param modelName The name of the model to use to validate the trigger.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param userID The ID of the user making the request.
+    /// @param sensitivity How sensitive the model should be to false accepts.
+    ///
+    /// @details
+    /// This call will automatically send the initial `ValidateEventConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void asyncValidateTrigger(Reactor* reactor,
+        const std::string& modelName,
+        const int32_t& sampleRate,
+        const std::string& languageCode,
+        const std::string& userID,
+        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+
+        // Create the validate event message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto validateEventConfig =
+            new ::sensory::api::v1::audio::ValidateEventConfig;
+        validateEventConfig->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        validateEventConfig->set_modelname(modelName);
+        validateEventConfig->set_userid(userID);
+        validateEventConfig->set_sensitivity(sensitivity);
+
+        // Create the request with the pointer to the enrollment config.
+        reactor->request.set_allocated_config(validateEventConfig);
+
+        // Create the stream and write the initial configuration request.
+        eventsStub->async()->ValidateEvent(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
     // ----- Transcribe Audio --------------------------------------------------
 
     /// a type for biometric transcription streams
