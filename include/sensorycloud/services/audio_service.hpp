@@ -121,6 +121,8 @@ class AudioService {
         eventsStub(::sensory::api::v1::audio::AudioEvents::NewStub(config.getChannel())),
         transcriptionsStub(::sensory::api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
 
+    // ----- Get Models --------------------------------------------------------
+
     /// @brief Fetch a list of the audio models supported by the cloud host.
     ///
     /// @param response The response to populate from the RPC.
@@ -134,6 +136,31 @@ class AudioService {
         config.setupUnaryClientContext(context, tokenManager);
         // Execute the RPC synchronously and return the status
         return modelsStub->GetModels(&context, {}, response);
+    }
+
+    /// A type for asynchronous model fetching.
+    typedef std::unique_ptr<
+        ::grpc::ClientAsyncResponseReader<
+            ::sensory::api::v1::audio::GetModelsResponse
+        >
+    > AsyncGetModelsReader;
+
+    /// @brief Fetch a list of the vision models supported by the cloud host.
+    ///
+    /// @param response The response to populate from the RPC.
+    /// @returns The status of the synchronous RPC.
+    ///
+    inline AsyncGetModelsReader asyncGetModels(
+        ::grpc::CompletionQueue* queue
+    ) const {
+        // Create a context for the client for a unary call.
+        // TODO: this will result in a memory leak. Update to remove the memory
+        // link by persisting a stack allocated context past the scope of this
+        // call to setup the stream.
+        auto context(new ::grpc::ClientContext);
+        config.setupUnaryClientContext(*context, tokenManager);
+        // Execute the RPC synchronously and return the status
+        return modelsStub->AsyncGetModels(context, {}, queue);
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
