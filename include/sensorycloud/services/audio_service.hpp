@@ -230,27 +230,28 @@ class AudioService {
     /// to an enrollment, `false` to perform the enrollment without the liveness
     /// check.
     /// @param enrollmentDuration The duration in seconds for text-independent
-    /// enrollments, defaults to 12.5 without liveness enabled and 8 with
-    /// liveness enabled.
+    /// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
+    /// with liveness enabled.
     /// @param numUtterances The number of utterances that should be required
-    /// for text-dependent enrollments, defaults to 4 if not specified.
+    /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
+    ///
+    /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
+    /// are both specified. For _text-independent_ models, an enrollment
+    /// duration can be specified, but the number of utterances do not apply.
+    /// Conversely, for _text-dependent_ enrollments, a number of utterances
+    /// may be provided, but an enrollment duration does not apply.
     ///
     /// @details
     /// This call will automatically send the initial `CreateEnrollmentConfig`
     /// message to the server.
     ///
-    /// Note that for text-_independent_ models, an enrollment duration can be
-    /// specified, but the number of utterances do not apply. Conversely, for
-    /// text-_dependent_ enrollments, a number of utterances may be provided,
-    /// but an enrollment duration does not apply.
-    ///
     /// The enrollment duration for text-independent enrollments controls the
     /// maximal amount of time allowed for authentication.
     ///
     /// The number of utterances for text-dependent enrollments controls the
-    /// number of uttered text fragments that must be emitted to authenticate.
+    /// number of uttered phrases that must be emitted to authenticate.
     ///
     inline CreateEnrollmentStream createEnrollment(
         const std::string& modelName,
