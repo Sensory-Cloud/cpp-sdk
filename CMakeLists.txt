@@ -382,6 +382,10 @@ add_executable(portaudio_transcribe examples/portaudio/transcribe.cpp)
 target_link_libraries(portaudio_transcribe PRIVATE sensorycloud)
 target_link_libraries(portaudio_transcribe PRIVATE portaudio)
 
+add_executable(portaudio_transcribe_callback examples/portaudio/transcribe_callback.cpp)
+target_link_libraries(portaudio_transcribe_callback PRIVATE sensorycloud)
+target_link_libraries(portaudio_transcribe_callback PRIVATE portaudio)
+
 add_executable(portaudio_biometric_enroll examples/portaudio/biometric_enroll.cpp)
 target_link_libraries(portaudio_biometric_enroll PRIVATE sensorycloud)
 target_link_libraries(portaudio_biometric_enroll PRIVATE portaudio)

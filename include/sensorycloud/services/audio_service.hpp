@@ -32,8 +32,8 @@
 #include "sensorycloud/generated/v1/audio/audio.pb.h"
 #include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/call_data.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/call_data.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -180,6 +180,8 @@ class AudioService {
         return call;
     }
 
+    // ----- Create Enrollment -------------------------------------------------
+
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -316,6 +318,8 @@ class AudioService {
         return stream;
     }
 
+    // ----- Authenticate ------------------------------------------------------
+
     /// A type for biometric authentication streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -380,6 +384,8 @@ class AudioService {
         return stream;
     }
 
+    // ----- Validate Trigger --------------------------------------------------
+
     /// A type for trigger validation streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -440,6 +446,8 @@ class AudioService {
         return stream;
     }
 
+    // ----- Transcribe Audio --------------------------------------------------
+
     /// a type for biometric transcription streams
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -494,6 +502,60 @@ class AudioService {
             transcriptionsStub->Transcribe(context);
         stream->Write(request);
         return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `Transcribe` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::TranscribeRequest,
+        ::sensory::api::v1::audio::TranscribeResponse
+    > TranscribeBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server that provides a
+    /// transcription of the provided audio data.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param modelName The name of the model to use to transcribe the audio.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param langaugeCode The language code of the audio stream.
+    /// @param userID The ID of the user making the request.
+    ///
+    /// @details
+    /// This call will automatically send the initial `TranscribeConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void asyncTranscribeAudio(Reactor* reactor,
+        const std::string& modelName,
+        const int32_t& sampleRate,
+        const std::string& languageCode,
+        const std::string& userID
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+
+        // Create the transcribe audio message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
+        transcribeConfig->set_allocated_audio(
+            newAudioConfig(sampleRate, languageCode)
+        );
+        transcribeConfig->set_modelname(modelName);
+        transcribeConfig->set_userid(userID);
+
+        // Create the request with the pointer to the enrollment config.
+        reactor->request.set_allocated_config(transcribeConfig);
+
+        // Create the stream and write the initial configuration request.
+        transcriptionsStub->async()->Transcribe(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
     }
 };
 
