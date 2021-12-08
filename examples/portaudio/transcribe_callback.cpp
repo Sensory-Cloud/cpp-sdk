@@ -114,10 +114,7 @@ class PortAudioReactor :
     ///
     void OnWriteDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
-        if (!ok) {
-            std::cout << "write broken" << std::endl;
-            return;
-        }
+        if (!ok) return;
         // Read a block of samples from the ADC.
         auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
         if (err) {
@@ -140,10 +137,7 @@ class PortAudioReactor :
     ///
     void OnReadDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
-        if (!ok) {
-            std::cout << "read broken" << std::endl;
-            return;
-        }
+        if (!ok) return;
         // Log the current transcription to the terminal.
         std::cout << "Response" << std::endl;
         std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
