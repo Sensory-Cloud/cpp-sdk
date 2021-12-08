@@ -382,6 +382,10 @@ add_executable(portaudio_sound_id examples/portaudio/sound_id.cpp)
 target_link_libraries(portaudio_sound_id PRIVATE sensorycloud)
 target_link_libraries(portaudio_sound_id PRIVATE portaudio)
 
+add_executable(portaudio_sound_id_callback examples/portaudio/sound_id_callback.cpp)
+target_link_libraries(portaudio_sound_id_callback PRIVATE sensorycloud)
+target_link_libraries(portaudio_sound_id_callback PRIVATE portaudio)
+
 add_executable(portaudio_transcribe examples/portaudio/transcribe.cpp)
 target_link_libraries(portaudio_transcribe PRIVATE sensorycloud)
 target_link_libraries(portaudio_transcribe PRIVATE portaudio)
