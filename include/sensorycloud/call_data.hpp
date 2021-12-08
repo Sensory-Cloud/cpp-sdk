@@ -174,7 +174,7 @@ class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response>
     ///
     /// @param status_ The completion status of the stream.
     ///
-    inline void OnDone(const grpc::Status& status_) override {
+    inline virtual void OnDone(const grpc::Status& status_) override {
         // Lock the critical section for updating the `isDone` flag and the
         // gRPC `status` variable.
         std::lock_guard<std::mutex> lock(mutex);
