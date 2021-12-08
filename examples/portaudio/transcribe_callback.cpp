@@ -60,10 +60,55 @@ inline int describe_pa_error(const PaError& err) {
 ///
 class PortAudioReactor :
     public AudioService<SecureCredentialStore>::TranscribeBidiReactor {
+ private:
+    /// The capture device that input audio is streaming in from.
+    PaStream* capture;
+    /// The buffer for the block of samples from the port audio input device.
+    uint8_t* sampleBlock = nullptr;
+    /// The sample rate of the audio input stream.
+    uint32_t sampleRate;
+    /// The number of channels in the input audio.
+    uint32_t numChannels;
+    /// The number of frames per block of audio.
+    uint32_t framesPerBlock;
+    /// The number of bytes per audio sample (i.e., 2 for 16-bit audio)
+    uint32_t sampleSize;
+    /// The maximum duration of the stream in seconds.
+    float duration;
+    /// The number of blocks that have been written to the server.
+    std::atomic<uint32_t> blocks_written;
+
  public:
     /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
-    PortAudioReactor() :
-        AudioService<SecureCredentialStore>::TranscribeBidiReactor() { }
+    ///
+    /// @param capture_ The PortAudio capture device.
+    /// @param sampleRate_ The sampling rate of the audio stream.
+    /// @param numChannels_ The number of channels in the input stream.
+    /// @param framesPerBlock_ The number of frames in a block of audio.
+    /// @param sampleSize_ The number of bytes in an individual frame.
+    /// @param duration_ the maximum duration for the audio capture
+    ///
+    PortAudioReactor(PaStream* capture_,
+        uint32_t sampleRate_ = 16000,
+        uint32_t numChannels_ = 1,
+        uint32_t framesPerBlock_ = 4096,
+        uint32_t sampleSize_ = 2,
+        float duration_ = 60
+    ) :
+        AudioService<SecureCredentialStore>::TranscribeBidiReactor(),
+        capture(capture_),
+        sampleRate(sampleRate_),
+        numChannels(numChannels_),
+        framesPerBlock(framesPerBlock_),
+        sampleSize(sampleSize_),
+        duration(duration_),
+        blocks_written(0) {
+        // Determine the number of bytes in a given chunk of samples.
+        const auto bytesPerBlock = framesPerBlock * numChannels * sampleSize;
+        // Create a buffer for the audio samples based on the number of bytes in
+        // a block of samples.
+        sampleBlock = static_cast<uint8_t*>(malloc(bytesPerBlock));
+    }
 
     /// @brief React to a _write done_ event.
     ///
@@ -75,6 +120,19 @@ class PortAudioReactor :
             std::cout << "write broken" << std::endl;
             return;
         }
+        // Read a block of samples from the ADC.
+        auto err = Pa_ReadStream(capture, sampleBlock, framesPerBlock);
+        if (err) {
+            describe_pa_error(err);
+            return;
+        }
+        // Set the audio content for the request and start the write request
+        request.set_audiocontent(sampleBlock, framesPerBlock * sampleSize);
+
+        if (++blocks_written > (duration * sampleRate) / framesPerBlock)
+            StartWritesDone();
+        else  // Send the data to the server to transcribe the audio.
+            StartWrite(&request);
     }
 
     /// @brief React to a _read done_ event.
@@ -85,7 +143,6 @@ class PortAudioReactor :
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) {
             std::cout << "read broken" << std::endl;
-            std::cout << getIsDone() << std::endl;
             return;
         }
         // Log the current transcription to the terminal.
@@ -100,45 +157,13 @@ class PortAudioReactor :
     }
 
     /// @brief Stream audio from a PortAudio capture device.
-    ///
-    /// @param capture The PortAudio capture device.
-    /// @param duration the maximum duration for the audio capture
-    /// @param sampleRate The sampling rate of the audio stream.
-    /// @param numChannels The number of channels in the input stream.
-    /// @param framesPerBlock The number of frames in a block of audio.
-    /// @param sampleSize The number of bytes in an individual frame.
-    ///
-    ::grpc::Status streamAudio(
-        PaStream* capture,
-        float duration = 60,
-        uint32_t sampleRate = 16000,
-        uint32_t numChannels = 1,
-        uint32_t framesPerBlock = 4096,
-        uint32_t sampleSize = 2
-    ) {
+    ::grpc::Status streamAudio() {
         // Start the call to initiate the stream in the background.
         StartCall();
-        // Determine the number of bytes in a given chunk of samples.
-        const auto bytesPerBlock = framesPerBlock * numChannels * sampleSize;
-        // Create a buffer for the audio samples based on the number of bytes in
-        // a block of samples.
-        uint8_t* sampleBlock = static_cast<uint8_t*>(malloc(bytesPerBlock));
-        for (int i = 0; i < (duration * sampleRate) / framesPerBlock; ++i) {
-            // Read a block of samples from the ADC.
-            auto err = Pa_ReadStream(capture, sampleBlock, framesPerBlock);
-            if (err) {
-                describe_pa_error(err);
-                break;
-            }
-            // Set the audio content for the request and start the write request
-            request.set_audiocontent(sampleBlock, framesPerBlock * sampleSize);
-            // Send the data to the server to transcribe the audio.
-            StartWrite(&request);
-        }
         // Free the dynamically allocated audio buffer.
-        free(sampleBlock);
+        // free(sampleBlock);
         // Once the loop terminates, there are no more messages to write.
-        StartWritesDone();
+        // StartWritesDone();
 
         return await();
     }
@@ -237,7 +262,7 @@ int main(int argc, const char** argv) {
     // std::cin >> audioModel;
 
     // the maximal duration of the recording in seconds
-    static constexpr auto DURATION = 60;
+    static constexpr auto DURATION = 10;
     // the sample rate of the input audio stream. This should match the sample
     // rate of the selected model
     static constexpr auto SAMPLE_RATE = 16000;
@@ -289,14 +314,14 @@ int main(int argc, const char** argv) {
     if (err != paNoError) return describe_pa_error(err);
 
     // Create the network stream
-    PortAudioReactor reactor;
+    PortAudioReactor reactor(capture, SAMPLE_RATE, NUM_CHANNELS, FRAMES_PER_BLOCK, SAMPLE_SIZE, DURATION);
     audioService.asyncTranscribeAudio(&reactor,
         audioModel,
         SAMPLE_RATE,
         "en-US",
         userID
     );
-    reactor.streamAudio(capture, DURATION, SAMPLE_RATE, NUM_CHANNELS, FRAMES_PER_BLOCK, SAMPLE_SIZE);
+    reactor.streamAudio();
 
     // Stop the audio stream.
     err = Pa_StopStream(capture);
