@@ -34,7 +34,12 @@
 #include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
-int describe_pa_error(const PaError& err) {
+/// @brief Print a description of a PortAudio error that occurred.
+///
+/// @param err The error that was thrown by PortAudio.
+/// @returns The OS-level error code for the message.
+///
+inline int describe_pa_error(const PaError& err) {
     fprintf(stderr, "An error occured while using the portaudio stream\n");
     fprintf(stderr, "Error number: %d\n", err);
     fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
