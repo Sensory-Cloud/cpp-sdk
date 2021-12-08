@@ -280,7 +280,7 @@ int main(int argc, const char** argv) {
     static constexpr auto NUM_CHANNELS = 1;
     // The size of the audio sample blocks, i.e., the number of samples to read
     // from the ADC per step and send to Sensory, Cloud.
-    static constexpr auto FRAMES_PER_BLOCK = 2*4096;
+    static constexpr auto FRAMES_PER_BLOCK = 4096;
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
     static constexpr auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
