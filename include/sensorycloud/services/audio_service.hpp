@@ -148,7 +148,7 @@ class AudioService {
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
     /// @param response The response to populate from the RPC.
-    /// @returns The status of the synchronous RPC.
+    /// @returns The asynchronous reader.
     ///
     inline AsyncGetModelsReader asyncGetModels(
         ::grpc::CompletionQueue* queue
