@@ -410,4 +410,10 @@ add_executable(portaudio_biometric_authenticate_callback examples/portaudio/biom
 target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE sensorycloud)
 target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE portaudio)
 
+
+
+add_executable(application_voice_assistant examples/applications/voice_assistant.cpp)
+target_link_libraries(application_voice_assistant PRIVATE sensorycloud)
+target_link_libraries(application_voice_assistant PRIVATE portaudio)
+
 endif()
