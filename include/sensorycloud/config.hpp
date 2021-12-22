@@ -124,6 +124,8 @@ class Config {
     ///
     /// @param host_ The host-name of the RPC service.
     /// @param port_ The port number of the RPC service.
+    /// @param tenantID_ The unique ID of your tenant in Sensory Cloud.
+    /// @param deviceID_ The unique ID of the device running the SDK.
     /// @param isSecure_ `true` to use SSL/TLS for message encryption, `false`
     /// to use an insecure connection.
     ///
