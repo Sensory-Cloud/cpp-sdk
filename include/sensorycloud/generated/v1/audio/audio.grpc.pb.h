@@ -255,8 +255,8 @@ class AudioBiometrics final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    // Enrolls a user with a stream of audio. Streams a CreateEnrollmentResponse
-    // as the audio is processed.
+    // Enrolls a user with a stream of audio. Streams a CreateEnrollmentResponse as the audio is processed.
+    // CreateEnrollment only supports biometric-enabled models
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrollmentRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> CreateEnrollment(::grpc::ClientContext* context) {
       return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrollmentRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(CreateEnrollmentRaw(context));
@@ -269,6 +269,7 @@ class AudioBiometrics final {
     }
     // Authenticates a user with a stream of audio against an existing enrollment.
     // Streams an AuthenticateResponse as the audio is processed.
+    // Authenticate only supports biometric-enabled models
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::AuthenticateRequest, ::sensory::api::v1::audio::AuthenticateResponse>> Authenticate(::grpc::ClientContext* context) {
       return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::AuthenticateRequest, ::sensory::api::v1::audio::AuthenticateResponse>>(AuthenticateRaw(context));
@@ -282,12 +283,13 @@ class AudioBiometrics final {
     class async_interface {
      public:
       virtual ~async_interface() {}
-      // Enrolls a user with a stream of audio. Streams a CreateEnrollmentResponse
-      // as the audio is processed.
+      // Enrolls a user with a stream of audio. Streams a CreateEnrollmentResponse as the audio is processed.
+      // CreateEnrollment only supports biometric-enabled models
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void CreateEnrollment(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::CreateEnrollmentRequest,::sensory::api::v1::audio::CreateEnrollmentResponse>* reactor) = 0;
       // Authenticates a user with a stream of audio against an existing enrollment.
       // Streams an AuthenticateResponse as the audio is processed.
+      // Authenticate only supports biometric-enabled models
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void Authenticate(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::AuthenticateRequest,::sensory::api::v1::audio::AuthenticateResponse>* reactor) = 0;
     };
@@ -354,12 +356,13 @@ class AudioBiometrics final {
    public:
     Service();
     virtual ~Service();
-    // Enrolls a user with a stream of audio. Streams a CreateEnrollmentResponse
-    // as the audio is processed.
+    // Enrolls a user with a stream of audio. Streams a CreateEnrollmentResponse as the audio is processed.
+    // CreateEnrollment only supports biometric-enabled models
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status CreateEnrollment(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrollmentRequest>* stream);
     // Authenticates a user with a stream of audio against an existing enrollment.
     // Streams an AuthenticateResponse as the audio is processed.
+    // Authenticate only supports biometric-enabled models
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status Authenticate(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::AuthenticateResponse, ::sensory::api::v1::audio::AuthenticateRequest>* stream);
   };
@@ -598,6 +601,30 @@ class AudioEvents final {
     std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>> PrepareAsyncValidateEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>>(PrepareAsyncValidateEventRaw(context, cq));
     }
+    // Enrolls a sound or voice. Streams a CreateEnrollmentResponse as the audio is processed.
+    // CreateEnrollment supports all enrollable models
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> CreateEnrolledEvent(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(CreateEnrolledEventRaw(context));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> AsyncCreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(AsyncCreateEnrolledEventRaw(context, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> PrepareAsyncCreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(PrepareAsyncCreateEnrolledEventRaw(context, cq));
+    }
+    // Authenticates a sound or voice. Streams a ValidateEventResponse as the audio is processed.
+    // ValidateEnrolledEvent supports all enrollable models
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>> ValidateEnrolledEvent(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>>(ValidateEnrolledEventRaw(context));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>> AsyncValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>>(AsyncValidateEnrolledEventRaw(context, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>> PrepareAsyncValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>>(PrepareAsyncValidateEnrolledEventRaw(context, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -605,6 +632,14 @@ class AudioEvents final {
       // Streams a ValidateEventResponse as the audio is processed.
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void ValidateEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::ValidateEventRequest,::sensory::api::v1::audio::ValidateEventResponse>* reactor) = 0;
+      // Enrolls a sound or voice. Streams a CreateEnrollmentResponse as the audio is processed.
+      // CreateEnrollment supports all enrollable models
+      // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+      virtual void CreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::CreateEnrolledEventRequest,::sensory::api::v1::audio::CreateEnrollmentResponse>* reactor) = 0;
+      // Authenticates a sound or voice. Streams a ValidateEventResponse as the audio is processed.
+      // ValidateEnrolledEvent supports all enrollable models
+      // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+      virtual void ValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::ValidateEnrolledEventRequest,::sensory::api::v1::audio::ValidateEnrolledEventResponse>* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -613,6 +648,12 @@ class AudioEvents final {
     virtual ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* ValidateEventRaw(::grpc::ClientContext* context) = 0;
     virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* AsyncValidateEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* PrepareAsyncValidateEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* CreateEnrolledEventRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* AsyncCreateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* PrepareAsyncCreateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* ValidateEnrolledEventRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* AsyncValidateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* PrepareAsyncValidateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -626,10 +667,30 @@ class AudioEvents final {
     std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>> PrepareAsyncValidateEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>>(PrepareAsyncValidateEventRaw(context, cq));
     }
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> CreateEnrolledEvent(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(CreateEnrolledEventRaw(context));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> AsyncCreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(AsyncCreateEnrolledEventRaw(context, cq, tag));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>> PrepareAsyncCreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>>(PrepareAsyncCreateEnrolledEventRaw(context, cq));
+    }
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>> ValidateEnrolledEvent(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>>(ValidateEnrolledEventRaw(context));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>> AsyncValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>>(AsyncValidateEnrolledEventRaw(context, cq, tag));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>> PrepareAsyncValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>>(PrepareAsyncValidateEnrolledEventRaw(context, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void ValidateEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::ValidateEventRequest,::sensory::api::v1::audio::ValidateEventResponse>* reactor) override;
+      void CreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::CreateEnrolledEventRequest,::sensory::api::v1::audio::CreateEnrollmentResponse>* reactor) override;
+      void ValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::ValidateEnrolledEventRequest,::sensory::api::v1::audio::ValidateEnrolledEventResponse>* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -644,7 +705,15 @@ class AudioEvents final {
     ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* ValidateEventRaw(::grpc::ClientContext* context) override;
     ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* AsyncValidateEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* PrepareAsyncValidateEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* CreateEnrolledEventRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* AsyncCreateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* PrepareAsyncCreateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* ValidateEnrolledEventRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* AsyncValidateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* PrepareAsyncValidateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_ValidateEvent_;
+    const ::grpc::internal::RpcMethod rpcmethod_CreateEnrolledEvent_;
+    const ::grpc::internal::RpcMethod rpcmethod_ValidateEnrolledEvent_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -656,6 +725,14 @@ class AudioEvents final {
     // Streams a ValidateEventResponse as the audio is processed.
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status ValidateEvent(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEventResponse, ::sensory::api::v1::audio::ValidateEventRequest>* stream);
+    // Enrolls a sound or voice. Streams a CreateEnrollmentResponse as the audio is processed.
+    // CreateEnrollment supports all enrollable models
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status CreateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* stream);
+    // Authenticates a sound or voice. Streams a ValidateEventResponse as the audio is processed.
+    // ValidateEnrolledEvent supports all enrollable models
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status ValidateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* stream);
   };
   template <class BaseClass>
   class WithAsyncMethod_ValidateEvent : public BaseClass {
@@ -677,7 +754,47 @@ class AudioEvents final {
       ::grpc::Service::RequestAsyncBidiStreaming(0, context, stream, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_ValidateEvent<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_CreateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_CreateEnrolledEvent() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_CreateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CreateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCreateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(1, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_ValidateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ValidateEnrolledEvent() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_ValidateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ValidateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestValidateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(2, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_ValidateEvent<WithAsyncMethod_CreateEnrolledEvent<WithAsyncMethod_ValidateEnrolledEvent<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_ValidateEvent : public BaseClass {
    private:
@@ -701,7 +818,53 @@ class AudioEvents final {
       ::grpc::CallbackServerContext* /*context*/)
       { return nullptr; }
   };
-  typedef WithCallbackMethod_ValidateEvent<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_CreateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_CreateEnrolledEvent() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackBidiHandler< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context) { return this->CreateEnrolledEvent(context); }));
+    }
+    ~WithCallbackMethod_CreateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CreateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerBidiReactor< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* CreateEnrolledEvent(
+      ::grpc::CallbackServerContext* /*context*/)
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_ValidateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_ValidateEnrolledEvent() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackBidiHandler< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context) { return this->ValidateEnrolledEvent(context); }));
+    }
+    ~WithCallbackMethod_ValidateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ValidateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerBidiReactor< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* ValidateEnrolledEvent(
+      ::grpc::CallbackServerContext* /*context*/)
+      { return nullptr; }
+  };
+  typedef WithCallbackMethod_ValidateEvent<WithCallbackMethod_CreateEnrolledEvent<WithCallbackMethod_ValidateEnrolledEvent<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_ValidateEvent : public BaseClass {
@@ -716,6 +879,40 @@ class AudioEvents final {
     }
     // disable synchronous version of this method
     ::grpc::Status ValidateEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEventResponse, ::sensory::api::v1::audio::ValidateEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_CreateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_CreateEnrolledEvent() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_CreateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CreateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_ValidateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ValidateEnrolledEvent() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_ValidateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ValidateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -741,6 +938,46 @@ class AudioEvents final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_CreateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_CreateEnrolledEvent() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_CreateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CreateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCreateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(1, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_ValidateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ValidateEnrolledEvent() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_ValidateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ValidateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestValidateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(2, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_ValidateEvent : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -760,6 +997,52 @@ class AudioEvents final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* ValidateEvent(
+      ::grpc::CallbackServerContext* /*context*/)
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_CreateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_CreateEnrolledEvent() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context) { return this->CreateEnrolledEvent(context); }));
+    }
+    ~WithRawCallbackMethod_CreateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CreateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* CreateEnrolledEvent(
+      ::grpc::CallbackServerContext* /*context*/)
+      { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_ValidateEnrolledEvent : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_ValidateEnrolledEvent() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context) { return this->ValidateEnrolledEvent(context); }));
+    }
+    ~WithRawCallbackMethod_ValidateEnrolledEvent() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ValidateEnrolledEvent(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* /*stream*/)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* ValidateEnrolledEvent(
       ::grpc::CallbackServerContext* /*context*/)
       { return nullptr; }
   };

@@ -1333,6 +1333,7 @@ class CreateEnrollmentResponse final :
     kModelVersionFieldNumber = 5,
     kPercentCompleteFieldNumber = 1,
     kIsAliveFieldNumber = 2,
+    kScoreFieldNumber = 6,
   };
   // string enrollmentId = 3;
   void clear_enrollmentid();
@@ -1394,6 +1395,15 @@ class CreateEnrollmentResponse final :
   void _internal_set_isalive(bool value);
   public:
 
+  // float score = 6;
+  void clear_score();
+  float score() const;
+  void set_score(float value);
+  private:
+  float _internal_score() const;
+  void _internal_set_score(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.video.CreateEnrollmentResponse)
  private:
   class _Internal;
@@ -1406,6 +1416,7 @@ class CreateEnrollmentResponse final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelversion_;
   ::PROTOBUF_NAMESPACE_ID::int64 percentcomplete_;
   bool isalive_;
+  float score_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
 };
@@ -1861,6 +1872,7 @@ class CreateEnrollmentConfig final :
     kDeviceIdFieldNumber = 2,
     kModelNameFieldNumber = 3,
     kDescriptionFieldNumber = 4,
+    kReferenceIdFieldNumber = 8,
     kCompressionFieldNumber = 7,
     kIsLivenessEnabledFieldNumber = 5,
     kLivenessThresholdFieldNumber = 6,
@@ -1921,6 +1933,20 @@ class CreateEnrollmentConfig final :
   std::string* _internal_mutable_description();
   public:
 
+  // string referenceId = 8 [(.validate.rules) = {
+  void clear_referenceid();
+  const std::string& referenceid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_referenceid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_referenceid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_referenceid();
+  void set_allocated_referenceid(std::string* referenceid);
+  private:
+  const std::string& _internal_referenceid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_referenceid(const std::string& value);
+  std::string* _internal_mutable_referenceid();
+  public:
+
   // .sensory.api.common.CompressionConfiguration compression = 7;
   bool has_compression() const;
   private:
@@ -1968,6 +1994,7 @@ class CreateEnrollmentConfig final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelname_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr referenceid_;
   ::sensory::api::common::CompressionConfiguration* compression_;
   bool islivenessenabled_;
   int livenessthreshold_;
@@ -3337,6 +3364,26 @@ inline void CreateEnrollmentResponse::set_allocated_modelversion(std::string* mo
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.CreateEnrollmentResponse.modelVersion)
 }
 
+// float score = 6;
+inline void CreateEnrollmentResponse::clear_score() {
+  score_ = 0;
+}
+inline float CreateEnrollmentResponse::_internal_score() const {
+  return score_;
+}
+inline float CreateEnrollmentResponse::score() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentResponse.score)
+  return _internal_score();
+}
+inline void CreateEnrollmentResponse::_internal_set_score(float value) {
+  
+  score_ = value;
+}
+inline void CreateEnrollmentResponse::set_score(float value) {
+  _internal_set_score(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentResponse.score)
+}
+
 // -------------------------------------------------------------------
 
 // AuthenticateResponse
@@ -3843,6 +3890,52 @@ inline void CreateEnrollmentConfig::set_allocated_compression(::sensory::api::co
   }
   compression_ = compression;
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.CreateEnrollmentConfig.compression)
+}
+
+// string referenceId = 8 [(.validate.rules) = {
+inline void CreateEnrollmentConfig::clear_referenceid() {
+  referenceid_.ClearToEmpty();
+}
+inline const std::string& CreateEnrollmentConfig::referenceid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentConfig.referenceId)
+  return _internal_referenceid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CreateEnrollmentConfig::set_referenceid(ArgT0&& arg0, ArgT... args) {
+ 
+ referenceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentConfig.referenceId)
+}
+inline std::string* CreateEnrollmentConfig::mutable_referenceid() {
+  std::string* _s = _internal_mutable_referenceid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.video.CreateEnrollmentConfig.referenceId)
+  return _s;
+}
+inline const std::string& CreateEnrollmentConfig::_internal_referenceid() const {
+  return referenceid_.Get();
+}
+inline void CreateEnrollmentConfig::_internal_set_referenceid(const std::string& value) {
+  
+  referenceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* CreateEnrollmentConfig::_internal_mutable_referenceid() {
+  
+  return referenceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* CreateEnrollmentConfig::release_referenceid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.video.CreateEnrollmentConfig.referenceId)
+  return referenceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void CreateEnrollmentConfig::set_allocated_referenceid(std::string* referenceid) {
+  if (referenceid != nullptr) {
+    
+  } else {
+    
+  }
+  referenceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), referenceid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.CreateEnrollmentConfig.referenceId)
 }
 
 // -------------------------------------------------------------------

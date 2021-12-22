@@ -534,6 +534,7 @@ class EnrollmentResponse final :
     kDeviceIdFieldNumber = 8,
     kUserIdFieldNumber = 9,
     kDeviceNameFieldNumber = 11,
+    kReferenceIdFieldNumber = 13,
     kCreatedAtFieldNumber = 2,
     kUpdatedAtFieldNumber = 3,
     kCompressionFieldNumber = 10,
@@ -638,6 +639,20 @@ class EnrollmentResponse final :
   std::string* _internal_mutable_devicename();
   public:
 
+  // string referenceId = 13;
+  void clear_referenceid();
+  const std::string& referenceid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_referenceid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_referenceid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_referenceid();
+  void set_allocated_referenceid(std::string* referenceid);
+  private:
+  const std::string& _internal_referenceid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_referenceid(const std::string& value);
+  std::string* _internal_mutable_referenceid();
+  public:
+
   // .google.protobuf.Timestamp createdAt = 2;
   bool has_createdat() const;
   private:
@@ -724,6 +739,7 @@ class EnrollmentResponse final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr userid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr devicename_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr referenceid_;
   PROTOBUF_NAMESPACE_ID::Timestamp* createdat_;
   PROTOBUF_NAMESPACE_ID::Timestamp* updatedat_;
   ::sensory::api::common::CompressionConfiguration* compression_;
@@ -2610,6 +2626,52 @@ inline void EnrollmentResponse::_internal_set_didenrollwithliveness(bool value) 
 inline void EnrollmentResponse::set_didenrollwithliveness(bool value) {
   _internal_set_didenrollwithliveness(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.management.EnrollmentResponse.didEnrollWithLiveness)
+}
+
+// string referenceId = 13;
+inline void EnrollmentResponse::clear_referenceid() {
+  referenceid_.ClearToEmpty();
+}
+inline const std::string& EnrollmentResponse::referenceid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.EnrollmentResponse.referenceId)
+  return _internal_referenceid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void EnrollmentResponse::set_referenceid(ArgT0&& arg0, ArgT... args) {
+ 
+ referenceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.EnrollmentResponse.referenceId)
+}
+inline std::string* EnrollmentResponse::mutable_referenceid() {
+  std::string* _s = _internal_mutable_referenceid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.EnrollmentResponse.referenceId)
+  return _s;
+}
+inline const std::string& EnrollmentResponse::_internal_referenceid() const {
+  return referenceid_.Get();
+}
+inline void EnrollmentResponse::_internal_set_referenceid(const std::string& value) {
+  
+  referenceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* EnrollmentResponse::_internal_mutable_referenceid() {
+  
+  return referenceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* EnrollmentResponse::release_referenceid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.EnrollmentResponse.referenceId)
+  return referenceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void EnrollmentResponse::set_allocated_referenceid(std::string* referenceid) {
+  if (referenceid != nullptr) {
+    
+  } else {
+    
+  }
+  referenceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), referenceid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.EnrollmentResponse.referenceId)
 }
 
 // -------------------------------------------------------------------

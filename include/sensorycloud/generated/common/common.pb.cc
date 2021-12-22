@@ -275,22 +275,23 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "\020f\022\025\n\021SOUND_SCENE_FIXED\020g\022\023\n\016FACE_BIOMET"
   "RIC\020\311\001\022\025\n\020FACE_RECOGNITION\020\312\001\022\027\n\022OBJECT_"
   "RECOGNITION\020\313\001\022\024\n\017IMAGE_TRANSFORM\020\314\001\022\014\n\007"
-  "UNKNOWN\020\350\007*8\n\016TechnologyType\022\013\n\007NOT_SET\020"
-  "\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003*&\n\017Compress"
-  "ionType\022\023\n\017IMAGE_GRAYSCALE\020\000*9\n\nClientTy"
-  "pe\022\010\n\004ROOT\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CLUSTER\020\002\022\010\n"
-  "\004USER\020\003*E\n\016UsageEventType\022\022\n\016AUTHENTICAT"
-  "ION\020\000\022\017\n\013RECOGNITION\020\001\022\016\n\nENROLLMENT\020\002Bj"
-  "\n\025io.sensory.api.commonB\025SensoryApiCommo"
-  "nProtoP\001Z8gitlab.com/sensory-cloud/serve"
-  "r/titan.git/pkg/api/commonb\006proto3"
+  "UNKNOWN\020\350\007*A\n\016TechnologyType\022\013\n\007NOT_SET\020"
+  "\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003\022\007\n\003STT\020\004*&\n"
+  "\017CompressionType\022\023\n\017IMAGE_GRAYSCALE\020\000*9\n"
+  "\nClientType\022\010\n\004ROOT\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CLU"
+  "STER\020\002\022\010\n\004USER\020\003*E\n\016UsageEventType\022\022\n\016AU"
+  "THENTICATION\020\000\022\017\n\013RECOGNITION\020\001\022\016\n\nENROL"
+  "LMENT\020\002Bj\n\025io.sensory.api.commonB\025Sensor"
+  "yApiCommonProtoP\001Z8gitlab.com/sensory-cl"
+  "oud/server/titan.git/pkg/api/commonb\006pro"
+  "to3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2fcommon_2eproto_deps[1] = {
   &::descriptor_table_validate_2fvalidate_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2fcommon_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2fcommon_2eproto = {
-  false, false, 1834, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
+  false, false, 1843, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
   &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 1, 8,
   schemas, file_default_instances, TableStruct_common_2fcommon_2eproto::offsets,
   file_level_metadata_common_2fcommon_2eproto, file_level_enum_descriptors_common_2fcommon_2eproto, file_level_service_descriptors_common_2fcommon_2eproto,
@@ -359,6 +360,7 @@ bool TechnologyType_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;

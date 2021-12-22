@@ -38,7 +38,8 @@ constexpr FloatRules::FloatRules(
   , lt_(0)
   , lte_(0)
   , gt_(0)
-  , gte_(0){}
+  , gte_(0)
+  , ignore_empty_(false){}
 struct FloatRulesDefaultTypeInternal {
   constexpr FloatRulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -56,7 +57,8 @@ constexpr DoubleRules::DoubleRules(
   , lt_(0)
   , lte_(0)
   , gt_(0)
-  , gte_(0){}
+  , gte_(0)
+  , ignore_empty_(false){}
 struct DoubleRulesDefaultTypeInternal {
   constexpr DoubleRulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -74,7 +76,8 @@ constexpr Int32Rules::Int32Rules(
   , lt_(0)
   , lte_(0)
   , gt_(0)
-  , gte_(0){}
+  , gte_(0)
+  , ignore_empty_(false){}
 struct Int32RulesDefaultTypeInternal {
   constexpr Int32RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -92,7 +95,8 @@ constexpr Int64Rules::Int64Rules(
   , lt_(int64_t{0})
   , lte_(int64_t{0})
   , gt_(int64_t{0})
-  , gte_(int64_t{0}){}
+  , gte_(int64_t{0})
+  , ignore_empty_(false){}
 struct Int64RulesDefaultTypeInternal {
   constexpr Int64RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -110,7 +114,8 @@ constexpr UInt32Rules::UInt32Rules(
   , lt_(0u)
   , lte_(0u)
   , gt_(0u)
-  , gte_(0u){}
+  , gte_(0u)
+  , ignore_empty_(false){}
 struct UInt32RulesDefaultTypeInternal {
   constexpr UInt32RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -128,7 +133,8 @@ constexpr UInt64Rules::UInt64Rules(
   , lt_(uint64_t{0u})
   , lte_(uint64_t{0u})
   , gt_(uint64_t{0u})
-  , gte_(uint64_t{0u}){}
+  , gte_(uint64_t{0u})
+  , ignore_empty_(false){}
 struct UInt64RulesDefaultTypeInternal {
   constexpr UInt64RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -146,7 +152,8 @@ constexpr SInt32Rules::SInt32Rules(
   , lt_(0)
   , lte_(0)
   , gt_(0)
-  , gte_(0){}
+  , gte_(0)
+  , ignore_empty_(false){}
 struct SInt32RulesDefaultTypeInternal {
   constexpr SInt32RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -164,7 +171,8 @@ constexpr SInt64Rules::SInt64Rules(
   , lt_(int64_t{0})
   , lte_(int64_t{0})
   , gt_(int64_t{0})
-  , gte_(int64_t{0}){}
+  , gte_(int64_t{0})
+  , ignore_empty_(false){}
 struct SInt64RulesDefaultTypeInternal {
   constexpr SInt64RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -182,7 +190,8 @@ constexpr Fixed32Rules::Fixed32Rules(
   , lt_(0u)
   , lte_(0u)
   , gt_(0u)
-  , gte_(0u){}
+  , gte_(0u)
+  , ignore_empty_(false){}
 struct Fixed32RulesDefaultTypeInternal {
   constexpr Fixed32RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -200,7 +209,8 @@ constexpr Fixed64Rules::Fixed64Rules(
   , lt_(uint64_t{0u})
   , lte_(uint64_t{0u})
   , gt_(uint64_t{0u})
-  , gte_(uint64_t{0u}){}
+  , gte_(uint64_t{0u})
+  , ignore_empty_(false){}
 struct Fixed64RulesDefaultTypeInternal {
   constexpr Fixed64RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -218,7 +228,8 @@ constexpr SFixed32Rules::SFixed32Rules(
   , lt_(0)
   , lte_(0)
   , gt_(0)
-  , gte_(0){}
+  , gte_(0)
+  , ignore_empty_(false){}
 struct SFixed32RulesDefaultTypeInternal {
   constexpr SFixed32RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -236,7 +247,8 @@ constexpr SFixed64Rules::SFixed64Rules(
   , lt_(int64_t{0})
   , lte_(int64_t{0})
   , gt_(int64_t{0})
-  , gte_(int64_t{0}){}
+  , gte_(int64_t{0})
+  , ignore_empty_(false){}
 struct SFixed64RulesDefaultTypeInternal {
   constexpr SFixed64RulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -272,6 +284,7 @@ constexpr StringRules::StringRules(
   , max_len_(uint64_t{0u})
   , min_bytes_(uint64_t{0u})
   , max_bytes_(uint64_t{0u})
+  , ignore_empty_(false)
   , len_(uint64_t{0u})
   , len_bytes_(uint64_t{0u})
   , strict_(true)
@@ -296,6 +309,7 @@ constexpr BytesRules::BytesRules(
   , contains_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , min_len_(uint64_t{0u})
   , max_len_(uint64_t{0u})
+  , ignore_empty_(false)
   , len_(uint64_t{0u})
   , _oneof_case_{}{}
 struct BytesRulesDefaultTypeInternal {
@@ -340,7 +354,8 @@ constexpr RepeatedRules::RepeatedRules(
   : items_(nullptr)
   , min_items_(uint64_t{0u})
   , max_items_(uint64_t{0u})
-  , unique_(false){}
+  , unique_(false)
+  , ignore_empty_(false){}
 struct RepeatedRulesDefaultTypeInternal {
   constexpr RepeatedRulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -356,7 +371,8 @@ constexpr MapRules::MapRules(
   , values_(nullptr)
   , min_pairs_(uint64_t{0u})
   , max_pairs_(uint64_t{0u})
-  , no_sparse_(false){}
+  , no_sparse_(false)
+  , ignore_empty_(false){}
 struct MapRulesDefaultTypeInternal {
   constexpr MapRulesDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -487,6 +503,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::FloatRules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::FloatRules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::FloatRules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::FloatRules, ignore_empty_),
   0,
   1,
   2,
@@ -494,6 +511,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::DoubleRules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::DoubleRules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -506,6 +524,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::DoubleRules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::DoubleRules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::DoubleRules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::DoubleRules, ignore_empty_),
   0,
   1,
   2,
@@ -513,6 +532,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::Int32Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::Int32Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -525,6 +545,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::Int32Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::Int32Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::Int32Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::Int32Rules, ignore_empty_),
   0,
   1,
   2,
@@ -532,6 +553,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::Int64Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::Int64Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -544,6 +566,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::Int64Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::Int64Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::Int64Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::Int64Rules, ignore_empty_),
   0,
   1,
   2,
@@ -551,6 +574,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::UInt32Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::UInt32Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -563,6 +587,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::UInt32Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::UInt32Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::UInt32Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::UInt32Rules, ignore_empty_),
   0,
   1,
   2,
@@ -570,6 +595,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::UInt64Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::UInt64Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -582,6 +608,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::UInt64Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::UInt64Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::UInt64Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::UInt64Rules, ignore_empty_),
   0,
   1,
   2,
@@ -589,6 +616,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::SInt32Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::SInt32Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -601,6 +629,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::SInt32Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::SInt32Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::SInt32Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::SInt32Rules, ignore_empty_),
   0,
   1,
   2,
@@ -608,6 +637,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::SInt64Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::SInt64Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -620,6 +650,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::SInt64Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::SInt64Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::SInt64Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::SInt64Rules, ignore_empty_),
   0,
   1,
   2,
@@ -627,6 +658,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::Fixed32Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::Fixed32Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -639,6 +671,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::Fixed32Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::Fixed32Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::Fixed32Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::Fixed32Rules, ignore_empty_),
   0,
   1,
   2,
@@ -646,6 +679,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::Fixed64Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::Fixed64Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -658,6 +692,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::Fixed64Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::Fixed64Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::Fixed64Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::Fixed64Rules, ignore_empty_),
   0,
   1,
   2,
@@ -665,6 +700,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::SFixed32Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::SFixed32Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -677,6 +713,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::SFixed32Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::SFixed32Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::SFixed32Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::SFixed32Rules, ignore_empty_),
   0,
   1,
   2,
@@ -684,6 +721,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::SFixed64Rules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::SFixed64Rules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -696,6 +734,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::SFixed64Rules, gte_),
   PROTOBUF_FIELD_OFFSET(::validate::SFixed64Rules, in_),
   PROTOBUF_FIELD_OFFSET(::validate::SFixed64Rules, not_in_),
+  PROTOBUF_FIELD_OFFSET(::validate::SFixed64Rules, ignore_empty_),
   0,
   1,
   2,
@@ -703,6 +742,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   4,
   ~0u,
   ~0u,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::BoolRules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::BoolRules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -740,12 +780,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   PROTOBUF_FIELD_OFFSET(::validate::StringRules, strict_),
+  PROTOBUF_FIELD_OFFSET(::validate::StringRules, ignore_empty_),
   PROTOBUF_FIELD_OFFSET(::validate::StringRules, well_known_),
   0,
-  10,
+  11,
   6,
   7,
-  11,
+  12,
   8,
   9,
   1,
@@ -765,7 +806,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   ~0u,
   ~0u,
   ~0u,
-  12,
+  13,
+  10,
   PROTOBUF_FIELD_OFFSET(::validate::BytesRules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::BytesRules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -784,9 +826,10 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
   ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
+  PROTOBUF_FIELD_OFFSET(::validate::BytesRules, ignore_empty_),
   PROTOBUF_FIELD_OFFSET(::validate::BytesRules, well_known_),
   0,
-  7,
+  8,
   5,
   6,
   1,
@@ -798,6 +841,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   ~0u,
   ~0u,
   ~0u,
+  7,
   PROTOBUF_FIELD_OFFSET(::validate::EnumRules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::EnumRules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -829,10 +873,12 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::RepeatedRules, max_items_),
   PROTOBUF_FIELD_OFFSET(::validate::RepeatedRules, unique_),
   PROTOBUF_FIELD_OFFSET(::validate::RepeatedRules, items_),
+  PROTOBUF_FIELD_OFFSET(::validate::RepeatedRules, ignore_empty_),
   1,
   2,
   3,
   0,
+  4,
   PROTOBUF_FIELD_OFFSET(::validate::MapRules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::MapRules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -843,11 +889,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
   PROTOBUF_FIELD_OFFSET(::validate::MapRules, no_sparse_),
   PROTOBUF_FIELD_OFFSET(::validate::MapRules, keys_),
   PROTOBUF_FIELD_OFFSET(::validate::MapRules, values_),
+  PROTOBUF_FIELD_OFFSET(::validate::MapRules, ignore_empty_),
   2,
   3,
   4,
   0,
   1,
+  5,
   PROTOBUF_FIELD_OFFSET(::validate::AnyRules, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::validate::AnyRules, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -906,28 +954,28 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_validate_2fvalidate_2eproto::o
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 28, sizeof(::validate::FieldRules)},
-  { 50, 62, sizeof(::validate::FloatRules)},
-  { 69, 81, sizeof(::validate::DoubleRules)},
-  { 88, 100, sizeof(::validate::Int32Rules)},
-  { 107, 119, sizeof(::validate::Int64Rules)},
-  { 126, 138, sizeof(::validate::UInt32Rules)},
-  { 145, 157, sizeof(::validate::UInt64Rules)},
-  { 164, 176, sizeof(::validate::SInt32Rules)},
-  { 183, 195, sizeof(::validate::SInt64Rules)},
-  { 202, 214, sizeof(::validate::Fixed32Rules)},
-  { 221, 233, sizeof(::validate::Fixed64Rules)},
-  { 240, 252, sizeof(::validate::SFixed32Rules)},
-  { 259, 271, sizeof(::validate::SFixed64Rules)},
-  { 278, 284, sizeof(::validate::BoolRules)},
-  { 285, 316, sizeof(::validate::StringRules)},
-  { 341, 360, sizeof(::validate::BytesRules)},
-  { 373, 382, sizeof(::validate::EnumRules)},
-  { 386, 393, sizeof(::validate::MessageRules)},
-  { 395, 404, sizeof(::validate::RepeatedRules)},
-  { 408, 418, sizeof(::validate::MapRules)},
-  { 423, 431, sizeof(::validate::AnyRules)},
-  { 434, 447, sizeof(::validate::DurationRules)},
-  { 455, 469, sizeof(::validate::TimestampRules)},
+  { 50, 63, sizeof(::validate::FloatRules)},
+  { 71, 84, sizeof(::validate::DoubleRules)},
+  { 92, 105, sizeof(::validate::Int32Rules)},
+  { 113, 126, sizeof(::validate::Int64Rules)},
+  { 134, 147, sizeof(::validate::UInt32Rules)},
+  { 155, 168, sizeof(::validate::UInt64Rules)},
+  { 176, 189, sizeof(::validate::SInt32Rules)},
+  { 197, 210, sizeof(::validate::SInt64Rules)},
+  { 218, 231, sizeof(::validate::Fixed32Rules)},
+  { 239, 252, sizeof(::validate::Fixed64Rules)},
+  { 260, 273, sizeof(::validate::SFixed32Rules)},
+  { 281, 294, sizeof(::validate::SFixed64Rules)},
+  { 302, 308, sizeof(::validate::BoolRules)},
+  { 309, 341, sizeof(::validate::StringRules)},
+  { 367, 387, sizeof(::validate::BytesRules)},
+  { 401, 410, sizeof(::validate::EnumRules)},
+  { 414, 421, sizeof(::validate::MessageRules)},
+  { 423, 433, sizeof(::validate::RepeatedRules)},
+  { 438, 449, sizeof(::validate::MapRules)},
+  { 455, 463, sizeof(::validate::AnyRules)},
+  { 466, 479, sizeof(::validate::DurationRules)},
+  { 487, 501, sizeof(::validate::TimestampRules)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -983,93 +1031,103 @@ const char descriptor_table_protodef_validate_2fvalidate_2eproto[] PROTOBUF_SECT
   "H\000\022!\n\003any\030\024 \001(\0132\022.validate.AnyRulesH\000\022+\n"
   "\010duration\030\025 \001(\0132\027.validate.DurationRules"
   "H\000\022-\n\ttimestamp\030\026 \001(\0132\030.validate.Timesta"
-  "mpRulesH\000B\006\n\004type\"i\n\nFloatRules\022\r\n\005const"
+  "mpRulesH\000B\006\n\004type\"\177\n\nFloatRules\022\r\n\005const"
   "\030\001 \001(\002\022\n\n\002lt\030\002 \001(\002\022\013\n\003lte\030\003 \001(\002\022\n\n\002gt\030\004 "
   "\001(\002\022\013\n\003gte\030\005 \001(\002\022\n\n\002in\030\006 \003(\002\022\016\n\006not_in\030\007"
-  " \003(\002\"j\n\013DoubleRules\022\r\n\005const\030\001 \001(\001\022\n\n\002lt"
-  "\030\002 \001(\001\022\013\n\003lte\030\003 \001(\001\022\n\n\002gt\030\004 \001(\001\022\013\n\003gte\030\005"
-  " \001(\001\022\n\n\002in\030\006 \003(\001\022\016\n\006not_in\030\007 \003(\001\"i\n\nInt3"
-  "2Rules\022\r\n\005const\030\001 \001(\005\022\n\n\002lt\030\002 \001(\005\022\013\n\003lte"
-  "\030\003 \001(\005\022\n\n\002gt\030\004 \001(\005\022\013\n\003gte\030\005 \001(\005\022\n\n\002in\030\006 "
-  "\003(\005\022\016\n\006not_in\030\007 \003(\005\"i\n\nInt64Rules\022\r\n\005con"
-  "st\030\001 \001(\003\022\n\n\002lt\030\002 \001(\003\022\013\n\003lte\030\003 \001(\003\022\n\n\002gt\030"
-  "\004 \001(\003\022\013\n\003gte\030\005 \001(\003\022\n\n\002in\030\006 \003(\003\022\016\n\006not_in"
-  "\030\007 \003(\003\"j\n\013UInt32Rules\022\r\n\005const\030\001 \001(\r\022\n\n\002"
-  "lt\030\002 \001(\r\022\013\n\003lte\030\003 \001(\r\022\n\n\002gt\030\004 \001(\r\022\013\n\003gte"
-  "\030\005 \001(\r\022\n\n\002in\030\006 \003(\r\022\016\n\006not_in\030\007 \003(\r\"j\n\013UI"
-  "nt64Rules\022\r\n\005const\030\001 \001(\004\022\n\n\002lt\030\002 \001(\004\022\013\n\003"
-  "lte\030\003 \001(\004\022\n\n\002gt\030\004 \001(\004\022\013\n\003gte\030\005 \001(\004\022\n\n\002in"
-  "\030\006 \003(\004\022\016\n\006not_in\030\007 \003(\004\"j\n\013SInt32Rules\022\r\n"
-  "\005const\030\001 \001(\021\022\n\n\002lt\030\002 \001(\021\022\013\n\003lte\030\003 \001(\021\022\n\n"
-  "\002gt\030\004 \001(\021\022\013\n\003gte\030\005 \001(\021\022\n\n\002in\030\006 \003(\021\022\016\n\006no"
-  "t_in\030\007 \003(\021\"j\n\013SInt64Rules\022\r\n\005const\030\001 \001(\022"
-  "\022\n\n\002lt\030\002 \001(\022\022\013\n\003lte\030\003 \001(\022\022\n\n\002gt\030\004 \001(\022\022\013\n"
-  "\003gte\030\005 \001(\022\022\n\n\002in\030\006 \003(\022\022\016\n\006not_in\030\007 \003(\022\"k"
-  "\n\014Fixed32Rules\022\r\n\005const\030\001 \001(\007\022\n\n\002lt\030\002 \001("
-  "\007\022\013\n\003lte\030\003 \001(\007\022\n\n\002gt\030\004 \001(\007\022\013\n\003gte\030\005 \001(\007\022"
-  "\n\n\002in\030\006 \003(\007\022\016\n\006not_in\030\007 \003(\007\"k\n\014Fixed64Ru"
-  "les\022\r\n\005const\030\001 \001(\006\022\n\n\002lt\030\002 \001(\006\022\013\n\003lte\030\003 "
-  "\001(\006\022\n\n\002gt\030\004 \001(\006\022\013\n\003gte\030\005 \001(\006\022\n\n\002in\030\006 \003(\006"
-  "\022\016\n\006not_in\030\007 \003(\006\"l\n\rSFixed32Rules\022\r\n\005con"
-  "st\030\001 \001(\017\022\n\n\002lt\030\002 \001(\017\022\013\n\003lte\030\003 \001(\017\022\n\n\002gt\030"
-  "\004 \001(\017\022\013\n\003gte\030\005 \001(\017\022\n\n\002in\030\006 \003(\017\022\016\n\006not_in"
-  "\030\007 \003(\017\"l\n\rSFixed64Rules\022\r\n\005const\030\001 \001(\020\022\n"
-  "\n\002lt\030\002 \001(\020\022\013\n\003lte\030\003 \001(\020\022\n\n\002gt\030\004 \001(\020\022\013\n\003g"
-  "te\030\005 \001(\020\022\n\n\002in\030\006 \003(\020\022\016\n\006not_in\030\007 \003(\020\"\032\n\t"
-  "BoolRules\022\r\n\005const\030\001 \001(\010\"\347\003\n\013StringRules"
-  "\022\r\n\005const\030\001 \001(\t\022\013\n\003len\030\023 \001(\004\022\017\n\007min_len\030"
-  "\002 \001(\004\022\017\n\007max_len\030\003 \001(\004\022\021\n\tlen_bytes\030\024 \001("
-  "\004\022\021\n\tmin_bytes\030\004 \001(\004\022\021\n\tmax_bytes\030\005 \001(\004\022"
-  "\017\n\007pattern\030\006 \001(\t\022\016\n\006prefix\030\007 \001(\t\022\016\n\006suff"
-  "ix\030\010 \001(\t\022\020\n\010contains\030\t \001(\t\022\024\n\014not_contai"
-  "ns\030\027 \001(\t\022\n\n\002in\030\n \003(\t\022\016\n\006not_in\030\013 \003(\t\022\017\n\005"
-  "email\030\014 \001(\010H\000\022\022\n\010hostname\030\r \001(\010H\000\022\014\n\002ip\030"
-  "\016 \001(\010H\000\022\016\n\004ipv4\030\017 \001(\010H\000\022\016\n\004ipv6\030\020 \001(\010H\000\022"
-  "\r\n\003uri\030\021 \001(\010H\000\022\021\n\007uri_ref\030\022 \001(\010H\000\022\021\n\007add"
-  "ress\030\025 \001(\010H\000\022\016\n\004uuid\030\026 \001(\010H\000\0220\n\020well_kno"
-  "wn_regex\030\030 \001(\0162\024.validate.KnownRegexH\000\022\024"
-  "\n\006strict\030\031 \001(\010:\004trueB\014\n\nwell_known\"\345\001\n\nB"
-  "ytesRules\022\r\n\005const\030\001 \001(\014\022\013\n\003len\030\r \001(\004\022\017\n"
-  "\007min_len\030\002 \001(\004\022\017\n\007max_len\030\003 \001(\004\022\017\n\007patte"
-  "rn\030\004 \001(\t\022\016\n\006prefix\030\005 \001(\014\022\016\n\006suffix\030\006 \001(\014"
-  "\022\020\n\010contains\030\007 \001(\014\022\n\n\002in\030\010 \003(\014\022\016\n\006not_in"
-  "\030\t \003(\014\022\014\n\002ip\030\n \001(\010H\000\022\016\n\004ipv4\030\013 \001(\010H\000\022\016\n\004"
-  "ipv6\030\014 \001(\010H\000B\014\n\nwell_known\"L\n\tEnumRules\022"
-  "\r\n\005const\030\001 \001(\005\022\024\n\014defined_only\030\002 \001(\010\022\n\n\002"
-  "in\030\003 \003(\005\022\016\n\006not_in\030\004 \003(\005\".\n\014MessageRules"
-  "\022\014\n\004skip\030\001 \001(\010\022\020\n\010required\030\002 \001(\010\"j\n\rRepe"
-  "atedRules\022\021\n\tmin_items\030\001 \001(\004\022\021\n\tmax_item"
-  "s\030\002 \001(\004\022\016\n\006unique\030\003 \001(\010\022#\n\005items\030\004 \001(\0132\024"
-  ".validate.FieldRules\"\215\001\n\010MapRules\022\021\n\tmin"
-  "_pairs\030\001 \001(\004\022\021\n\tmax_pairs\030\002 \001(\004\022\021\n\tno_sp"
-  "arse\030\003 \001(\010\022\"\n\004keys\030\004 \001(\0132\024.validate.Fiel"
-  "dRules\022$\n\006values\030\005 \001(\0132\024.validate.FieldR"
-  "ules\"8\n\010AnyRules\022\020\n\010required\030\001 \001(\010\022\n\n\002in"
-  "\030\002 \003(\t\022\016\n\006not_in\030\003 \003(\t\"\273\002\n\rDurationRules"
-  "\022\020\n\010required\030\001 \001(\010\022(\n\005const\030\002 \001(\0132\031.goog"
-  "le.protobuf.Duration\022%\n\002lt\030\003 \001(\0132\031.googl"
-  "e.protobuf.Duration\022&\n\003lte\030\004 \001(\0132\031.googl"
-  "e.protobuf.Duration\022%\n\002gt\030\005 \001(\0132\031.google"
-  ".protobuf.Duration\022&\n\003gte\030\006 \001(\0132\031.google"
-  ".protobuf.Duration\022%\n\002in\030\007 \003(\0132\031.google."
-  "protobuf.Duration\022)\n\006not_in\030\010 \003(\0132\031.goog"
-  "le.protobuf.Duration\"\272\002\n\016TimestampRules\022"
-  "\020\n\010required\030\001 \001(\010\022)\n\005const\030\002 \001(\0132\032.googl"
-  "e.protobuf.Timestamp\022&\n\002lt\030\003 \001(\0132\032.googl"
-  "e.protobuf.Timestamp\022\'\n\003lte\030\004 \001(\0132\032.goog"
-  "le.protobuf.Timestamp\022&\n\002gt\030\005 \001(\0132\032.goog"
-  "le.protobuf.Timestamp\022\'\n\003gte\030\006 \001(\0132\032.goo"
-  "gle.protobuf.Timestamp\022\016\n\006lt_now\030\007 \001(\010\022\016"
-  "\n\006gt_now\030\010 \001(\010\022)\n\006within\030\t \001(\0132\031.google."
-  "protobuf.Duration*F\n\nKnownRegex\022\013\n\007UNKNO"
-  "WN\020\000\022\024\n\020HTTP_HEADER_NAME\020\001\022\025\n\021HTTP_HEADE"
-  "R_VALUE\020\002:2\n\010disabled\022\037.google.protobuf."
-  "MessageOptions\030\257\010 \001(\010:0\n\010required\022\035.goog"
-  "le.protobuf.OneofOptions\030\257\010 \001(\010:C\n\005rules"
-  "\022\035.google.protobuf.FieldOptions\030\257\010 \001(\0132\024"
-  ".validate.FieldRulesBP\n\032io.envoyproxy.pg"
-  "v.validateZ2github.com/envoyproxy/protoc"
-  "-gen-validate/validate"
+  " \003(\002\022\024\n\014ignore_empty\030\010 \001(\010\"\200\001\n\013DoubleRul"
+  "es\022\r\n\005const\030\001 \001(\001\022\n\n\002lt\030\002 \001(\001\022\013\n\003lte\030\003 \001"
+  "(\001\022\n\n\002gt\030\004 \001(\001\022\013\n\003gte\030\005 \001(\001\022\n\n\002in\030\006 \003(\001\022"
+  "\016\n\006not_in\030\007 \003(\001\022\024\n\014ignore_empty\030\010 \001(\010\"\177\n"
+  "\nInt32Rules\022\r\n\005const\030\001 \001(\005\022\n\n\002lt\030\002 \001(\005\022\013"
+  "\n\003lte\030\003 \001(\005\022\n\n\002gt\030\004 \001(\005\022\013\n\003gte\030\005 \001(\005\022\n\n\002"
+  "in\030\006 \003(\005\022\016\n\006not_in\030\007 \003(\005\022\024\n\014ignore_empty"
+  "\030\010 \001(\010\"\177\n\nInt64Rules\022\r\n\005const\030\001 \001(\003\022\n\n\002l"
+  "t\030\002 \001(\003\022\013\n\003lte\030\003 \001(\003\022\n\n\002gt\030\004 \001(\003\022\013\n\003gte\030"
+  "\005 \001(\003\022\n\n\002in\030\006 \003(\003\022\016\n\006not_in\030\007 \003(\003\022\024\n\014ign"
+  "ore_empty\030\010 \001(\010\"\200\001\n\013UInt32Rules\022\r\n\005const"
+  "\030\001 \001(\r\022\n\n\002lt\030\002 \001(\r\022\013\n\003lte\030\003 \001(\r\022\n\n\002gt\030\004 "
+  "\001(\r\022\013\n\003gte\030\005 \001(\r\022\n\n\002in\030\006 \003(\r\022\016\n\006not_in\030\007"
+  " \003(\r\022\024\n\014ignore_empty\030\010 \001(\010\"\200\001\n\013UInt64Rul"
+  "es\022\r\n\005const\030\001 \001(\004\022\n\n\002lt\030\002 \001(\004\022\013\n\003lte\030\003 \001"
+  "(\004\022\n\n\002gt\030\004 \001(\004\022\013\n\003gte\030\005 \001(\004\022\n\n\002in\030\006 \003(\004\022"
+  "\016\n\006not_in\030\007 \003(\004\022\024\n\014ignore_empty\030\010 \001(\010\"\200\001"
+  "\n\013SInt32Rules\022\r\n\005const\030\001 \001(\021\022\n\n\002lt\030\002 \001(\021"
+  "\022\013\n\003lte\030\003 \001(\021\022\n\n\002gt\030\004 \001(\021\022\013\n\003gte\030\005 \001(\021\022\n"
+  "\n\002in\030\006 \003(\021\022\016\n\006not_in\030\007 \003(\021\022\024\n\014ignore_emp"
+  "ty\030\010 \001(\010\"\200\001\n\013SInt64Rules\022\r\n\005const\030\001 \001(\022\022"
+  "\n\n\002lt\030\002 \001(\022\022\013\n\003lte\030\003 \001(\022\022\n\n\002gt\030\004 \001(\022\022\013\n\003"
+  "gte\030\005 \001(\022\022\n\n\002in\030\006 \003(\022\022\016\n\006not_in\030\007 \003(\022\022\024\n"
+  "\014ignore_empty\030\010 \001(\010\"\201\001\n\014Fixed32Rules\022\r\n\005"
+  "const\030\001 \001(\007\022\n\n\002lt\030\002 \001(\007\022\013\n\003lte\030\003 \001(\007\022\n\n\002"
+  "gt\030\004 \001(\007\022\013\n\003gte\030\005 \001(\007\022\n\n\002in\030\006 \003(\007\022\016\n\006not"
+  "_in\030\007 \003(\007\022\024\n\014ignore_empty\030\010 \001(\010\"\201\001\n\014Fixe"
+  "d64Rules\022\r\n\005const\030\001 \001(\006\022\n\n\002lt\030\002 \001(\006\022\013\n\003l"
+  "te\030\003 \001(\006\022\n\n\002gt\030\004 \001(\006\022\013\n\003gte\030\005 \001(\006\022\n\n\002in\030"
+  "\006 \003(\006\022\016\n\006not_in\030\007 \003(\006\022\024\n\014ignore_empty\030\010 "
+  "\001(\010\"\202\001\n\rSFixed32Rules\022\r\n\005const\030\001 \001(\017\022\n\n\002"
+  "lt\030\002 \001(\017\022\013\n\003lte\030\003 \001(\017\022\n\n\002gt\030\004 \001(\017\022\013\n\003gte"
+  "\030\005 \001(\017\022\n\n\002in\030\006 \003(\017\022\016\n\006not_in\030\007 \003(\017\022\024\n\014ig"
+  "nore_empty\030\010 \001(\010\"\202\001\n\rSFixed64Rules\022\r\n\005co"
+  "nst\030\001 \001(\020\022\n\n\002lt\030\002 \001(\020\022\013\n\003lte\030\003 \001(\020\022\n\n\002gt"
+  "\030\004 \001(\020\022\013\n\003gte\030\005 \001(\020\022\n\n\002in\030\006 \003(\020\022\016\n\006not_i"
+  "n\030\007 \003(\020\022\024\n\014ignore_empty\030\010 \001(\010\"\032\n\tBoolRul"
+  "es\022\r\n\005const\030\001 \001(\010\"\375\003\n\013StringRules\022\r\n\005con"
+  "st\030\001 \001(\t\022\013\n\003len\030\023 \001(\004\022\017\n\007min_len\030\002 \001(\004\022\017"
+  "\n\007max_len\030\003 \001(\004\022\021\n\tlen_bytes\030\024 \001(\004\022\021\n\tmi"
+  "n_bytes\030\004 \001(\004\022\021\n\tmax_bytes\030\005 \001(\004\022\017\n\007patt"
+  "ern\030\006 \001(\t\022\016\n\006prefix\030\007 \001(\t\022\016\n\006suffix\030\010 \001("
+  "\t\022\020\n\010contains\030\t \001(\t\022\024\n\014not_contains\030\027 \001("
+  "\t\022\n\n\002in\030\n \003(\t\022\016\n\006not_in\030\013 \003(\t\022\017\n\005email\030\014"
+  " \001(\010H\000\022\022\n\010hostname\030\r \001(\010H\000\022\014\n\002ip\030\016 \001(\010H\000"
+  "\022\016\n\004ipv4\030\017 \001(\010H\000\022\016\n\004ipv6\030\020 \001(\010H\000\022\r\n\003uri\030"
+  "\021 \001(\010H\000\022\021\n\007uri_ref\030\022 \001(\010H\000\022\021\n\007address\030\025 "
+  "\001(\010H\000\022\016\n\004uuid\030\026 \001(\010H\000\0220\n\020well_known_rege"
+  "x\030\030 \001(\0162\024.validate.KnownRegexH\000\022\024\n\006stric"
+  "t\030\031 \001(\010:\004true\022\024\n\014ignore_empty\030\032 \001(\010B\014\n\nw"
+  "ell_known\"\373\001\n\nBytesRules\022\r\n\005const\030\001 \001(\014\022"
+  "\013\n\003len\030\r \001(\004\022\017\n\007min_len\030\002 \001(\004\022\017\n\007max_len"
+  "\030\003 \001(\004\022\017\n\007pattern\030\004 \001(\t\022\016\n\006prefix\030\005 \001(\014\022"
+  "\016\n\006suffix\030\006 \001(\014\022\020\n\010contains\030\007 \001(\014\022\n\n\002in\030"
+  "\010 \003(\014\022\016\n\006not_in\030\t \003(\014\022\014\n\002ip\030\n \001(\010H\000\022\016\n\004i"
+  "pv4\030\013 \001(\010H\000\022\016\n\004ipv6\030\014 \001(\010H\000\022\024\n\014ignore_em"
+  "pty\030\016 \001(\010B\014\n\nwell_known\"L\n\tEnumRules\022\r\n\005"
+  "const\030\001 \001(\005\022\024\n\014defined_only\030\002 \001(\010\022\n\n\002in\030"
+  "\003 \003(\005\022\016\n\006not_in\030\004 \003(\005\".\n\014MessageRules\022\014\n"
+  "\004skip\030\001 \001(\010\022\020\n\010required\030\002 \001(\010\"\200\001\n\rRepeat"
+  "edRules\022\021\n\tmin_items\030\001 \001(\004\022\021\n\tmax_items\030"
+  "\002 \001(\004\022\016\n\006unique\030\003 \001(\010\022#\n\005items\030\004 \001(\0132\024.v"
+  "alidate.FieldRules\022\024\n\014ignore_empty\030\005 \001(\010"
+  "\"\243\001\n\010MapRules\022\021\n\tmin_pairs\030\001 \001(\004\022\021\n\tmax_"
+  "pairs\030\002 \001(\004\022\021\n\tno_sparse\030\003 \001(\010\022\"\n\004keys\030\004"
+  " \001(\0132\024.validate.FieldRules\022$\n\006values\030\005 \001"
+  "(\0132\024.validate.FieldRules\022\024\n\014ignore_empty"
+  "\030\006 \001(\010\"8\n\010AnyRules\022\020\n\010required\030\001 \001(\010\022\n\n\002"
+  "in\030\002 \003(\t\022\016\n\006not_in\030\003 \003(\t\"\273\002\n\rDurationRul"
+  "es\022\020\n\010required\030\001 \001(\010\022(\n\005const\030\002 \001(\0132\031.go"
+  "ogle.protobuf.Duration\022%\n\002lt\030\003 \001(\0132\031.goo"
+  "gle.protobuf.Duration\022&\n\003lte\030\004 \001(\0132\031.goo"
+  "gle.protobuf.Duration\022%\n\002gt\030\005 \001(\0132\031.goog"
+  "le.protobuf.Duration\022&\n\003gte\030\006 \001(\0132\031.goog"
+  "le.protobuf.Duration\022%\n\002in\030\007 \003(\0132\031.googl"
+  "e.protobuf.Duration\022)\n\006not_in\030\010 \003(\0132\031.go"
+  "ogle.protobuf.Duration\"\272\002\n\016TimestampRule"
+  "s\022\020\n\010required\030\001 \001(\010\022)\n\005const\030\002 \001(\0132\032.goo"
+  "gle.protobuf.Timestamp\022&\n\002lt\030\003 \001(\0132\032.goo"
+  "gle.protobuf.Timestamp\022\'\n\003lte\030\004 \001(\0132\032.go"
+  "ogle.protobuf.Timestamp\022&\n\002gt\030\005 \001(\0132\032.go"
+  "ogle.protobuf.Timestamp\022\'\n\003gte\030\006 \001(\0132\032.g"
+  "oogle.protobuf.Timestamp\022\016\n\006lt_now\030\007 \001(\010"
+  "\022\016\n\006gt_now\030\010 \001(\010\022)\n\006within\030\t \001(\0132\031.googl"
+  "e.protobuf.Duration*F\n\nKnownRegex\022\013\n\007UNK"
+  "NOWN\020\000\022\024\n\020HTTP_HEADER_NAME\020\001\022\025\n\021HTTP_HEA"
+  "DER_VALUE\020\002:2\n\010disabled\022\037.google.protobu"
+  "f.MessageOptions\030\257\010 \001(\010:1\n\007ignored\022\037.goo"
+  "gle.protobuf.MessageOptions\030\260\010 \001(\010:0\n\010re"
+  "quired\022\035.google.protobuf.OneofOptions\030\257\010"
+  " \001(\010:C\n\005rules\022\035.google.protobuf.FieldOpt"
+  "ions\030\257\010 \001(\0132\024.validate.FieldRulesBP\n\032io."
+  "envoyproxy.pgv.validateZ2github.com/envo"
+  "yproxy/protoc-gen-validate/validate"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_validate_2fvalidate_2eproto_deps[3] = {
   &::descriptor_table_google_2fprotobuf_2fdescriptor_2eproto,
@@ -1078,7 +1136,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_validate_2fvalidate_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_validate_2fvalidate_2eproto = {
-  false, false, 4502, descriptor_table_protodef_validate_2fvalidate_2eproto, "validate/validate.proto", 
+  false, false, 4915, descriptor_table_protodef_validate_2fvalidate_2eproto, "validate/validate.proto", 
   &descriptor_table_validate_2fvalidate_2eproto_once, descriptor_table_validate_2fvalidate_2eproto_deps, 3, 23,
   schemas, file_default_instances, TableStruct_validate_2fvalidate_2eproto::offsets,
   file_level_metadata_validate_2fvalidate_2eproto, file_level_enum_descriptors_validate_2fvalidate_2eproto, file_level_service_descriptors_validate_2fvalidate_2eproto,
@@ -2533,6 +2591,9 @@ class FloatRules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 FloatRules::FloatRules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -2553,16 +2614,16 @@ FloatRules::FloatRules(const FloatRules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.FloatRules)
 }
 
 inline void FloatRules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 FloatRules::~FloatRules() {
@@ -2595,10 +2656,10 @@ void FloatRules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -2681,6 +2742,14 @@ const char* FloatRules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -2754,6 +2823,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2789,7 +2864,7 @@ size_t FloatRules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional float const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 4;
@@ -2813,6 +2888,11 @@ size_t FloatRules::ByteSizeLong() const {
     // optional float gte = 5;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 4;
+    }
+
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -2847,7 +2927,7 @@ void FloatRules::MergeFrom(const FloatRules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -2862,6 +2942,9 @@ void FloatRules::MergeFrom(const FloatRules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -2886,8 +2969,8 @@ void FloatRules::InternalSwap(FloatRules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FloatRules, gte_)
-      + sizeof(FloatRules::gte_)
+      PROTOBUF_FIELD_OFFSET(FloatRules, ignore_empty_)
+      + sizeof(FloatRules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(FloatRules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -2919,6 +3002,9 @@ class DoubleRules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 DoubleRules::DoubleRules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -2939,16 +3025,16 @@ DoubleRules::DoubleRules(const DoubleRules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.DoubleRules)
 }
 
 inline void DoubleRules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 DoubleRules::~DoubleRules() {
@@ -2981,10 +3067,10 @@ void DoubleRules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -3067,6 +3153,14 @@ const char* DoubleRules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -3140,6 +3234,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3175,7 +3275,7 @@ size_t DoubleRules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional double const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 8;
@@ -3199,6 +3299,11 @@ size_t DoubleRules::ByteSizeLong() const {
     // optional double gte = 5;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 8;
+    }
+
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -3233,7 +3338,7 @@ void DoubleRules::MergeFrom(const DoubleRules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -3248,6 +3353,9 @@ void DoubleRules::MergeFrom(const DoubleRules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -3272,8 +3380,8 @@ void DoubleRules::InternalSwap(DoubleRules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(DoubleRules, gte_)
-      + sizeof(DoubleRules::gte_)
+      PROTOBUF_FIELD_OFFSET(DoubleRules, ignore_empty_)
+      + sizeof(DoubleRules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(DoubleRules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -3305,6 +3413,9 @@ class Int32Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 Int32Rules::Int32Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -3325,16 +3436,16 @@ Int32Rules::Int32Rules(const Int32Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.Int32Rules)
 }
 
 inline void Int32Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 Int32Rules::~Int32Rules() {
@@ -3367,10 +3478,10 @@ void Int32Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -3453,6 +3564,14 @@ const char* Int32Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -3526,6 +3645,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3561,7 +3686,7 @@ size_t Int32Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional int32 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -3597,6 +3722,11 @@ size_t Int32Rules::ByteSizeLong() const {
           this->_internal_gte());
     }
 
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -3629,7 +3759,7 @@ void Int32Rules::MergeFrom(const Int32Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -3644,6 +3774,9 @@ void Int32Rules::MergeFrom(const Int32Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -3668,8 +3801,8 @@ void Int32Rules::InternalSwap(Int32Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Int32Rules, gte_)
-      + sizeof(Int32Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(Int32Rules, ignore_empty_)
+      + sizeof(Int32Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(Int32Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -3701,6 +3834,9 @@ class Int64Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 Int64Rules::Int64Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -3721,16 +3857,16 @@ Int64Rules::Int64Rules(const Int64Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.Int64Rules)
 }
 
 inline void Int64Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 Int64Rules::~Int64Rules() {
@@ -3763,10 +3899,10 @@ void Int64Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -3849,6 +3985,14 @@ const char* Int64Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -3922,6 +4066,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3957,7 +4107,7 @@ size_t Int64Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional int64 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -3993,6 +4143,11 @@ size_t Int64Rules::ByteSizeLong() const {
           this->_internal_gte());
     }
 
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -4025,7 +4180,7 @@ void Int64Rules::MergeFrom(const Int64Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -4040,6 +4195,9 @@ void Int64Rules::MergeFrom(const Int64Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -4064,8 +4222,8 @@ void Int64Rules::InternalSwap(Int64Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Int64Rules, gte_)
-      + sizeof(Int64Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(Int64Rules, ignore_empty_)
+      + sizeof(Int64Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(Int64Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -4097,6 +4255,9 @@ class UInt32Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 UInt32Rules::UInt32Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -4117,16 +4278,16 @@ UInt32Rules::UInt32Rules(const UInt32Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.UInt32Rules)
 }
 
 inline void UInt32Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 UInt32Rules::~UInt32Rules() {
@@ -4159,10 +4320,10 @@ void UInt32Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -4245,6 +4406,14 @@ const char* UInt32Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -4318,6 +4487,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4353,7 +4528,7 @@ size_t UInt32Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional uint32 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -4389,6 +4564,11 @@ size_t UInt32Rules::ByteSizeLong() const {
           this->_internal_gte());
     }
 
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -4421,7 +4601,7 @@ void UInt32Rules::MergeFrom(const UInt32Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -4436,6 +4616,9 @@ void UInt32Rules::MergeFrom(const UInt32Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -4460,8 +4643,8 @@ void UInt32Rules::InternalSwap(UInt32Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UInt32Rules, gte_)
-      + sizeof(UInt32Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(UInt32Rules, ignore_empty_)
+      + sizeof(UInt32Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(UInt32Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -4493,6 +4676,9 @@ class UInt64Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 UInt64Rules::UInt64Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -4513,16 +4699,16 @@ UInt64Rules::UInt64Rules(const UInt64Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.UInt64Rules)
 }
 
 inline void UInt64Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 UInt64Rules::~UInt64Rules() {
@@ -4555,10 +4741,10 @@ void UInt64Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -4641,6 +4827,14 @@ const char* UInt64Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -4714,6 +4908,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4749,7 +4949,7 @@ size_t UInt64Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional uint64 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -4785,6 +4985,11 @@ size_t UInt64Rules::ByteSizeLong() const {
           this->_internal_gte());
     }
 
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -4817,7 +5022,7 @@ void UInt64Rules::MergeFrom(const UInt64Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -4832,6 +5037,9 @@ void UInt64Rules::MergeFrom(const UInt64Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -4856,8 +5064,8 @@ void UInt64Rules::InternalSwap(UInt64Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UInt64Rules, gte_)
-      + sizeof(UInt64Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(UInt64Rules, ignore_empty_)
+      + sizeof(UInt64Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(UInt64Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -4889,6 +5097,9 @@ class SInt32Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 SInt32Rules::SInt32Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -4909,16 +5120,16 @@ SInt32Rules::SInt32Rules(const SInt32Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.SInt32Rules)
 }
 
 inline void SInt32Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 SInt32Rules::~SInt32Rules() {
@@ -4951,10 +5162,10 @@ void SInt32Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -5037,6 +5248,14 @@ const char* SInt32Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -5110,6 +5329,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSInt32ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5145,7 +5370,7 @@ size_t SInt32Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional sint32 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -5181,6 +5406,11 @@ size_t SInt32Rules::ByteSizeLong() const {
           this->_internal_gte());
     }
 
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -5213,7 +5443,7 @@ void SInt32Rules::MergeFrom(const SInt32Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -5228,6 +5458,9 @@ void SInt32Rules::MergeFrom(const SInt32Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -5252,8 +5485,8 @@ void SInt32Rules::InternalSwap(SInt32Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SInt32Rules, gte_)
-      + sizeof(SInt32Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(SInt32Rules, ignore_empty_)
+      + sizeof(SInt32Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(SInt32Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -5285,6 +5518,9 @@ class SInt64Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 SInt64Rules::SInt64Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -5305,16 +5541,16 @@ SInt64Rules::SInt64Rules(const SInt64Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.SInt64Rules)
 }
 
 inline void SInt64Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 SInt64Rules::~SInt64Rules() {
@@ -5347,10 +5583,10 @@ void SInt64Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -5433,6 +5669,14 @@ const char* SInt64Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -5506,6 +5750,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSInt64ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5541,7 +5791,7 @@ size_t SInt64Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional sint64 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -5577,6 +5827,11 @@ size_t SInt64Rules::ByteSizeLong() const {
           this->_internal_gte());
     }
 
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -5609,7 +5864,7 @@ void SInt64Rules::MergeFrom(const SInt64Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -5624,6 +5879,9 @@ void SInt64Rules::MergeFrom(const SInt64Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -5648,8 +5906,8 @@ void SInt64Rules::InternalSwap(SInt64Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SInt64Rules, gte_)
-      + sizeof(SInt64Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(SInt64Rules, ignore_empty_)
+      + sizeof(SInt64Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(SInt64Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -5681,6 +5939,9 @@ class Fixed32Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 Fixed32Rules::Fixed32Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -5701,16 +5962,16 @@ Fixed32Rules::Fixed32Rules(const Fixed32Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.Fixed32Rules)
 }
 
 inline void Fixed32Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 Fixed32Rules::~Fixed32Rules() {
@@ -5743,10 +6004,10 @@ void Fixed32Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -5829,6 +6090,14 @@ const char* Fixed32Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -5902,6 +6171,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed32ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5937,7 +6212,7 @@ size_t Fixed32Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional fixed32 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 4;
@@ -5961,6 +6236,11 @@ size_t Fixed32Rules::ByteSizeLong() const {
     // optional fixed32 gte = 5;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 4;
+    }
+
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -5995,7 +6275,7 @@ void Fixed32Rules::MergeFrom(const Fixed32Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -6010,6 +6290,9 @@ void Fixed32Rules::MergeFrom(const Fixed32Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -6034,8 +6317,8 @@ void Fixed32Rules::InternalSwap(Fixed32Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Fixed32Rules, gte_)
-      + sizeof(Fixed32Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(Fixed32Rules, ignore_empty_)
+      + sizeof(Fixed32Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(Fixed32Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -6067,6 +6350,9 @@ class Fixed64Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 Fixed64Rules::Fixed64Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -6087,16 +6373,16 @@ Fixed64Rules::Fixed64Rules(const Fixed64Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.Fixed64Rules)
 }
 
 inline void Fixed64Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 Fixed64Rules::~Fixed64Rules() {
@@ -6129,10 +6415,10 @@ void Fixed64Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -6215,6 +6501,14 @@ const char* Fixed64Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -6288,6 +6582,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed64ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -6323,7 +6623,7 @@ size_t Fixed64Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional fixed64 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 8;
@@ -6347,6 +6647,11 @@ size_t Fixed64Rules::ByteSizeLong() const {
     // optional fixed64 gte = 5;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 8;
+    }
+
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -6381,7 +6686,7 @@ void Fixed64Rules::MergeFrom(const Fixed64Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -6396,6 +6701,9 @@ void Fixed64Rules::MergeFrom(const Fixed64Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -6420,8 +6728,8 @@ void Fixed64Rules::InternalSwap(Fixed64Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Fixed64Rules, gte_)
-      + sizeof(Fixed64Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(Fixed64Rules, ignore_empty_)
+      + sizeof(Fixed64Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(Fixed64Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -6453,6 +6761,9 @@ class SFixed32Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 SFixed32Rules::SFixed32Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -6473,16 +6784,16 @@ SFixed32Rules::SFixed32Rules(const SFixed32Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.SFixed32Rules)
 }
 
 inline void SFixed32Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 SFixed32Rules::~SFixed32Rules() {
@@ -6515,10 +6826,10 @@ void SFixed32Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -6601,6 +6912,14 @@ const char* SFixed32Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -6674,6 +6993,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSFixed32ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -6709,7 +7034,7 @@ size_t SFixed32Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional sfixed32 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 4;
@@ -6733,6 +7058,11 @@ size_t SFixed32Rules::ByteSizeLong() const {
     // optional sfixed32 gte = 5;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 4;
+    }
+
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -6767,7 +7097,7 @@ void SFixed32Rules::MergeFrom(const SFixed32Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -6782,6 +7112,9 @@ void SFixed32Rules::MergeFrom(const SFixed32Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -6806,8 +7139,8 @@ void SFixed32Rules::InternalSwap(SFixed32Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SFixed32Rules, gte_)
-      + sizeof(SFixed32Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(SFixed32Rules, ignore_empty_)
+      + sizeof(SFixed32Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(SFixed32Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -6839,6 +7172,9 @@ class SFixed64Rules::_Internal {
   static void set_has_gte(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
 };
 
 SFixed64Rules::SFixed64Rules(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -6859,16 +7195,16 @@ SFixed64Rules::SFixed64Rules(const SFixed64Rules& from)
       not_in_(from.not_in_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&const__, &from.const__,
-    static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.SFixed64Rules)
 }
 
 inline void SFixed64Rules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&const__) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&gte_) -
-    reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
 }
 
 SFixed64Rules::~SFixed64Rules() {
@@ -6901,10 +7237,10 @@ void SFixed64Rules::Clear() {
   in_.Clear();
   not_in_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     ::memset(&const__, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&gte_) -
-        reinterpret_cast<char*>(&const__)) + sizeof(gte_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&const__)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -6987,6 +7323,14 @@ const char* SFixed64Rules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -7060,6 +7404,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteSFixed64ToArray(7, this->_internal_not_in(i), target);
   }
 
+  // optional bool ignore_empty = 8;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -7095,7 +7445,7 @@ size_t SFixed64Rules::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional sfixed64 const = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 + 8;
@@ -7119,6 +7469,11 @@ size_t SFixed64Rules::ByteSizeLong() const {
     // optional sfixed64 gte = 5;
     if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 8;
+    }
+
+    // optional bool ignore_empty = 8;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
     }
 
   }
@@ -7153,7 +7508,7 @@ void SFixed64Rules::MergeFrom(const SFixed64Rules& from) {
   in_.MergeFrom(from.in_);
   not_in_.MergeFrom(from.not_in_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       const__ = from.const__;
     }
@@ -7168,6 +7523,9 @@ void SFixed64Rules::MergeFrom(const SFixed64Rules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       gte_ = from.gte_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -7192,8 +7550,8 @@ void SFixed64Rules::InternalSwap(SFixed64Rules* other) {
   in_.InternalSwap(&other->in_);
   not_in_.InternalSwap(&other->not_in_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SFixed64Rules, gte_)
-      + sizeof(SFixed64Rules::gte_)
+      PROTOBUF_FIELD_OFFSET(SFixed64Rules, ignore_empty_)
+      + sizeof(SFixed64Rules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(SFixed64Rules, const__)>(
           reinterpret_cast<char*>(&const__),
           reinterpret_cast<char*>(&other->const__));
@@ -7409,7 +7767,7 @@ class StringRules::_Internal {
     (*has_bits)[0] |= 1u;
   }
   static void set_has_len(HasBits* has_bits) {
-    (*has_bits)[0] |= 1024u;
+    (*has_bits)[0] |= 2048u;
   }
   static void set_has_min_len(HasBits* has_bits) {
     (*has_bits)[0] |= 64u;
@@ -7418,7 +7776,7 @@ class StringRules::_Internal {
     (*has_bits)[0] |= 128u;
   }
   static void set_has_len_bytes(HasBits* has_bits) {
-    (*has_bits)[0] |= 2048u;
+    (*has_bits)[0] |= 4096u;
   }
   static void set_has_min_bytes(HasBits* has_bits) {
     (*has_bits)[0] |= 256u;
@@ -7442,7 +7800,10 @@ class StringRules::_Internal {
     (*has_bits)[0] |= 32u;
   }
   static void set_has_strict(HasBits* has_bits) {
-    (*has_bits)[0] |= 4096u;
+    (*has_bits)[0] |= 8192u;
+  }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 1024u;
   }
 };
 
@@ -7675,7 +8036,7 @@ void StringRules::Clear() {
         reinterpret_cast<char*>(&max_len_) -
         reinterpret_cast<char*>(&min_len_)) + sizeof(max_len_));
   }
-  if (cached_has_bits & 0x00001f00u) {
+  if (cached_has_bits & 0x00003f00u) {
     ::memset(&min_bytes_, 0, static_cast<size_t>(
         reinterpret_cast<char*>(&len_bytes_) -
         reinterpret_cast<char*>(&min_bytes_)) + sizeof(len_bytes_));
@@ -7922,6 +8283,14 @@ const char* StringRules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 26;
+      case 26:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 208)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -8086,13 +8455,13 @@ failure:
     default: ;
   }
   // optional uint64 len = 19;
-  if (cached_has_bits & 0x00000400u) {
+  if (cached_has_bits & 0x00000800u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(19, this->_internal_len(), target);
   }
 
   // optional uint64 len_bytes = 20;
-  if (cached_has_bits & 0x00000800u) {
+  if (cached_has_bits & 0x00001000u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(20, this->_internal_len_bytes(), target);
   }
@@ -8128,9 +8497,15 @@ failure:
   }
 
   // optional bool strict = 25 [default = true];
-  if (cached_has_bits & 0x00001000u) {
+  if (cached_has_bits & 0x00002000u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(25, this->_internal_strict(), target);
+  }
+
+  // optional bool ignore_empty = 26;
+  if (cached_has_bits & 0x00000400u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(26, this->_internal_ignore_empty(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -8224,7 +8599,7 @@ size_t StringRules::ByteSizeLong() const {
     }
 
   }
-  if (cached_has_bits & 0x00001f00u) {
+  if (cached_has_bits & 0x00003f00u) {
     // optional uint64 min_bytes = 4;
     if (cached_has_bits & 0x00000100u) {
       total_size += 1 +
@@ -8239,22 +8614,27 @@ size_t StringRules::ByteSizeLong() const {
           this->_internal_max_bytes());
     }
 
-    // optional uint64 len = 19;
+    // optional bool ignore_empty = 26;
     if (cached_has_bits & 0x00000400u) {
+      total_size += 2 + 1;
+    }
+
+    // optional uint64 len = 19;
+    if (cached_has_bits & 0x00000800u) {
       total_size += 2 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
           this->_internal_len());
     }
 
     // optional uint64 len_bytes = 20;
-    if (cached_has_bits & 0x00000800u) {
+    if (cached_has_bits & 0x00001000u) {
       total_size += 2 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
           this->_internal_len_bytes());
     }
 
     // optional bool strict = 25 [default = true];
-    if (cached_has_bits & 0x00001000u) {
+    if (cached_has_bits & 0x00002000u) {
       total_size += 2 + 1;
     }
 
@@ -8373,7 +8753,7 @@ void StringRules::MergeFrom(const StringRules& from) {
     }
     _has_bits_[0] |= cached_has_bits;
   }
-  if (cached_has_bits & 0x00001f00u) {
+  if (cached_has_bits & 0x00003f00u) {
     if (cached_has_bits & 0x00000100u) {
       min_bytes_ = from.min_bytes_;
     }
@@ -8381,12 +8761,15 @@ void StringRules::MergeFrom(const StringRules& from) {
       max_bytes_ = from.max_bytes_;
     }
     if (cached_has_bits & 0x00000400u) {
-      len_ = from.len_;
+      ignore_empty_ = from.ignore_empty_;
     }
     if (cached_has_bits & 0x00000800u) {
-      len_bytes_ = from.len_bytes_;
+      len_ = from.len_;
     }
     if (cached_has_bits & 0x00001000u) {
+      len_bytes_ = from.len_bytes_;
+    }
+    if (cached_has_bits & 0x00002000u) {
       strict_ = from.strict_;
     }
     _has_bits_[0] |= cached_has_bits;
@@ -8512,7 +8895,7 @@ class BytesRules::_Internal {
     (*has_bits)[0] |= 1u;
   }
   static void set_has_len(HasBits* has_bits) {
-    (*has_bits)[0] |= 128u;
+    (*has_bits)[0] |= 256u;
   }
   static void set_has_min_len(HasBits* has_bits) {
     (*has_bits)[0] |= 32u;
@@ -8531,6 +8914,9 @@ class BytesRules::_Internal {
   }
   static void set_has_contains(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
+  }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 128u;
   }
 };
 
@@ -8693,9 +9079,10 @@ void BytesRules::Clear() {
   }
   if (cached_has_bits & 0x000000e0u) {
     ::memset(&min_len_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&len_) -
-        reinterpret_cast<char*>(&min_len_)) + sizeof(len_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&min_len_)) + sizeof(ignore_empty_));
   }
+  len_ = uint64_t{0u};
   clear_well_known();
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -8822,6 +9209,14 @@ const char* BytesRules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // optional bool ignore_empty = 14;
+      case 14:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 112)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag == 0) || ((tag & 7) == 4)) {
@@ -8930,9 +9325,15 @@ failure:
     default: ;
   }
   // optional uint64 len = 13;
-  if (cached_has_bits & 0x00000080u) {
+  if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(13, this->_internal_len(), target);
+  }
+
+  // optional bool ignore_empty = 14;
+  if (cached_has_bits & 0x00000080u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(14, this->_internal_ignore_empty(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -9018,14 +9419,19 @@ size_t BytesRules::ByteSizeLong() const {
           this->_internal_max_len());
     }
 
-    // optional uint64 len = 13;
+    // optional bool ignore_empty = 14;
     if (cached_has_bits & 0x00000080u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
-          this->_internal_len());
+      total_size += 1 + 1;
     }
 
   }
+  // optional uint64 len = 13;
+  if (cached_has_bits & 0x00000100u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_len());
+  }
+
   switch (well_known_case()) {
     // bool ip = 10;
     case kIp: {
@@ -9100,9 +9506,12 @@ void BytesRules::MergeFrom(const BytesRules& from) {
       max_len_ = from.max_len_;
     }
     if (cached_has_bits & 0x00000080u) {
-      len_ = from.len_;
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
+  }
+  if (cached_has_bits & 0x00000100u) {
+    _internal_set_len(from._internal_len());
   }
   switch (from.well_known_case()) {
     case kIp: {
@@ -9751,6 +10160,9 @@ class RepeatedRules::_Internal {
   static void set_has_items(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 16u;
+  }
 };
 
 const ::validate::FieldRules&
@@ -9776,16 +10188,16 @@ RepeatedRules::RepeatedRules(const RepeatedRules& from)
     items_ = nullptr;
   }
   ::memcpy(&min_items_, &from.min_items_,
-    static_cast<size_t>(reinterpret_cast<char*>(&unique_) -
-    reinterpret_cast<char*>(&min_items_)) + sizeof(unique_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&min_items_)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.RepeatedRules)
 }
 
 inline void RepeatedRules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&items_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&unique_) -
-    reinterpret_cast<char*>(&items_)) + sizeof(unique_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&items_)) + sizeof(ignore_empty_));
 }
 
 RepeatedRules::~RepeatedRules() {
@@ -9821,10 +10233,10 @@ void RepeatedRules::Clear() {
     GOOGLE_DCHECK(items_ != nullptr);
     items_->Clear();
   }
-  if (cached_has_bits & 0x0000000eu) {
+  if (cached_has_bits & 0x0000001eu) {
     ::memset(&min_items_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&unique_) -
-        reinterpret_cast<char*>(&min_items_)) + sizeof(unique_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&min_items_)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -9865,6 +10277,14 @@ const char* RepeatedRules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_items(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional bool ignore_empty = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -9925,6 +10345,12 @@ failure:
         4, _Internal::items(this), target, stream);
   }
 
+  // optional bool ignore_empty = 5;
+  if (cached_has_bits & 0x00000010u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -9942,7 +10368,7 @@ size_t RepeatedRules::ByteSizeLong() const {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000001fu) {
     // optional .validate.FieldRules items = 4;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -9966,6 +10392,11 @@ size_t RepeatedRules::ByteSizeLong() const {
 
     // optional bool unique = 3;
     if (cached_has_bits & 0x00000008u) {
+      total_size += 1 + 1;
+    }
+
+    // optional bool ignore_empty = 5;
+    if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 1;
     }
 
@@ -9999,7 +10430,7 @@ void RepeatedRules::MergeFrom(const RepeatedRules& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000000fu) {
+  if (cached_has_bits & 0x0000001fu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_mutable_items()->::validate::FieldRules::MergeFrom(from._internal_items());
     }
@@ -10011,6 +10442,9 @@ void RepeatedRules::MergeFrom(const RepeatedRules& from) {
     }
     if (cached_has_bits & 0x00000008u) {
       unique_ = from.unique_;
+    }
+    if (cached_has_bits & 0x00000010u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -10033,8 +10467,8 @@ void RepeatedRules::InternalSwap(RepeatedRules* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(RepeatedRules, unique_)
-      + sizeof(RepeatedRules::unique_)
+      PROTOBUF_FIELD_OFFSET(RepeatedRules, ignore_empty_)
+      + sizeof(RepeatedRules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(RepeatedRules, items_)>(
           reinterpret_cast<char*>(&items_),
           reinterpret_cast<char*>(&other->items_));
@@ -10067,6 +10501,9 @@ class MapRules::_Internal {
   static const ::validate::FieldRules& values(const MapRules* msg);
   static void set_has_values(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
+  }
+  static void set_has_ignore_empty(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
   }
 };
 
@@ -10102,16 +10539,16 @@ MapRules::MapRules(const MapRules& from)
     values_ = nullptr;
   }
   ::memcpy(&min_pairs_, &from.min_pairs_,
-    static_cast<size_t>(reinterpret_cast<char*>(&no_sparse_) -
-    reinterpret_cast<char*>(&min_pairs_)) + sizeof(no_sparse_));
+    static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&min_pairs_)) + sizeof(ignore_empty_));
   // @@protoc_insertion_point(copy_constructor:validate.MapRules)
 }
 
 inline void MapRules::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&keys_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&no_sparse_) -
-    reinterpret_cast<char*>(&keys_)) + sizeof(no_sparse_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&ignore_empty_) -
+    reinterpret_cast<char*>(&keys_)) + sizeof(ignore_empty_));
 }
 
 MapRules::~MapRules() {
@@ -10154,10 +10591,10 @@ void MapRules::Clear() {
       values_->Clear();
     }
   }
-  if (cached_has_bits & 0x0000001cu) {
+  if (cached_has_bits & 0x0000003cu) {
     ::memset(&min_pairs_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&no_sparse_) -
-        reinterpret_cast<char*>(&min_pairs_)) + sizeof(no_sparse_));
+        reinterpret_cast<char*>(&ignore_empty_) -
+        reinterpret_cast<char*>(&min_pairs_)) + sizeof(ignore_empty_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -10205,6 +10642,14 @@ const char* MapRules::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_values(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // optional bool ignore_empty = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          _Internal::set_has_ignore_empty(&has_bits);
+          ignore_empty_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -10273,6 +10718,12 @@ failure:
         5, _Internal::values(this), target, stream);
   }
 
+  // optional bool ignore_empty = 6;
+  if (cached_has_bits & 0x00000020u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_ignore_empty(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -10290,7 +10741,7 @@ size_t MapRules::ByteSizeLong() const {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     // optional .validate.FieldRules keys = 4;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
@@ -10324,6 +10775,11 @@ size_t MapRules::ByteSizeLong() const {
       total_size += 1 + 1;
     }
 
+    // optional bool ignore_empty = 6;
+    if (cached_has_bits & 0x00000020u) {
+      total_size += 1 + 1;
+    }
+
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -10354,7 +10810,7 @@ void MapRules::MergeFrom(const MapRules& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000001fu) {
+  if (cached_has_bits & 0x0000003fu) {
     if (cached_has_bits & 0x00000001u) {
       _internal_mutable_keys()->::validate::FieldRules::MergeFrom(from._internal_keys());
     }
@@ -10369,6 +10825,9 @@ void MapRules::MergeFrom(const MapRules& from) {
     }
     if (cached_has_bits & 0x00000010u) {
       no_sparse_ = from.no_sparse_;
+    }
+    if (cached_has_bits & 0x00000020u) {
+      ignore_empty_ = from.ignore_empty_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -10391,8 +10850,8 @@ void MapRules::InternalSwap(MapRules* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(MapRules, no_sparse_)
-      + sizeof(MapRules::no_sparse_)
+      PROTOBUF_FIELD_OFFSET(MapRules, ignore_empty_)
+      + sizeof(MapRules::ignore_empty_)
       - PROTOBUF_FIELD_OFFSET(MapRules, keys_)>(
           reinterpret_cast<char*>(&keys_),
           reinterpret_cast<char*>(&other->keys_));
@@ -11745,6 +12204,9 @@ void TimestampRules::InternalSwap(TimestampRules* other) {
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   disabled(kDisabledFieldNumber, false);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
+  ignored(kIgnoredFieldNumber, false);
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::google::protobuf::OneofOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   required(kRequiredFieldNumber, false);

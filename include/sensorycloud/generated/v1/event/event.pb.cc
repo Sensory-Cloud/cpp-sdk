@@ -113,7 +113,7 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "ts\030\001 \003(\0132 .sensory.api.v1.event.UsageEve"
   "nt\"\352\001\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
   "oogle.protobuf.TimestampB\010\372B\005\262\001\002\010\001\022\031\n\010du"
-  "ration\030\002 \001(\003B\007\372B\004\"\002 \000\022\024\n\002id\030\003 \001(\tB\010\372B\005r\003"
+  "ration\030\002 \001(\003B\007\372B\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372B\005r\003"
   "\260\001\001\022\033\n\010clientId\030\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004type"
   "\030\005 \001(\0162\".sensory.api.common.UsageEventTy"
   "peB\010\372B\005\202\001\002\020\001\022\031\n\005route\030\006 \001(\tB\n\372B\007r\005\020\001\030\377\003\""

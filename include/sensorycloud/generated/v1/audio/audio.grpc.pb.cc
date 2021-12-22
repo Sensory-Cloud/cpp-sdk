@@ -174,6 +174,8 @@ AudioBiometrics::Service::~Service() {
 
 static const char* AudioEvents_method_names[] = {
   "/sensory.api.v1.audio.AudioEvents/ValidateEvent",
+  "/sensory.api.v1.audio.AudioEvents/CreateEnrolledEvent",
+  "/sensory.api.v1.audio.AudioEvents/ValidateEnrolledEvent",
 };
 
 std::unique_ptr< AudioEvents::Stub> AudioEvents::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -184,6 +186,8 @@ std::unique_ptr< AudioEvents::Stub> AudioEvents::NewStub(const std::shared_ptr< 
 
 AudioEvents::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_ValidateEvent_(AudioEvents_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::BIDI_STREAMING, channel)
+  , rpcmethod_CreateEnrolledEvent_(AudioEvents_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::BIDI_STREAMING, channel)
+  , rpcmethod_ValidateEnrolledEvent_(AudioEvents_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::BIDI_STREAMING, channel)
   {}
 
 ::grpc::ClientReaderWriter< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>* AudioEvents::Stub::ValidateEventRaw(::grpc::ClientContext* context) {
@@ -202,6 +206,38 @@ void AudioEvents::Stub::async::ValidateEvent(::grpc::ClientContext* context, ::g
   return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::audio::ValidateEventRequest, ::sensory::api::v1::audio::ValidateEventResponse>::Create(channel_.get(), cq, rpcmethod_ValidateEvent_, context, false, nullptr);
 }
 
+::grpc::ClientReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* AudioEvents::Stub::CreateEnrolledEventRaw(::grpc::ClientContext* context) {
+  return ::grpc::internal::ClientReaderWriterFactory< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>::Create(channel_.get(), rpcmethod_CreateEnrolledEvent_, context);
+}
+
+void AudioEvents::Stub::async::CreateEnrolledEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::CreateEnrolledEventRequest,::sensory::api::v1::audio::CreateEnrollmentResponse>* reactor) {
+  ::grpc::internal::ClientCallbackReaderWriterFactory< ::sensory::api::v1::audio::CreateEnrolledEventRequest,::sensory::api::v1::audio::CreateEnrollmentResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_CreateEnrolledEvent_, context, reactor);
+}
+
+::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* AudioEvents::Stub::AsyncCreateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>::Create(channel_.get(), cq, rpcmethod_CreateEnrolledEvent_, context, true, tag);
+}
+
+::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>* AudioEvents::Stub::PrepareAsyncCreateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>::Create(channel_.get(), cq, rpcmethod_CreateEnrolledEvent_, context, false, nullptr);
+}
+
+::grpc::ClientReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* AudioEvents::Stub::ValidateEnrolledEventRaw(::grpc::ClientContext* context) {
+  return ::grpc::internal::ClientReaderWriterFactory< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>::Create(channel_.get(), rpcmethod_ValidateEnrolledEvent_, context);
+}
+
+void AudioEvents::Stub::async::ValidateEnrolledEvent(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::audio::ValidateEnrolledEventRequest,::sensory::api::v1::audio::ValidateEnrolledEventResponse>* reactor) {
+  ::grpc::internal::ClientCallbackReaderWriterFactory< ::sensory::api::v1::audio::ValidateEnrolledEventRequest,::sensory::api::v1::audio::ValidateEnrolledEventResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_ValidateEnrolledEvent_, context, reactor);
+}
+
+::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* AudioEvents::Stub::AsyncValidateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>::Create(channel_.get(), cq, rpcmethod_ValidateEnrolledEvent_, context, true, tag);
+}
+
+::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>* AudioEvents::Stub::PrepareAsyncValidateEnrolledEventRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>::Create(channel_.get(), cq, rpcmethod_ValidateEnrolledEvent_, context, false, nullptr);
+}
+
 AudioEvents::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       AudioEvents_method_names[0],
@@ -213,12 +249,44 @@ AudioEvents::Service::Service() {
              ::sensory::api::v1::audio::ValidateEventRequest>* stream) {
                return service->ValidateEvent(ctx, stream);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      AudioEvents_method_names[1],
+      ::grpc::internal::RpcMethod::BIDI_STREAMING,
+      new ::grpc::internal::BidiStreamingHandler< AudioEvents::Service, ::sensory::api::v1::audio::CreateEnrolledEventRequest, ::sensory::api::v1::audio::CreateEnrollmentResponse>(
+          [](AudioEvents::Service* service,
+             ::grpc::ServerContext* ctx,
+             ::grpc::ServerReaderWriter<::sensory::api::v1::audio::CreateEnrollmentResponse,
+             ::sensory::api::v1::audio::CreateEnrolledEventRequest>* stream) {
+               return service->CreateEnrolledEvent(ctx, stream);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      AudioEvents_method_names[2],
+      ::grpc::internal::RpcMethod::BIDI_STREAMING,
+      new ::grpc::internal::BidiStreamingHandler< AudioEvents::Service, ::sensory::api::v1::audio::ValidateEnrolledEventRequest, ::sensory::api::v1::audio::ValidateEnrolledEventResponse>(
+          [](AudioEvents::Service* service,
+             ::grpc::ServerContext* ctx,
+             ::grpc::ServerReaderWriter<::sensory::api::v1::audio::ValidateEnrolledEventResponse,
+             ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* stream) {
+               return service->ValidateEnrolledEvent(ctx, stream);
+             }, this)));
 }
 
 AudioEvents::Service::~Service() {
 }
 
 ::grpc::Status AudioEvents::Service::ValidateEvent(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEventResponse, ::sensory::api::v1::audio::ValidateEventRequest>* stream) {
+  (void) context;
+  (void) stream;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status AudioEvents::Service::CreateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::CreateEnrollmentResponse, ::sensory::api::v1::audio::CreateEnrolledEventRequest>* stream) {
+  (void) context;
+  (void) stream;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status AudioEvents::Service::ValidateEnrolledEvent(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::audio::ValidateEnrolledEventResponse, ::sensory::api::v1::audio::ValidateEnrolledEventRequest>* stream) {
   (void) context;
   (void) stream;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
