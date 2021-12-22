@@ -51,7 +51,7 @@ inline int describe_pa_error(const PaError& err) {
     return 1;
 }
 
-/// @brief A bidirection stream reactor for biometric enrollments from audio
+/// @brief A bidirection stream reactor for validating triggers from audio
 /// stream data.
 ///
 /// @details
@@ -73,11 +73,7 @@ class ValidateTriggerReactor :
     /// The buffer for the block of samples from the port audio input device.
     std::unique_ptr<uint8_t> sampleBlock;
     /// A flag determining whether the trigger was detected.
-    bool didTrigger;
-    /// A mutex for guarding access to the `didTrigger` variable.
-    std::mutex mutex;
-    /// A condition variable for signalling to an awaiting process.
-    std::condition_variable conditionVariable;
+    std::atomic<bool> didTrigger;
 
  public:
     /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
@@ -123,14 +119,8 @@ class ValidateTriggerReactor :
         request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
-        std::unique_lock<std::mutex> lock(mutex);
-        if (didTrigger) {
-            lock.unlock();
-            StartWritesDone();
-        } else {  // Send the data to the server to validate the audio event.
-            lock.unlock();
+        if (!didTrigger)  // Send the data to the server to validate the audio event.
             StartWrite(&request);
-        }
     }
 
     /// @brief React to a _read done_ event.
@@ -147,8 +137,8 @@ class ValidateTriggerReactor :
         // std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
         // std::cout << "\tScore:        " << response.score()       << std::endl;
         if (response.success()) {  // Flag the trigger and stop reading messages.
-            std::lock_guard<std::mutex> lock(mutex);
             didTrigger = true;
+            StartWritesDone();
         } else {  // Start the next read request.
             StartRead(&response);
         }
@@ -159,9 +149,109 @@ class ValidateTriggerReactor :
     /// @returns `true` if the wake-word was detected in the audio stream,
     /// `false` otherwise.
     ///
-    inline bool getDidTrigger() {
-        std::lock_guard<std::mutex> lock(mutex);
-        return didTrigger;
+    inline bool getDidTrigger() const { return didTrigger; }
+};
+
+/// @brief A bidirection stream reactor for transcribing text from audio
+/// stream data.
+///
+/// @details
+/// Input data for the stream is provided by a PortAudio capture device.
+///
+class AudioTranscriptionReactor :
+    public AudioService<SecureCredentialStore>::TranscribeBidiReactor {
+ private:
+    /// The capture device that input audio is streaming in from.
+    PaStream* capture;
+    /// The number of channels in the input audio.
+    uint32_t numChannels;
+    /// The number of bytes per audio sample (i.e., 2 for 16-bit audio)
+    uint32_t sampleSize;
+    /// The sample rate of the audio input stream.
+    uint32_t sampleRate;
+    /// The number of frames per block of audio.
+    uint32_t framesPerBlock;
+    /// The maximum duration of the stream in seconds.
+    float duration;
+    /// The buffer for the block of samples from the port audio input device.
+    std::unique_ptr<uint8_t> sampleBlock;
+    /// The number of blocks that have been written to the server.
+    std::atomic<uint32_t> blocks_written;
+    /// A boolean determining whether the audio transcription has finished.
+    std::atomic<bool> isFinishedTranscribing;
+
+ public:
+    /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
+    ///
+    /// @param capture_ The PortAudio capture device.
+    /// @param numChannels_ The number of channels in the input stream.
+    /// @param sampleSize_ The number of bytes in an individual frame.
+    /// @param sampleRate_ The sampling rate of the audio stream.
+    /// @param framesPerBlock_ The number of frames in a block of audio.
+    /// @param duration_ the maximum duration for the audio capture
+    ///
+    AudioTranscriptionReactor(PaStream* capture_,
+        uint32_t numChannels_ = 1,
+        uint32_t sampleSize_ = 2,
+        uint32_t sampleRate_ = 16000,
+        uint32_t framesPerBlock_ = 4096,
+        float duration_ = 60
+    ) :
+        AudioService<SecureCredentialStore>::TranscribeBidiReactor(),
+        capture(capture_),
+        numChannels(numChannels_),
+        sampleSize(sampleSize_),
+        sampleRate(sampleRate_),
+        framesPerBlock(framesPerBlock_),
+        duration(duration_),
+        sampleBlock(static_cast<uint8_t*>(malloc(framesPerBlock_ * numChannels_ * sampleSize_))),
+        blocks_written(0),
+        isFinishedTranscribing(false) {
+        if (capture == nullptr)
+            throw std::runtime_error("capture must point to an allocated stream.");
+    }
+
+    /// @brief React to a _write done_ event.
+    ///
+    /// @param ok whether the write succeeded.
+    ///
+    void OnWriteDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // Read a block of samples from the ADC.
+        auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
+        if (err) {
+            describe_pa_error(err);
+            return;
+        }
+        // Set the audio content for the request and start the write request
+        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
+        // If the number of blocks written surpasses the maximal length, close
+        // the stream.
+        if (++blocks_written > (duration * sampleRate) / framesPerBlock || isFinishedTranscribing)
+            StartWritesDone();
+        else  // Send the data to the server to transcribe the audio.
+            StartWrite(&request);
+    }
+
+    /// @brief React to a _read done_ event.
+    ///
+    /// @param ok whether the read succeeded.
+    ///
+    void OnReadDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // Log the current transcription to the terminal.
+        // std::cout << "Response" << std::endl;
+        // std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
+        // std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
+        // std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+        if (!response.ispartialresult()) {  // Log the fully transcribed result.
+            std::cout << response.transcript() << std::endl;
+            isFinishedTranscribing = true;
+        } else {  // Start the next read request
+            StartRead(&response);
+        }
     }
 };
 
@@ -253,10 +343,8 @@ int main(int argc, const char** argv) {
     //     }
     // })->await();
 
-    std::string audioModel = "wakeword-16kHz-voice_genie.trg";
-    // std::cout << "Audio model: ";
-    // std::cin >> audioModel;
-
+    // the maximal duration of the recording in seconds
+    static constexpr auto DURATION = 60;
     // the sample rate of the input audio stream. This should match the sample
     // rate of the selected model
     static constexpr auto SAMPLE_RATE = 16000;
@@ -319,11 +407,11 @@ int main(int argc, const char** argv) {
         // model, the sample rate of the audio and the expected language. A
         // user ID is also necessary to detect audio events.
         audioService.asyncValidateTrigger(&validateTriggerReactor,
-            audioModel,
+            "wakeword-16kHz-alexa.trg",
             SAMPLE_RATE,
             "en-US",
             userID,
-            sensory::api::v1::audio::ThresholdSensitivity::LOW
+            sensory::api::v1::audio::ThresholdSensitivity::HIGHEST
         );
         validateTriggerReactor.StartCall();
         auto status = validateTriggerReactor.await();
@@ -334,8 +422,35 @@ int main(int argc, const char** argv) {
             return 1;
         }
 
+        if (!validateTriggerReactor.getDidTrigger()) continue;
+
         std::cout << "yes?" << std::endl;
 
+        // Create the gRPC reactor to respond to streaming events.
+        AudioTranscriptionReactor reactor(capture,
+            NUM_CHANNELS,
+            SAMPLE_SIZE,
+            SAMPLE_RATE,
+            FRAMES_PER_BLOCK,
+            DURATION
+        );
+        // Initialize the stream with the reactor for callbacks, given audio model,
+        // the sample rate of the audio and the expected language. A user ID is also
+        // necessary to transcribe audio.
+        audioService.asyncTranscribeAudio(&reactor,
+            "vad-lvcsr-broad-enUS-2.3.0.snsr",
+            SAMPLE_RATE,
+            "en-US",
+            userID
+        );
+        reactor.StartCall();
+        status = reactor.await();
+
+        if (!status.ok()) {  // The call failed, print a descriptive message.
+            std::cout << "Transcription stream broke with\n\t" <<
+                status.error_code() << ": " << status.error_message() << std::endl;
+            return 1;
+        }
     }
 
     // Stop the audio stream.
