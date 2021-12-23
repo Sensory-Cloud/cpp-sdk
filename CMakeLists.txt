@@ -412,6 +412,17 @@ target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE portaudi
 
 
 
+
+
+add_executable(dr_wav_transcribe_callback examples/dr_wav/transcribe_callback.cpp examples/dr_wav/dr_wav.h)
+target_link_libraries(dr_wav_transcribe_callback PRIVATE sensorycloud)
+target_link_libraries(dr_wav_transcribe_callback PRIVATE portaudio)
+
+
+
+
+
+
 add_executable(application_voice_assistant examples/applications/voice_assistant.cpp)
 target_link_libraries(application_voice_assistant PRIVATE sensorycloud)
 target_link_libraries(application_voice_assistant PRIVATE portaudio)
