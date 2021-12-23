@@ -59,6 +59,10 @@ class AudioFileReactor :
     std::size_t index = 0;
     /// The progress bar for providing a response per frame written.
     tqdm bar;
+    /// A mutex for guarding access to the `isDone` and `status` variables.
+    std::mutex mutex;
+    /// The current transcription from the server
+    std::string transcript = "";
 
  public:
     /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
@@ -85,14 +89,22 @@ class AudioFileReactor :
     /// @param ok whether the write succeeded.
     ///
     void OnWriteDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+
+        // If the index has exceeded the buffer size, there are no more samples
+        // to write from the audio buffer.
         if (index >= buffer.size()) {
+            // Signal to the stream that no more data will be written.
             StartWritesDone();
-            std::cout << response.transcript()      << std::endl;
+            // Lock access to the critical section for the transcript string.
+            std::lock_guard<std::mutex> lock(mutex);
+            // Update the transcript with the final output transcript.
+            transcript = response.transcript();
+
             return;
         }
 
-        // If the status is not OK, then an error occurred during the stream.
-        if (!ok) return;
         // Count the number of samples to upload in this request based on the
         // index of the current sample and the number of remaining samples.
         const auto numSamples = index + framesPerBlock > buffer.size() ?
@@ -115,15 +127,18 @@ class AudioFileReactor :
     void OnReadDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
-        // Log the current transcription to the terminal.
-        // std::cout << "Response" << std::endl;
-        // std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
-        // std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
-        // std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
-        // if (!response.ispartialresult())  // Log the fully transcribed result.
-        //     std::cout << response.transcript() << std::endl;
-        // Start the next read request
+        // Start the next read request.
         StartRead(&response);
+    }
+
+    /// @brief Return the current transcript.
+    ///
+    /// @returns the transcript upon completion of the stream.
+    ///
+    std::string getTranscript() {
+        // Lock access to the critical section for the transcript string
+        std::lock_guard<std::mutex> lock(mutex);
+        return transcript;
     }
 };
 
@@ -239,6 +254,8 @@ int main(int argc, const char** argv) {
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
+
+    std::cout << reactor.getTranscript() << std::endl;
 
     return 0;
 }
