@@ -23,7 +23,6 @@
 // SOFTWARE.
 //
 
-#include <portaudio.h>
 #include <iostream>
 #include <thread>
 #include <sensorycloud/config.hpp>
@@ -33,7 +32,8 @@
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
-#include "dr_wav.h"
+#include "audio_buffer.hpp"
+#include "tqdm.hpp"
 
 using sensory::token_manager::TokenManager;
 using sensory::token_manager::SecureCredentialStore;
@@ -41,95 +41,71 @@ using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
 
-/// @brief Print a description of a PortAudio error that occurred.
-///
-/// @param err The error that was thrown by PortAudio.
-/// @returns The OS-level error code for the message.
-///
-inline int describe_pa_error(const PaError& err) {
-    fprintf(stderr, "An error occured while using the portaudio stream\n");
-    fprintf(stderr, "Error number: %d\n", err);
-    fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-    return 1;
-}
-
 /// @brief A bidirection stream reactor for biometric enrollments from audio
 /// stream data.
 ///
-/// @details
-/// Input data for the stream is provided by a PortAudio capture device.
-///
-class PortAudioReactor :
+class AudioFileReactor :
     public AudioService<SecureCredentialStore>::TranscribeBidiReactor {
  private:
-    /// The capture device that input audio is streaming in from.
-    PaStream* capture;
+    /// The audio samples to transcribe to text.
+    const std::vector<int16_t>& buffer;
     /// The number of channels in the input audio.
     uint32_t numChannels;
-    /// The number of bytes per audio sample (i.e., 2 for 16-bit audio)
-    uint32_t sampleSize;
     /// The sample rate of the audio input stream.
     uint32_t sampleRate;
     /// The number of frames per block of audio.
     uint32_t framesPerBlock;
-    /// The maximum duration of the stream in seconds.
-    float duration;
-    /// The buffer for the block of samples from the port audio input device.
-    std::unique_ptr<uint8_t> sampleBlock;
-    /// The number of blocks that have been written to the server.
-    std::atomic<uint32_t> blocks_written;
+    /// The current index of the audio stream
+    std::size_t index = 0;
+    /// The progress bar for providing a response per frame written.
+    tqdm bar;
 
  public:
     /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
     ///
-    /// @param capture_ The PortAudio capture device.
+    /// @param buffer_ The audio samples to transcribe to text
     /// @param numChannels_ The number of channels in the input stream.
-    /// @param sampleSize_ The number of bytes in an individual frame.
     /// @param sampleRate_ The sampling rate of the audio stream.
     /// @param framesPerBlock_ The number of frames in a block of audio.
-    /// @param duration_ the maximum duration for the audio capture
     ///
-    PortAudioReactor(PaStream* capture_,
+    AudioFileReactor(const std::vector<int16_t>& buffer_,
         uint32_t numChannels_ = 1,
-        uint32_t sampleSize_ = 2,
         uint32_t sampleRate_ = 16000,
-        uint32_t framesPerBlock_ = 4096,
-        float duration_ = 60
+        uint32_t framesPerBlock_ = 4096
     ) :
         AudioService<SecureCredentialStore>::TranscribeBidiReactor(),
-        capture(capture_),
+        buffer(buffer_),
         numChannels(numChannels_),
-        sampleSize(sampleSize_),
         sampleRate(sampleRate_),
         framesPerBlock(framesPerBlock_),
-        duration(duration_),
-        sampleBlock(static_cast<uint8_t*>(malloc(framesPerBlock_ * numChannels_ * sampleSize_))),
-        blocks_written(0) {
-        if (capture == nullptr)
-            throw std::runtime_error("capture must point to an allocated stream.");
-    }
+        bar(buffer_.size() / static_cast<float>(framesPerBlock_), "frame") { }
 
     /// @brief React to a _write done_ event.
     ///
     /// @param ok whether the write succeeded.
     ///
     void OnWriteDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
-        if (!ok) return;
-        // Read a block of samples from the ADC.
-        auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
-        if (err) {
-            describe_pa_error(err);
+        if (index >= buffer.size()) {
+            StartWritesDone();
+            std::cout << response.transcript()      << std::endl;
             return;
         }
-        // Set the audio content for the request and start the write request
-        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
+
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // Count the number of samples to upload in this request based on the
+        // index of the current sample and the number of remaining samples.
+        const auto numSamples = index + framesPerBlock > buffer.size() ?
+            buffer.size() - index : framesPerBlock;
+        // Set the audio content for the request and start the write request.
+        request.set_audiocontent(&buffer[index], numSamples * sizeof(int16_t));
+        // Update the index of the current sample based on the number of samples
+        // that were just pushed.
+        index += numSamples;
+        bar.update();
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
-        if (++blocks_written > (duration * sampleRate) / framesPerBlock)
-            StartWritesDone();
-        else  // Send the data to the server to transcribe the audio.
-            StartWrite(&request);
+        StartWrite(&request);
     }
 
     /// @brief React to a _read done_ event.
@@ -140,10 +116,10 @@ class PortAudioReactor :
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         // Log the current transcription to the terminal.
-        std::cout << "Response" << std::endl;
-        std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
-        std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
-        std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+        // std::cout << "Response" << std::endl;
+        // std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
+        // std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
+        // std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
         // if (!response.ispartialresult())  // Log the fully transcribed result.
         //     std::cout << response.transcript() << std::endl;
         // Start the next read request
@@ -160,26 +136,21 @@ int main(int argc, const char** argv) {
         "D895F447-91E8-486F-A783-6E3A33E4C7C5"
     );
 
-    // Query the health of the remote service.
-    HealthService healthService(config);
-    // Query the health of the remote service.
-    healthService.asyncGetHealth([](HealthService::GetHealthCallData* call) {
-        if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to get server health with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-        }
-        // Report the health of the remote service
-        std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << call->getResponse().ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << call->getResponse().serverversion() << std::endl;
-        std::cout << "\tID:             " << call->getResponse().id()            << std::endl;
-    })->await();
-
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
+    // // Query the health of the remote service.
+    // HealthService healthService(config);
+    // // Query the health of the remote service.
+    // healthService.asyncGetHealth([](HealthService::GetHealthCallData* call) {
+    //     if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
+    //         std::cout << "Failed to get server health with\n\t" <<
+    //             call->getStatus().error_code() << ": " <<
+    //             call->getStatus().error_message() << std::endl;
+    //     }
+    //     // Report the health of the remote service
+    //     std::cout << "Server status" << std::endl;
+    //     std::cout << "\tIs Healthy:     " << call->getResponse().ishealthy()     << std::endl;
+    //     std::cout << "\tServer Version: " << call->getResponse().serverversion() << std::endl;
+    //     std::cout << "\tID:             " << call->getResponse().id()            << std::endl;
+    // })->await();
 
     // Create an OAuth service
     OAuthService oauthService(config);
@@ -221,106 +192,47 @@ int main(int argc, const char** argv) {
     // Create the audio service based on the configuration and token manager.
     AudioService<SecureCredentialStore> audioService(config, tokenManager);
 
-    // ------ Query the available audio models ---------------------------------
+    std::string audioModel = "speech_recognition_en";
+    std::string wavFile = "wav/jabberwocky16khz_mono.wav";
+    std::string userID = "ckckck";
+    const uint32_t SAMPLES_PER_FRAME = 4096;
 
-    std::cout << "Available audio models:" << std::endl;
-    audioService.asyncGetModels([](AudioService<SecureCredentialStore>::GetModelsCallData* call) {
-        if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to get audio models with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-        }
-        // Iterate over the models returned in the response
-        for (auto& model : call->getResponse().models()) {
-            // Ignore models that aren't face biometric models.
-            if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_COMMAND_AND_SEARCH)
-                continue;
-            std::cout << "\t" << model.name() << std::endl;
-        }
-    })->await();
-
-    std::string audioModel = "";
-    std::cout << "Audio model: ";
-    std::cin >> audioModel;
-
-    // the maximal duration of the recording in seconds
-    static constexpr auto DURATION = 60;
-    // the sample rate of the input audio stream. This should match the sample
-    // rate of the selected model
-    static constexpr auto SAMPLE_RATE = 16000;
-    // The number of input channels from the microphone. This should always be
-    // mono.
-    static constexpr auto NUM_CHANNELS = 1;
-    // The size of the audio sample blocks, i.e., the number of samples to read
-    // from the ADC per step and send to Sensory, Cloud.
-    static constexpr auto FRAMES_PER_BLOCK = 4096;
-    // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
-    static constexpr auto SAMPLE_SIZE = 2;
-    // The number of bytes in a given chunk of samples.
-    static constexpr auto BYTES_PER_BLOCK =
-        FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
-
-    // Initialize the PortAudio driver.
-    PaError err = paNoError;
-    err = Pa_Initialize();
-    if (err != paNoError) return describe_pa_error(err);
-
-    // Setup the input parameters for the port audio stream.
-    PaStreamParameters inputParameters;
-    inputParameters.device = Pa_GetDefaultInputDevice();
-    if (inputParameters.device == paNoDevice) {
-        fprintf(stderr,"Error: No default input device.\n");
+    // Load the audio file and zero pad the buffer with 300ms of silence.
+    AudioBuffer buffer;
+    buffer.load(wavFile);
+    buffer.padBack(300);
+    // Check that the file is 16kHz.
+    if (buffer.getSampleRate() != 16000) {
+        std::cout << "Error: attempting to load WAV file with sample rate of "
+            << buffer.getSampleRate() << "kHz, but only 16kHz audio is supported."
+            << std::endl;
         return 1;
     }
-    inputParameters.channelCount = 1;
-    inputParameters.sampleFormat = paInt16;  // Sensory expects 16-bit audio
-    inputParameters.suggestedLatency =
-        Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
-    inputParameters.hostApiSpecificStreamInfo = NULL;
-
-    // Open the PortAudio stream with the input device.
-    PaStream* capture;
-    err = Pa_OpenStream(&capture,
-        &inputParameters,
-        NULL,       // no output parameters for an input stream
-        SAMPLE_RATE,
-        FRAMES_PER_BLOCK,
-        paClipOff,  // we won't output out-of-range samples so don't clip them
-        NULL,       // using the blocking interface (no callback)
-        NULL        // no data for the callback since there is none
-    );
-    if (err != paNoError) return describe_pa_error(err);
-
-    // Start the audio input stream.
-    err = Pa_StartStream(capture);
-    if (err != paNoError) return describe_pa_error(err);
+    // Check that the file in monophonic.
+    if (buffer.getChannels() > 1) {
+        std::cout << "Error: attempting to load WAV file with "
+            << buffer.getChannels() << " channels, but only mono audio is supported."
+            << std::endl;
+        return 1;
+    }
 
     // Create the gRPC reactor to respond to streaming events.
-    PortAudioReactor reactor(capture,
-        NUM_CHANNELS,
-        SAMPLE_SIZE,
-        SAMPLE_RATE,
-        FRAMES_PER_BLOCK,
-        DURATION
+    AudioFileReactor reactor(buffer.getSamples(),
+        buffer.getChannels(),
+        buffer.getSampleRate(),
+        SAMPLES_PER_FRAME  // the number of frames per block
     );
     // Initialize the stream with the reactor for callbacks, given audio model,
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to transcribe audio.
     audioService.asyncTranscribeAudio(&reactor,
         audioModel,
-        SAMPLE_RATE,
+        buffer.getSampleRate(),
         "en-US",
         userID
     );
     reactor.StartCall();
     auto status = reactor.await();
-
-    // Stop the audio stream.
-    err = Pa_StopStream(capture);
-    if (err != paNoError) return describe_pa_error(err);
-
-    // Terminate the port audio session.
-    Pa_Terminate();
 
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Transcription stream broke with\n\t" <<
