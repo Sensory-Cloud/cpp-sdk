@@ -151,22 +151,6 @@ int main(int argc, const char** argv) {
         "D895F447-91E8-486F-A783-6E3A33E4C7C5"
     );
 
-    // // Query the health of the remote service.
-    // HealthService healthService(config);
-    // // Query the health of the remote service.
-    // healthService.asyncGetHealth([](HealthService::GetHealthCallData* call) {
-    //     if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
-    //         std::cout << "Failed to get server health with\n\t" <<
-    //             call->getStatus().error_code() << ": " <<
-    //             call->getStatus().error_message() << std::endl;
-    //     }
-    //     // Report the health of the remote service
-    //     std::cout << "Server status" << std::endl;
-    //     std::cout << "\tIs Healthy:     " << call->getResponse().ishealthy()     << std::endl;
-    //     std::cout << "\tServer Version: " << call->getResponse().serverversion() << std::endl;
-    //     std::cout << "\tID:             " << call->getResponse().id()            << std::endl;
-    // })->await();
-
     // Create an OAuth service
     OAuthService oauthService(config);
     sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
