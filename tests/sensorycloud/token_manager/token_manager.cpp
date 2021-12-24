@@ -122,8 +122,8 @@ SCENARIO("a user wants to generate credentials in an empty secure store") {
             THEN("The returned client ID should be a length 36 UUIDv4") {
                 REQUIRE(36 == credentials.id.length());
             }
-            THEN("The returned client secret should be a length 16 secure random") {
-                REQUIRE(16 == credentials.secret.length());
+            THEN("The returned client secret should be a length 24 secure random") {
+                REQUIRE(24 == credentials.secret.length());
             }
         }
     }
@@ -151,8 +151,8 @@ SCENARIO("a user wants to overwrite credentials in a secure store") {
             THEN("The returned client ID should be a length 36 UUIDv4") {
                 REQUIRE(36 == credentials.id.length());
             }
-            THEN("The returned client secret should be a length 16 secure random") {
-                REQUIRE(16 == credentials.secret.length());
+            THEN("The returned client secret should be a length 24 secure random") {
+                REQUIRE(24 == credentials.secret.length());
             }
         }
     }
