@@ -42,24 +42,6 @@ using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
 
-// std::string getCmdOption(int argc, char* argv[], const std::string& option) {
-//     std::string cmd;
-//     for (int i = 0; i < argc; ++i) {
-//         std::string arg = argv[i];
-//         if (0 == arg.find(option)) {
-//             std::size_t found = arg.find_first_of(option);
-//             cmd = arg.substr(found + 1);
-//             return cmd;
-//         }
-//     }
-//     return cmd;
-// }
-
-// static const std::regex CMD_LINE_REGEX("^program ("
-//     "(-i)\\s([a-zA-Z0-9\\._]+)\\s*?|"
-//     "(-o)\\s([a-zA-Z0-9\\._]+)\\s*?"
-// ")+$");
-
 /// @brief A bidirection stream reactor for biometric enrollments from audio
 /// stream data.
 ///
