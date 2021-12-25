@@ -24,7 +24,7 @@
 //
 
 #include <iostream>
-#include <thread>
+#include <regex>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
@@ -33,6 +33,7 @@
 #include <sensorycloud/token_manager/secure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include "audio_buffer.hpp"
+#include "argparse.hpp"
 #include "tqdm.hpp"
 
 using sensory::token_manager::TokenManager;
@@ -40,6 +41,24 @@ using sensory::token_manager::SecureCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
+
+// std::string getCmdOption(int argc, char* argv[], const std::string& option) {
+//     std::string cmd;
+//     for (int i = 0; i < argc; ++i) {
+//         std::string arg = argv[i];
+//         if (0 == arg.find(option)) {
+//             std::size_t found = arg.find_first_of(option);
+//             cmd = arg.substr(found + 1);
+//             return cmd;
+//         }
+//     }
+//     return cmd;
+// }
+
+// static const std::regex CMD_LINE_REGEX("^program ("
+//     "(-i)\\s([a-zA-Z0-9\\._]+)\\s*?|"
+//     "(-o)\\s([a-zA-Z0-9\\._]+)\\s*?"
+// ")+$");
 
 /// @brief A bidirection stream reactor for biometric enrollments from audio
 /// stream data.
@@ -55,12 +74,14 @@ class AudioFileReactor :
     uint32_t sampleRate;
     /// The number of frames per block of audio.
     uint32_t framesPerBlock;
-    /// The current index of the audio stream
+    /// Whether to produce verbose output from the server.
+    bool verbose = false;
+    /// A mutex for guarding access to the `isDone` and `status` variables.
+    std::mutex mutex;
+    /// The current index of the audio stream.
     std::size_t index = 0;
     /// The progress bar for providing a response per frame written.
     tqdm bar;
-    /// A mutex for guarding access to the `isDone` and `status` variables.
-    std::mutex mutex;
     /// The current transcription from the server
     std::string transcript = "";
 
@@ -71,17 +92,20 @@ class AudioFileReactor :
     /// @param numChannels_ The number of channels in the input stream.
     /// @param sampleRate_ The sampling rate of the audio stream.
     /// @param framesPerBlock_ The number of frames in a block of audio.
+    /// @param verbose_ Whether to produce verbose output from the reactor.
     ///
     AudioFileReactor(const std::vector<int16_t>& buffer_,
         uint32_t numChannels_ = 1,
         uint32_t sampleRate_ = 16000,
-        uint32_t framesPerBlock_ = 4096
+        uint32_t framesPerBlock_ = 4096,
+        const bool& verbose_ = false
     ) :
         AudioService<SecureCredentialStore>::TranscribeBidiReactor(),
         buffer(buffer_),
         numChannels(numChannels_),
         sampleRate(sampleRate_),
         framesPerBlock(framesPerBlock_),
+        verbose(verbose_),
         bar(buffer_.size() / static_cast<float>(framesPerBlock_), "frame") { }
 
     /// @brief React to a _write done_ event.
@@ -127,6 +151,11 @@ class AudioFileReactor :
     void OnReadDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
+        if (verbose) {
+            std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
+            std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
+            std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+        }
         // Start the next read request.
         StartRead(&response);
     }
@@ -143,13 +172,67 @@ class AudioFileReactor :
 };
 
 int main(int argc, const char** argv) {
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
-    );
+    auto parser = argparse::ArgumentParser(argc, argv)
+            .prog("dr_wav_transcribe_callback")
+            .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
+            // .epilog("bar epilog");
+    parser.add_argument({ " -i ", "--input" }).required(true)
+        .help("INPUT The input audio file to stream to Sensory Cloud.");
+    parser.add_argument({ "-o", "--output" }).required(true)
+        .help("OUTPUT The output file to write the transcription to.");
+    parser.add_argument({ "-H", "--host" })
+        .help("HOST The hostname of a Sensory Cloud inference server.")
+        .default_value("io.stage.cloud.sensory.com");
+    parser.add_argument({ "-P", "--port" })
+        .help("PORT The port number that the Sensory Cloud inference server is running at.")
+        .default_value(443);
+    parser.add_argument({ "-t", "--tenant" })
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.")
+        .default_value("cabb7700-206f-4cc7-8e79-cd7f288aa78d");
+    parser.add_argument({ "-m", "--model" })
+        .help("MODEL The name of the transcription model to use.")
+        .default_value("speech_recognition_en");
+    parser.add_argument({ "-u", "--userid" })
+        .help("USERID The name of the user ID for the transcription.")
+        .default_value("ckckck");
+    parser.add_argument({ "-v", "--verbose" }).action("store_true")
+        .help("VERBOSE Produce verbose output during transcription.");
+
+    // Parse the arguments from the command line.
+    const auto args = parser.parse_args();
+    // The input audio file to transcribe audio from.
+    const auto INPUT_FILE = args.get<std::string>("input");
+    // The output file to write the transcription to.
+    const auto OUTPUT_FILE = args.get<std::string>("output");
+    // The hostname of the inference server.
+    const auto HOSTNAME = args.get<std::string>("host");
+    // The port number the inference server runs at.
+    const auto PORT = args.get<uint16_t>("port");
+    // The ID of the tenant on the Sensory Cloud inference server.
+    const auto TENANT = args.get<std::string>("tenant");
+    // The name of the audio transcription model to use.
+    const auto MODEL = args.get<std::string>("model");
+    // The ID of the user making the request.
+    const auto USER_ID = args.get<std::string>("userid");
+    /// A flag determining whether verbose output should be produced.
+    const auto VERBOSE = args.get<bool>("verbose");
+    // The number of audio samples per frame sent to the server.
+    const uint32_t SAMPLES_PER_FRAME = 4096;
+    // The unique identifier of the device
+    const auto DEVICE_ID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
+
+    // Initialize the configuration for the service.
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID);
+
+    // Query the health of the remote service.
+    sensory::service::HealthService healthService(config);
+    sensory::api::common::ServerHealthResponse serverHealth;
+    auto status = healthService.getHealth(&serverHealth);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to get server health with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
 
     // Create an OAuth service
     OAuthService oauthService(config);
@@ -191,14 +274,9 @@ int main(int argc, const char** argv) {
     // Create the audio service based on the configuration and token manager.
     AudioService<SecureCredentialStore> audioService(config, tokenManager);
 
-    std::string audioModel = "speech_recognition_en";
-    std::string wavFile = "wav/jabberwocky16khz_mono.wav";
-    std::string userID = "ckckck";
-    const uint32_t SAMPLES_PER_FRAME = 4096;
-
     // Load the audio file and zero pad the buffer with 300ms of silence.
     AudioBuffer buffer;
-    buffer.load(wavFile);
+    buffer.load(INPUT_FILE);
     buffer.padBack(300);
     // Check that the file is 16kHz.
     if (buffer.getSampleRate() != 16000) {
@@ -219,19 +297,20 @@ int main(int argc, const char** argv) {
     AudioFileReactor reactor(buffer.getSamples(),
         buffer.getChannels(),
         buffer.getSampleRate(),
-        SAMPLES_PER_FRAME  // the number of frames per block
+        SAMPLES_PER_FRAME,
+        VERBOSE
     );
     // Initialize the stream with the reactor for callbacks, given audio model,
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to transcribe audio.
     audioService.asyncTranscribeAudio(&reactor,
-        audioModel,
+        MODEL,
         buffer.getSampleRate(),
         "en-US",
-        userID
+        USER_ID
     );
     reactor.StartCall();
-    auto status = reactor.await();
+    status = reactor.await();
 
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Transcription stream broke with\n\t" <<
@@ -239,7 +318,13 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    std::cout << reactor.getTranscript() << std::endl;
+    if (VERBOSE) {
+        std::cout << reactor.getTranscript() << std::endl;
+    }
+
+    std::ofstream output_file(OUTPUT_FILE, std::ofstream::out);
+    output_file << reactor.getTranscript() << std::endl;
+    output_file.close();
 
     return 0;
 }

@@ -418,6 +418,7 @@ add_executable(dr_wav_transcribe_callback
     examples/dr_wav/transcribe_callback.cpp
     examples/dr_wav/dr_wav.h
     examples/dr_wav/audio_buffer.hpp
+    examples/dr_wav/argparse.hpp
     examples/dr_wav/tqdm.hpp
 )
 target_link_libraries(dr_wav_transcribe_callback PRIVATE sensorycloud)
