@@ -20,45 +20,30 @@ xcode-select --install
 brew install autoconf automake libtool shtool cmake
 ```
 
-<!-- ## gRPC
-
-This SDK uses gRPC to communicate with back-end servers. To install gRPC,
-execute the following command depending on your deployment target.
-
-### Debian
-
-```shell
-sudo apt-get install openssl libgrpc++-dev
-```
-
-### MacOS
-
-```shell
-brew install openssl grpc
-export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
-export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
-```
--->
-
 ## Usage
 
 ### Library Compilation
-
-```shell
-cmake -DUSE_SYSTEM_GRPC=ON -DUSE_SYSTEM_PROTO=ON .
-```
-
-```shell
-cmake -DUSE_SYSTEM_GRPC=OFF -DUSE_SYSTEM_PROTO=OFF .
-```
 
 #### Debian
 
 TODO
 
+<!--
+```shell
+sudo apt-get install openssl libgrpc++-dev
+```
+-->
+
 #### MacOS
 
-TODO
+To install with a system-wide installation of gRPC and protobuff, use the
+following snippet:
+
+```shell
+brew install openssl grpc protobuf
+export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
+export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
+```
 
 ## Development
 
