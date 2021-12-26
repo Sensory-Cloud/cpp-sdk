@@ -1,4 +1,4 @@
-# A docker file to build a CI image for Ubuntu 16.04.
+# A docker file to build a CI image for Ubuntu 21.10.
 #
 # Author: Christian Kauten (ckauten@sensoryinc.com)
 #
@@ -27,8 +27,8 @@
 # MARK: Image Setup
 # ----------------------------------------------------------------------------
 
-# Download base image Ubuntu 16.04.
-FROM ubuntu:16.04
+# Download base image Ubuntu 21.10.
+FROM ubuntu:21.10
 # Set the maintainer label for this Docker image.
 LABEL MAINTAINER "Christian Kauten ckauten@sensoryinc.com"
 # Set the time-zone of the machine.
@@ -44,13 +44,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get -y upgrade
 # Install dependencies for the SDK.
-RUN apt-get install -y build-essential autoconf libtool pkg-config git libssl-dev
-# Install the latest version of CMake.
-RUN apt-get install -y software-properties-common wget
-RUN wget -qO - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
-RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ xenial main'
-RUN apt-get update
-RUN apt-get -y install cmake
+RUN apt-get install -y build-essential autoconf libtool pkg-config cmake git libssl-dev
 
 # ----------------------------------------------------------------------------
 # MARK: Source Files
