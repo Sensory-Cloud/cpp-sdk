@@ -46,14 +46,6 @@ RUN apt-get -y upgrade
 # Install dependencies for the SDK.
 RUN apt-get install -y build-essential autoconf libtool pkg-config git libssl-dev
 
-# Install the latest version of CMake. This is based on the official CMake
-# documentation for Ubuntu 14.04 here: https://apt.kitware.com/
-# RUN apt-get install -y apt-transport-https wget
-# RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-# RUN echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ trusty main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
-# RUN apt-get update
-# RUN apt-get install -y cmake
-
 # Install the latest version of CMake. CMake does not officially support Ubuntu
 # 14.04 anymore, so CMake must be compiled from source.
 RUN apt-get install -y wget
