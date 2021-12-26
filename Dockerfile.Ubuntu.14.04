@@ -1,4 +1,4 @@
-# A docker file to build a CI image for Ubuntu 16.04.
+# A docker file to build a CI image for Ubuntu 14.04.
 #
 # Author: Christian Kauten (ckauten@sensoryinc.com)
 #
@@ -27,8 +27,8 @@
 # MARK: Image Setup
 # ----------------------------------------------------------------------------
 
-# Download base image Ubuntu 16.04.
-FROM ubuntu:16.04
+# Download base image Ubuntu 14.04.
+FROM ubuntu:14.04
 # Set the maintainer label for this Docker image.
 LABEL MAINTAINER "Christian Kauten ckauten@sensoryinc.com"
 # Set the time-zone of the machine.
@@ -47,12 +47,19 @@ RUN apt-get -y upgrade
 RUN apt-get install -y build-essential autoconf libtool pkg-config git libssl-dev
 
 # Install the latest version of CMake. This is based on the official CMake
-# documentation for Ubuntu 16.04 here: https://apt.kitware.com/
-RUN apt-get install -y apt-transport-https wget
-RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-RUN echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ xenial main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
-RUN apt-get update
-RUN apt-get install -y cmake
+# documentation for Ubuntu 14.04 here: https://apt.kitware.com/
+# RUN apt-get install -y apt-transport-https wget
+# RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+# RUN echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ trusty main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
+# RUN apt-get update
+# RUN apt-get install -y cmake
+
+# Install the latest version of CMake. CMake does not officially support Ubuntu
+# 14.04 anymore, so CMake must be compiled from source.
+RUN apt-get install -y wget
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz
+RUN tar -xvf cmake-3.22.1.tar.gz
+RUN cd /cmake-3.22.1 && ./bootstrap && make && make install
 
 # ----------------------------------------------------------------------------
 # MARK: Source Files
