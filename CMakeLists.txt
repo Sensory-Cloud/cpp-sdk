@@ -1,4 +1,6 @@
-# Copyright 2018 Sensory, Inc.
+# cmake build file for C++ Sensory Cloud.
+#
+# Copyright 2021 Sensory, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# cmake build file for C++ Sensory Cloud.
 
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.11)
 
 project(sensory-cloud-cpp-sdk)
 
