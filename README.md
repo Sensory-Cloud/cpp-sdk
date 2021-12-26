@@ -40,8 +40,10 @@ To install with a system-wide installation of gRPC and protobuff, use the
 following snippet:
 
 ```shell
-brew install openssl grpc protobuf
+brew install openssl protobuf grpc
+cmake -DGRPC_AS_SUBMODULE=OFF -DGRPC_FETCHCONTENT=OFF .
 export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
+make
 export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
 ```
 
