@@ -102,6 +102,30 @@ case "$1" in
     exit 0;
     ;;
 
+  "build_images"|"bi")
+    docker compose build --parallel
+    # docker build -f Dockerfile.Ubuntu.16.04 -t sensory-cloud-cpp-sdk:Ubuntu16.04 .
+    # docker build -f Dockerfile.Ubuntu.18.04 -t sensory-cloud-cpp-sdk:Ubuntu18.04 .
+    # docker build -f Dockerfile.Ubuntu.20.04 -t sensory-cloud-cpp-sdk:Ubuntu20.04 .
+    # docker build -f Dockerfile.Ubuntu.21.10 -t sensory-cloud-cpp-sdk:Ubuntu21.10 .
+    # docker build -f Dockerfile.Debian.9 -t sensory-cloud-cpp-sdk:Debian9 .
+    # docker build -f Dockerfile.Debian.10 -t sensory-cloud-cpp-sdk:Debian10 .
+    # docker build -f Dockerfile.Debian.11 -t sensory-cloud-cpp-sdk:Debian11 .
+    # docker build -f Dockerfile.CentOS.7 -t sensory-cloud-cpp-sdk:CentOS7 .
+    # docker build -f Dockerfile.CentOS.8 -t sensory-cloud-cpp-sdk:CentOS8 .
+    # docker build -f Dockerfile.RHEL.7 -t sensory-cloud-cpp-sdk:RHEL7 .
+    # docker build -f Dockerfile.RHEL.8 -t sensory-cloud-cpp-sdk:RHEL8 .
+    exit 0;
+    ;;
+
+  "test_all"|"ta")
+    # docker run --rm -it sensory-cloud-cpp-sdk:Ubuntu16.04 ls cpp-sdk
+    # docker run --rm -it sensory-cloud-cpp-sdk:Ubuntu18.04 ls cpp-sdk
+    # docker run --rm -it sensory-cloud-cpp-sdk:Ubuntu20.04 ls cpp-sdk
+    docker run --rm -it sensory-cloud-cpp-sdk:Ubuntu20.04 ls
+    exit 0;
+    ;;
+
   "doc"|"d")
     doxygen Doxyfile
     exit 0;
