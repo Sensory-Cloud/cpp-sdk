@@ -216,9 +216,9 @@ class VideoService {
         // Finish the RPC to tell it where the response and status buffers are
         // located within the call object. Use the address of the call as the
         // tag for identifying the call in the event-loop.
-        call->rpc->Finish(&call->response, &call->status, (void*) call);
-        // Return the pointer to the call. This both transfers the ownership of
-        // the instance to the caller, and provides the caller with an
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
         // identifier for detecting the result of this call in the completion
         // queue.
         return call;
