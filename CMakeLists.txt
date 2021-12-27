@@ -25,6 +25,15 @@ include(cmake/common.cmake)
 # Output built binaries to a `build` directory instead of the project root.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
 
+option(BUILD_LIBRARY "Build library for ${PROJECT_NAME}" OFF)
+option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" OFF)
+option(BUILD_BENCHMARKS "Build benchmarks for ${PROJECT_NAME}" OFF)
+option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" OFF)
+
+if (BUILD_LIBRARY OR BUILD_TESTS OR BUILD_BENCHMARKS OR BUILD_EXAMPLES)
+
+# --- Proto Files ------------------------------------------------------------
+
 # TODO: Remove debugging statements
 # message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
 # message(STATUS _GRPC_CPP_PLUGIN_EXECUTABLE=${_GRPC_CPP_PLUGIN_EXECUTABLE})
@@ -145,7 +154,7 @@ elseif (UNIX)
     # Target the mandatory libraries for using libsecret on Linux
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBSECRET IMPORTED_TARGET libsecret-1)
-    target_link_libraries(sensorycloud PRIVATE PkgConfig::LIBSECRET)
+    target_link_libraries(sensorycloud PUBLIC PkgConfig::LIBSECRET)
 elseif(MSVC)
     message(STATUS "Using Windows crypt32 implementation of SecureCredentialStore")
     # Target the mandatory libraries for using Windows credential locker
@@ -154,9 +163,9 @@ endif()
 
 # add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
 
-# --- Test Cases -------------------------------------------------------------
+endif()
 
-option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" OFF)
+# --- Test Cases -------------------------------------------------------------
 
 if (BUILD_TESTS)
 
@@ -188,8 +197,6 @@ endif()
 
 # --- Benchmarks -------------------------------------------------------------
 
-option(BUILD_BENCHMARKS "Build benchmarks for ${PROJECT_NAME}" OFF)
-
 if (BUILD_BENCHMARKS)
 
 # TODO
@@ -197,8 +204,6 @@ if (BUILD_BENCHMARKS)
 endif()
 
 # --- Examples ---------------------------------------------------------------
-
-option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" OFF)
 
 if (BUILD_EXAMPLES)
 
