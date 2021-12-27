@@ -19,6 +19,34 @@ eval "$(printf '\n' | /usr/bin/gnome-keyring-daemon --start)"
 ```
 -->
 
+<!--
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+/// @brief Return the home directory for the current user.
+///
+/// @returns The home directory for the user running the program
+///
+std::string getHomeDirectory() {
+    static constexpr std::size_t MAX_PATH = 1024;
+    char homedir[MAX_PATH];
+#ifdef _WIN32  // Windows
+    snprintf(homedir, MAX_PATH, "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+#else  // MacOS or Unix
+    snprintf(homedir, MAX_PATH, "%s", getenv("HOME"));
+#endif
+    return std::string(strdup(homedir));
+}
+
+std::string makeSDKDirectory() {
+    // Create the home directory for the SDK
+    const auto SDK_DIR(getHomeDirectory() + "/.sensorycloud");
+    mkdir(SDK_DIR.c_str(), 0755);
+    return SDK_DIR;
+}
+-->
+
 ## Requirements
 
 This project uses CMake as the primary build system and gcc as the primary
