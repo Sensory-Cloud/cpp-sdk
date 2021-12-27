@@ -42,6 +42,11 @@ SCENARIO("a user wants to insecurely store credentials on disk") {
                 store.erase("non-existent-key");
             }
         }
+        WHEN("at is called with a non-existent key") {
+            THEN("an empty string is returned") {
+                REQUIRE("" == store.at("non-existent-key"));
+            }
+        }
         WHEN("a key-value pair is inserted into the secure store") {
             store.emplace("foo", "bar");
             THEN("contains returns true") {
