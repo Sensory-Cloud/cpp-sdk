@@ -1,56 +1,56 @@
 services:
   # CentOS
-  # centos_7:
-  #   image: sensory-cloud-cpp-sdk:CentOS7
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.CentOS.7
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
-  # centos_8:
-  #   image: sensory-cloud-cpp-sdk:CentOS8
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.CentOS.8
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  centos_7:
+    image: sensory-cloud-cpp-sdk:CentOS7
+    build:
+      context: .
+      dockerfile: Dockerfile.CentOS.7
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  centos_8:
+    image: sensory-cloud-cpp-sdk:CentOS8
+    build:
+      context: .
+      dockerfile: Dockerfile.CentOS.8
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
   # RHEL
-  # rhel_7:
-  #   image: sensory-cloud-cpp-sdk:RHEL7
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.RHEL.7
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
-  # rhel_8:
-  #   image: sensory-cloud-cpp-sdk:RHEL8
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.RHEL.8
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  rhel_7:
+    image: sensory-cloud-cpp-sdk:RHEL7
+    build:
+      context: .
+      dockerfile: Dockerfile.RHEL.7
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  rhel_8:
+    image: sensory-cloud-cpp-sdk:RHEL8
+    build:
+      context: .
+      dockerfile: Dockerfile.RHEL.8
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
   # Debian
-  # debian_9:
-  #   image: sensory-cloud-cpp-sdk:Debian9
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.Debian.9
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
-  # debian_10:
-  #   image: sensory-cloud-cpp-sdk:Debian10
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.Debian.10
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
-  # debian_11:
-  #   image: sensory-cloud-cpp-sdk:Debian11
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.Debian.11
-  #   working_dir: /cpp-sdk
-  #   command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  debian_9:
+    image: sensory-cloud-cpp-sdk:Debian9
+    build:
+      context: .
+      dockerfile: Dockerfile.Debian.9
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  debian_10:
+    image: sensory-cloud-cpp-sdk:Debian10
+    build:
+      context: .
+      dockerfile: Dockerfile.Debian.10
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
+  debian_11:
+    image: sensory-cloud-cpp-sdk:Debian11
+    build:
+      context: .
+      dockerfile: Dockerfile.Debian.11
+    working_dir: /cpp-sdk
+    command: make && find build -name "test*" -exec echo {} \; -exec {} \;
   # Ubuntu
   ubuntu_16_04:
     image: sensory-cloud-cpp-sdk:Ubuntu16.04
