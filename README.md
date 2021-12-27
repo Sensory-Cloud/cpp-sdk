@@ -71,8 +71,8 @@ TODO
 
 The Sensory Cloud SDK is built on protobuf and gRPC and requires an active
 installation of both libraries as such. It is recommended to compile these
-libraries locally, but they can also be installed system-wide, or maintained
-locally using something like git submodules.
+libraries locally using `FetchContent` or git sub-modules, but they can also be
+installed system-wide.
 
 ### Local Installation (`FetchContent`)
 
@@ -86,9 +86,15 @@ cmake -DGRPC_AS_SUBMODULE=OFF -DGRPC_FETCHCONTENT=ON .
 make
 ```
 
-### Local Installation (Submodule)
+### Local Installation (`add_subdirectory`)
 
-TODO
+To compile against local clone of gRPC, place a copy of the gRPC source tree in
+the [third_party/grpc](third_party/grpc) directory and execute the following:
+
+```shell
+cmake -DGRPC_AS_SUBMODULE=ON -DGRPC_FETCHCONTENT=OFF .
+make
+```
 
 ### Global Installation (MacOS)
 
@@ -104,6 +110,10 @@ export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@3/"
 make
 export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
 ```
+
+Note that because MacOS does not follow the POSIX standard, some additional
+environment variables are used to provide information about the OpenSSL library
+and public certificates on disk used for Transport Layer Security (TLS).
 
 ## Compilation
 
