@@ -164,7 +164,7 @@ inline bool SecureCredentialStore::contains(const std::string& key) const {
     }};
 
     GError* error = NULL;
-    gchar* raw_passwords = secret_password_lookup_sync(
+    gchar* raw_values = secret_password_lookup_sync(
         &schema,
         NULL,  // not cancellable
         &error,
@@ -175,10 +175,10 @@ inline bool SecureCredentialStore::contains(const std::string& key) const {
 
     if (error != NULL) {  // An error occurred.
         return false;
-    } else if (raw_passwords == NULL) {  // Key-value pair not found.
+    } else if (raw_values == NULL) {  // Key-value pair not found.
         return false;
     } else {  // Key-value pair located.
-        secret_password_free(raw_passwords);
+        secret_password_free(raw_values);
         return true;
     }
 }
@@ -190,7 +190,7 @@ inline std::string SecureCredentialStore::at(const std::string& key) const {
     }};
 
     GError* error = NULL;
-    gchar* raw_passwords = secret_password_lookup_sync(
+    gchar* raw_values = secret_password_lookup_sync(
         &schema,
         NULL,  // not cancellable
         &error,
@@ -201,12 +201,12 @@ inline std::string SecureCredentialStore::at(const std::string& key) const {
 
     if (error != NULL) {  // An error occurred.
         return "";
-    } else if (raw_passwords == NULL) {  // Key-value pair not found.
+    } else if (raw_values == NULL) {  // Key-value pair not found.
         return "";
     } else {  // Key-value pair located.
-        const std::string password(raw_passwords);
-        secret_password_free(raw_passwords);
-        return password;
+        const std::string value(raw_values);
+        secret_password_free(raw_values);
+        return value;
     }
 }
 
