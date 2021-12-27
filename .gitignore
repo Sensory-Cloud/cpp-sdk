@@ -1,4 +1,5 @@
 # MARK: Project Files
+com.sensory.cloud.examples*
 cmake_install.cmake
 *CMakeFiles
 *CMakeCache.txt
