@@ -3,6 +3,14 @@
 This repository contains the source code for the Sensory Cloud C++ SDK.
 
 <!--
+# Install libsecret-1 and setup the Keychain for the container
+# RUN apt-get install -y libsecret-1-dev
+# RUN export $(dbus-launch)
+# RUN eval "$(printf '\n' | gnome-keyring-daemon --unlock)"
+# RUN eval "$(printf '\n' | /usr/bin/gnome-keyring-daemon --start)"
+-->
+
+<!--
 ```shell
 apt-get install -y libsecret-1-dev
 export $(dbus-launch)
