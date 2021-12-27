@@ -41,6 +41,84 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+/// @brief A type for encapsulating data for asynchronous calls.
+/// @tparam Factory The factory class that will manage the scope of the call.
+/// @tparam Request The type of the request message.
+/// @tparam Response The type of the response message.
+///
+/// @details
+/// The `Factory` is marked as a friend in order to provide mutable access to
+/// private attributes of the structure. This allows instances of `Factory` to
+/// mutate to the structure while all external scopes are limited to the
+/// immutable interface exposed by the public accessor functions. Instances of
+/// `AsyncUnaryCall` are mutable within the scope of `Factory`, but immutable
+/// outside of the scope of `Factory`.
+///
+template<typename Factory, typename Request, typename Response>
+struct AsyncUnaryCall {
+ private:
+    /// The gPRC context that the call is initiated with.
+    ::grpc::ClientContext context;
+    /// The status of the RPC after the response is processed.
+    ::grpc::Status status;
+    /// The request to execute in the unary call.
+    Request request;
+    /// The response to process after the RPC completes.
+    Response response;
+    /// The reader RPC executing the call.
+    std::unique_ptr<::grpc::ClientAsyncResponseReader<Response>> rpc;
+
+    /// @brief Initialize a new call.
+    AsyncUnaryCall() { }
+
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    AsyncUnaryCall(const AsyncUnaryCall& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const AsyncUnaryCall& other) = delete;
+
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
+
+ public:
+    /// @brief Return the context that the call was created with.
+    ///
+    /// @returns The gRPC context associated with the call.
+    ///
+    inline const ::grpc::ClientContext& getContext() const { return context; }
+
+    /// @brief Return the status of the call.
+    ///
+    /// @returns The gRPC status code and message from the call.
+    ///
+    inline const ::grpc::Status& getStatus() const { return status; }
+
+    /// @brief Return the request of the call.
+    ///
+    /// @returns The request message buffer for the call.
+    ///
+    inline const Request& getRequest() const { return request; }
+
+    /// @brief Return the response of the call.
+    ///
+    /// @returns The response message buffer for the call.
+    ///
+    inline const Response& getResponse() const { return response; }
+};
+
 /// @brief A service for video data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.
@@ -107,32 +185,47 @@ class VideoService {
         return modelsStub->GetModels(&context, {}, response);
     }
 
-    /// A type for asynchronous model fetching.
-    typedef std::unique_ptr<
-        ::grpc::ClientAsyncResponseReader<
-            ::sensory::api::v1::video::GetModelsResponse
-        >
-    > AsyncGetModelsReader;
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls
+    /// based on CompletionQueue event loops.
+    typedef AsyncUnaryCall<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::GetModelsRequest,
+        ::sensory::api::v1::video::GetModelsResponse
+    > AsyncGetModelsCall;
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
-    /// @param response The response to populate from the RPC.
-    /// @returns The asynchronous reader.
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
-    inline AsyncGetModelsReader asyncGetModels(
+    inline AsyncGetModelsCall* asyncGetModels(
         ::grpc::CompletionQueue* queue
     ) const {
-        // Create a context for the client for a unary call.
-        // TODO: this will result in a memory leak. Update to remove the memory
-        // link by persisting a stack allocated context past the scope of this
-        // call to setup the stream.
-        auto context(new ::grpc::ClientContext);
-        config.setupUnaryClientContext(*context, tokenManager);
-        // Execute the RPC synchronously and return the status
-        return modelsStub->AsyncGetModels(context, {}, queue);
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new AsyncGetModelsCall);
+        // Set the client context for a unary call.
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->rpc = modelsStub->AsyncGetModels(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, (void*) call);
+        // Return the pointer to the call. This both transfers the ownership of
+        // the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
     }
 
-    /// @brief A type for encapsulating data for asynchronous `GetModels` calls.
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls
+    /// based on callback/reactor patterns.
     typedef ::sensory::CallData<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::GetModelsRequest,
@@ -241,6 +334,79 @@ class VideoService {
         stream->Write(request);
         return stream;
     }
+
+
+
+
+    /// A type for asynchronous model fetching.
+    typedef std::unique_ptr<
+        ::grpc::ClientAsyncReaderWriter<
+            ::sensory::api::v1::video::CreateEnrollmentRequest,
+            ::sensory::api::v1::video::CreateEnrollmentResponse
+        >
+    > AsyncCreateEnrollmentReaderWriter;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating a video enrollment.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param modelName The name of the model to use to create the enrollment.
+    /// Use `getModels()` to obtain a list of available models.
+    /// @param userID The ID of the user performing the request.
+    /// @param description The description of the enrollment.
+    /// @param isLivenessEnabled `true` to perform a liveness check in addition
+    /// to an enrollment, `false` to perform the enrollment without the liveness
+    /// check.
+    /// @param livenessThreshold The liveness threshold for the optional
+    /// liveness check.
+    /// @returns A bidirectional stream that can be used to send video data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
+    ///
+    inline AsyncCreateEnrollmentReaderWriter asyncCreateEnrollment(
+        ::grpc::CompletionQueue* queue,
+        const std::string& modelName,
+        const std::string& userID,
+        const std::string& description = "",
+        const bool& isLivenessEnabled = false,
+        const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold =
+            ::sensory::api::v1::video::RecognitionThreshold::LOW
+    ) const {
+        // Create a context for the client for a unary call.
+        // TODO: this will result in a memory leak. Update to remove the memory
+        // link by persisting a stack allocated context past the scope of this
+        // call to setup the stream.
+        auto context(new ::grpc::ClientContext);
+        config.setupBidiClientContext(*context, tokenManager);
+        // Create the initial config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto enrollment_config =
+            new ::sensory::api::v1::video::CreateEnrollmentConfig;
+        enrollment_config->set_deviceid(config.getDeviceID());
+        enrollment_config->set_modelname(modelName);
+        enrollment_config->set_userid(userID);
+        enrollment_config->set_description(description);
+        enrollment_config->set_islivenessenabled(isLivenessEnabled);
+        enrollment_config->set_livenessthreshold(livenessThreshold);
+        // Start the stream with the context in the reactor and a pointer to
+        // reactor for callbacks.
+        auto rpc = biometricsStub->AsyncCreateEnrollment(context, queue, (void*) 1);
+
+        // Update the request buffer in the reactor with the allocated config.
+        // reactor->request.set_allocated_config(enrollment_config);
+
+        return rpc;
+    }
+
+
+
+
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollment` calls.

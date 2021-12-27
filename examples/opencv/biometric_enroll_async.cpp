@@ -132,29 +132,25 @@ int main(int argc, const char** argv) {
     // Start an asynchronous RPC to fetch the names of the available models. The
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
-    auto rpc = videoService.asyncGetModels(&queue);
-    // Finish the setup of the RPC with a pointer to the response message and
-    // gRPC status variable.
-    sensory::api::v1::video::GetModelsResponse videoModelsResponse;
-    // grpc::Status status;
-    rpc->Finish(&videoModelsResponse, &status, (void*) 1);
+    auto getModelsRPC = videoService.asyncGetModels(&queue);
 
     // Execute the asynchronous RPC in this thread (which will block like a
     // synchronous call).
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
-    if (ok && tag == (void*) 1) {
+    if (ok && tag == getModelsRPC) {
         if (!status.ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to get video models with\n\t" <<
                 status.error_code() << ": " << status.error_message() << std::endl;
             return 1;
         }
-        for (auto& model : videoModelsResponse.models()) {
+        for (auto& model : getModelsRPC->getResponse().models()) {
             if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
                 continue;
             std::cout << "\t" << model.name() << std::endl;
         }
+        delete getModelsRPC;
     }
 
     std::string videoModel = "";
