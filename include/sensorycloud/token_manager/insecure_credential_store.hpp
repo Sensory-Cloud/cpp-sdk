@@ -29,6 +29,7 @@
 #include <exception>
 #include <string>
 #include <cstdio>
+#include <fstream>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
