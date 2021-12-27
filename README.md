@@ -2,6 +2,15 @@
 
 This repository contains the source code for the Sensory Cloud C++ SDK.
 
+<!--
+```shell
+apt-get install -y libsecret-1-dev
+export $(dbus-launch)
+eval "$(printf '\n' | gnome-keyring-daemon --unlock)"
+eval "$(printf '\n' | /usr/bin/gnome-keyring-daemon --start)"
+```
+-->
+
 ## Requirements
 
 This project uses CMake as the primary build system and gcc as the primary
@@ -100,7 +109,7 @@ make
 
 The homebrew package manager for MacOS maintains version matched binaries of
 protobuf and gRPC that can be used for a system-wide installation of these two
-libraries. To install with a system-wide installation of gRPC and protobuff on
+libraries. To install with a system-wide installation of protobuf and gRPC on
 MacOS, use the following snippet:
 
 ```shell
