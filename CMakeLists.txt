@@ -128,6 +128,7 @@ else()
     endif()
 endif()
 
+# TODO: Remove debugging statements
 # message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
 # message(STATUS _GRPC_CPP_PLUGIN_EXECUTABLE=${_GRPC_CPP_PLUGIN_EXECUTABLE})
 
@@ -183,10 +184,10 @@ include_directories(
   ${protobuf_BINARY_DIR}
   ${protobuf_SOURCE_DIR}/../src)
 
-# TODO Remove these debugging statements
-message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
-message(STATUS protobuf_BINARY_DIR=${protobuf_BINARY_DIR})
-message(STATUS protobuf_SOURCE_DIR=${protobuf_SOURCE_DIR})
+# TODO: Remove debugging statements
+# message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
+# message(STATUS protobuf_BINARY_DIR=${protobuf_BINARY_DIR})
+# message(STATUS protobuf_SOURCE_DIR=${protobuf_SOURCE_DIR})
 
 # --- Library ----------------------------------------------------------------
 
@@ -198,7 +199,8 @@ file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/include/*.h
     ${CMAKE_CURRENT_BINARY_DIR}/include/*.hpp
 )
-# message(INCLUDES="${INCLUDES}")
+# TODO: Remove debugging statements
+# message(STATUS INCLUDES="${INCLUDES}")
 
 # Locate the definition files for the sensorycloud library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
@@ -206,7 +208,8 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/src/*.cc
     ${CMAKE_CURRENT_BINARY_DIR}/src/*.cpp
 )
-# message(SOURCES="${SOURCES}")
+# TODO: Remove debugging statements
+# message(STATUS SOURCES="${SOURCES}")
 
 # Create the sensorycloud library
 add_library(sensorycloud STATIC)
@@ -229,7 +232,10 @@ target_link_libraries(sensorycloud PUBLIC
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
 
+# --- SecureCredentialStore Implementation -----------------------------------
+
 if (APPLE)
+    message(STATUS "Using Apple Keychain implementation of SecureCredentialStore")
     # Target the Keychain library for using the MacOS keychain
     target_compile_definitions(sensorycloud PUBLIC -DKEYCHAIN_MACOS=1)
     # Target the mandatory libraries for using the Keychain in MacOS
@@ -238,9 +244,15 @@ if (APPLE)
     # Target the link libraries for Keychain usage on MacOS
     target_link_libraries(sensorycloud PRIVATE ${COREFOUNDATION_LIBRARY} ${SECURITY_LIBRARY})
 elseif (UNIX)
-    message(STATUS Unix)
+    message(STATUS "Using Linux libsecret implementation of SecureCredentialStore")
+    # Target the mandatory libraries for using libsecret on Linux
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(LIBSECRET IMPORTED_TARGET libsecret-1)
+    target_link_libraries(sensorycloud PRIVATE PkgConfig::LIBSECRET)
 elseif(MSVC)
-    message(STATUS Windows)
+    message(STATUS "Using Windows crypt32 implementation of SecureCredentialStore")
+    # Target the mandatory libraries for using Windows credential locker
+    target_link_libraries(sensorycloud PRIVATE crypt32)
 endif()
 
 # add_library(sensorycloud::sensorycloud ALIAS sensorycloud)

@@ -38,7 +38,7 @@
 #elif defined(__ANDROID__)  // Android flavored Linux
 
 #elif defined(__linux__)  // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
-
+#include <libsecret/secret.h>
 #elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)  // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
 
 #elif defined(__hpux)  // HP-UX
@@ -111,11 +111,127 @@ class SecureCredentialStore {
 
 #if defined(_WIN32) || defined(_WIN64)  // Windows
 
+inline void SecureCredentialStore::emplace(const std::string& key, const std::string& value) const {
+
+}
+
+inline bool SecureCredentialStore::contains(const std::string& key) const {
+    return false;
+}
+
+inline std::string SecureCredentialStore::at(const std::string& key) const {
+    return "";
+}
+
+inline void SecureCredentialStore::erase(const std::string& key) const {
+
+}
+
 #elif defined(__CYGWIN__) && !defined(_WIN32)  // Cygwin POSIX Windows
 
 #elif defined(__ANDROID__)  // Android flavored Linux
 
 #elif defined(__linux__)  // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
+
+inline void SecureCredentialStore::emplace(const std::string& key, const std::string& value) const {
+    const SecretSchema schema{package.c_str(), SECRET_SCHEMA_NONE, {
+        {"key", SECRET_SCHEMA_ATTRIBUTE_STRING},
+        {NULL, SecretSchemaAttributeType(0)},
+    }};
+
+    GError *error = NULL;
+    secret_password_store_sync(
+        &schema,
+        SECRET_COLLECTION_DEFAULT,
+        (package + "." + key).c_str(),
+        value.c_str(),
+        NULL,  // not cancellable
+        &error,
+        "key",
+        key.c_str(),
+        NULL
+    );
+
+    if (error != NULL) {  // An error occurred.
+
+    }
+}
+
+inline bool SecureCredentialStore::contains(const std::string& key) const {
+    const SecretSchema schema{package.c_str(), SECRET_SCHEMA_NONE, {
+        {"key", SECRET_SCHEMA_ATTRIBUTE_STRING},
+        {NULL, SecretSchemaAttributeType(0)},
+    }};
+
+    GError* error = NULL;
+    gchar* raw_passwords = secret_password_lookup_sync(
+        &schema,
+        NULL,  // not cancellable
+        &error,
+        "key",
+        key.c_str(),
+        NULL
+    );
+
+    if (error != NULL) {  // An error occurred.
+        return false;
+    } else if (raw_passwords == NULL) {  // Key-value pair not found.
+        return false;
+    } else {  // Key-value pair located.
+        secret_password_free(raw_passwords);
+        return true;
+    }
+}
+
+inline std::string SecureCredentialStore::at(const std::string& key) const {
+    const SecretSchema schema{package.c_str(), SECRET_SCHEMA_NONE, {
+        {"key", SECRET_SCHEMA_ATTRIBUTE_STRING},
+        {NULL, SecretSchemaAttributeType(0)},
+    }};
+
+    GError* error = NULL;
+    gchar* raw_passwords = secret_password_lookup_sync(
+        &schema,
+        NULL,  // not cancellable
+        &error,
+        "key",
+        key.c_str(),
+        NULL
+    );
+
+    if (error != NULL) {  // An error occurred.
+        return "";
+    } else if (raw_passwords == NULL) {  // Key-value pair not found.
+        return "";
+    } else {  // Key-value pair located.
+        const std::string password(raw_passwords);
+        secret_password_free(raw_passwords);
+        return password;
+    }
+}
+
+inline void SecureCredentialStore::erase(const std::string& key) const {
+    const SecretSchema schema{package.c_str(), SECRET_SCHEMA_NONE, {
+        {"key", SECRET_SCHEMA_ATTRIBUTE_STRING},
+        {NULL, SecretSchemaAttributeType(0)},
+    }};
+
+    GError* error = NULL;
+    bool deleted = secret_password_clear_sync(
+        &schema,
+        NULL, // not cancellable
+        &error,
+        "key",
+        key.c_str(),
+        NULL
+    );
+
+    if (error != NULL) {  // An error occurred
+
+    } else if (!deleted) {  // Failed to delete.
+
+    }
+}
 
 #elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)  // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
 
