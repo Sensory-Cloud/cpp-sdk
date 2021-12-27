@@ -154,6 +154,7 @@ inline void SecureCredentialStore::emplace(const std::string& key, const std::st
 
     if (error != NULL) {  // An error occurred.
 
+        g_error_free(error);
     }
 }
 
@@ -174,6 +175,7 @@ inline bool SecureCredentialStore::contains(const std::string& key) const {
     );
 
     if (error != NULL) {  // An error occurred.
+        g_error_free(error);
         return false;
     } else if (raw_values == NULL) {  // Key-value pair not found.
         return false;
@@ -200,6 +202,7 @@ inline std::string SecureCredentialStore::at(const std::string& key) const {
     );
 
     if (error != NULL) {  // An error occurred.
+        g_error_free(error);
         return "";
     } else if (raw_values == NULL) {  // Key-value pair not found.
         return "";
@@ -227,7 +230,7 @@ inline void SecureCredentialStore::erase(const std::string& key) const {
     );
 
     if (error != NULL) {  // An error occurred
-
+        g_error_free(error);
     } else if (!deleted) {  // Failed to delete.
 
     }
