@@ -31,18 +31,24 @@
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 int main() {
     std::cout << "Hello, Sensory Cloud C++ SDK!" << std::endl;
+
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto deviceID(keychain.at("deviceID"));
 
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        deviceID
     );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
@@ -61,15 +67,9 @@ int main() {
     std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
     std::cout << "\tid: " << serverHealth.id() << std::endl;
 
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
-
     // Create an OAuth service
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -102,7 +102,7 @@ int main() {
 
     // Query the available video models
     std::cout << "Available video models:" << std::endl;
-    sensory::service::VideoService<sensory::token_manager::SecureCredentialStore> videoService(config, tokenManager);
+    sensory::service::VideoService<sensory::token_manager::InsecureCredentialStore> videoService(config, tokenManager);
     sensory::api::v1::video::GetModelsResponse videoModelsResponse;
     status = videoService.getModels(&videoModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -115,7 +115,7 @@ int main() {
 
     // Query the available audio models
     std::cout << "Available audio models:" << std::endl;
-    sensory::service::AudioService<sensory::token_manager::SecureCredentialStore> audioService(config, tokenManager);
+    sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore> audioService(config, tokenManager);
     sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
     status = audioService.getModels(&audioModelsResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -126,9 +126,14 @@ int main() {
     for (auto& model : audioModelsResponse.models())
         std::cout << "\t" << model.name() << std::endl;
 
+    // Query the user ID
+    std::string userID = "";
+    std::cout << "user ID: ";
+    std::cin >> userID;
+
     // Query this user's active enrollments
     std::cout << "Active enrollments:" << std::endl;
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore> mgmtService(config, tokenManager);
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore> mgmtService(config, tokenManager);
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
