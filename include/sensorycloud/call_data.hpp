@@ -37,6 +37,180 @@
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
 
+// -----------------------------------------------------------------------------
+// MARK: Async Interface -- CompletionQueue
+// -----------------------------------------------------------------------------
+
+/// @brief A type for encapsulating data for asynchronous calls.
+/// @tparam Factory The factory class that will manage the scope of the call.
+/// @tparam Request The type of the request message.
+/// @tparam Response The type of the response message.
+///
+/// @details
+/// The `Factory` is marked as a friend in order to provide mutable access to
+/// private attributes of the structure. This allows instances of `Factory` to
+/// mutate to the structure while all external scopes are limited to the
+/// immutable interface exposed by the public accessor functions. Instances of
+/// `AsyncUnaryCall` are mutable within the scope of `Factory`, but immutable
+/// outside of the scope of `Factory`.
+///
+template<typename Factory, typename Request, typename Response>
+struct AsyncUnaryCall {
+ private:
+    /// The gPRC context that the call is initiated with.
+    ::grpc::ClientContext context;
+    /// The status of the RPC after the response is processed.
+    ::grpc::Status status;
+    /// The request to execute in the unary call.
+    Request request;
+    /// The response to process after the RPC completes.
+    Response response;
+    /// The reader RPC executing the call.
+    std::unique_ptr<::grpc::ClientAsyncResponseReader<Response>> rpc;
+
+    /// @brief Initialize a new call.
+    AsyncUnaryCall() { }
+
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    AsyncUnaryCall(const AsyncUnaryCall& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const AsyncUnaryCall& other) = delete;
+
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
+
+ public:
+    /// @brief Return the context that the call was created with.
+    ///
+    /// @returns The gRPC context associated with the call.
+    ///
+    inline const ::grpc::ClientContext& getContext() const { return context; }
+
+    /// @brief Return the status of the call.
+    ///
+    /// @returns The gRPC status code and message from the call.
+    ///
+    inline const ::grpc::Status& getStatus() const { return status; }
+
+    /// @brief Return the request of the call.
+    ///
+    /// @returns The request message buffer for the call.
+    ///
+    inline const Request& getRequest() const { return request; }
+
+    /// @brief Return the response of the call.
+    ///
+    /// @returns The response message buffer for the call.
+    ///
+    inline const Response& getResponse() const { return response; }
+};
+
+/// @brief A type for encapsulating data for asynchronous calls.
+/// @tparam Factory The factory class that will manage the scope of the call.
+/// @tparam Request The type of the request message.
+/// @tparam Response The type of the response message.
+///
+/// @details
+/// The `Factory` is marked as a friend in order to provide mutable access to
+/// private attributes of the structure. This allows instances of `Factory` to
+/// mutate to the structure while all external scopes are limited to the
+/// immutable interface exposed by the public accessor functions. Instances of
+/// `AsyncBidiCall` are mutable within the scope of `Factory`, but immutable
+/// outside of the scope of `Factory`.
+///
+template<typename Factory, typename Request, typename Response>
+struct AsyncBidiCall {
+ private:
+    /// The gPRC context that the call is initiated with.
+    ::grpc::ClientContext context;
+    /// The status of the RPC after the response is processed.
+    ::grpc::Status status;
+    /// The request to execute in the unary call.
+    Request request;
+    /// The response to process after the RPC completes.
+    Response response;
+    /// The reader RPC executing the call.
+    std::unique_ptr<::grpc::ClientAsyncReaderWriter<Request, Response>> rpc;
+
+    /// @brief Initialize a new call.
+    AsyncBidiCall() { }
+
+    /// @brief Create a copy of this object.
+    ///
+    /// @param other the other instance to copy data from
+    ///
+    /// @details
+    /// This copy constructor is private to prevent the copying of this object
+    AsyncBidiCall(const AsyncBidiCall& other) = delete;
+
+    /// @brief Assign to this object using the `=` operator.
+    ///
+    /// @param other The other instance to copy data from.
+    ///
+    /// @details
+    /// This assignment operator is private to prevent copying of this object.
+    ///
+    void operator=(const AsyncBidiCall& other) = delete;
+
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
+
+ public:
+    /// @brief Return the context that the call was created with.
+    ///
+    /// @returns The gRPC context associated with the call.
+    ///
+    inline const ::grpc::ClientContext& getContext() const { return context; }
+
+    /// @brief Return the status of the call.
+    ///
+    /// @returns The gRPC status code and message from the call.
+    ///
+    inline ::grpc::Status& getStatus() { return status; }
+
+    /// @brief Return the request of the call.
+    ///
+    /// @returns The request message buffer for the call.
+    ///
+    inline Request& getRequest() { return request; }
+
+    /// @brief Return the response of the call.
+    ///
+    /// @returns The response message buffer for the call.
+    ///
+    inline Response& getResponse() { return response; }
+
+    /// @brief Return the gRPC client interface associated with this call.
+    ///
+    /// @returns the gRPC stream that is represented by this call object.
+    ///
+    inline ::grpc::ClientAsyncReaderWriter<Request, Response>* getCall() const {
+        return rpc.get();
+    }
+
+    // inline void finish(void* tag) { rpc->Finish(&status, tag); }
+};
+
+// -----------------------------------------------------------------------------
+// MARK: Async Interface -- Reactor/Callback
+// -----------------------------------------------------------------------------
+
 /// @brief A type for encapsulating data for asynchronous calls.
 /// @tparam Factory The factory class that will manage the scope of the call.
 /// @tparam Request The type of the request message.

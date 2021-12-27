@@ -41,84 +41,6 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
-/// @brief A type for encapsulating data for asynchronous calls.
-/// @tparam Factory The factory class that will manage the scope of the call.
-/// @tparam Request The type of the request message.
-/// @tparam Response The type of the response message.
-///
-/// @details
-/// The `Factory` is marked as a friend in order to provide mutable access to
-/// private attributes of the structure. This allows instances of `Factory` to
-/// mutate to the structure while all external scopes are limited to the
-/// immutable interface exposed by the public accessor functions. Instances of
-/// `AsyncUnaryCall` are mutable within the scope of `Factory`, but immutable
-/// outside of the scope of `Factory`.
-///
-template<typename Factory, typename Request, typename Response>
-struct AsyncUnaryCall {
- private:
-    /// The gPRC context that the call is initiated with.
-    ::grpc::ClientContext context;
-    /// The status of the RPC after the response is processed.
-    ::grpc::Status status;
-    /// The request to execute in the unary call.
-    Request request;
-    /// The response to process after the RPC completes.
-    Response response;
-    /// The reader RPC executing the call.
-    std::unique_ptr<::grpc::ClientAsyncResponseReader<Response>> rpc;
-
-    /// @brief Initialize a new call.
-    AsyncUnaryCall() { }
-
-    /// @brief Create a copy of this object.
-    ///
-    /// @param other the other instance to copy data from
-    ///
-    /// @details
-    /// This copy constructor is private to prevent the copying of this object
-    AsyncUnaryCall(const AsyncUnaryCall& other) = delete;
-
-    /// @brief Assign to this object using the `=` operator.
-    ///
-    /// @param other The other instance to copy data from.
-    ///
-    /// @details
-    /// This assignment operator is private to prevent copying of this object.
-    ///
-    void operator=(const AsyncUnaryCall& other) = delete;
-
-    // Mark the Factory type as a friend to allow it to have write access to
-    // the internal types. This allows the parent scope to have mutability, but
-    // all other scopes must access data through the immutable `get` interface.
-    friend Factory;
-
- public:
-    /// @brief Return the context that the call was created with.
-    ///
-    /// @returns The gRPC context associated with the call.
-    ///
-    inline const ::grpc::ClientContext& getContext() const { return context; }
-
-    /// @brief Return the status of the call.
-    ///
-    /// @returns The gRPC status code and message from the call.
-    ///
-    inline const ::grpc::Status& getStatus() const { return status; }
-
-    /// @brief Return the request of the call.
-    ///
-    /// @returns The request message buffer for the call.
-    ///
-    inline const Request& getRequest() const { return request; }
-
-    /// @brief Return the response of the call.
-    ///
-    /// @returns The response message buffer for the call.
-    ///
-    inline const Response& getResponse() const { return response; }
-};
-
 /// @brief A service for video data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.
@@ -335,16 +257,13 @@ class VideoService {
         return stream;
     }
 
-
-
-
-    /// A type for asynchronous model fetching.
-    typedef std::unique_ptr<
-        ::grpc::ClientAsyncReaderWriter<
-            ::sensory::api::v1::video::CreateEnrollmentRequest,
-            ::sensory::api::v1::video::CreateEnrollmentResponse
-        >
-    > AsyncCreateEnrollmentReaderWriter;
+    /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
+    /// calls based on CompletionQueue event loops.
+    typedef AsyncBidiCall<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::CreateEnrollmentRequest,
+        ::sensory::api::v1::video::CreateEnrollmentResponse
+    > AsyncCreateEnrollmentCall;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating a video enrollment.
@@ -368,7 +287,7 @@ class VideoService {
     /// This call will automatically send the initial `CreateEnrollmentConfig`
     /// message to the server.
     ///
-    inline AsyncCreateEnrollmentReaderWriter asyncCreateEnrollment(
+    inline AsyncCreateEnrollmentCall* asyncCreateEnrollment(
         ::grpc::CompletionQueue* queue,
         const std::string& modelName,
         const std::string& userID,
@@ -377,12 +296,13 @@ class VideoService {
         const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold =
             ::sensory::api::v1::video::RecognitionThreshold::LOW
     ) const {
-        // Create a context for the client for a unary call.
-        // TODO: this will result in a memory leak. Update to remove the memory
-        // link by persisting a stack allocated context past the scope of this
-        // call to setup the stream.
-        auto context(new ::grpc::ClientContext);
-        config.setupBidiClientContext(*context, tokenManager);
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new AsyncCreateEnrollmentCall);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+
         // Create the initial config message. gRPC expects a dynamically
         // allocated message and will free the pointer when exiting the scope
         // of the request.
@@ -394,19 +314,15 @@ class VideoService {
         enrollment_config->set_description(description);
         enrollment_config->set_islivenessenabled(isLivenessEnabled);
         enrollment_config->set_livenessthreshold(livenessThreshold);
-        // Start the stream with the context in the reactor and a pointer to
-        // reactor for callbacks.
-        auto rpc = biometricsStub->AsyncCreateEnrollment(context, queue, (void*) 1);
+        call->request.set_allocated_config(enrollment_config);
 
-        // Update the request buffer in the reactor with the allocated config.
-        // reactor->request.set_allocated_config(enrollment_config);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->rpc = biometricsStub->AsyncCreateEnrollment(&call->context, queue, static_cast<void*>(call));
+        // Write the initial config message to the stream
+        // call->rpc->Write(call->request, (void*) 1);
 
-        return rpc;
+        return call;
     }
-
-
-
-
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollment` calls.
