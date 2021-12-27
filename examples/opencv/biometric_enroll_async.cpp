@@ -287,6 +287,14 @@ int main(int argc, const char** argv) {
                 // Finish the stream and terminate.
                 stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
             } else if (tag == (void*) Events::Finish) {  // Respond to `Finish`
+                // Check the final status of the stream and delete the call
+                // handle now that the stream has terminated.
+                if (!stream->getStatus().ok()) {
+                    std::cout << "Authentication stream failed with\n\t"
+                        << stream->getStatus().error_code() << ": "
+                        << stream->getStatus().error_message() << std::endl;
+                }
+                delete stream;
                 // By this point, we can guarantee that no write/read events
                 // will be coming to the completion queue. Break out of the
                 // event loop to terminate the background processing thread.
@@ -335,13 +343,6 @@ int main(int argc, const char** argv) {
 
     // Wait for the network thread to join back in.
     eventThread.join();
-
-    if (!stream->getStatus().ok()) {
-        std::cout << "Authentication stream failed with\n\t"
-            << stream->getStatus().error_code() << ": "
-            << stream->getStatus().error_message() << std::endl;
-        return 1;
-    }
 
     return 0;
 }
