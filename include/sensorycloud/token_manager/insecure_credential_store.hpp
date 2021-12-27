@@ -53,7 +53,7 @@ class InsecureCredentialStore {
     /// The value of `package_` should remain constant among compatible versions
     /// of the calling application.
     ///
-    explicit InsecureCredentialStore(const std::string root_path_, const std::string& package_) :
+    explicit InsecureCredentialStore(const std::string& root_path_, const std::string& package_) :
         root_path(root_path_),
         package(package_) { }
 
