@@ -139,7 +139,7 @@ inline void SecureCredentialStore::emplace(const std::string& key, const std::st
         {NULL, SecretSchemaAttributeType(0)},
     }};
 
-    GError *error = NULL;
+    GError* error = NULL;
     secret_password_store_sync(
         &schema,
         SECRET_COLLECTION_DEFAULT,
@@ -153,7 +153,6 @@ inline void SecureCredentialStore::emplace(const std::string& key, const std::st
     );
 
     if (error != NULL) {  // An error occurred.
-
         g_error_free(error);
     }
 }
