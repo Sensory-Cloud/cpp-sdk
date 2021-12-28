@@ -268,9 +268,8 @@ class VideoService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating a video enrollment.
     ///
-    /// @tparam Reactor The type of the reactor for handling callbacks.
-    /// @param reactor The reactor for receiving callbacks and managing the
-    /// context of the stream.
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
     /// @param userID The ID of the user performing the request.
@@ -318,8 +317,6 @@ class VideoService {
 
         // Start the asynchronous RPC with the call's context and queue.
         call->rpc = biometricsStub->AsyncCreateEnrollment(&call->context, queue, static_cast<void*>(call));
-        // Write the initial config message to the stream
-        // call->rpc->Write(call->request, (void*) 1);
 
         return call;
     }
@@ -443,6 +440,65 @@ class VideoService {
         return stream;
     }
 
+    /// @brief A type for encapsulating data for asynchronous `Authenticate`
+    /// calls based on CompletionQueue event loops.
+    typedef AsyncReaderWriterCall<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::AuthenticateRequest,
+        ::sensory::api::v1::video::AuthenticateResponse
+    > AsyncAuthenticateCall;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// video authentication.
+    ///
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
+    /// @param enrollmentID The enrollment ID to authenticate against. This can
+    /// be either an enrollment ID or a group ID.
+    /// @param isLivenessEnabled `true` to perform a liveness check before the
+    /// authentication, `false` to only perform the authentication.
+    /// @param livenessThreshold The liveness threshold for the optional
+    /// liveness check.
+    /// @returns A bidirectional stream that can be used to send video data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the initial `CreateEnrollmentConfig`
+    /// message to the server.
+    ///
+    inline AsyncAuthenticateCall* asyncAuthenticate(
+        ::grpc::CompletionQueue* queue,
+        const std::string& enrollmentID,
+        const bool& isLivenessEnabled = false,
+        const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold =
+            ::sensory::api::v1::video::RecognitionThreshold::LOW
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new AsyncAuthenticateCall);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+
+        // Create the initial config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto authenticate_config =
+            new ::sensory::api::v1::video::AuthenticateConfig;
+        authenticate_config->set_enrollmentid(enrollmentID);
+        authenticate_config->set_islivenessenabled(isLivenessEnabled);
+        authenticate_config->set_livenessthreshold(livenessThreshold);
+
+        // Create the request with the pointer to the allocated config.
+        ::sensory::api::v1::video::AuthenticateRequest request;
+        call->request.set_allocated_config(authenticate_config);
+
+        // Start the asynchronous RPC with the call's context and queue.
+        call->rpc = biometricsStub->AsyncAuthenticate(&call->context, queue, static_cast<void*>(call));
+
+        return call;
+    }
+
     /// @brief A type for encapsulating data for asynchronous
     /// `Authenticate` calls.
     typedef ::sensory::AwaitableBidiReactor<
@@ -499,6 +555,32 @@ class VideoService {
 
     // ----- Validate Liveness -------------------------------------------------
 
+    /// @brief Allocation a recognition config for initializing a liveness
+    /// validation stream.
+    ///
+    /// @param modelName The name of the model to use. Use `getModels()` to
+    /// obtain a list of available models.
+    /// @param userID The ID of the user performing the request.
+    /// @param threshold The threshold of how confident the model has to be to
+    /// give a positive liveness result.
+    ///
+    static inline void allocateRecognitionConfig(
+        ::sensory::api::v1::video::ValidateRecognitionRequest& request,
+        const std::string& modelName,
+        const std::string& userID,
+        const ::sensory::api::v1::video::RecognitionThreshold& threshold
+    ) {
+        // Create the initial config message. gRPC expects a dynamically
+        // allocated message and will free the pointer when exiting the scope
+        // of the request.
+        auto recognition_config =
+            new ::sensory::api::v1::video::ValidateRecognitionConfig;
+        recognition_config->set_modelname(modelName);
+        recognition_config->set_userid(userID);
+        recognition_config->set_threshold(threshold);
+        request.set_allocated_config(recognition_config);
+    }
+
     /// A type for face liveness validation streams.
     typedef std::unique_ptr<
         ::grpc::ClientReaderWriter<
@@ -532,25 +614,61 @@ class VideoService {
         // context?
         auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the initial config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto recognition_config =
-            new ::sensory::api::v1::video::ValidateRecognitionConfig;
-        recognition_config->set_modelname(modelName);
-        recognition_config->set_userid(userID);
-        recognition_config->set_threshold(threshold);
-
         // Create the request with the pointer to the allocated config.
         ::sensory::api::v1::video::ValidateRecognitionRequest request;
-        request.set_allocated_config(recognition_config);
-
+        allocateRecognitionConfig(request, modelName, userID, threshold);
         // Create the stream and write the initial configuration request.
         ValidateLivenessStream stream =
             recognitionStub->ValidateLiveness(context);
         stream->Write(request);
+
         return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `ValidateLiveness`
+    /// calls based on CompletionQueue event loops.
+    typedef AsyncReaderWriterCall<
+        VideoService<SecureCredentialStore>,
+        ::sensory::api::v1::video::ValidateRecognitionRequest,
+        ::sensory::api::v1::video::LivenessRecognitionResponse
+    > AsyncValidateLivenessCall;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// validating the liveness of an image stream.
+    ///
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
+    /// @param modelName The name of the model to use. Use `getModels()` to
+    /// obtain a list of available models.
+    /// @param userID The ID of the user performing the request.
+    /// @param threshold The threshold of how confident the model has to be to
+    /// give a positive liveness result.
+    /// @returns A bidirectional stream that can be used to send video data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the initial
+    /// `ValidateRecognitionConfig` message to the server.
+    ///
+    inline AsyncValidateLivenessCall* asyncValidateLiveness(
+        ::grpc::CompletionQueue* queue,
+        const std::string& modelName,
+        const std::string& userID,
+        const ::sensory::api::v1::video::RecognitionThreshold& threshold
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new AsyncValidateLivenessCall);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+        // Create the request with the pointer to the allocated config.
+        ::sensory::api::v1::video::ValidateRecognitionRequest request;
+        allocateRecognitionConfig(call->request, modelName, userID, threshold);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->rpc = recognitionStub->AsyncValidateLiveness(&call->context, queue, static_cast<void*>(call));
+
+        return call;
     }
 
     /// @brief A type for encapsulating data for asynchronous
@@ -576,8 +694,8 @@ class VideoService {
     /// the server.
     ///
     /// @details
-    /// This call will automatically send the initial `CreateEnrollmentConfig`
-    /// message to the server.
+    /// This call will automatically send the initial
+    /// `ValidateRecognitionConfig` message to the server.
     ///
     template<typename Reactor>
     inline void asyncValidateLiveness(Reactor* reactor,
@@ -588,16 +706,7 @@ class VideoService {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-        // Create the initial config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto recognition_config =
-            new ::sensory::api::v1::video::ValidateRecognitionConfig;
-        recognition_config->set_modelname(modelName);
-        recognition_config->set_userid(userID);
-        recognition_config->set_threshold(threshold);
-        // Update the request buffer in the reactor with the allocated config.
-        reactor->request.set_allocated_config(recognition_config);
+        allocateRecognitionConfig(reactor->request, modelName, userID, threshold);
         // Start the stream with the context in the reactor and a pointer to
         // reactor for callbacks.
         recognitionStub->async()->ValidateLiveness(&reactor->context, reactor);
