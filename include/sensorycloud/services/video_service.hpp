@@ -109,7 +109,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncUnaryCall<
+    typedef AsyncResponseReaderCall<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::GetModelsRequest,
         ::sensory::api::v1::video::GetModelsResponse
@@ -259,7 +259,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncBidiCall<
+    typedef AsyncReaderWriterCall<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::CreateEnrollmentRequest,
         ::sensory::api::v1::video::CreateEnrollmentResponse

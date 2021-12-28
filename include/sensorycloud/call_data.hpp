@@ -51,11 +51,11 @@ namespace sensory {
 /// private attributes of the structure. This allows instances of `Factory` to
 /// mutate to the structure while all external scopes are limited to the
 /// immutable interface exposed by the public accessor functions. Instances of
-/// `AsyncUnaryCall` are mutable within the scope of `Factory`, but immutable
-/// outside of the scope of `Factory`.
+/// `AsyncResponseReaderCall` are mutable within the scope of `Factory`, but
+/// immutable outside of the scope of `Factory`.
 ///
 template<typename Factory, typename Request, typename Response>
-struct AsyncUnaryCall {
+struct AsyncResponseReaderCall {
  private:
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
@@ -69,7 +69,7 @@ struct AsyncUnaryCall {
     std::unique_ptr<::grpc::ClientAsyncResponseReader<Response>> rpc;
 
     /// @brief Initialize a new call.
-    AsyncUnaryCall() { }
+    AsyncResponseReaderCall() { }
 
     /// @brief Create a copy of this object.
     ///
@@ -77,7 +77,7 @@ struct AsyncUnaryCall {
     ///
     /// @details
     /// This copy constructor is private to prevent the copying of this object
-    AsyncUnaryCall(const AsyncUnaryCall& other) = delete;
+    AsyncResponseReaderCall(const AsyncResponseReaderCall& other) = delete;
 
     /// @brief Assign to this object using the `=` operator.
     ///
@@ -86,7 +86,7 @@ struct AsyncUnaryCall {
     /// @details
     /// This assignment operator is private to prevent copying of this object.
     ///
-    void operator=(const AsyncUnaryCall& other) = delete;
+    void operator=(const AsyncResponseReaderCall& other) = delete;
 
     // Mark the Factory type as a friend to allow it to have write access to
     // the internal types. This allows the parent scope to have mutability, but
@@ -129,11 +129,11 @@ struct AsyncUnaryCall {
 /// private attributes of the structure. This allows instances of `Factory` to
 /// mutate to the structure while all external scopes are limited to the
 /// immutable interface exposed by the public accessor functions. Instances of
-/// `AsyncBidiCall` are mutable within the scope of `Factory`, but immutable
-/// outside of the scope of `Factory`.
+/// `AsyncReaderWriterCall` are mutable within the scope of `Factory`, but
+/// immutable outside of the scope of `Factory`.
 ///
 template<typename Factory, typename Request, typename Response>
-struct AsyncBidiCall {
+struct AsyncReaderWriterCall {
  private:
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
@@ -147,7 +147,7 @@ struct AsyncBidiCall {
     std::unique_ptr<::grpc::ClientAsyncReaderWriter<Request, Response>> rpc;
 
     /// @brief Initialize a new call.
-    AsyncBidiCall() { }
+    AsyncReaderWriterCall() { }
 
     /// @brief Create a copy of this object.
     ///
@@ -155,7 +155,7 @@ struct AsyncBidiCall {
     ///
     /// @details
     /// This copy constructor is private to prevent the copying of this object
-    AsyncBidiCall(const AsyncBidiCall& other) = delete;
+    AsyncReaderWriterCall(const AsyncReaderWriterCall& other) = delete;
 
     /// @brief Assign to this object using the `=` operator.
     ///
@@ -164,7 +164,7 @@ struct AsyncBidiCall {
     /// @details
     /// This assignment operator is private to prevent copying of this object.
     ///
-    void operator=(const AsyncBidiCall& other) = delete;
+    void operator=(const AsyncReaderWriterCall& other) = delete;
 
     // Mark the Factory type as a friend to allow it to have write access to
     // the internal types. This allows the parent scope to have mutability, but
