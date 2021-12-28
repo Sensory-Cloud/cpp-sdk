@@ -51,7 +51,7 @@ using sensory::service::OAuthService;
 /// Input data for the stream is provided by an OpenCV capture device.
 ///
 class OpenCVReactor :
-    public VideoService<SecureCredentialStore>::AuthorizeBidiReactor {
+    public VideoService<SecureCredentialStore>::AuthenticateBidiReactor {
  private:
     /// A flag determining whether the last sent frame was enrolled. This flag
     /// is atomic to support thread safe reads and writes.
@@ -67,7 +67,7 @@ class OpenCVReactor :
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
     OpenCVReactor() :
-        VideoService<SecureCredentialStore>::AuthorizeBidiReactor(),
+        VideoService<SecureCredentialStore>::AuthenticateBidiReactor(),
         isAuthenticated(false),
         isLive(false) { }
 
