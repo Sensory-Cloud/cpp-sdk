@@ -107,10 +107,6 @@ class ManagementService {
         return stub->GetEnrollments(&context, request, response);
     }
 
-
-
-
-
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls based on CompletionQueue event loops.
     typedef AsyncResponseReaderCall<
@@ -119,10 +115,38 @@ class ManagementService {
         ::sensory::api::v1::management::GetEnrollmentsResponse
     > GetEnrollmentsAsyncCall;
 
-
-
-
-
+    /// @brief Fetch a list of the current enrollments for the given userID
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param userID The ID of the user to fetch enrollments for.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    inline GetEnrollmentsAsyncCall* getEnrollments(
+        ::grpc::CompletionQueue* queue,
+        const std::string& userID
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new GetEnrollmentsAsyncCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_userid(userID);
+        call->rpc = stub->AsyncGetEnrollments(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
 
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls.
@@ -197,11 +221,6 @@ class ManagementService {
         return stub->DeleteEnrollment(&context, request, response);
     }
 
-
-
-
-
-
     /// @brief A type for encapsulating data for asynchronous `DeleteEnrollment`
     /// calls based on CompletionQueue event loops.
     typedef AsyncResponseReaderCall<
@@ -210,11 +229,38 @@ class ManagementService {
         ::sensory::api::v1::management::EnrollmentResponse
     > DeleteEnrollmentAsyncCall;
 
-
-
-
-
-
+    /// @brief Request the deletion of an enrollment.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param enrollmentID The ID of the enrollment to delete.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    inline DeleteEnrollmentAsyncCall* deleteEnrollment(
+        ::grpc::CompletionQueue* queue,
+        const std::string& enrollmentID
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new DeleteEnrollmentAsyncCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_id(enrollmentID);
+        call->rpc = stub->AsyncDeleteEnrollment(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollment` calls.
@@ -290,9 +336,6 @@ class ManagementService {
         return stub->GetEnrollmentGroups(&context, request, response);
     }
 
-
-
-
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls based on CompletionQueue event loops.
     typedef AsyncResponseReaderCall<
@@ -301,9 +344,39 @@ class ManagementService {
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse
     > GetEnrollmentGroupsAsyncCall;
 
-
-
-
+    /// @brief Fetch a list of the current enrollment groups owned by a given
+    /// userID.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param userID The ID of the user to fetch enrollment groups for.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    inline GetEnrollmentGroupsAsyncCall* getEnrollmentGroups(
+        ::grpc::CompletionQueue* queue,
+        const std::string& userID
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new GetEnrollmentGroupsAsyncCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_userid(userID);
+        call->rpc = stub->AsyncGetEnrollmentGroups(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls.
@@ -399,9 +472,6 @@ class ManagementService {
         return stub->CreateEnrollmentGroup(&context, request, response);
     }
 
-
-
-
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls based on CompletionQueue event loops.
     typedef AsyncResponseReaderCall<
@@ -410,9 +480,56 @@ class ManagementService {
         ::sensory::api::v1::management::EnrollmentGroupResponse
     > CreateEnrollmentGroupAsyncCall;
 
-
-
-
+    /// @brief Create a new group of enrollments that can be used for group
+    /// authentication.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param userID The ID of the user that owns the enrollment group.
+    /// @param groupID A unique group identifier for the enrollment group. If
+    /// empty, an ID will be automatically generated.
+    /// @param groupName A friendly display name to use for the enrollment
+    /// group.
+    /// @param description A description of the enrollment group.
+    /// @param modelName The name of the model that all enrollments in this
+    /// group will use.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    inline CreateEnrollmentGroupAsyncCall* createEnrollmentGroup(
+        ::grpc::CompletionQueue* queue,
+        const std::string& userID,
+        const std::string& groupID,
+        const std::string& groupName,
+        const std::string& description,
+        const std::string& modelName
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new CreateEnrollmentGroupAsyncCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_userid(userID);
+        call->request.set_id(
+            groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
+        );
+        call->request.set_name(groupName);
+        call->request.set_description(description);
+        call->request.set_modelname(modelName);
+        call->rpc = stub->AsyncCreateEnrollmentGroup(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls.
@@ -507,10 +624,6 @@ class ManagementService {
         return stub->AppendEnrollmentGroup(&context, request, response);
     }
 
-
-
-
-
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls based on CompletionQueue event loops.
     typedef AsyncResponseReaderCall<
@@ -519,9 +632,43 @@ class ManagementService {
         ::sensory::api::v1::management::EnrollmentGroupResponse
     > AppendEnrollmentGroupAsyncCall;
 
-
-
-
+    /// @brief Append enrollments to an existing enrollment group.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param groupID The ID of the enrollment group to append enrollments to.
+    /// @param enrollments A list of enrollment IDs to append to the enrollment
+    /// group.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    inline AppendEnrollmentGroupAsyncCall* appendEnrollmentGroup(
+        ::grpc::CompletionQueue* queue,
+        const std::string& groupID,
+        const std::vector<std::string>& enrollments
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new AppendEnrollmentGroupAsyncCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_groupid(groupID);
+        for (auto& enrollment: enrollments)
+            call->request.add_enrollmentids(enrollment);
+        call->rpc = stub->AsyncAppendEnrollmentGroup(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls.
@@ -598,10 +745,6 @@ class ManagementService {
         return stub->DeleteEnrollmentGroup(&context, request, response);
     }
 
-
-
-
-
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroup` calls based on CompletionQueue event loops.
     typedef AsyncResponseReaderCall<
@@ -610,9 +753,38 @@ class ManagementService {
         ::sensory::api::v1::management::EnrollmentGroupResponse
     > DeleteEnrollmentGroupAsyncCall;
 
-
-
-
+    /// @brief Request the deletion of enrollment groups.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param groupID The ID of the group to delete.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    inline DeleteEnrollmentGroupAsyncCall* deleteEnrollmentGroup(
+        ::grpc::CompletionQueue* queue,
+        const std::string& groupID
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new DeleteEnrollmentGroupAsyncCall);
+        config.setupUnaryClientContext(call->context, tokenManager);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_id(groupID);
+        call->rpc = stub->AsyncDeleteEnrollmentGroup(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroupRequest` calls.
