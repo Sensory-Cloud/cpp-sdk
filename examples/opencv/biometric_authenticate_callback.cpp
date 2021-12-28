@@ -304,7 +304,7 @@ int main(int argc, const char** argv) {
 
     // Create the stream.
     OpenCVReactor reactor;
-    videoService.asyncAuthenticate(&reactor, enrollmentID, isLivenessEnabled);
+    videoService.authenticate(&reactor, enrollmentID, isLivenessEnabled);
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd

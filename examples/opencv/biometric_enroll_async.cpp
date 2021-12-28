@@ -211,7 +211,7 @@ int main(int argc, const char** argv) {
     std::mutex frameMutex;
 
     // Create the enrollment stream.
-    auto stream = videoService.asyncCreateEnrollment(&queue,
+    auto stream = videoService.createEnrollment(&queue,
         videoModel,
         userID,
         description,

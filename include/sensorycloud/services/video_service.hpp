@@ -308,7 +308,7 @@ class VideoService {
     /// This call will automatically send the initial `CreateEnrollmentConfig`
     /// message to the server.
     ///
-    inline CreateEnrollmentAsyncCall* asyncCreateEnrollment(
+    inline CreateEnrollmentAsyncCall* createEnrollment(
         ::grpc::CompletionQueue* queue,
         const std::string& modelName,
         const std::string& userID,
@@ -361,7 +361,7 @@ class VideoService {
     /// message to the server.
     ///
     template<typename Reactor>
-    inline void asyncCreateEnrollment(Reactor* reactor,
+    inline void createEnrollment(Reactor* reactor,
         const std::string& modelName,
         const std::string& userID,
         const std::string& description = "",
@@ -479,7 +479,7 @@ class VideoService {
     /// This call will automatically send the initial `CreateEnrollmentConfig`
     /// message to the server.
     ///
-    inline AuthenticateAsyncCall* asyncAuthenticate(
+    inline AuthenticateAsyncCall* authenticate(
         ::grpc::CompletionQueue* queue,
         const std::string& enrollmentID,
         const bool& isLivenessEnabled = false,
@@ -527,7 +527,7 @@ class VideoService {
     /// message to the server.
     ///
     template<typename Reactor>
-    inline void asyncAuthenticate(Reactor* reactor,
+    inline void authenticate(Reactor* reactor,
         const std::string& enrollmentID,
         const bool& isLivenessEnabled = false,
         const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold =
@@ -641,7 +641,7 @@ class VideoService {
     /// This call will automatically send the initial
     /// `ValidateRecognitionConfig` message to the server.
     ///
-    inline ValidateLivenessAsyncCall* asyncValidateLiveness(
+    inline ValidateLivenessAsyncCall* validateLiveness(
         ::grpc::CompletionQueue* queue,
         const std::string& modelName,
         const std::string& userID,
@@ -686,7 +686,7 @@ class VideoService {
     /// `ValidateRecognitionConfig` message to the server.
     ///
     template<typename Reactor>
-    inline void asyncValidateLiveness(Reactor* reactor,
+    inline void validateLiveness(Reactor* reactor,
         const std::string& modelName,
         const std::string& userID,
         const ::sensory::api::v1::video::RecognitionThreshold& threshold

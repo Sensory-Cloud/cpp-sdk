@@ -319,7 +319,7 @@ int main(int argc, const char** argv) {
 
     // Create the stream.
     OpenCVReactor reactor;
-    videoService.asyncCreateEnrollment(&reactor,
+    videoService.createEnrollment(&reactor,
         videoModel,
         userID,
         description,

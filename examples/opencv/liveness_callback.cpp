@@ -305,7 +305,7 @@ int main(int argc, const char** argv) {
 
     // Create the stream.
     OpenCVReactor reactor;
-    videoService.asyncValidateLiveness(&reactor, videoModel, userID,
+    videoService.validateLiveness(&reactor, videoModel, userID,
         sensory::api::v1::video::RecognitionThreshold::LOW);
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
