@@ -206,6 +206,9 @@ target_link_libraries(management PRIVATE sensorycloud)
 add_executable(management_callback examples/management_callback.cpp)
 target_link_libraries(management_callback PRIVATE sensorycloud)
 
+add_executable(management_async examples/management_async.cpp)
+target_link_libraries(management_async PRIVATE sensorycloud)
+
 # ----- Video Examples -------------------------------------------------------
 
 find_package(OpenCV REQUIRED)
