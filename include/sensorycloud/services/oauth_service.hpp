@@ -123,6 +123,65 @@ class OAuthService {
         return deviceStub->EnrollDevice(&context, request, response);
     }
 
+    /// @brief A type for encapsulating data for asynchronous `GetToken` calls
+    /// based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        OAuthService,
+        ::sensory::api::v1::management::EnrollDeviceRequest,
+        ::sensory::api::v1::management::DeviceResponse
+    > RegisterDeviceAsyncCall;
+
+    /// @brief Register a new device with the Sensory Cloud service.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param name The friendly name of the device that is being registered.
+    /// @param credential A credential string to authenticate that this device
+    /// is allowed to register.
+    /// @param clientID The client ID to use for OAuth token generation.
+    /// @param clientSecret The client secret to use for OAuth token generation.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
+    ///
+    /// @details
+    /// The credential string authenticates that this device is allowed to
+    /// register. Depending on the server configuration the credential string
+    /// may be one of multiple values:
+    /// -   An empty string if no authentication is configured on the server,
+    /// -   a shared secret (password), or
+    /// -   a signed JWT.
+    ///
+    inline RegisterDeviceAsyncCall* registerDevice(
+        ::grpc::CompletionQueue* queue,
+        const std::string& name,
+        const std::string& credential,
+        const std::string& clientID,
+        const std::string& clientSecret
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new RegisterDeviceAsyncCall);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_deviceid(config.getDeviceID());
+        call->request.set_tenantid(config.getTenantID());
+        call->request.set_name(name);
+        call->request.set_credential(credential);
+        auto clientRequest = new ::sensory::api::common::GenericClient;
+        clientRequest->set_clientid(clientID);
+        clientRequest->set_secret(clientSecret);
+        call->request.set_allocated_client(clientRequest);
+        call->rpc = deviceStub->AsyncEnrollDevice(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
+
     /// @brief A type for encapsulating data for asynchronous `EnrollDevice`
     /// calls.
     typedef ::sensory::CallData<
@@ -170,6 +229,10 @@ class OAuthService {
         call->request.set_tenantid(config.getTenantID());
         call->request.set_name(name);
         call->request.set_credential(credential);
+        auto clientRequest = new ::sensory::api::common::GenericClient;
+        clientRequest->set_clientid(clientID);
+        clientRequest->set_secret(clientSecret);
+        call->request.set_allocated_client(clientRequest);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
         deviceStub->async()->EnrollDevice(
@@ -197,7 +260,7 @@ class OAuthService {
     /// @param clientSecret The client secret to use for OAuth token generation.
     /// @returns The status of the synchronous gRPC call.
     ///
-    ::grpc::Status getToken(
+    inline ::grpc::Status getToken(
         ::sensory::api::common::TokenResponse* response,
         const std::string& clientID,
         const std::string& clientSecret
@@ -211,6 +274,45 @@ class OAuthService {
         request.set_secret(clientSecret);
         // Execute the remote procedure call synchronously
         return oauthStub->GetToken(&context, request, response);
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `GetToken` calls
+    /// based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        OAuthService,
+        ::sensory::api::oauth::TokenRequest,
+        ::sensory::api::common::TokenResponse
+    > GetTokenAsyncCall;
+
+    /// @brief Request a new OAuth token from the server.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param response The token response to store the result of the RPC into.
+    /// @param clientID The client ID to use for OAuth token generation.
+    /// @param clientSecret The client secret to use for OAuth token generation.
+    /// @returns The status of the synchronous gRPC call.
+    ///
+    inline GetTokenAsyncCall* getToken(::grpc::CompletionQueue* queue,
+        const std::string& clientID,
+        const std::string& clientSecret
+    ) {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new GetTokenAsyncCall);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_clientid(clientID);
+        call->request.set_secret(clientSecret);
+        call->rpc = oauthStub->AsyncGetToken(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetToken` calls.
@@ -230,7 +332,7 @@ class OAuthService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetTokenCallData> asyncGetToken(
+    inline std::shared_ptr<GetTokenCallData> getToken(
         const std::string& clientID,
         const std::string& clientSecret,
         const Callback& callback
