@@ -406,7 +406,7 @@ int main(int argc, const char** argv) {
         // Initialize the stream with the reactor for callbacks, given audio
         // model, the sample rate of the audio and the expected language. A
         // user ID is also necessary to detect audio events.
-        audioService.asyncValidateTrigger(&validateTriggerReactor,
+        audioService.validateTrigger(&validateTriggerReactor,
             "wakeword-16kHz-alexa.trg",
             SAMPLE_RATE,
             "en-US",
@@ -437,7 +437,7 @@ int main(int argc, const char** argv) {
         // Initialize the stream with the reactor for callbacks, given audio model,
         // the sample rate of the audio and the expected language. A user ID is also
         // necessary to transcribe audio.
-        audioService.asyncTranscribeAudio(&reactor,
+        audioService.transcribeAudio(&reactor,
             "vad-lvcsr-broad-enUS-2.3.0.snsr",
             SAMPLE_RATE,
             "en-US",

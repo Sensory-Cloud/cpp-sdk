@@ -303,7 +303,7 @@ int main(int argc, const char** argv) {
     // Initialize the stream with the reactor for callbacks, given audio model,
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to detect audio events.
-    audioService.asyncValidateTrigger(&reactor,
+    audioService.validateTrigger(&reactor,
         audioModel,
         SAMPLE_RATE,
         "en-US",

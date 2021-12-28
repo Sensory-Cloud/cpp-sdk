@@ -465,7 +465,7 @@ class AudioService {
     /// number of uttered phrases that must be emitted to authenticate.
     ///
     template<typename Reactor>
-    inline void asyncCreateEnrollment(Reactor* reactor,
+    inline void createEnrollment(Reactor* reactor,
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& languageCode,
@@ -669,7 +669,7 @@ class AudioService {
     /// message to the server.
     ///
     template<typename Reactor>
-    inline void asyncAuthenticate(Reactor* reactor,
+    inline void authenticate(Reactor* reactor,
         const std::string& enrollmentID,
         const int32_t& sampleRate,
         const std::string& languageCode,
@@ -851,7 +851,7 @@ class AudioService {
     /// message to the server.
     ///
     template<typename Reactor>
-    inline void asyncValidateTrigger(Reactor* reactor,
+    inline void validateTrigger(Reactor* reactor,
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& languageCode,
@@ -1020,7 +1020,7 @@ class AudioService {
     /// message to the server.
     ///
     template<typename Reactor>
-    inline void asyncTranscribeAudio(Reactor* reactor,
+    inline void transcribeAudio(Reactor* reactor,
         const std::string& modelName,
         const int32_t& sampleRate,
         const std::string& languageCode,

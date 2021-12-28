@@ -285,7 +285,7 @@ int main(int argc, const char** argv) {
     // Initialize the stream with the reactor for callbacks, given audio model,
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to transcribe audio.
-    audioService.asyncTranscribeAudio(&reactor,
+    audioService.transcribeAudio(&reactor,
         MODEL,
         buffer.getSampleRate(),
         "en-US",

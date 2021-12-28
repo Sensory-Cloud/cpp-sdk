@@ -340,7 +340,7 @@ int main(int argc, const char** argv) {
     // necessary to detect audio events. An optional description can provide a
     // human readable explanation of the enrollment. For some models, an
     // optional liveness check may also be conducted during the enrollment.
-    audioService.asyncCreateEnrollment(&reactor,
+    audioService.createEnrollment(&reactor,
         audioModel,
         sampleRate,
         "en-US",
