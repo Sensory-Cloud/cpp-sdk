@@ -27,54 +27,54 @@
 #include <catch2/catch.hpp>
 #include "sensorycloud/token_manager/secure_credential_store.hpp"
 
-SCENARIO("a user wants to securely store credentials on disk") {
-    GIVEN("an application ID") {
-        const std::string package("com.sensory.test");
-        sensory::token_manager::SecureCredentialStore store(package);
-        WHEN("contains is called with a non-existent key") {
-            THEN("false is returned") {
-                REQUIRE_FALSE(store.contains("foo"));
-            }
-        }
-        WHEN("erase is called with a non-existent key") {
-            THEN("no error occurs") {
-                store.erase("non-existent-key");
-            }
-        }
-        WHEN("at is called with a non-existent key") {
-            THEN("an empty string is returned") {
-                REQUIRE("" == store.at("non-existent-key"));
-            }
-        }
-        WHEN("a key-value pair is inserted into the secure store") {
-            store.emplace("foo", "bar");
-            THEN("contains returns true") {
-                REQUIRE(store.contains("foo"));
-            }
-            THEN("at returns the value") {
-                REQUIRE("bar" == store.at("foo"));
-            }
-            THEN("emplace overwrites the key-value pair") {
-                store.emplace("foo", "zar");
-                REQUIRE("zar" == store.at("foo"));
-            }
-            THEN("erase removes the key from the store") {
-                store.erase("foo");
-                REQUIRE_FALSE(store.contains("foo"));
-            }
-        }
-        WHEN("a key store is initialized from a persistent state") {
-            const std::string package("com.sensory.test");
-            {  // Write the key-value pair within a constrained scope.
-                sensory::token_manager::SecureCredentialStore store(package);
-                store.emplace("foo", "bar");
-            }
-            THEN("previously created keys are detected") {
-                sensory::token_manager::SecureCredentialStore store(package);
-                REQUIRE(store.contains("foo"));
-                REQUIRE("bar" == store.at("foo"));
-                store.erase("foo");
-            }
-        }
-    }
-}
+// SCENARIO("a user wants to securely store credentials on disk") {
+//     GIVEN("an application ID") {
+//         const std::string package("com.sensory.test");
+//         sensory::token_manager::SecureCredentialStore store(package);
+//         WHEN("contains is called with a non-existent key") {
+//             THEN("false is returned") {
+//                 REQUIRE_FALSE(store.contains("foo"));
+//             }
+//         }
+//         WHEN("erase is called with a non-existent key") {
+//             THEN("no error occurs") {
+//                 store.erase("non-existent-key");
+//             }
+//         }
+//         WHEN("at is called with a non-existent key") {
+//             THEN("an empty string is returned") {
+//                 REQUIRE("" == store.at("non-existent-key"));
+//             }
+//         }
+//         WHEN("a key-value pair is inserted into the secure store") {
+//             store.emplace("foo", "bar");
+//             THEN("contains returns true") {
+//                 REQUIRE(store.contains("foo"));
+//             }
+//             THEN("at returns the value") {
+//                 REQUIRE("bar" == store.at("foo"));
+//             }
+//             THEN("emplace overwrites the key-value pair") {
+//                 store.emplace("foo", "zar");
+//                 REQUIRE("zar" == store.at("foo"));
+//             }
+//             THEN("erase removes the key from the store") {
+//                 store.erase("foo");
+//                 REQUIRE_FALSE(store.contains("foo"));
+//             }
+//         }
+//         WHEN("a key store is initialized from a persistent state") {
+//             const std::string package("com.sensory.test");
+//             {  // Write the key-value pair within a constrained scope.
+//                 sensory::token_manager::SecureCredentialStore store(package);
+//                 store.emplace("foo", "bar");
+//             }
+//             THEN("previously created keys are detected") {
+//                 sensory::token_manager::SecureCredentialStore store(package);
+//                 REQUIRE(store.contains("foo"));
+//                 REQUIRE("bar" == store.at("foo"));
+//                 store.erase("foo");
+//             }
+//         }
+//     }
+// }

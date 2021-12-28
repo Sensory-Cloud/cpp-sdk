@@ -33,7 +33,7 @@
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
@@ -54,12 +54,18 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        DEVICE_ID
     );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
@@ -85,8 +91,7 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -119,7 +124,7 @@ int main(int argc, const char** argv) {
 
     // Query this user's active enrollments
     std::cout << "Active enrollments:" << std::endl;
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore> mgmtService(config, tokenManager);
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore> mgmtService(config, tokenManager);
     sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
     status = mgmtService.getEnrollments(&enrollmentResponse, userID);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -167,7 +172,7 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream
-    sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
+    sensory::service::VideoService<sensory::token_manager::InsecureCredentialStore>
         videoService(config, tokenManager);
     auto stream = videoService.authenticate(
         enrollmentID,

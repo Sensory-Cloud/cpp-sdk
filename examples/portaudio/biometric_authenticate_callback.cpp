@@ -31,11 +31,11 @@
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 using sensory::token_manager::TokenManager;
-using sensory::token_manager::SecureCredentialStore;
+using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
@@ -59,7 +59,7 @@ inline int describe_pa_error(const PaError& err) {
 /// Input data for the stream is provided by a PortAudio capture device.
 ///
 class PortAudioReactor :
-    public AudioService<SecureCredentialStore>::AuthenticateBidiReactor {
+    public AudioService<InsecureCredentialStore>::AuthenticateBidiReactor {
  private:
     /// The capture device that input audio is streaming in from.
     PaStream* capture;
@@ -91,7 +91,7 @@ class PortAudioReactor :
         uint32_t sampleRate_ = 16000,
         uint32_t framesPerBlock_ = 4096
     ) :
-        AudioService<SecureCredentialStore>::AuthenticateBidiReactor(),
+        AudioService<InsecureCredentialStore>::AuthenticateBidiReactor(),
         capture(capture_),
         numChannels(numChannels_),
         sampleSize(sampleSize_),
@@ -147,12 +147,18 @@ class PortAudioReactor :
 };
 
 int main(int argc, const char** argv) {
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        DEVICE_ID
     );
 
     // Query the health of the remote service.
@@ -178,8 +184,7 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     OAuthService oauthService(config);
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
@@ -213,7 +218,7 @@ int main(int argc, const char** argv) {
 
     // ------ Fetch the metadata about the enrollment --------------------------
 
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>
         mgmtService(config, tokenManager);
 
     // Query this user's active enrollments
@@ -270,7 +275,7 @@ int main(int argc, const char** argv) {
     // ------ Create the audio service -----------------------------------------
 
     // Create the audio service based on the configuration and token manager.
-    AudioService<SecureCredentialStore> audioService(config, tokenManager);
+    AudioService<InsecureCredentialStore> audioService(config, tokenManager);
 
     // the sample rate of the input audio stream. This should match the sample
     // rate of the selected model

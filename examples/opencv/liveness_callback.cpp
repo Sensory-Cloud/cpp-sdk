@@ -31,14 +31,14 @@
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 
 using sensory::token_manager::TokenManager;
-using sensory::token_manager::SecureCredentialStore;
+using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::VideoService;
 using sensory::service::OAuthService;
@@ -60,7 +60,7 @@ enum class FaceAlignment : int {
 /// Input data for the stream is provided by an OpenCV capture device.
 ///
 class OpenCVReactor :
-    public VideoService<SecureCredentialStore>::ValidateLivenessBidiReactor {
+    public VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor {
  private:
     /// A flag determining whether the last sent frame was detected as live.
     std::atomic<bool> isLive;
@@ -75,7 +75,7 @@ class OpenCVReactor :
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
     OpenCVReactor() :
-        VideoService<SecureCredentialStore>::ValidateLivenessBidiReactor(),
+        VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor(),
         isLive(false),
         alignmentCode(FaceAlignment::Valid) { }
 
@@ -191,12 +191,18 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        DEVICE_ID
     );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
@@ -228,8 +234,7 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     OAuthService oauthService(config);
-    SecureCredentialStore keychain("com.sensory.cloud");
-    TokenManager<SecureCredentialStore> tokenManager(oauthService, keychain);
+    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -263,13 +268,13 @@ int main(int argc, const char** argv) {
     // ------ Create the video service -----------------------------------------
 
     // Create the video service based on the configuration and token manager.
-    VideoService<SecureCredentialStore>
+    VideoService<InsecureCredentialStore>
         videoService(config, tokenManager);
 
     // ------ Query the available video models ---------------------------------
 
     std::cout << "Available video models:" << std::endl;
-    videoService.getModels([](VideoService<SecureCredentialStore>::GetModelsCallData* call) {
+    videoService.getModels([](VideoService<InsecureCredentialStore>::GetModelsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get video models with\n\t" <<
                 call->getStatus().error_code() << ": " <<

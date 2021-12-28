@@ -31,7 +31,7 @@
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 int describe_pa_error(const PaError& err) {
@@ -42,12 +42,18 @@ int describe_pa_error(const PaError& err) {
 }
 
 int main(int argc, const char** argv) {
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        DEVICE_ID
     );
 
     // Query the health of the remote service.
@@ -72,8 +78,7 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
@@ -105,9 +110,9 @@ int main(int argc, const char** argv) {
         }
     }
 
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>
         mgmtService(config, tokenManager);
-    sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>
+    sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore>
         audioService(config, tokenManager);
 
     // Query this user's active enrollments

@@ -30,14 +30,14 @@
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
 #include <sensorycloud/services/audio_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include "audio_buffer.hpp"
 #include "argparse.hpp"
 #include "tqdm.hpp"
 
 using sensory::token_manager::TokenManager;
-using sensory::token_manager::SecureCredentialStore;
+using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
@@ -46,7 +46,7 @@ using sensory::service::OAuthService;
 /// stream data.
 ///
 class AudioFileReactor :
-    public AudioService<SecureCredentialStore>::TranscribeBidiReactor {
+    public AudioService<InsecureCredentialStore>::TranscribeBidiReactor {
  private:
     /// The audio samples to transcribe to text.
     const std::vector<int16_t>& buffer;
@@ -82,7 +82,7 @@ class AudioFileReactor :
         uint32_t framesPerBlock_ = 4096,
         const bool& verbose_ = false
     ) :
-        AudioService<SecureCredentialStore>::TranscribeBidiReactor(),
+        AudioService<InsecureCredentialStore>::TranscribeBidiReactor(),
         buffer(buffer_),
         numChannels(numChannels_),
         sampleRate(sampleRate_),
@@ -200,8 +200,12 @@ int main(int argc, const char** argv) {
     const auto VERBOSE = args.get<bool>("verbose");
     // The number of audio samples per frame sent to the server.
     const uint32_t SAMPLES_PER_FRAME = 4096;
-    // The unique identifier of the device
-    const auto DEVICE_ID = "D895F447-91E8-486F-A783-6E3A33E4C7C5";
+
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
 
     // Initialize the configuration for the service.
     sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID);
@@ -218,8 +222,7 @@ int main(int argc, const char** argv) {
 
     // Create an OAuth service
     OAuthService oauthService(config);
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
@@ -254,7 +257,7 @@ int main(int argc, const char** argv) {
     // ------ Create the audio service -----------------------------------------
 
     // Create the audio service based on the configuration and token manager.
-    AudioService<SecureCredentialStore> audioService(config, tokenManager);
+    AudioService<InsecureCredentialStore> audioService(config, tokenManager);
 
     // Load the audio file and zero pad the buffer with 300ms of silence.
     AudioBuffer buffer;
