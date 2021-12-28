@@ -106,7 +106,6 @@ class HealthService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    template<typename Callback>
     inline GetHealthAsyncCall* getHealth(::grpc::CompletionQueue* queue) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
