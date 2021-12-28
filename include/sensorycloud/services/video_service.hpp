@@ -301,8 +301,11 @@ class VideoService {
     /// check.
     /// @param livenessThreshold The liveness threshold for the optional
     /// liveness check.
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     /// @details
     /// This call will automatically send the initial `CreateEnrollmentConfig`
@@ -472,8 +475,11 @@ class VideoService {
     /// authentication, `false` to only perform the authentication.
     /// @param livenessThreshold The liveness threshold for the optional
     /// liveness check.
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     /// @details
     /// This call will automatically send the initial `CreateEnrollmentConfig`
@@ -634,8 +640,11 @@ class VideoService {
     /// @param userID The ID of the user performing the request.
     /// @param threshold The threshold of how confident the model has to be to
     /// give a positive liveness result.
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     /// @details
     /// This call will automatically send the initial

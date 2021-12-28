@@ -140,7 +140,11 @@ class OAuthService {
     /// @param clientID The client ID to use for OAuth token generation.
     /// @param clientSecret The client secret to use for OAuth token generation.
     /// @param callback The callback to execute when the response arrives.
-    /// @returns A pointer to the asynchronous call spawned by this call.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     /// @details
     /// The credential string authenticates that this device is allowed to
@@ -290,7 +294,11 @@ class OAuthService {
     /// @param response The token response to store the result of the RPC into.
     /// @param clientID The client ID to use for OAuth token generation.
     /// @param clientSecret The client secret to use for OAuth token generation.
-    /// @returns The status of the synchronous gRPC call.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     inline GetTokenAsyncCall* getToken(::grpc::CompletionQueue* queue,
         const std::string& clientID,

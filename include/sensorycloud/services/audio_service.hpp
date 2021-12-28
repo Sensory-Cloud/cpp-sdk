@@ -349,8 +349,11 @@ class AudioService {
     /// @param numUtterances The number of utterances that should be required
     /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
     ///
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
     /// are both specified. For _text-independent_ models, an enrollment
@@ -600,8 +603,11 @@ class AudioService {
     /// @param langaugeCode The language code of the audio stream.
     /// @param isLivenessEnabled `true` to perform a liveness check before the
     /// authentication, `false` to only perform the authentication.
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     inline AuthenticateAsyncCall* authenticate(
         ::grpc::CompletionQueue* queue,
@@ -786,8 +792,11 @@ class AudioService {
     /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param sensitivity How sensitive the model should be to false accepts.
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     inline ValidateEventAsyncCall* validateTrigger(
         ::grpc::CompletionQueue* queue,
@@ -959,8 +968,11 @@ class AudioService {
     /// @param sampleRate The sample rate of the audio stream.
     /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
-    /// @returns A bidirectional stream that can be used to send video data to
-    /// the server.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
     ///
     inline TranscribeAsyncCall* transcribeAudio(
         ::grpc::CompletionQueue* queue,
