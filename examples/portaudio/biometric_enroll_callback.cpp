@@ -205,7 +205,7 @@ int main(int argc, const char** argv) {
         std::cin >> password;
 
         // Register this device with the remote host
-        oauthService.asyncRegisterDevice(
+        oauthService.registerDevice(
             name,
             password,
             credentials.id,

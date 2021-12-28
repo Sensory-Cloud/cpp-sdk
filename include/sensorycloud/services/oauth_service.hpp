@@ -152,7 +152,7 @@ class OAuthService {
     /// -   a signed JWT.
     ///
     template<typename Callback>
-    inline std::shared_ptr<RegisterDeviceCallData> asyncRegisterDevice(
+    inline std::shared_ptr<RegisterDeviceCallData> registerDevice(
         const std::string& name,
         const std::string& credential,
         const std::string& clientID,
