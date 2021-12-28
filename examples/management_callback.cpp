@@ -30,7 +30,7 @@
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 /// @brief Print help about the application to the console.
@@ -72,7 +72,7 @@ void check_health(const sensory::service::HealthService& healthService) {
 ///
 int login(
     sensory::service::OAuthService& oauthService,
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>& tokenManager
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>& tokenManager
 ) {
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -114,12 +114,12 @@ int login(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 void get_enrollments(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
     mgmtService.getEnrollments(
         userID,
-        [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::GetEnrollmentsCallData* call) {
+        [](sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>::GetEnrollmentsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get enrollments with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -153,12 +153,12 @@ void get_enrollments(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 void delete_enrollment(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& enrollmentID
 ) {
     mgmtService.deleteEnrollment(
         enrollmentID,
-        [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::DeleteEnrollmentCallData* call) {
+        [](sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>::DeleteEnrollmentCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to delete enrollment with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -173,12 +173,12 @@ void delete_enrollment(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 void get_enrollment_groups(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
     mgmtService.getEnrollmentGroups(
         userID,
-        [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::GetEnrollmentGroupsCallData* call) {
+        [](sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>::GetEnrollmentGroupsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get enrollment groups with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -211,7 +211,7 @@ void get_enrollment_groups(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 void create_enrollment_group(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
     // Get the name of the group from the command line.
@@ -233,7 +233,7 @@ void create_enrollment_group(
         groupName,
         description,
         modelName,
-        [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::CreateEnrollmentGroupCallData* call) {
+        [](sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>::CreateEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to create enrollment group with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -250,14 +250,14 @@ void create_enrollment_group(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 void append_enrollment_group(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& groupID,
     const std::vector<std::string>& enrollments
 ) {
     mgmtService.appendEnrollmentGroup(
         groupID,
         enrollments,
-        [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::AppendEnrollmentGroupCallData* call) {
+        [](sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>::AppendEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to append enrollment group with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -273,12 +273,12 @@ void append_enrollment_group(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 void delete_enrollment_group(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& groupID
 ) {
     mgmtService.deleteEnrollmentGroup(
         groupID,
-        [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::DeleteEnrollmentGroupCallData* call) {
+        [](sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>::DeleteEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to delete enrollment group with\n\t" <<
                 call->getStatus().error_code() << ": " <<
@@ -288,25 +288,30 @@ void delete_enrollment_group(
 }
 
 int main() {
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        DEVICE_ID
     );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
     // Create the OAuth service for requesting tokens from the server.
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
     login(oauthService, tokenManager);
     // Create the health service for query health information from the server.
     sensory::service::HealthService healthService(config);
     // Create the management service for fetching and updating enrollments and
     // enrollment groups.
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore> mgmtService(config, tokenManager);
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore> mgmtService(config, tokenManager);
 
     std::string cmd = "";
     while (cmd != "quit") {  // Run the CLI until the `quit` command is input.

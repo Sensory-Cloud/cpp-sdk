@@ -30,7 +30,7 @@
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
-#include <sensorycloud/token_manager/secure_credential_store.hpp>
+#include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
 
 /// @brief Print help about the application to the console.
@@ -74,7 +74,7 @@ int check_health(const sensory::Config& config) {
 ///
 int login(
     sensory::service::OAuthService& oauthService,
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>& tokenManager
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>& tokenManager
 ) {
     if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
@@ -116,7 +116,7 @@ int login(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int get_enrollments(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
     sensory::api::v1::management::GetEnrollmentsResponse rsp;
@@ -155,7 +155,7 @@ int get_enrollments(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int delete_enrollment(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& enrollmentID
 ) {
     sensory::api::v1::management::EnrollmentResponse rsp;
@@ -174,7 +174,7 @@ int delete_enrollment(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int get_enrollment_groups(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
     sensory::api::v1::management::GetEnrollmentGroupsResponse rsp;
@@ -212,7 +212,7 @@ int get_enrollment_groups(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int create_enrollment_group(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
     // Get the name of the group from the command line.
@@ -246,7 +246,7 @@ int create_enrollment_group(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int append_enrollment_group(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& groupID,
     const std::vector<std::string>& enrollments
 ) {
@@ -267,7 +267,7 @@ int append_enrollment_group(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int delete_enrollment_group(
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore>& mgmtService,
     const std::string& groupID
 ) {
     sensory::api::v1::management::EnrollmentGroupResponse rsp;
@@ -281,23 +281,28 @@ int delete_enrollment_group(
 }
 
 int main() {
+    // Create an insecure credential store for keeping OAuth credentials in.
+    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    if (!keychain.contains("deviceID"))
+        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
+    const auto DEVICE_ID(keychain.at("deviceID"));
+
     // Initialize the configuration to the host for given address and port
     sensory::Config config(
         "io.stage.cloud.sensory.com",
         443,
         "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        "D895F447-91E8-486F-A783-6E3A33E4C7C5"
+        DEVICE_ID
     );
     std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
 
     // Create the OAuth service for requesting tokens from the server.
-    sensory::token_manager::SecureCredentialStore keychain("com.sensory.cloud");
     sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore> tokenManager(oauthService, keychain);
+    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
     login(oauthService, tokenManager);
     // Create the management service for fetching and updating enrollments and
     // enrollment groups.
-    sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore> mgmtService(config, tokenManager);
+    sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore> mgmtService(config, tokenManager);
 
     std::string cmd = "";
     while (cmd != "quit") {  // Run the CLI until the `quit` command is input.
