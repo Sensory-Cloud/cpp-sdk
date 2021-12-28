@@ -25,10 +25,10 @@
 #include <vector>
 #define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
-// #define DR_FLAC_IMPLEMENTATION
-// #include "dr_flac.h"
-// #define DR_MP3_IMPLEMENTATION
-// #include "dr_mp3.h"
+#define DR_FLAC_IMPLEMENTATION
+#include "dr_flac.h"
+#define DR_MP3_IMPLEMENTATION
+#include "dr_mp3.h"
 
 /// @brief Extract the file extension from the given path.
 ///
@@ -157,51 +157,51 @@ struct AudioBuffer {
         return LoadStatus::Success;
     }
 
-    // /// @brief Load the given file into the sample player.
-    // ///
-    // /// @param file_path the path of the file to load
-    // /// @details
-    // /// https://mackron.github.io/dr_flac
-    // ///
-    // inline LoadStatus loadFLAC(const std::string& file_path) {
-    //     // Load the file metadata structure.
-    //     drflac* file = drflac_open_file(file_path.c_str(), NULL);
-    //     if (file == nullptr)
-    //         return LoadStatus::InvalidFile;
-    //     sample_rate = file->sampleRate;
-    //     channels = file->channels;
-    //     bit_depth = file->bitsPerSample;
-    //     // Load the samples into 32-bit floating point container
-    //     samples.resize(file->totalPCMFrameCount * file->channels);
-    //     drflac_read_pcm_frames_f32(file, file->totalPCMFrameCount, samples.data());
-    //     // Cleanup and release operating system resources.
-    //     drflac_close(file);
-    //     path = file_path;
-    //     return LoadStatus::Success;
-    // }
+    /// @brief Load the given file into the sample player.
+    ///
+    /// @param file_path the path of the file to load
+    /// @details
+    /// https://mackron.github.io/dr_flac
+    ///
+    inline LoadStatus loadFLAC(const std::string& file_path) {
+        // Load the file metadata structure.
+        drflac* file = drflac_open_file(file_path.c_str(), NULL);
+        if (file == nullptr)
+            return LoadStatus::InvalidFile;
+        sample_rate = file->sampleRate;
+        channels = file->channels;
+        bit_depth = file->bitsPerSample;
+        // Load the samples into 32-bit floating point container
+        samples.resize(file->totalPCMFrameCount * file->channels);
+        drflac_read_pcm_frames_s16(file, file->totalPCMFrameCount, samples.data());
+        // Cleanup and release operating system resources.
+        drflac_close(file);
+        path = file_path;
+        return LoadStatus::Success;
+    }
 
-    // /// @brief Load the given file into the sample player.
-    // ///
-    // /// @param file_path the path of the file to load
-    // /// @details
-    // /// https://github.com/mackron/dr_libs/blob/master/dr_mp3.h
-    // ///
-    // inline LoadStatus loadMP3(const std::string& file_path) {
-    //     // Load the file metadata structure.
-    //     drmp3 file;
-    //     if (!drmp3_init_file(&file, file_path.c_str(), NULL))
-    //         return LoadStatus::InvalidFile;
-    //     sample_rate = file.sampleRate;
-    //     channels = file.channels;
-    //     bit_depth = 16;
-    //     // Load the samples into 32-bit floating point container
-    //     samples.resize(drmp3_get_pcm_frame_count(&file) * file.channels);
-    //     drmp3_read_pcm_frames_f32(&file, drmp3_get_pcm_frame_count(&file), samples.data());
-    //     // Cleanup and release operating system resources.
-    //     drmp3_uninit(&file);
-    //     path = file_path;
-    //     return LoadStatus::Success;
-    // }
+    /// @brief Load the given file into the sample player.
+    ///
+    /// @param file_path the path of the file to load
+    /// @details
+    /// https://github.com/mackron/dr_libs/blob/master/dr_mp3.h
+    ///
+    inline LoadStatus loadMP3(const std::string& file_path) {
+        // Load the file metadata structure.
+        drmp3 file;
+        if (!drmp3_init_file(&file, file_path.c_str(), NULL))
+            return LoadStatus::InvalidFile;
+        sample_rate = file.sampleRate;
+        channels = file.channels;
+        bit_depth = 16;
+        // Load the samples into 32-bit floating point container
+        samples.resize(drmp3_get_pcm_frame_count(&file) * file.channels);
+        drmp3_read_pcm_frames_s16(&file, drmp3_get_pcm_frame_count(&file), samples.data());
+        // Cleanup and release operating system resources.
+        drmp3_uninit(&file);
+        path = file_path;
+        return LoadStatus::Success;
+    }
 
     /// @brief Load the given file into the sample player.
     ///
@@ -222,10 +222,10 @@ struct AudioBuffer {
         // Load the file based on the extension.
         if (extension.compare("wav") == 0)
             return loadWAV(file);
-        // else if (extension.compare("flac") == 0)
-        //     return loadFLAC(file);
-        // else if (extension.compare("mp3") == 0)
-        //     return loadMP3(file);
+        else if (extension.compare("flac") == 0)
+            return loadFLAC(file);
+        else if (extension.compare("mp3") == 0)
+            return loadMP3(file);
         else  // unsupported file-type
             return LoadStatus::InvalidExtension;
     }
