@@ -344,5 +344,13 @@ int main(int argc, const char** argv) {
     // Wait for the network thread to join back in.
     eventThread.join();
 
+    if (!stream->getStatus().ok()) {
+        std::cout << "Failed to create enrollment with\n\t" <<
+            stream->getStatus().error_code() << ": " <<
+            stream->getStatus().error_message() << std::endl;
+    } else {
+        std::cout << "Successfully created enrollment!" << std::endl;
+    }
+
     return 0;
 }
