@@ -260,7 +260,7 @@ int main(int argc, const char** argv) {
     // ------ Query the available video models ---------------------------------
 
     std::cout << "Available video models:" << std::endl;
-    videoService.asyncGetModels([](VideoService<SecureCredentialStore>::GetModelsCallData* call) {
+    videoService.getModels([](VideoService<SecureCredentialStore>::GetModelsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get video models with\n\t" <<
                 call->getStatus().error_code() << ": " <<

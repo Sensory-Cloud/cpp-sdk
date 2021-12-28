@@ -124,7 +124,7 @@ class VideoService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline GetModelsAsyncCall* asyncGetModels(
+    inline GetModelsAsyncCall* getModels(
         ::grpc::CompletionQueue* queue
     ) const {
         // Create a call data object to store the client context, the response,
@@ -162,7 +162,7 @@ class VideoService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetModelsCallData> asyncGetModels(
+    inline std::shared_ptr<GetModelsCallData> getModels(
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -197,7 +197,7 @@ class VideoService {
     /// enrollment creation stream.
     ///
     /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
+    /// Use `getModels()` to fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -240,7 +240,7 @@ class VideoService {
     /// creating a video enrollment.
     ///
     /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
+    /// Use `getModels()` to fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -293,7 +293,7 @@ class VideoService {
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
     /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
+    /// Use `getModels()` to fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -345,7 +345,7 @@ class VideoService {
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
     /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
+    /// Use `getModels()` to fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -550,7 +550,7 @@ class VideoService {
     /// validation stream.
     ///
     /// @param modelName The name of the model to use. Use `getModels()` to
-    /// obtain a list of available models.
+    /// fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param threshold The threshold of how confident the model has to be to
     /// give a positive liveness result.
@@ -584,7 +584,7 @@ class VideoService {
     /// validating the liveness of an image stream.
     ///
     /// @param modelName The name of the model to use. Use `getModels()` to
-    /// obtain a list of available models.
+    /// fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param threshold The threshold of how confident the model has to be to
     /// give a positive liveness result.
@@ -630,7 +630,7 @@ class VideoService {
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
     /// @param modelName The name of the model to use. Use `getModels()` to
-    /// obtain a list of available models.
+    /// fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param threshold The threshold of how confident the model has to be to
     /// give a positive liveness result.
@@ -674,7 +674,7 @@ class VideoService {
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
     /// @param modelName The name of the model to use. Use `getModels()` to
-    /// obtain a list of available models.
+    /// fetch a list of available models.
     /// @param userID The ID of the user performing the request.
     /// @param threshold The threshold of how confident the model has to be to
     /// give a positive liveness result.

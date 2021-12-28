@@ -132,7 +132,7 @@ int main(int argc, const char** argv) {
     // Start an asynchronous RPC to fetch the names of the available models. The
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
-    auto getModelsRPC = videoService.asyncGetModels(&queue);
+    auto getModelsRPC = videoService.getModels(&queue);
 
     // Execute the asynchronous RPC in this thread (which will block like a
     // synchronous call).
