@@ -25,18 +25,15 @@ include(cmake/common.cmake)
 # Output built binaries to a `build` directory instead of the project root.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
 
-option(BUILD_LIBRARY "Build library for ${PROJECT_NAME}" OFF)
-option(BUILD_TESTS "Build tests for ${PROJECT_NAME}" OFF)
-option(BUILD_BENCHMARKS "Build benchmarks for ${PROJECT_NAME}" OFF)
-option(BUILD_EXAMPLES "Build examples for ${PROJECT_NAME}" OFF)
+option(BUILD_LIBRARY "Build library" OFF)
+option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_BENCHMARKS "Build benchmarks" OFF)
+option(BUILD_EXAMPLES "Build example projects" OFF)
+option(BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore for Operating System" OFF)
 
 if (BUILD_LIBRARY OR BUILD_TESTS OR BUILD_BENCHMARKS OR BUILD_EXAMPLES)
 
 # --- Proto Files ------------------------------------------------------------
-
-# TODO: Remove debugging statements
-# message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
-# message(STATUS _GRPC_CPP_PLUGIN_EXECUTABLE=${_GRPC_CPP_PLUGIN_EXECUTABLE})
 
 # Locate the proto files for the sensorycloud library
 file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS
@@ -90,11 +87,6 @@ include_directories(
   ${protobuf_BINARY_DIR}
   ${protobuf_SOURCE_DIR}/../src)
 
-# TODO: Remove debugging statements
-# message(STATUS _PROTOBUF_PROTOC=${_PROTOBUF_PROTOC})
-# message(STATUS protobuf_BINARY_DIR=${protobuf_BINARY_DIR})
-# message(STATUS protobuf_SOURCE_DIR=${protobuf_SOURCE_DIR})
-
 # --- Library ----------------------------------------------------------------
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud")
@@ -105,8 +97,6 @@ file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/include/*.h
     ${CMAKE_CURRENT_BINARY_DIR}/include/*.hpp
 )
-# TODO: Remove debugging statements
-# message(STATUS INCLUDES="${INCLUDES}")
 
 # Locate the definition files for the sensorycloud library
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
@@ -114,8 +104,6 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/src/*.cc
     ${CMAKE_CURRENT_BINARY_DIR}/src/*.cpp
 )
-# TODO: Remove debugging statements
-# message(STATUS SOURCES="${SOURCES}")
 
 # Create the sensorycloud library
 add_library(sensorycloud STATIC)
@@ -140,30 +128,30 @@ target_link_libraries(sensorycloud PUBLIC
 
 # --- SecureCredentialStore Implementation -----------------------------------
 
-if (APPLE)
-    message(STATUS "Using Apple Keychain implementation of SecureCredentialStore")
-    # Target the Keychain library for using the MacOS keychain
-    target_compile_definitions(sensorycloud PUBLIC -DKEYCHAIN_MACOS=1)
-    # Target the mandatory libraries for using the Keychain in MacOS
-    find_library(COREFOUNDATION_LIBRARY CoreFoundation REQUIRED)
-    find_library(SECURITY_LIBRARY Security REQUIRED)
-    # Target the link libraries for Keychain usage on MacOS
-    target_link_libraries(sensorycloud PRIVATE ${COREFOUNDATION_LIBRARY} ${SECURITY_LIBRARY})
-elseif (UNIX)
-    message(STATUS "Using Linux libsecret implementation of SecureCredentialStore")
-    # Target the mandatory libraries for using libsecret on Linux
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(LIBSECRET IMPORTED_TARGET libsecret-1)
-    target_link_libraries(sensorycloud PUBLIC PkgConfig::LIBSECRET)
-elseif(MSVC)
-    message(STATUS "Using Windows crypt32 implementation of SecureCredentialStore")
-    # Target the mandatory libraries for using Windows credential locker
-    target_link_libraries(sensorycloud PRIVATE crypt32)
-endif()
+if (BUILD_SECURE_CREDENTIAL_STORE)
+    if (APPLE)
+        message(STATUS "Using Apple Keychain implementation of SecureCredentialStore")
+        # Target the Keychain library for using the MacOS keychain
+        target_compile_definitions(sensorycloud PUBLIC -DKEYCHAIN_MACOS=1)
+        # Target the mandatory libraries for using the Keychain in MacOS
+        find_library(COREFOUNDATION_LIBRARY CoreFoundation REQUIRED)
+        find_library(SECURITY_LIBRARY Security REQUIRED)
+        # Target the link libraries for Keychain usage on MacOS
+        target_link_libraries(sensorycloud PRIVATE ${COREFOUNDATION_LIBRARY} ${SECURITY_LIBRARY})
+    elseif (UNIX)
+        message(STATUS "Using Linux libsecret implementation of SecureCredentialStore")
+        # Target the mandatory libraries for using libsecret on Linux
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(LIBSECRET IMPORTED_TARGET libsecret-1)
+        target_link_libraries(sensorycloud PUBLIC PkgConfig::LIBSECRET)
+    elseif(MSVC)
+        message(STATUS "Using Windows crypt32 implementation of SecureCredentialStore")
+        # Target the mandatory libraries for using Windows credential locker
+        target_link_libraries(sensorycloud PRIVATE crypt32)
+    endif()  # Operating System Switch
+endif()  # BUILD_SECURE_CREDENTIAL_STORE
 
-# add_library(sensorycloud::sensorycloud ALIAS sensorycloud)
-
-endif()
+endif()  # BUILD_LIBRARY OR BUILD_TESTS OR BUILD_BENCHMARKS OR BUILD_EXAMPLES
 
 # --- Test Cases -------------------------------------------------------------
 
@@ -193,7 +181,7 @@ endforeach()
 # Create a combined target to compile all of the test codes
 add_custom_target(tests ALL DEPENDS ${TEST_BINARIES})
 
-endif()
+endif()  # BUILD_TESTS
 
 # --- Benchmarks -------------------------------------------------------------
 
@@ -201,7 +189,7 @@ if (BUILD_BENCHMARKS)
 
 # TODO
 
-endif()
+endif()  # BUILD_BENCHMARKS
 
 # --- Examples ---------------------------------------------------------------
 
@@ -347,4 +335,4 @@ add_executable(application_voice_assistant examples/applications/voice_assistant
 target_link_libraries(application_voice_assistant PRIVATE sensorycloud)
 target_link_libraries(application_voice_assistant PRIVATE portaudio)
 
-endif()
+endif()  # BUILD_EXAMPLES
