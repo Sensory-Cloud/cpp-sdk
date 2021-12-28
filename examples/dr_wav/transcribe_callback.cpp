@@ -115,7 +115,8 @@ class AudioFileReactor :
         // Update the index of the current sample based on the number of samples
         // that were just pushed.
         index += numSamples;
-        bar.update();
+        // TODO: when uploading entire files in one write, the progress bar is not necessary
+        // bar.update();
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
         StartWrite(&request);
@@ -263,7 +264,8 @@ int main(int argc, const char** argv) {
     // Load the audio file and zero pad the buffer with 300ms of silence.
     AudioBuffer buffer;
     buffer.load(INPUT_FILE);
-    buffer.padBack(1000);
+    // TODO: this padding was removed when deciding to upload full audio files in one request
+    // buffer.padBack(300);
     // Check that the file is 16kHz.
     if (buffer.getSampleRate() != 16000) {
         std::cout << "Error: attempting to load WAV file with sample rate of "
@@ -283,7 +285,7 @@ int main(int argc, const char** argv) {
     AudioFileReactor reactor(buffer.getSamples(),
         buffer.getChannels(),
         buffer.getSampleRate(),
-        SAMPLES_PER_FRAME,
+        buffer.getNumSamples(), //SAMPLES_PER_FRAME,  // TODO: SAMPLE_PER_FRAME is not needed to upload entire files
         VERBOSE
     );
     // Initialize the stream with the reactor for callbacks, given audio model,
