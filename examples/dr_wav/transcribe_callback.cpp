@@ -103,11 +103,6 @@ class AudioFileReactor :
         if (index >= buffer.size()) {
             // Signal to the stream that no more data will be written.
             StartWritesDone();
-            // Lock access to the critical section for the transcript string.
-            std::lock_guard<std::mutex> lock(mutex);
-            // Update the transcript with the final output transcript.
-            transcript = response.transcript();
-
             return;
         }
 
@@ -137,6 +132,12 @@ class AudioFileReactor :
             std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
             std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
             std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+        }
+        {
+            // Lock access to the critical section for the transcript string.
+            std::lock_guard<std::mutex> lock(mutex);
+            // Update the transcript with the final output transcript.
+            transcript = response.transcript();
         }
         // Start the next read request.
         StartRead(&response);
@@ -262,7 +263,7 @@ int main(int argc, const char** argv) {
     // Load the audio file and zero pad the buffer with 300ms of silence.
     AudioBuffer buffer;
     buffer.load(INPUT_FILE);
-    buffer.padBack(300);
+    buffer.padBack(1000);
     // Check that the file is 16kHz.
     if (buffer.getSampleRate() != 16000) {
         std::cout << "Error: attempting to load WAV file with sample rate of "
