@@ -221,7 +221,7 @@ int main(int argc, const char** argv) {
     // ------ Query the available audio models ---------------------------------
 
     std::cout << "Available audio models:" << std::endl;
-    audioService.asyncGetModels([](AudioService<SecureCredentialStore>::GetModelsCallData* call) {
+    audioService.getModels([](AudioService<SecureCredentialStore>::GetModelsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to get audio models with\n\t" <<
                 call->getStatus().error_code() << ": " <<
