@@ -117,7 +117,7 @@ void get_enrollments(
     sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
-    mgmtService.asyncGetEnrollments(
+    mgmtService.getEnrollments(
         userID,
         [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::GetEnrollmentsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
@@ -156,7 +156,7 @@ void delete_enrollment(
     sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
     const std::string& enrollmentID
 ) {
-    mgmtService.asyncDeleteEnrollment(
+    mgmtService.deleteEnrollment(
         enrollmentID,
         [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::DeleteEnrollmentCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
@@ -176,7 +176,7 @@ void get_enrollment_groups(
     sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
     const std::string& userID
 ) {
-    mgmtService.asyncGetEnrollmentGroups(
+    mgmtService.getEnrollmentGroups(
         userID,
         [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::GetEnrollmentGroupsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
@@ -227,7 +227,7 @@ void create_enrollment_group(
     std::string modelName = "";
     std::getline(std::cin, modelName);
     // Execute the RPC to create the enrollment group.
-    mgmtService.asyncCreateEnrollmentGroup(
+    mgmtService.createEnrollmentGroup(
         userID,
         "",
         groupName,
@@ -254,7 +254,7 @@ void append_enrollment_group(
     const std::string& groupID,
     const std::vector<std::string>& enrollments
 ) {
-    mgmtService.asyncAppendEnrollmentGroup(
+    mgmtService.appendEnrollmentGroup(
         groupID,
         enrollments,
         [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::AppendEnrollmentGroupCallData* call) {
@@ -276,7 +276,7 @@ void delete_enrollment_group(
     sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>& mgmtService,
     const std::string& groupID
 ) {
-    mgmtService.asyncDeleteEnrollmentGroup(
+    mgmtService.deleteEnrollmentGroup(
         groupID,
         [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::DeleteEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.

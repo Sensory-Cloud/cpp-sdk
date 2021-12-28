@@ -107,6 +107,23 @@ class ManagementService {
         return stub->GetEnrollments(&context, request, response);
     }
 
+
+
+
+
+    /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
+    /// calls based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::GetEnrollmentsRequest,
+        ::sensory::api::v1::management::GetEnrollmentsResponse
+    > GetEnrollmentsAsyncCall;
+
+
+
+
+
+
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls.
     typedef ::sensory::CallData<
@@ -124,7 +141,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetEnrollmentsCallData> asyncGetEnrollments(
+    inline std::shared_ptr<GetEnrollmentsCallData> getEnrollments(
         const std::string& userID,
         const Callback& callback
     ) const {
@@ -180,6 +197,25 @@ class ManagementService {
         return stub->DeleteEnrollment(&context, request, response);
     }
 
+
+
+
+
+
+    /// @brief A type for encapsulating data for asynchronous `DeleteEnrollment`
+    /// calls based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::DeleteEnrollmentRequest,
+        ::sensory::api::v1::management::EnrollmentResponse
+    > DeleteEnrollmentAsyncCall;
+
+
+
+
+
+
+
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollment` calls.
     typedef ::sensory::CallData<
@@ -200,7 +236,7 @@ class ManagementService {
     /// The server will prevent users from deleting their last enrollment.
     ///
     template<typename Callback>
-    inline std::shared_ptr<DeleteEnrollmentCallData> asyncDeleteEnrollment(
+    inline std::shared_ptr<DeleteEnrollmentCallData> deleteEnrollment(
         const std::string& enrollmentID,
         const Callback& callback
     ) const {
@@ -254,6 +290,21 @@ class ManagementService {
         return stub->GetEnrollmentGroups(&context, request, response);
     }
 
+
+
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `GetEnrollmentGroups` calls based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::GetEnrollmentsRequest,
+        ::sensory::api::v1::management::GetEnrollmentGroupsResponse
+    > GetEnrollmentGroupsAsyncCall;
+
+
+
+
+
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls.
     typedef ::sensory::CallData<
@@ -272,7 +323,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetEnrollmentGroupsCallData> asyncGetEnrollmentGroups(
+    inline std::shared_ptr<GetEnrollmentGroupsCallData> getEnrollmentGroups(
         const std::string& userID,
         const Callback& callback
     ) const {
@@ -348,6 +399,21 @@ class ManagementService {
         return stub->CreateEnrollmentGroup(&context, request, response);
     }
 
+
+
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `CreateEnrollmentGroup` calls based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
+        ::sensory::api::v1::management::EnrollmentGroupResponse
+    > CreateEnrollmentGroupAsyncCall;
+
+
+
+
+
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls.
     typedef ::sensory::CallData<
@@ -373,7 +439,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<CreateEnrollmentGroupCallData> asyncCreateEnrollmentGroup(
+    inline std::shared_ptr<CreateEnrollmentGroupCallData> createEnrollmentGroup(
         const std::string& userID,
         const std::string& groupID,
         const std::string& groupName,
@@ -441,6 +507,22 @@ class ManagementService {
         return stub->AppendEnrollmentGroup(&context, request, response);
     }
 
+
+
+
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `AppendEnrollmentGroup` calls based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
+        ::sensory::api::v1::management::EnrollmentGroupResponse
+    > AppendEnrollmentGroupAsyncCall;
+
+
+
+
+
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls.
     typedef ::sensory::CallData<
@@ -460,7 +542,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<AppendEnrollmentGroupCallData> asyncAppendEnrollmentGroup(
+    inline std::shared_ptr<AppendEnrollmentGroupCallData> appendEnrollmentGroup(
         const std::string& groupID,
         const std::vector<std::string>& enrollments,
         const Callback& callback
@@ -516,6 +598,22 @@ class ManagementService {
         return stub->DeleteEnrollmentGroup(&context, request, response);
     }
 
+
+
+
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `DeleteEnrollmentGroup` calls based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        ManagementService<SecureCredentialStore>,
+        ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,
+        ::sensory::api::v1::management::EnrollmentGroupResponse
+    > DeleteEnrollmentGroupAsyncCall;
+
+
+
+
+
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroupRequest` calls.
     typedef ::sensory::CallData<
@@ -533,7 +631,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<DeleteEnrollmentGroupCallData> asyncDeleteEnrollmentGroup(
+    inline std::shared_ptr<DeleteEnrollmentGroupCallData> deleteEnrollmentGroup(
         const std::string& groupID,
         const Callback& callback
     ) const {
