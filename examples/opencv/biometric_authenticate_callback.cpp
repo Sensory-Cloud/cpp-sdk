@@ -177,7 +177,7 @@ int main(int argc, const char** argv) {
     HealthService healthService(config);
 
     // Query the health of the remote service.
-    healthService.asyncGetHealth([](HealthService::GetHealthCallData* call) {
+    healthService.getHealth([](HealthService::GetHealthCallData* call) {
         if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to get server health with\n\t" <<
                 call->getStatus().error_code() << ": " <<

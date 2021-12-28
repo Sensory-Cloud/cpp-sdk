@@ -89,6 +89,42 @@ class HealthService {
         return stub->GetHealth(&context, {}, response);
     }
 
+    /// @brief A type for encapsulating data for asynchronous `GetModels` calls
+    /// based on CompletionQueue event loops.
+    typedef AsyncResponseReaderCall<
+        HealthService,
+        ::sensory::api::health::HealthRequest,
+        ::sensory::api::common::ServerHealthResponse
+    > GetHealthAsyncCall;
+
+    /// @brief Get the health status of the remote server.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    template<typename Callback>
+    inline GetHealthAsyncCall* getHealth(::grpc::CompletionQueue* queue) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new GetHealthAsyncCall);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->rpc = stub->AsyncGetHealth(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
+
     /// @brief A type for encapsulating data for asynchronous `GetHealth` calls.
     typedef ::sensory::CallData<
         HealthService,
@@ -104,7 +140,7 @@ class HealthService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetHealthCallData> asyncGetHealth(
+    inline std::shared_ptr<GetHealthCallData> getHealth(
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
