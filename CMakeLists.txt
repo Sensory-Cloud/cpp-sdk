@@ -214,42 +214,43 @@ target_link_libraries(management_async PRIVATE sensorycloud)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+
+
 add_executable(opencv_biometric_authenticate examples/opencv/biometric_authenticate.cpp)
 target_link_libraries(opencv_biometric_authenticate PRIVATE sensorycloud)
 target_link_libraries(opencv_biometric_authenticate PRIVATE ${OpenCV_LIBS})
 
-add_executable(opencv_biometric_enroll examples/opencv/biometric_enroll.cpp)
-target_link_libraries(opencv_biometric_enroll PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_enroll PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_liveness examples/opencv/liveness.cpp)
-target_link_libraries(opencv_liveness PRIVATE sensorycloud)
-target_link_libraries(opencv_liveness PRIVATE ${OpenCV_LIBS})
-
-
-
-
-# add_executable(opencv_biometric_authenticate_async examples/opencv/biometric_authenticate_async.cpp)
-# target_link_libraries(opencv_biometric_authenticate_async PRIVATE sensorycloud)
-# target_link_libraries(opencv_biometric_authenticate_async PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_biometric_enroll_async examples/opencv/biometric_enroll_async.cpp)
-target_link_libraries(opencv_biometric_enroll_async PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_enroll_async PRIVATE ${OpenCV_LIBS})
-
-# add_executable(opencv_liveness_async examples/opencv/liveness_async.cpp)
-# target_link_libraries(opencv_liveness_async PRIVATE sensorycloud)
-# target_link_libraries(opencv_liveness_async PRIVATE ${OpenCV_LIBS})
-
-
+add_executable(opencv_biometric_authenticate_async examples/opencv/biometric_authenticate_async.cpp)
+target_link_libraries(opencv_biometric_authenticate_async PRIVATE sensorycloud)
+target_link_libraries(opencv_biometric_authenticate_async PRIVATE ${OpenCV_LIBS})
 
 add_executable(opencv_biometric_authenticate_callback examples/opencv/biometric_authenticate_callback.cpp)
 target_link_libraries(opencv_biometric_authenticate_callback PRIVATE sensorycloud)
 target_link_libraries(opencv_biometric_authenticate_callback PRIVATE ${OpenCV_LIBS})
 
+
+
+add_executable(opencv_biometric_enroll examples/opencv/biometric_enroll.cpp)
+target_link_libraries(opencv_biometric_enroll PRIVATE sensorycloud)
+target_link_libraries(opencv_biometric_enroll PRIVATE ${OpenCV_LIBS})
+
+add_executable(opencv_biometric_enroll_async examples/opencv/biometric_enroll_async.cpp)
+target_link_libraries(opencv_biometric_enroll_async PRIVATE sensorycloud)
+target_link_libraries(opencv_biometric_enroll_async PRIVATE ${OpenCV_LIBS})
+
 add_executable(opencv_biometric_enroll_callback examples/opencv/biometric_enroll_callback.cpp)
 target_link_libraries(opencv_biometric_enroll_callback PRIVATE sensorycloud)
 target_link_libraries(opencv_biometric_enroll_callback PRIVATE ${OpenCV_LIBS})
+
+
+
+add_executable(opencv_liveness examples/opencv/liveness.cpp)
+target_link_libraries(opencv_liveness PRIVATE sensorycloud)
+target_link_libraries(opencv_liveness PRIVATE ${OpenCV_LIBS})
+
+add_executable(opencv_liveness_async examples/opencv/liveness_async.cpp)
+target_link_libraries(opencv_liveness_async PRIVATE sensorycloud)
+target_link_libraries(opencv_liveness_async PRIVATE ${OpenCV_LIBS})
 
 add_executable(opencv_liveness_callback examples/opencv/liveness_callback.cpp)
 target_link_libraries(opencv_liveness_callback PRIVATE sensorycloud)
