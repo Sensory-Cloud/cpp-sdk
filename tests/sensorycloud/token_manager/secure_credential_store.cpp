@@ -25,8 +25,8 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include "sensorycloud/token_manager/secure_credential_store.hpp"
-
+// #include "sensorycloud/token_manager/secure_credential_store.hpp"
+//
 // SCENARIO("a user wants to securely store credentials on disk") {
 //     GIVEN("an application ID") {
 //         const std::string package("com.sensory.test");

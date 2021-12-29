@@ -79,28 +79,22 @@ class AudioService {
 
     /// @brief Create a new audio config for an audio streaming application.
     ///
-    /// @brief sampleRate The sample rate of the audio stream.
+    /// @param encoding The encoding of the samples in the byte-stream.
+    /// @param sampleRate The sample rate of the audio stream.
+    /// @param audioChannelCount The number of audio channels in the audio.
+    /// @param languageCode The language code for the speech in the audio.
     /// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
     ///
-    /// @details
-    /// This function assumes the audio encoding is 16-bit PCM, i.e., linear
-    /// 16 (`::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16`).
-    /// This function also assumed the audio stream has a single channel, i.e.,
-    /// is monophonic.
-    ///
     static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
-        const float& sampleRate,
+        const ::sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding,
+        const float& sampleRateHertz,
+        const uint32_t& audioChannelCount,
         const std::string& languageCode
     ) {
-        // Create the audio config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
         auto audioConfig = new ::sensory::api::v1::audio::AudioConfig;
-        audioConfig->set_encoding(
-            ::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16
-        );
-        audioConfig->set_sampleratehertz(sampleRate);
-        audioConfig->set_audiochannelcount(1);
+        audioConfig->set_encoding(encoding);
+        audioConfig->set_sampleratehertz(sampleRateHertz);
+        audioConfig->set_audiochannelcount(audioChannelCount);
         audioConfig->set_languagecode(languageCode);
         return audioConfig;
     }
@@ -289,7 +283,7 @@ class AudioService {
         auto enrollmentConfig =
             new ::sensory::api::v1::audio::CreateEnrollmentConfig;
         enrollmentConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         enrollmentConfig->set_modelname(modelName);
         enrollmentConfig->set_userid(userID);
@@ -392,7 +386,7 @@ class AudioService {
         auto enrollmentConfig =
             new ::sensory::api::v1::audio::CreateEnrollmentConfig;
         enrollmentConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         enrollmentConfig->set_modelname(modelName);
         enrollmentConfig->set_userid(userID);
@@ -488,7 +482,7 @@ class AudioService {
         auto enrollmentConfig =
             new ::sensory::api::v1::audio::CreateEnrollmentConfig;
         enrollmentConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         enrollmentConfig->set_modelname(modelName);
         enrollmentConfig->set_userid(userID);
@@ -566,7 +560,7 @@ class AudioService {
         auto authenticateConfig =
             new ::sensory::api::v1::audio::AuthenticateConfig;
         authenticateConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
@@ -633,7 +627,7 @@ class AudioService {
         auto authenticateConfig =
             new ::sensory::api::v1::audio::AuthenticateConfig;
         authenticateConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
@@ -695,7 +689,7 @@ class AudioService {
         auto authenticateConfig =
             new ::sensory::api::v1::audio::AuthenticateConfig;
         authenticateConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
@@ -756,7 +750,7 @@ class AudioService {
         auto validateEventConfig =
             new ::sensory::api::v1::audio::ValidateEventConfig;
         validateEventConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         validateEventConfig->set_modelname(modelName);
         validateEventConfig->set_userid(userID);
@@ -819,7 +813,7 @@ class AudioService {
         auto validateEventConfig =
             new ::sensory::api::v1::audio::ValidateEventConfig;
         validateEventConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         validateEventConfig->set_modelname(modelName);
         validateEventConfig->set_userid(userID);
@@ -877,7 +871,7 @@ class AudioService {
         auto validateEventConfig =
             new ::sensory::api::v1::audio::ValidateEventConfig;
         validateEventConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         validateEventConfig->set_modelname(modelName);
         validateEventConfig->set_userid(userID);
@@ -934,7 +928,7 @@ class AudioService {
         // of the request.
         auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
         transcribeConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         transcribeConfig->set_modelname(modelName);
         transcribeConfig->set_userid(userID);
@@ -993,7 +987,7 @@ class AudioService {
         // of the request.
         auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
         transcribeConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         transcribeConfig->set_modelname(modelName);
         transcribeConfig->set_userid(userID);
@@ -1047,7 +1041,7 @@ class AudioService {
         // of the request.
         auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
         transcribeConfig->set_allocated_audio(
-            newAudioConfig(sampleRate, languageCode)
+            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
         );
         transcribeConfig->set_modelname(modelName);
         transcribeConfig->set_userid(userID);

@@ -55,22 +55,28 @@ RUN apt-get update
 RUN apt-get install -y cmake
 
 # ----------------------------------------------------------------------------
+# MARK: Protobuf and gRPC
+# ----------------------------------------------------------------------------
+
+# Copy the common CMake file to the container, this file changes infrequently
+# to prevent the cloning of protobuf and gRPC from occurring very often.
+COPY ./cmake/common.cmake /cpp-sdk/cmake/common.cmake
+# Create a dummy CMakeLists.txt that will clone the gRPC code.
+RUN printf "cmake_minimum_required(VERSION 3.11)\nproject(clone-grpc)\ninclude(cmake/common.cmake)" > /cpp-sdk/CMakeLists.txt
+# Create a build directory for the repository and clone protobuf and gRPC.
+# Enable verbose output from `FetchContent` to monitor the cloning of gRPC,
+# which can be slow.
+RUN mkdir /cpp-sdk/build && cd /cpp-sdk/build && cmake -DGRPC_FETCHCONTENT=ON -DFETCHCONTENT_QUIET=OFF ..
+
+# ----------------------------------------------------------------------------
 # MARK: Source Files
 # ----------------------------------------------------------------------------
 
 # Copy the files for the SDK into the image.
+COPY CMakeLists.txt /cpp-sdk/
 ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
-ADD ./examples /cpp-sdk/examples
-COPY CMakeLists.txt /cpp-sdk/
-
-# ----------------------------------------------------------------------------
-# MARK: Generate Makefiles
-# ----------------------------------------------------------------------------
-
-# Change into the SDK directory and prepare the makefiles for a local
-# installation of protobuf and gRPC. Enable verbose output from `FetchContent`
-# to monitor the cloning of gRPC, which can be slow.
-RUN cd cpp-sdk && cmake . -DGRPC_FETCHCONTENT=ON -DFETCHCONTENT_QUIET=OFF -DBUILD_TESTS=ON
+# Remove any generated protobuf and gRPC code.
+RUN rm -rf /cpp-sdk/include/sensorycloud/generated/*

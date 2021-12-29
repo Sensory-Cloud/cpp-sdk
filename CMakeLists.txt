@@ -2,6 +2,8 @@
 #
 # Copyright 2021 Sensory, Inc.
 #
+# Author: Christian Kauten (ckauten@sensoryinc.com)
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,35 +19,29 @@
 
 # Version 3.11 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.11)
-# Assign the name of the project
+# Assign the name of the project.
 project(sensory-cloud-cpp-sdk)
-# Include the common files for finding/compiling Protobuf and gRPC
+
+# Include the common files for finding/compiling Protobuf and gRPC.
 include(cmake/common.cmake)
+include(FetchContent)
 
-# Output built binaries to a `build` directory instead of the project root.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
-
-option(BUILD_LIBRARY "Build library" OFF)
-option(BUILD_TESTS "Build tests" OFF)
-option(BUILD_BENCHMARKS "Build benchmarks" OFF)
-option(BUILD_EXAMPLES "Build example projects" OFF)
-option(BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore for Operating System" OFF)
-
-if (BUILD_LIBRARY OR BUILD_TESTS OR BUILD_BENCHMARKS OR BUILD_EXAMPLES)
+# Setup the optional arguments for augmenting the compilation of the library.
+option(SENSORY_CLOUD_BUILD_TESTS "Build test cases" OFF)
+option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore" OFF)
 
 # --- Proto Files ------------------------------------------------------------
 
-# Locate the proto files for the sensorycloud library
-file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/proto/*.proto
-)
-
+# Iterate over the proto files to compile them with protoc. The proto files are
+# expected to be in the ./proto directory. Generated code (headers and source)
+# will go to the ./include/sensorycloud/generated directory.
+file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS proto/*.proto)
 foreach(PROTO IN ITEMS ${PROTOS})
-    # Create the proto header file
+    # Create the protobuf header file
     string(REPLACE ".proto" ".pb.h" PROTO_HDR ${PROTO})
     string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_HDR ${PROTO_HDR})
     list(APPEND PROTO_HDRS ${PROTO_HDR})
-    # Create the proto definition file
+    # Create the protobuf definition file
     string(REPLACE ".proto" ".pb.cc" PROTO_SRC ${PROTO})
     string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_SRC ${PROTO_SRC})
     list(APPEND PROTO_SRCS ${PROTO_SRC})
@@ -57,65 +53,44 @@ foreach(PROTO IN ITEMS ${PROTOS})
     string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
     string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_SRC ${GRPC_SRC})
     list(APPEND GRPC_SRCS ${GRPC_SRC})
-    # Create the command to generate the protobuff code
+    # Create the command to generate the protobuf and gRPC code
     add_custom_command(
         OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
         COMMAND ${_PROTOBUF_PROTOC}
-        ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated"
-            --cpp_out "${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated"
-            --proto_path="${CMAKE_CURRENT_BINARY_DIR}/proto"
+        ARGS --grpc_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
+            --cpp_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
+            --proto_path="${PROJECT_SOURCE_DIR}/proto"
             --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
             -I="${protobuf_SOURCE_DIR}/../src"
             "${PROTO}"
-        DEPENDS "${PROTO}" #always_rebuild
+        DEPENDS "${PROTO}"
     )
 endforeach()
 
-# Dummy output which is never actually produced. Anything that depends on
-# this will always be rebuilt. Stack Overflow Reference:
-# https://stackoverflow.com/questions/13920072/how-to-always-run-command-when-building-regardless-of-any-dependency
-add_custom_command(
-    OUTPUT always_rebuild
-    COMMAND cmake -E echo
-)
+# --- Library ----------------------------------------------------------------
 
 # This block is taken from the protobuf CMakeLists.txt and tells the compiler
 # where the header files are located. These are necessary for using google proto
 # dependencies.
 include_directories(
-  ${ZLIB_INCLUDE_DIRECTORIES}
-  ${protobuf_BINARY_DIR}
-  ${protobuf_SOURCE_DIR}/../src)
-
-# --- Library ----------------------------------------------------------------
-
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud")
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/include/sensorycloud/generated")
-
-# Locate the header files for the sensorycloud library
-file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/include/*.h
-    ${CMAKE_CURRENT_BINARY_DIR}/include/*.hpp
+    ${ZLIB_INCLUDE_DIRECTORIES}
+    ${protobuf_BINARY_DIR}
+    ${protobuf_SOURCE_DIR}/../src
 )
 
-# Locate the definition files for the sensorycloud library
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/src/*.c
-    ${CMAKE_CURRENT_BINARY_DIR}/src/*.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/src/*.cpp
-)
-
+# Locate the header and source files for the sensorycloud library.
+file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS include/*.h include/*.hpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.c src/*.cc src/*.cpp)
 # Create the sensorycloud library
-add_library(sensorycloud STATIC)
-target_sources(sensorycloud PUBLIC ${INCLUDES} ${SOURCES}
-    ${PROTO_SRCS}
-    ${PROTO_HDRS}
-    ${GRPC_SRCS}
-    ${GRPC_HDRS}
+add_library(sensorycloud
+    ${INCLUDES} ${SOURCES}
+    ${PROTO_HDRS} ${PROTO_SRCS}
+    ${GRPC_HDRS} ${GRPC_SRCS}
 )
 target_include_directories(sensorycloud PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+    include/sensorycloud include/sensorycloud/generated
 )
 target_compile_features(sensorycloud PUBLIC cxx_std_11)
 set_target_properties(sensorycloud PROPERTIES
@@ -124,11 +99,12 @@ set_target_properties(sensorycloud PROPERTIES
 target_link_libraries(sensorycloud PUBLIC
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
-    ${_PROTOBUF_LIBPROTOBUF})
+    ${_PROTOBUF_LIBPROTOBUF}
+)
 
 # --- SecureCredentialStore Implementation -----------------------------------
 
-if (BUILD_SECURE_CREDENTIAL_STORE)
+if (SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE)
     if (APPLE)
         message(STATUS "Using Apple Keychain implementation of SecureCredentialStore")
         # Target the Keychain library for using the MacOS keychain
@@ -149,196 +125,31 @@ if (BUILD_SECURE_CREDENTIAL_STORE)
         # Target the mandatory libraries for using Windows credential locker
         target_link_libraries(sensorycloud PRIVATE crypt32)
     endif()  # Operating System Switch
-endif()  # BUILD_SECURE_CREDENTIAL_STORE
-
-endif()  # BUILD_LIBRARY OR BUILD_TESTS OR BUILD_BENCHMARKS OR BUILD_EXAMPLES
+endif()  # SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE
 
 # --- Test Cases -------------------------------------------------------------
 
-if (BUILD_TESTS)
+if (SENSORY_CLOUD_BUILD_TESTS)
+    # Install the Catch2 development dependency
+    FetchContent_Declare(Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v2.13.7
+    )
+    FetchContent_MakeAvailable(Catch2)
 
-# Install the Catch2 development dependency
-include(FetchContent)
-FetchContent_Declare(Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v2.13.7
-)
-FetchContent_MakeAvailable(Catch2)
-
-# Find the source files for the test code to compile iteratively
-file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tests/*.cpp)
-foreach(TEST_SOURCE IN ITEMS ${TEST_SOURCES})
-    # Convert the path name to an executable name to build.
-    string(REPLACE "${CMAKE_CURRENT_BINARY_DIR}/tests/" "test_" BINARY_NAME ${TEST_SOURCE})
-    string(REPLACE "/" "_" BINARY_NAME ${BINARY_NAME})
-    string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
-    # Create the binary and link it with the required libraries
-    add_executable(${BINARY_NAME} ${TEST_SOURCE})
-    target_link_libraries(${BINARY_NAME} PRIVATE sensorycloud)
-    target_link_libraries(${BINARY_NAME} PRIVATE Catch2::Catch2)
-    list(APPEND TEST_BINARIES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BINARY_NAME})
-endforeach()
-# Create a combined target to compile all of the test codes
-add_custom_target(tests ALL DEPENDS ${TEST_BINARIES})
-
-endif()  # BUILD_TESTS
-
-# --- Benchmarks -------------------------------------------------------------
-
-if (BUILD_BENCHMARKS)
-
-# TODO
-
-endif()  # BUILD_BENCHMARKS
-
-# --- Examples ---------------------------------------------------------------
-
-if (BUILD_EXAMPLES)
-
-# ----- Basic Examples -------------------------------------------------------
-
-add_executable(hello_cloud examples/hello_cloud.cpp)
-target_link_libraries(hello_cloud PRIVATE sensorycloud)
-
-add_executable(management examples/management.cpp)
-target_link_libraries(management PRIVATE sensorycloud)
-
-add_executable(management_callback examples/management_callback.cpp)
-target_link_libraries(management_callback PRIVATE sensorycloud)
-
-add_executable(management_async examples/management_async.cpp)
-target_link_libraries(management_async PRIVATE sensorycloud)
-
-# ----- Video Examples -------------------------------------------------------
-
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-
-
-add_executable(opencv_biometric_authenticate examples/opencv/biometric_authenticate.cpp)
-target_link_libraries(opencv_biometric_authenticate PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_authenticate PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_biometric_authenticate_async examples/opencv/biometric_authenticate_async.cpp)
-target_link_libraries(opencv_biometric_authenticate_async PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_authenticate_async PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_biometric_authenticate_callback examples/opencv/biometric_authenticate_callback.cpp)
-target_link_libraries(opencv_biometric_authenticate_callback PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_authenticate_callback PRIVATE ${OpenCV_LIBS})
-
-
-
-add_executable(opencv_biometric_enroll examples/opencv/biometric_enroll.cpp)
-target_link_libraries(opencv_biometric_enroll PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_enroll PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_biometric_enroll_async examples/opencv/biometric_enroll_async.cpp)
-target_link_libraries(opencv_biometric_enroll_async PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_enroll_async PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_biometric_enroll_callback examples/opencv/biometric_enroll_callback.cpp)
-target_link_libraries(opencv_biometric_enroll_callback PRIVATE sensorycloud)
-target_link_libraries(opencv_biometric_enroll_callback PRIVATE ${OpenCV_LIBS})
-
-
-
-add_executable(opencv_liveness examples/opencv/liveness.cpp)
-target_link_libraries(opencv_liveness PRIVATE sensorycloud)
-target_link_libraries(opencv_liveness PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_liveness_async examples/opencv/liveness_async.cpp)
-target_link_libraries(opencv_liveness_async PRIVATE sensorycloud)
-target_link_libraries(opencv_liveness_async PRIVATE ${OpenCV_LIBS})
-
-add_executable(opencv_liveness_callback examples/opencv/liveness_callback.cpp)
-target_link_libraries(opencv_liveness_callback PRIVATE sensorycloud)
-target_link_libraries(opencv_liveness_callback PRIVATE ${OpenCV_LIBS})
-
-# ----- Audio Examples -------------------------------------------------------
-
-FetchContent_Declare(portaudio
-    GIT_REPOSITORY https://github.com/PortAudio/portaudio.git
-    GIT_TAG        v19.7.0
-)
-FetchContent_MakeAvailable(portaudio)
-
-include_directories(
-  ${portaudio_BINARY_DIR}
-  ${portaudio_SOURCE_DIR})
-
-add_executable(paex_record examples/portaudio/paex_record.c)
-target_link_libraries(paex_record PRIVATE portaudio)
-
-add_executable(paex_read_write_wire examples/portaudio/paex_read_write_wire.c)
-target_link_libraries(paex_read_write_wire PRIVATE portaudio)
-
-add_executable(pa_devs examples/portaudio/pa_devs.c)
-target_link_libraries(pa_devs PRIVATE portaudio)
-
-add_executable(portaudio_wakeword examples/portaudio/wake_word.cpp)
-target_link_libraries(portaudio_wakeword PRIVATE sensorycloud)
-target_link_libraries(portaudio_wakeword PRIVATE portaudio)
-
-add_executable(portaudio_wakeword_callback examples/portaudio/wake_word_callback.cpp)
-target_link_libraries(portaudio_wakeword_callback PRIVATE sensorycloud)
-target_link_libraries(portaudio_wakeword_callback PRIVATE portaudio)
-
-add_executable(portaudio_sound_id examples/portaudio/sound_id.cpp)
-target_link_libraries(portaudio_sound_id PRIVATE sensorycloud)
-target_link_libraries(portaudio_sound_id PRIVATE portaudio)
-
-add_executable(portaudio_sound_id_callback examples/portaudio/sound_id_callback.cpp)
-target_link_libraries(portaudio_sound_id_callback PRIVATE sensorycloud)
-target_link_libraries(portaudio_sound_id_callback PRIVATE portaudio)
-
-add_executable(portaudio_transcribe examples/portaudio/transcribe.cpp)
-target_link_libraries(portaudio_transcribe PRIVATE sensorycloud)
-target_link_libraries(portaudio_transcribe PRIVATE portaudio)
-
-add_executable(portaudio_transcribe_callback examples/portaudio/transcribe_callback.cpp)
-target_link_libraries(portaudio_transcribe_callback PRIVATE sensorycloud)
-target_link_libraries(portaudio_transcribe_callback PRIVATE portaudio)
-
-add_executable(portaudio_biometric_enroll examples/portaudio/biometric_enroll.cpp)
-target_link_libraries(portaudio_biometric_enroll PRIVATE sensorycloud)
-target_link_libraries(portaudio_biometric_enroll PRIVATE portaudio)
-
-add_executable(portaudio_biometric_enroll_callback examples/portaudio/biometric_enroll_callback.cpp)
-target_link_libraries(portaudio_biometric_enroll_callback PRIVATE sensorycloud)
-target_link_libraries(portaudio_biometric_enroll_callback PRIVATE portaudio)
-
-add_executable(portaudio_biometric_authenticate examples/portaudio/biometric_authenticate.cpp)
-target_link_libraries(portaudio_biometric_authenticate PRIVATE sensorycloud)
-target_link_libraries(portaudio_biometric_authenticate PRIVATE portaudio)
-
-add_executable(portaudio_biometric_authenticate_callback examples/portaudio/biometric_authenticate_callback.cpp)
-target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE sensorycloud)
-target_link_libraries(portaudio_biometric_authenticate_callback PRIVATE portaudio)
-
-
-
-
-
-add_executable(dr_wav_transcribe_callback
-    examples/dr_wav/transcribe_callback.cpp
-    examples/dr_wav/dr_wav.h
-    examples/dr_wav/dr_flac.h
-    examples/dr_wav/dr_mp3.h
-    examples/dr_wav/audio_buffer.hpp
-    examples/dr_wav/argparse.hpp
-    examples/dr_wav/tqdm.hpp
-)
-target_link_libraries(dr_wav_transcribe_callback PRIVATE sensorycloud)
-
-
-
-
-
-
-add_executable(application_voice_assistant examples/applications/voice_assistant.cpp)
-target_link_libraries(application_voice_assistant PRIVATE sensorycloud)
-target_link_libraries(application_voice_assistant PRIVATE portaudio)
-
-endif()  # BUILD_EXAMPLES
+    # Find the source files for the test code to compile iteratively
+    file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
+    foreach(TEST_SOURCE IN ITEMS ${TEST_SOURCES})
+        # Convert the path name to an executable name to build.
+        string(REPLACE "${PROJECT_SOURCE_DIR}/tests/" "test_" BINARY_NAME ${TEST_SOURCE})
+        string(REPLACE "/" "_" BINARY_NAME ${BINARY_NAME})
+        string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
+        # Create the binary and link it with the required libraries
+        add_executable(${BINARY_NAME} ${TEST_SOURCE})
+        target_link_libraries(${BINARY_NAME} PRIVATE sensorycloud)
+        target_link_libraries(${BINARY_NAME} PRIVATE Catch2::Catch2)
+        list(APPEND TEST_BINARIES ${BINARY_NAME})
+    endforeach()
+    # Create a combined target to compile all of the test codes
+    add_custom_target(tests ALL DEPENDS ${TEST_BINARIES})
+endif()  # SENSORY_CLOUD_BUILD_TESTS
