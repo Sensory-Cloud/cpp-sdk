@@ -51,6 +51,103 @@ inline int describe_pa_error(const PaError& err) {
     return 1;
 }
 
+/// @brief A bidirection stream reactor for biometric enrollments from audio
+/// stream data.
+///
+/// @details
+/// Input data for the stream is provided by a PortAudio capture device.
+///
+class PortAudioReactor :
+    public AudioService<InsecureCredentialStore>::ValidateEventBidiReactor {
+ private:
+    /// The capture device that input audio is streaming in from.
+    PaStream* capture;
+    /// The number of channels in the input audio.
+    uint32_t numChannels;
+    /// The number of bytes per audio sample (i.e., 2 for 16-bit audio)
+    uint32_t sampleSize;
+    /// The sample rate of the audio input stream.
+    uint32_t sampleRate;
+    /// The number of frames per block of audio.
+    uint32_t framesPerBlock;
+    /// The maximum duration of the stream in seconds.
+    float duration;
+    /// The buffer for the block of samples from the port audio input device.
+    std::unique_ptr<uint8_t> sampleBlock;
+    /// The number of blocks that have been written to the server.
+    std::atomic<uint32_t> blocks_written;
+
+ public:
+    /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
+    ///
+    /// @param capture_ The PortAudio capture device.
+    /// @param numChannels_ The number of channels in the input stream.
+    /// @param sampleSize_ The number of bytes in an individual frame.
+    /// @param sampleRate_ The sampling rate of the audio stream.
+    /// @param framesPerBlock_ The number of frames in a block of audio.
+    /// @param duration_ the maximum duration for the audio capture
+    ///
+    PortAudioReactor(PaStream* capture_,
+        uint32_t numChannels_ = 1,
+        uint32_t sampleSize_ = 2,
+        uint32_t sampleRate_ = 16000,
+        uint32_t framesPerBlock_ = 4096,
+        float duration_ = 60
+    ) :
+        AudioService<InsecureCredentialStore>::ValidateEventBidiReactor(),
+        capture(capture_),
+        numChannels(numChannels_),
+        sampleSize(sampleSize_),
+        sampleRate(sampleRate_),
+        framesPerBlock(framesPerBlock_),
+        duration(duration_),
+        sampleBlock(static_cast<uint8_t*>(malloc(framesPerBlock_ * numChannels_ * sampleSize_))),
+        blocks_written(0) {
+        if (capture == nullptr)
+            throw std::runtime_error("capture must point to an allocated stream.");
+    }
+
+    /// @brief React to a _write done_ event.
+    ///
+    /// @param ok whether the write succeeded.
+    ///
+    void OnWriteDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // Read a block of samples from the ADC.
+        auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
+        if (err) {
+            describe_pa_error(err);
+            return;
+        }
+        // Set the audio content for the request and start the write request
+        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
+        // If the number of blocks written surpasses the maximal length, close
+        // the stream.
+        if (++blocks_written > (duration * sampleRate) / framesPerBlock)
+            StartWritesDone();
+        else  // Send the data to the server to validate the audio event.
+            StartWrite(&request);
+    }
+
+    /// @brief React to a _read done_ event.
+    ///
+    /// @param ok whether the read succeeded.
+    ///
+    void OnReadDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // Log the current audio event status to the terminal.
+        std::cout << "Response" << std::endl;
+        std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
+        std::cout << "\tSuccess:      " << response.success()     << std::endl;
+        std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
+        std::cout << "\tScore:        " << response.score()       << std::endl;
+        // Start the next read request
+        StartRead(&response);
+    }
+};
+
 int main(int argc, const char** argv) {
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
@@ -138,10 +235,8 @@ int main(int argc, const char** argv) {
         // Iterate over the models returned in the response
         for (auto& model : call->getResponse().models()) {
             // Ignore models that aren't face biometric models.
-            if (model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_DEPENDENT &&
-                model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_INDEPENDENT &&
-                model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD
-            ) continue;
+            if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
+                continue;
             std::cout << "\t" << model.name() << std::endl;
         }
     })->await();
@@ -150,38 +245,11 @@ int main(int argc, const char** argv) {
     std::cout << "Audio model: ";
     std::cin >> audioModel;
 
-    // Determine the sample rate of the model.
-    int32_t sampleRate(0);
-    if (audioModel.find("8kHz") != std::string::npos)
-        sampleRate = 8000;
-    else if (audioModel.find("16kHz") != std::string::npos)
-        sampleRate = 16000;
-
-    // Determine whether to conduct a liveness check.
-    std::string liveness;
-    bool isLivenessEnabled(false);
-    while (true) {
-        std::cout << "Liveness Check [yes|y, no|n]: ";
-        std::cin >> liveness;
-        if (liveness == "yes" || liveness == "y") {
-            isLivenessEnabled = true;
-            break;
-        } else if (liveness == "no" || liveness == "n") {
-            isLivenessEnabled = false;
-            break;
-        } else {
-            continue;
-        }
-    }
-
-    // Get the description of the model.
-    std::string description;
-    std::cout << "Description: ";
-    std::cin.ignore();
-    std::getline(std::cin, description);
-
     // the maximal duration of the recording in seconds
     static constexpr auto DURATION = 60;
+    // the sample rate of the input audio stream. This should match the sample
+    // rate of the selected model
+    static constexpr auto SAMPLE_RATE = 16000;
     // The number of input channels from the microphone. This should always be
     // mono.
     static constexpr auto NUM_CHANNELS = 1;
@@ -197,13 +265,12 @@ int main(int argc, const char** argv) {
     // Start an asynchronous RPC to fetch the names of the available models. The
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
-    auto stream = audioService.createEnrollment(&queue,
+    auto stream = audioService.validateTrigger(&queue,
         audioModel,
-        sampleRate,
+        SAMPLE_RATE,
         "en-US",
         userID,
-        description,
-        isLivenessEnabled
+        sensory::api::v1::audio::ThresholdSensitivity::LOW
     );
 
     /// Tagged events in the CompletionQueue handler.
@@ -219,11 +286,12 @@ int main(int argc, const char** argv) {
     };
 
     // start the stream event thread in the background to handle events.
-    std::thread audioThread([&stream, &queue, &sampleRate](){
+    std::thread audioThread([&stream, &queue](){
+        // The number of audio blocks written for detecting expiration of the
+        // stream.
+        uint32_t blocks_written;
         // The sample block of audio.
         std::unique_ptr<uint8_t> sampleBlock(static_cast<uint8_t*>(malloc(BYTES_PER_BLOCK)));
-        // A flag determining whether the user has been enrolled.
-        bool isEnrolled(false);
 
         // Initialize the PortAudio driver.
         PaError err = paNoError;
@@ -248,7 +316,7 @@ int main(int argc, const char** argv) {
         err = Pa_OpenStream(&capture,
             &inputParameters,
             NULL,       // no output parameters for an input stream
-            sampleRate,
+            SAMPLE_RATE,
             FRAMES_PER_BLOCK,
             paClipOff,  // we won't output out-of-range samples so don't clip them
             NULL,       // using the blocking interface (no callback)
@@ -288,23 +356,17 @@ int main(int argc, const char** argv) {
                 // Set the audio content for the request and start the write request
                 stream->getRequest().set_audiocontent(sampleBlock.get(), FRAMES_PER_BLOCK * SAMPLE_SIZE);
                 // If the user has been authenticated, close the stream.
-                if (isEnrolled)
+                if (++blocks_written > (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK)
                     stream->getCall()->WritesDone((void*) Events::WritesDone);
                 else  // Send the data to the server to authenticate the user.
                     stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
-                // std::cout << "Response" << std::endl;
-                // std::cout << "\tPercent Complete:         " << response.percentcomplete()        << std::endl;
-                // std::cout << "\tPercent Segment Complete: " << response.percentsegmentcomplete() << std::endl;
-                // std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
-                // std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
-                // std::cout << "\tModel Name:               " << response.modelname()              << std::endl;
-                // std::cout << "\tModel Version:            " << response.modelversion()           << std::endl;
-                // std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
-                if (stream->getResponse().percentcomplete() < 100)  // Start the next read request
-                    stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
-                else  // Enrollment succeeded, stop reading.
-                    isEnrolled = true;
+                std::cout << "Response" << std::endl;
+                std::cout << "\tAudio Energy: " << stream->getResponse().audioenergy() << std::endl;
+                std::cout << "\tSuccess:      " << stream->getResponse().success()     << std::endl;
+                std::cout << "\tResult ID:    " << stream->getResponse().resultid()    << std::endl;
+                std::cout << "\tScore:        " << stream->getResponse().score()       << std::endl;
+                stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::WritesDone) {  // Respond to `WritesDone`
                 // Finish the stream and terminate.
                 stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
@@ -312,7 +374,7 @@ int main(int argc, const char** argv) {
                 // Check the final status of the stream and delete the call
                 // handle now that the stream has terminated.
                 if (!stream->getStatus().ok()) {
-                    std::cout << "Authentication stream failed with\n\t"
+                    std::cout << "Wake-word stream failed with\n\t"
                         << stream->getStatus().error_code() << ": "
                         << stream->getStatus().error_message() << std::endl;
                 }
@@ -321,12 +383,6 @@ int main(int argc, const char** argv) {
                 // event loop to terminate the background processing thread.
                 break;
             }
-        }
-
-        if (isEnrolled) {
-            std::cout << "Successfully enrolled!" << std::endl;
-        } else {
-            std::cout << "Enrollment failed!" << std::endl;
         }
 
         // Stop the audio stream.
@@ -343,7 +399,7 @@ int main(int argc, const char** argv) {
     audioThread.join();
 
     if (!stream->getStatus().ok()) {
-        std::cout << "Failed to enroll with\n\t" <<
+        std::cout << "Wake word stream broke with\n\t" <<
             stream->getStatus().error_code() << ": " <<
             stream->getStatus().error_message() << std::endl;
     }

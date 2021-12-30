@@ -222,12 +222,13 @@ int main(int argc, const char** argv) {
         Finish = 4
     };
 
-    std::unique_ptr<uint8_t> sampleBlock(static_cast<uint8_t*>(malloc(BYTES_PER_BLOCK)));
-
-    std::atomic<bool> authenticated(false);
-
     // start the stream event thread in the background to handle events.
-    std::thread audioThread([&stream, &queue, &sampleBlock, &authenticated](){
+    std::thread audioThread([&stream, &queue](){
+        // The sample block of audio.
+        std::unique_ptr<uint8_t> sampleBlock(static_cast<uint8_t*>(malloc(BYTES_PER_BLOCK)));
+        // A flag determining whether the user has been authenticated.
+        bool authenticated(false);
+
         // Initialize the PortAudio driver.
         PaError err = paNoError;
         err = Pa_Initialize();
@@ -331,6 +332,12 @@ int main(int argc, const char** argv) {
         // Terminate the port audio session.
         Pa_Terminate();
 
+        if (authenticated) {
+            std::cout << "Successfully authenticated!" << std::endl;
+        } else {
+            std::cout << "Authentication failed!" << std::endl;
+        }
+
         return 0;
     });
 
@@ -341,10 +348,6 @@ int main(int argc, const char** argv) {
         std::cout << "Failed to authenticate with\n\t" <<
             stream->getStatus().error_code() << ": " <<
             stream->getStatus().error_message() << std::endl;
-    } else if (authenticated) {
-        std::cout << "Successfully authenticated!" << std::endl;
-    } else {
-        std::cout << "Authentication failed!" << std::endl;
     }
 
     delete stream;
