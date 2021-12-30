@@ -24,7 +24,7 @@ project(sensory-cloud-portaudio-applications)
 include(FetchContent)
 FetchContent_Declare(sensorycloud
     GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
-    GIT_TAG        develop
+    GIT_TAG        async-portaudio-examples
 )
 FetchContent_MakeAvailable(sensorycloud)
 
