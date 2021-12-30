@@ -96,9 +96,9 @@ add_executable(biometric_enroll biometric_enroll.cpp)
 target_link_libraries(biometric_enroll PRIVATE sensorycloud)
 target_link_libraries(biometric_enroll PRIVATE portaudio)
 
-# add_executable(biometric_enroll_async biometric_enroll_async.cpp)
-# target_link_libraries(biometric_enroll_async PRIVATE sensorycloud)
-# target_link_libraries(biometric_enroll_async PRIVATE portaudio)
+add_executable(biometric_enroll_async biometric_enroll_async.cpp)
+target_link_libraries(biometric_enroll_async PRIVATE sensorycloud)
+target_link_libraries(biometric_enroll_async PRIVATE portaudio)
 
 add_executable(biometric_enroll_callback biometric_enroll_callback.cpp)
 target_link_libraries(biometric_enroll_callback PRIVATE sensorycloud)
