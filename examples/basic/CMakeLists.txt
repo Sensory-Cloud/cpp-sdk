@@ -24,7 +24,7 @@ project(sensory-cloud-basic-applications)
 include(FetchContent)
 FetchContent_Declare(sensorycloud
     GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
-    GIT_TAG        developCMakeLists
+    GIT_TAG        develop
 )
 FetchContent_MakeAvailable(sensorycloud)
 

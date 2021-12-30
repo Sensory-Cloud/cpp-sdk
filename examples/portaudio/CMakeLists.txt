@@ -24,7 +24,7 @@ project(sensory-cloud-portaudio-applications)
 include(FetchContent)
 FetchContent_Declare(sensorycloud
     GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
-    GIT_TAG        developCMakeLists
+    GIT_TAG        develop
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -54,6 +54,10 @@ add_executable(wakeword wake_word.cpp)
 target_link_libraries(wakeword PRIVATE sensorycloud)
 target_link_libraries(wakeword PRIVATE portaudio)
 
+# add_executable(wakeword_async wake_word_async.cpp)
+# target_link_libraries(wakeword_async PRIVATE sensorycloud)
+# target_link_libraries(wakeword_async PRIVATE portaudio)
+
 add_executable(wakeword_callback wake_word_callback.cpp)
 target_link_libraries(wakeword_callback PRIVATE sensorycloud)
 target_link_libraries(wakeword_callback PRIVATE portaudio)
@@ -63,6 +67,10 @@ target_link_libraries(wakeword_callback PRIVATE portaudio)
 add_executable(sound_id sound_id.cpp)
 target_link_libraries(sound_id PRIVATE sensorycloud)
 target_link_libraries(sound_id PRIVATE portaudio)
+
+# add_executable(sound_id_async sound_id_async.cpp)
+# target_link_libraries(sound_id_async PRIVATE sensorycloud)
+# target_link_libraries(sound_id_async PRIVATE portaudio)
 
 add_executable(sound_id_callback sound_id_callback.cpp)
 target_link_libraries(sound_id_callback PRIVATE sensorycloud)
@@ -74,6 +82,10 @@ add_executable(transcribe transcribe.cpp)
 target_link_libraries(transcribe PRIVATE sensorycloud)
 target_link_libraries(transcribe PRIVATE portaudio)
 
+# add_executable(transcribe_async transcribe_async.cpp)
+# target_link_libraries(transcribe_async PRIVATE sensorycloud)
+# target_link_libraries(transcribe_async PRIVATE portaudio)
+
 add_executable(transcribe_callback transcribe_callback.cpp)
 target_link_libraries(transcribe_callback PRIVATE sensorycloud)
 target_link_libraries(transcribe_callback PRIVATE portaudio)
@@ -84,6 +96,10 @@ add_executable(biometric_enroll biometric_enroll.cpp)
 target_link_libraries(biometric_enroll PRIVATE sensorycloud)
 target_link_libraries(biometric_enroll PRIVATE portaudio)
 
+# add_executable(biometric_enroll_async biometric_enroll_async.cpp)
+# target_link_libraries(biometric_enroll_async PRIVATE sensorycloud)
+# target_link_libraries(biometric_enroll_async PRIVATE portaudio)
+
 add_executable(biometric_enroll_callback biometric_enroll_callback.cpp)
 target_link_libraries(biometric_enroll_callback PRIVATE sensorycloud)
 target_link_libraries(biometric_enroll_callback PRIVATE portaudio)
@@ -93,6 +109,10 @@ target_link_libraries(biometric_enroll_callback PRIVATE portaudio)
 add_executable(biometric_authenticate biometric_authenticate.cpp)
 target_link_libraries(biometric_authenticate PRIVATE sensorycloud)
 target_link_libraries(biometric_authenticate PRIVATE portaudio)
+
+add_executable(biometric_authenticate_async biometric_authenticate_async.cpp)
+target_link_libraries(biometric_authenticate_async PRIVATE sensorycloud)
+target_link_libraries(biometric_authenticate_async PRIVATE portaudio)
 
 add_executable(biometric_authenticate_callback biometric_authenticate_callback.cpp)
 target_link_libraries(biometric_authenticate_callback PRIVATE sensorycloud)
