@@ -28,7 +28,7 @@
 #include "sensorycloud/token_manager/secure_random.hpp"
 
 // the number of repetitions for sampling UUIDs during testing
-#define REPETITIONS 30
+#define REPETITIONS 100
 
 TEST_CASE("secure_random strings should have 8 characters") {
     for (int i = 0; i < REPETITIONS; ++i) {
@@ -53,6 +53,39 @@ TEST_CASE("secure_random strings should have 32 characters") {
         SECTION(std::string("Sample ") + std::to_string(i)) {
             const auto uuid = sensory::token_manager::secure_random<32>();
             REQUIRE(32 == uuid.length());
+        }
+    }
+}
+
+SCENARIO("A user wants to generate sequential random numbers") {
+    GIVEN("a length of 8") {
+        static constexpr std::size_t LENGTH = 8;
+        WHEN("two random strings are generated") {
+            const auto uuid1 = sensory::token_manager::secure_random<LENGTH>();
+            const auto uuid2 = sensory::token_manager::secure_random<LENGTH>();
+            THEN("the strings are not the same") {
+                REQUIRE(uuid1 != uuid2);
+            }
+        }
+    }
+    GIVEN("a length of 16") {
+        static constexpr std::size_t LENGTH = 16;
+        WHEN("two random strings are generated") {
+            const auto uuid1 = sensory::token_manager::secure_random<LENGTH>();
+            const auto uuid2 = sensory::token_manager::secure_random<LENGTH>();
+            THEN("the strings are not the same") {
+                REQUIRE(uuid1 != uuid2);
+            }
+        }
+    }
+    GIVEN("a length of 32") {
+        static constexpr std::size_t LENGTH = 32;
+        WHEN("two random strings are generated") {
+            const auto uuid1 = sensory::token_manager::secure_random<LENGTH>();
+            const auto uuid2 = sensory::token_manager::secure_random<LENGTH>();
+            THEN("the strings are not the same") {
+                REQUIRE(uuid1 != uuid2);
+            }
         }
     }
 }
