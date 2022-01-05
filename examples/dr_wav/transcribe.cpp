@@ -156,29 +156,24 @@ class AudioFileReactor :
 };
 
 int main(int argc, const char** argv) {
+    // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
-            .prog("dr_wav_transcribe_callback")
-            .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
-            // .epilog("bar epilog");
-    parser.add_argument({ " -i ", "--input" }).required(true)
+        .prog("transcribe")
+        .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
+    parser.add_argument({ "-i", "--input" }).required(true)
         .help("INPUT The input audio file to stream to Sensory Cloud.");
     parser.add_argument({ "-o", "--output" }).required(true)
         .help("OUTPUT The output file to write the transcription to.");
-    parser.add_argument({ "-H", "--host" })
-        .help("HOST The hostname of a Sensory Cloud inference server.")
-        .default_value("io.stage.cloud.sensory.com");
-    parser.add_argument({ "-P", "--port" })
-        .help("PORT The port number that the Sensory Cloud inference server is running at.")
-        .default_value(443);
-    parser.add_argument({ "-t", "--tenant" })
-        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.")
-        .default_value("cabb7700-206f-4cc7-8e79-cd7f288aa78d");
-    parser.add_argument({ "-m", "--model" })
-        .help("MODEL The name of the transcription model to use.")
-        .default_value("speech_recognition_en");
-    parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID for the transcription.")
-        .default_value("ckckck");
+    parser.add_argument({ "-H", "--host" }).required(true)
+        .help("HOST The hostname of a Sensory Cloud inference server.");
+    parser.add_argument({ "-P", "--port" }).required(true)
+        .help("PORT The port number that the Sensory Cloud inference server is running at.");
+    parser.add_argument({ "-t", "--tenant" }).required(true)
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-m", "--model" }).required(true)
+        .help("MODEL The name of the transcription model to use.");
+    parser.add_argument({ "-u", "--userid" }).required(true)
+        .help("USERID The name of the user ID for the transcription.");
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("VERBOSE Produce verbose output during transcription.");
 
