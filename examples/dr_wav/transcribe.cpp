@@ -115,8 +115,8 @@ class AudioFileReactor :
         // Update the index of the current sample based on the number of samples
         // that were just pushed.
         index += numSamples;
-        // TODO: when uploading entire files in one write, the progress bar is not necessary
-        // bar.update();
+        if (framesPerBlock < buffer.size())  // Update progress bar if chunking
+            bar.update();
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
         StartWrite(&request);
@@ -134,8 +134,7 @@ class AudioFileReactor :
             std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
             std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
         }
-        {
-            // Lock access to the critical section for the transcript string.
+        {  // Lock access to the critical section for the transcript string.
             std::lock_guard<std::mutex> lock(mutex);
             // Update the transcript with the final output transcript.
             transcript = response.transcript();
@@ -174,29 +173,25 @@ int main(int argc, const char** argv) {
         .help("MODEL The name of the transcription model to use.");
     parser.add_argument({ "-u", "--userid" }).required(true)
         .help("USERID The name of the user ID for the transcription.");
+    parser.add_argument({ "-l", "--language" }).required(true)
+        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    parser.add_argument({ "-C", "--chunksize" })
+        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+        .default_value(0);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("VERBOSE Produce verbose output during transcription.");
-
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
-    // The input audio file to transcribe audio from.
     const auto INPUT_FILE = args.get<std::string>("input");
-    // The output file to write the transcription to.
     const auto OUTPUT_FILE = args.get<std::string>("output");
-    // The hostname of the inference server.
     const auto HOSTNAME = args.get<std::string>("host");
-    // The port number the inference server runs at.
     const auto PORT = args.get<uint16_t>("port");
-    // The ID of the tenant on the Sensory Cloud inference server.
     const auto TENANT = args.get<std::string>("tenant");
-    // The name of the audio transcription model to use.
     const auto MODEL = args.get<std::string>("model");
-    // The ID of the user making the request.
     const auto USER_ID = args.get<std::string>("userid");
-    /// A flag determining whether verbose output should be produced.
+    const auto LANGUAGE = args.get<std::string>("language");
+    const auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
-    // The number of audio samples per frame sent to the server.
-    const uint32_t SAMPLES_PER_FRAME = 4096;
 
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
@@ -209,12 +204,17 @@ int main(int argc, const char** argv) {
 
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
+    sensory::api::common::ServerHealthResponse serverHealthResponse;
+    auto status = healthService.getHealth(&serverHealthResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
+    } else if (VERBOSE) {
+        std::cout << "Server status" << std::endl;
+        std::cout << "\tIs Healthy:     " << serverHealthResponse.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << serverHealthResponse.serverversion() << std::endl;
+        std::cout << "\tID:             " << serverHealthResponse.id()            << std::endl;
     }
 
     // Create an OAuth service
@@ -222,9 +222,11 @@ int main(int argc, const char** argv) {
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
+    if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
         const auto credentials = tokenManager.generateCredentials();
+
+        std::cout << "Registering device with server..." << std::endl;
 
         // Query the friendly device name
         std::string name = "";
@@ -233,22 +235,18 @@ int main(int argc, const char** argv) {
 
         // Query the shared pass-phrase
         std::string password = "";
-        std::cout << "password: ";
+        std::cout << "Password: ";
         std::cin >> password;
 
         // Register this device with the remote host
-        oauthService.registerDevice(
-            name,
-            password,
-            credentials.id,
-            credentials.secret,
-            [](OAuthService::RegisterDeviceCallData* call) {
-            if (!call->getStatus().ok()) {  // The call failed.
-                std::cout << "Failed to register device with\n\t" <<
-                    call->getStatus().error_code() << ": " <<
-                    call->getStatus().error_message() << std::endl;
-            }
-        })->await();
+        sensory::api::v1::management::DeviceResponse deviceResponse;
+        status = oauthService.registerDevice(&deviceResponse,
+            name, password, credentials.id, credentials.secret);
+        if (!status.ok()) {  // the call failed, print a descriptive message
+            std::cout << "Failed to register device with\n\t" <<
+                status.error_code() << ": " << status.error_message() << std::endl;
+            return 1;
+        }
     }
 
     // ------ Create the audio service -----------------------------------------
@@ -256,15 +254,13 @@ int main(int argc, const char** argv) {
     // Create the audio service based on the configuration and token manager.
     AudioService<InsecureCredentialStore> audioService(config, tokenManager);
 
-    // Load the audio file and zero pad the buffer with 300ms of silence.
+    // Load the audio file.
     AudioBuffer buffer;
     buffer.load(INPUT_FILE);
-    // TODO: this padding was removed when deciding to upload full audio files in one request
-    // buffer.padBack(300);
     // Check that the file is 16kHz.
     if (buffer.getSampleRate() != 16000) {
         std::cout << "Error: attempting to load WAV file with sample rate of "
-            << buffer.getSampleRate() << "kHz, but only 16kHz audio is supported."
+            << buffer.getSampleRate() << "Hz, but only 16000Hz audio is supported."
             << std::endl;
         return 1;
     }
@@ -275,36 +271,32 @@ int main(int argc, const char** argv) {
             << std::endl;
         return 1;
     }
+    // Pad the file with 300ms of silence.
+    buffer.padBack(300);
 
     // Create the gRPC reactor to respond to streaming events.
     AudioFileReactor reactor(buffer.getSamples(),
         buffer.getChannels(),
         buffer.getSampleRate(),
-        buffer.getNumSamples(), //SAMPLES_PER_FRAME,  // TODO: SAMPLE_PER_FRAME is not needed to upload entire files
+        CHUNK_SIZE > 0 ? CHUNK_SIZE : buffer.getNumSamples(),
         VERBOSE
     );
     // Initialize the stream with the reactor for callbacks, given audio model,
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to transcribe audio.
-    audioService.transcribeAudio(&reactor,
-        MODEL,
-        buffer.getSampleRate(),
-        "en-US",
-        USER_ID
-    );
+    audioService.transcribeAudio(&reactor, MODEL, buffer.getSampleRate(), LANGUAGE, USER_ID);
     reactor.StartCall();
+    // Wait for the call to terminate and check the final status.
     status = reactor.await();
-
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Transcription stream broke with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
+    // Log the transcript to the terminal if in verbose mode.
+    if (VERBOSE) std::cout << reactor.getTranscript() << std::endl;
 
-    if (VERBOSE) {
-        std::cout << reactor.getTranscript() << std::endl;
-    }
-
+    // Write the transcript to an output file.
     std::ofstream output_file(OUTPUT_FILE, std::ofstream::out);
     output_file << reactor.getTranscript() << std::endl;
     output_file.close();
