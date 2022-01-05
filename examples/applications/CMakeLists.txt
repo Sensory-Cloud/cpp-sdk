@@ -23,8 +23,8 @@ project(sensory-cloud-voice-assistant)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
-    GIT_TAG        develop
+    GIT_REPOSITORY https://github.com/Sensory-Cloud/cpp-sdk.git
+    GIT_TAG        main
 )
 FetchContent_MakeAvailable(sensorycloud)
 
