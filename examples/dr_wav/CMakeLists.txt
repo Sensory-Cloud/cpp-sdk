@@ -29,12 +29,6 @@ FetchContent_Declare(sensorycloud
 FetchContent_MakeAvailable(sensorycloud)
 
 # Add the application to the build chain.
-add_executable(transcribe transcribe.cpp
-    dr_wav.h
-    dr_flac.h
-    dr_mp3.h
-    audio_buffer.hpp
-    argparse.hpp
-    tqdm.hpp
-)
+include_directories(dep)
+add_executable(transcribe transcribe.cpp)
 target_link_libraries(transcribe PRIVATE sensorycloud)

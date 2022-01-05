@@ -32,9 +32,9 @@
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
-#include "audio_buffer.hpp"
-#include "argparse.hpp"
-#include "tqdm.hpp"
+#include "dep/audio_buffer.hpp"
+#include "dep/argparse.hpp"
+#include "dep/tqdm.hpp"
 
 using sensory::token_manager::TokenManager;
 using sensory::token_manager::InsecureCredentialStore;
