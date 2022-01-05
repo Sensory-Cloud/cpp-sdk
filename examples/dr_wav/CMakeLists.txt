@@ -1,4 +1,4 @@
-# cmake build file for Sensory Cloud Audio File Transcription Application.
+# cmake build file for Sensory Cloud audio applications based on file inputs.
 #
 # Copyright 2021 Sensory, Inc.
 #
@@ -29,7 +29,7 @@ FetchContent_Declare(sensorycloud
 FetchContent_MakeAvailable(sensorycloud)
 
 # Add the application to the build chain.
-add_executable(dr_wav_transcribe_callback transcribe_callback.cpp
+add_executable(transcribe transcribe.cpp
     dr_wav.h
     dr_flac.h
     dr_mp3.h
@@ -37,4 +37,4 @@ add_executable(dr_wav_transcribe_callback transcribe_callback.cpp
     argparse.hpp
     tqdm.hpp
 )
-target_link_libraries(dr_wav_transcribe_callback PRIVATE sensorycloud)
+target_link_libraries(transcribe PRIVATE sensorycloud)
