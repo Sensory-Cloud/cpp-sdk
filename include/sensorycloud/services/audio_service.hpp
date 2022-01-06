@@ -63,6 +63,65 @@ static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
     return audioConfig;
 }
 
+/// @brief Allocate a new configuration object for enrollment creation.
+///
+/// @param modelName The name of the model to use to create the enrollment.
+/// Use `getModels()` to obtain a list of available models.
+/// @param userID The ID of the user making the request.
+/// @param description The description of the enrollment.
+/// @param isLivenessEnabled `true` to perform a liveness check in addition
+/// to an enrollment, `false` to perform the enrollment without the liveness
+/// check.
+/// @param enrollmentDuration The duration in seconds for text-independent
+/// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
+/// with liveness enabled.
+/// @param numUtterances The number of utterances that should be required
+/// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+///
+/// @returns A pointer to the create enrollment config object.
+///
+/// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
+/// are both specified. For _text-independent_ models, an enrollment
+/// duration can be specified, but the number of utterances do not apply.
+/// Conversely, for _text-dependent_ enrollments, a number of utterances
+/// may be provided, but an enrollment duration does not apply.
+///
+/// @details
+/// The enrollment duration for text-independent enrollments controls the
+/// maximal amount of time allowed for authentication.
+///
+/// The number of utterances for text-dependent enrollments controls the
+/// number of uttered phrases that must be emitted to authenticate.
+///
+static inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const std::string& description,
+    const bool& isLivenessEnabled,
+    const float enrollmentDuration = 0.f,
+    const int32_t numUtterances = 0
+) {
+    // The number of utterances and the enrollment duration cannot both be
+    // specified in the message, so check for sentinel "null" values and if
+    // both are provided, throw an error. This check is conducted before
+    // allocation of the config to prevent memory leaks.
+    if (enrollmentDuration > 0 && numUtterances > 0)
+        throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
+    // Create the enrollment config message. gRPC expects a dynamically
+    // allocated message and will free the pointer when exiting the scope
+    // of the request.
+    auto config = new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_description(description);
+    config->set_islivenessenabled(isLivenessEnabled);
+    if (enrollmentDuration > 0)  // enrollment duration provided
+        config->set_enrollmentduration(enrollmentDuration);
+    else if (numUtterances > 0)  // number of utterances provided
+        config->set_enrollmentnumutterances(numUtterances);
+    return config;
+}
+
 /// @brief A service for audio data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.

@@ -58,20 +58,99 @@ SCENARIO("A user needs to create an AudioConfig") {
         const uint32_t audioChannelCount = 1;
         const std::string languageCode = "en-US";
         WHEN("an audio config is dynamically allocated from the parameters") {
-            auto audioConfig = sensory::service::newAudioConfig(
+            auto config = sensory::service::newAudioConfig(
                 encoding,
                 sampleRateHertz,
                 audioChannelCount,
                 languageCode
             );
             THEN("a pointer is returned with the variables set") {
-                REQUIRE(audioConfig != nullptr);
-                REQUIRE(audioConfig->encoding() == encoding);
-                REQUIRE(audioConfig->sampleratehertz() == sampleRateHertz);
-                REQUIRE(audioConfig->audiochannelcount() == audioChannelCount);
-                REQUIRE(audioConfig->languagecode() == languageCode);
+                REQUIRE(config != nullptr);
+                REQUIRE(config->encoding() == encoding);
+                REQUIRE(config->sampleratehertz() == sampleRateHertz);
+                REQUIRE(config->audiochannelcount() == audioChannelCount);
+                REQUIRE(config->languagecode() == languageCode);
             }
-            delete audioConfig;
+            delete config;
+        }
+    }
+}
+
+SCENARIO("A user needs to create a CreateEnrollmentConfig") {
+    GIVEN("parameters for the enrollment based on a text-independent model") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const bool& isLivenessEnabled = true;
+        const float enrollmentDuration = 10.f;
+        const int32_t numUtterances = 0;
+        WHEN("a CreateEnrollmentConfig is allocated from the parameters") {
+            auto config = sensory::service::newCreateEnrollmentConfig(
+                modelName,
+                userID,
+                description,
+                isLivenessEnabled,
+                enrollmentDuration,
+                numUtterances
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
+                REQUIRE(config->enrollmentduration() == enrollmentDuration);
+                REQUIRE(config->enrollmentnumutterances() == numUtterances);
+            }
+            delete config;
+        }
+    }
+    GIVEN("parameters for the enrollment based on a text-independent model") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const bool& isLivenessEnabled = true;
+        const float enrollmentDuration = 0.f;
+        const int32_t numUtterances = 4;
+        WHEN("a CreateEnrollmentConfig is allocated from the parameters") {
+            auto config = sensory::service::newCreateEnrollmentConfig(
+                modelName,
+                userID,
+                description,
+                isLivenessEnabled,
+                enrollmentDuration,
+                numUtterances
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
+                REQUIRE(config->enrollmentduration() == enrollmentDuration);
+                REQUIRE(config->enrollmentnumutterances() == numUtterances);
+            }
+            delete config;
+        }
+    }
+    GIVEN("invalid parameters for the enrollment (both enrollmentDuration and numUtterances provided)") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const bool& isLivenessEnabled = true;
+        const float enrollmentDuration = 10.f;
+        const int32_t numUtterances = 4;
+        WHEN("a CreateEnrollmentConfig is allocated from the parameters") {
+            THEN("an error is thrown") {
+                REQUIRE_THROWS(sensory::service::newCreateEnrollmentConfig(
+                    modelName,
+                    userID,
+                    description,
+                    isLivenessEnabled,
+                    enrollmentDuration,
+                    numUtterances
+                ));
+            }
         }
     }
 }
