@@ -228,10 +228,12 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating an audio enrollment.
     ///
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -262,9 +264,8 @@ class AudioService {
     /// number of uttered phrases that must be emitted to authenticate.
     ///
     inline CreateEnrollmentStream createEnrollment(
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID,
         const std::string& description = "",
         const bool& isLivenessEnabled = false,
@@ -282,9 +283,7 @@ class AudioService {
         // of the request.
         auto enrollmentConfig =
             new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollmentConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        enrollmentConfig->set_allocated_audio(audioConfig);
         enrollmentConfig->set_modelname(modelName);
         enrollmentConfig->set_userid(userID);
         enrollmentConfig->set_deviceid(config.getDeviceID());
@@ -328,10 +327,12 @@ class AudioService {
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -364,9 +365,8 @@ class AudioService {
     ///
     inline CreateEnrollmentAsyncCall* createEnrollment(
         ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID,
         const std::string& description = "",
         const bool& isLivenessEnabled = false,
@@ -385,9 +385,7 @@ class AudioService {
         // of the request.
         auto enrollmentConfig =
             new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollmentConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        enrollmentConfig->set_allocated_audio(audioConfig);
         enrollmentConfig->set_modelname(modelName);
         enrollmentConfig->set_userid(userID);
         enrollmentConfig->set_deviceid(config.getDeviceID());
@@ -430,10 +428,12 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to create the enrollment.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param description The description of the enrollment.
     /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -463,9 +463,8 @@ class AudioService {
     ///
     template<typename Reactor>
     inline void createEnrollment(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID,
         const std::string& description = "",
         const bool& isLivenessEnabled = false,
@@ -481,9 +480,7 @@ class AudioService {
         // of the request.
         auto enrollmentConfig =
             new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollmentConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        enrollmentConfig->set_allocated_audio(audioConfig);
         enrollmentConfig->set_modelname(modelName);
         enrollmentConfig->set_userid(userID);
         enrollmentConfig->set_deviceid(config.getDeviceID());
@@ -525,10 +522,12 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// authentication.
     ///
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param enrollmentID The enrollment ID to authenticate against. This can
     /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param isLivenessEnabled `true` to perform a liveness check before the
     /// authentication, `false` to only perform the authentication.
     /// @returns A bidirectional stream that can be used to send audio data to
@@ -539,9 +538,8 @@ class AudioService {
     /// message to the server.
     ///
     inline AuthenticateStream authenticate(
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const bool& isLivenessEnabled = false,
         const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
             ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
@@ -559,9 +557,7 @@ class AudioService {
         // of the request.
         auto authenticateConfig =
             new ::sensory::api::v1::audio::AuthenticateConfig;
-        authenticateConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        authenticateConfig->set_allocated_audio(audioConfig);
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
         authenticateConfig->set_sensitivity(sensitivity);
@@ -591,10 +587,12 @@ class AudioService {
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param enrollmentID The enrollment ID to authenticate against. This can
     /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param isLivenessEnabled `true` to perform a liveness check before the
     /// authentication, `false` to only perform the authentication.
     /// @returns A pointer to the call data associated with this asynchronous
@@ -605,9 +603,8 @@ class AudioService {
     ///
     inline AuthenticateAsyncCall* authenticate(
         ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const bool& isLivenessEnabled = false,
         const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
             ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
@@ -626,9 +623,7 @@ class AudioService {
         // of the request.
         auto authenticateConfig =
             new ::sensory::api::v1::audio::AuthenticateConfig;
-        authenticateConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        authenticateConfig->set_allocated_audio(audioConfig);
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
         authenticateConfig->set_sensitivity(sensitivity);
@@ -657,10 +652,12 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param enrollmentID The enrollment ID to authenticate against. This can
     /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param isLivenessEnabled `true` to perform a liveness check before the
     /// authentication, `false` to only perform the authentication.
     ///
@@ -670,9 +667,8 @@ class AudioService {
     ///
     template<typename Reactor>
     inline void authenticate(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const bool& isLivenessEnabled = false,
         const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
             ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
@@ -688,9 +684,7 @@ class AudioService {
         // of the request.
         auto authenticateConfig =
             new ::sensory::api::v1::audio::AuthenticateConfig;
-        authenticateConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        authenticateConfig->set_allocated_audio(audioConfig);
         authenticateConfig->set_enrollmentid(enrollmentID);
         authenticateConfig->set_islivenessenabled(isLivenessEnabled);
         authenticateConfig->set_sensitivity(sensitivity);
@@ -718,10 +712,12 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// audio event validation.
     ///
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to validate the trigger.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param sensitivity How sensitive the model should be to false accepts.
     /// @returns A bidirectional stream that can be used to send audio data to
@@ -732,9 +728,8 @@ class AudioService {
     /// message to the server.
     ///
     inline ValidateTriggerStream validateTrigger(
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID,
         const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
     ) const {
@@ -749,9 +744,7 @@ class AudioService {
         // of the request.
         auto validateEventConfig =
             new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        validateEventConfig->set_allocated_audio(audioConfig);
         validateEventConfig->set_modelname(modelName);
         validateEventConfig->set_userid(userID);
         validateEventConfig->set_sensitivity(sensitivity);
@@ -780,10 +773,12 @@ class AudioService {
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to validate the trigger.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param sensitivity How sensitive the model should be to false accepts.
     /// @returns A pointer to the call data associated with this asynchronous
@@ -794,9 +789,8 @@ class AudioService {
     ///
     inline ValidateEventAsyncCall* validateTrigger(
         ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID,
         const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
     ) const {
@@ -812,9 +806,7 @@ class AudioService {
         // of the request.
         auto validateEventConfig =
             new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        validateEventConfig->set_allocated_audio(audioConfig);
         validateEventConfig->set_modelname(modelName);
         validateEventConfig->set_userid(userID);
         validateEventConfig->set_sensitivity(sensitivity);
@@ -842,10 +834,12 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to validate the trigger.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @param sensitivity How sensitive the model should be to false accepts.
     ///
@@ -855,9 +849,8 @@ class AudioService {
     ///
     template<typename Reactor>
     inline void validateTrigger(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID,
         const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
     ) const {
@@ -870,9 +863,7 @@ class AudioService {
         // of the request.
         auto validateEventConfig =
             new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        validateEventConfig->set_allocated_audio(audioConfig);
         validateEventConfig->set_modelname(modelName);
         validateEventConfig->set_userid(userID);
         validateEventConfig->set_sensitivity(sensitivity);
@@ -899,10 +890,12 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
     ///
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to transcribe the audio.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
@@ -912,9 +905,8 @@ class AudioService {
     /// message to the server.
     ///
     inline TranscribeAudioStream transcribeAudio(
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID
     ) const {
         // Create a context for the client for a bidirectional stream.
@@ -927,9 +919,7 @@ class AudioService {
         // allocated message and will free the pointer when exiting the scope
         // of the request.
         auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        transcribeConfig->set_allocated_audio(audioConfig);
         transcribeConfig->set_modelname(modelName);
         transcribeConfig->set_userid(userID);
 
@@ -957,10 +947,12 @@ class AudioService {
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to transcribe the audio.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
@@ -970,9 +962,8 @@ class AudioService {
     ///
     inline TranscribeAsyncCall* transcribeAudio(
         ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID
     ) const {
         // Create a call data object to store the client context, the response,
@@ -986,9 +977,7 @@ class AudioService {
         // allocated message and will free the pointer when exiting the scope
         // of the request.
         auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        transcribeConfig->set_allocated_audio(audioConfig);
         transcribeConfig->set_modelname(modelName);
         transcribeConfig->set_userid(userID);
 
@@ -1015,10 +1004,12 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
     /// @param modelName The name of the model to use to transcribe the audio.
     /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
     /// @param userID The ID of the user making the request.
     ///
     /// @details
@@ -1027,9 +1018,8 @@ class AudioService {
     ///
     template<typename Reactor>
     inline void transcribeAudio(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
         const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
         const std::string& userID
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
@@ -1040,9 +1030,7 @@ class AudioService {
         // allocated message and will free the pointer when exiting the scope
         // of the request.
         auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
+        transcribeConfig->set_allocated_audio(audioConfig);
         transcribeConfig->set_modelname(modelName);
         transcribeConfig->set_userid(userID);
 
