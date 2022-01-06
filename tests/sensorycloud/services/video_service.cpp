@@ -26,3 +26,26 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include "sensorycloud/services/video_service.hpp"
+#include "sensorycloud/services/oauth_service.hpp"
+#include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/token_manager/insecure_credential_store.hpp"
+
+using sensory::Config;
+using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::TokenManager;
+using sensory::service::OAuthService;
+using sensory::service::VideoService;
+
+TEST_CASE("Should create VideoService from Config and TokenManager") {
+    // Create the configuration that provides information about the remote host.
+    Config config("hostname.com", 443, "tenant ID", "device ID");
+    // Create the OAuth service for requesting and managing OAuth tokens through
+    // a token manager instance.
+    OAuthService oauthService(config);
+    // Create a credential store for keeping the clientID, clientSecret,
+    // token, and expiration time.
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
+    // Create the actual video service from the config and token manager.
+    VideoService<InsecureCredentialStore> service(config, tokenManager);
+}

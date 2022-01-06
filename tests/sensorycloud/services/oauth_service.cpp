@@ -26,3 +26,14 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include "sensorycloud/services/oauth_service.hpp"
+
+using sensory::Config;
+using sensory::service::OAuthService;
+
+TEST_CASE("Should create OAuthService from Config") {
+    // Create the configuration that provides information about the remote host.
+    Config config("hostname.com", 443, "tenant ID", "device ID");
+    // Create the OAuth service for requesting and managing OAuth tokens through
+    // a token manager instance.
+    OAuthService service(config);
+}
