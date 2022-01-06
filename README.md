@@ -71,9 +71,9 @@ point for integrating the Sensory Cloud SDK into your project.
 | [Dockerfile.Ubuntu.20.04](Dockerfile.Ubuntu.20.04) | Ubuntu    | 20.04      |
 | [Dockerfile.Ubuntu.18.04](Dockerfile.Ubuntu.18.04) | Ubuntu    | 18.04      |
 | [Dockerfile.Ubuntu.16.04](Dockerfile.Ubuntu.16.04) | Ubuntu    | 16.04      |
+| [Dockerfile.Debian.11](Dockerfile.Debian.11)       | Debian    | 11         |
+| [Dockerfile.Debian.10](Dockerfile.Debian.10)       | Debian    | 10         |
 | [Dockerfile.Debian.9](Dockerfile.Debian.9)         | Debian    | 9          |
-| [Dockerfile.Debian.8](Dockerfile.Debian.8)         | Debian    | 8          |
-| [Dockerfile.Debian.7](Dockerfile.Debian.7)         | Debian    | 7          |
 | [Dockerfile.RHEL.8](Dockerfile.RHEL.8)             | RHEL      | 8          |
 | [Dockerfile.RHEL.7](Dockerfile.RHEL.7)             | RHEL      | 7          |
 | [Dockerfile.CentOS.8](Dockerfile.CentOS.8)         | CentOS    | 8          |
@@ -160,8 +160,6 @@ cmake -DGRPC_AS_SUBMODULE=ON -DGRPC_FETCHCONTENT=OFF <source directory>
 
 ### Global Installation (MacOS)
 
-<!-- sudo apt-get install openssl libgrpc++-dev -->
-
 The homebrew package manager for MacOS maintains version matched binaries of
 protobuf and gRPC that can be used for a system-wide installation of these two
 libraries. To install with a system-wide installation of protobuf and gRPC on
@@ -207,7 +205,7 @@ cmake -DSENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE=ON <source directory>
 
 The table below provides information about the implementations of
 `SecureCredentialStore` that are provided. Please refer to
-[./md/tutorial.md](./md/tutorial.md) for more information about the
+[md/tutorial.md](md/tutorial.md) for more information about the
 `SecureCredentialStore` object.
 
 | Operating System  | Secure Secret Library                  |
@@ -222,10 +220,10 @@ The table below provides information about the implementations of
 
 ### Tutorials and Examples
 
-Please refer to the [./md/tutorial.md](./md/tutorial.md) for a tutorial of the
+Please refer to the [md/tutorial.md](md/tutorial.md) for a tutorial of the
 blocking synchronous interface of the SDK. Tutorials for the asynchronous
 interface can be found in the
-[./md/async_event_loop.md](./md/async_event_loop.md) and
-[./md/async_callback.md](./md/async_callback.md) for event-loop and reactor
-patterns, respectively. Examples code can be found in the [examples](examples)
+[md/async_event_loop.md](md/async_event_loop.md) and
+[md/async_callback.md](md/async_callback.md) for event-loop and reactor
+patterns, respectively. Examples code can be found in the [examples](examples/)
 directory.
