@@ -49,7 +49,7 @@ namespace service {
 /// @param languageCode The language code for the speech in the audio.
 /// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
 ///
-static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
+inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
     const ::sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding,
     const float& sampleRateHertz,
     const uint32_t& audioChannelCount,
@@ -66,7 +66,6 @@ static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
 /// @brief Allocate a new configuration object for enrollment creation.
 ///
 /// @param modelName The name of the model to use to create the enrollment.
-/// Use `getModels()` to obtain a list of available models.
 /// @param userID The ID of the user making the request.
 /// @param description The description of the enrollment.
 /// @param isLivenessEnabled `true` to perform a liveness check in addition
@@ -78,7 +77,7 @@ static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
 /// @param numUtterances The number of utterances that should be required
 /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
 ///
-/// @returns A pointer to the create enrollment config object.
+/// @returns A pointer to the `CreateEnrollmentConfig` object.
 ///
 /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
 /// are both specified. For _text-independent_ models, an enrollment
@@ -93,7 +92,7 @@ static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
 /// The number of utterances for text-dependent enrollments controls the
 /// number of uttered phrases that must be emitted to authenticate.
 ///
-static inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentConfig(
+inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentConfig(
     const std::string& modelName,
     const std::string& userID,
     const std::string& description,
@@ -107,9 +106,6 @@ static inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnroll
     // allocation of the config to prevent memory leaks.
     if (enrollmentDuration > 0 && numUtterances > 0)
         throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
-    // Create the enrollment config message. gRPC expects a dynamically
-    // allocated message and will free the pointer when exiting the scope
-    // of the request.
     auto config = new ::sensory::api::v1::audio::CreateEnrollmentConfig;
     config->set_modelname(modelName);
     config->set_userid(userID);
@@ -119,6 +115,65 @@ static inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnroll
         config->set_enrollmentduration(enrollmentDuration);
     else if (numUtterances > 0)  // number of utterances provided
         config->set_enrollmentnumutterances(numUtterances);
+    return config;
+}
+
+/// @brief Allocate a new configuration object for enrollment authentication.
+///
+/// @param enrollmentID The enrollment ID to authenticate against. This can
+/// be either an enrollment ID or a group ID.
+/// @param isLivenessEnabled `true` to perform a liveness check before the
+/// authentication, `false` to only perform the authentication.
+/// @param sensitivity The sensitivity of the model.
+/// @param security The security level of the model.
+/// @returns A pointer to the `AuthenticateConfig` object.
+///
+inline ::sensory::api::v1::audio::AuthenticateConfig* newAuthenticateConfig(
+    const std::string& enrollmentID,
+    const bool& isLivenessEnabled,
+    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,              // ::sensory::api::v1::audio::ThresholdSensitivity::LOW
+    const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security  // ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+) {
+    auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
+    config->set_enrollmentid(enrollmentID);
+    config->set_islivenessenabled(isLivenessEnabled);
+    config->set_sensitivity(sensitivity);
+    config->set_security(security);
+    return config;
+}
+
+/// @brief Allocate a new configuration object for trigger validation.
+///
+/// @param modelName The name of the model to use to validate the trigger.
+/// @param userID The ID of the user making the request.
+/// @param sensitivity The sensitivity of the model.
+/// @returns A pointer to the `ValidateEventConfig` object.
+///
+inline ::sensory::api::v1::audio::ValidateEventConfig* newValidateEventConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+) {
+    auto config = new ::sensory::api::v1::audio::ValidateEventConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_sensitivity(sensitivity);
+    return config;
+}
+
+/// @brief Allocate a new configuration object for audio transcription.
+///
+/// @param modelName The name of the model to use to transcribe the audio.
+/// @param userID The ID of the user making the request.
+/// @returns A pointer to the `TranscribeConfig` object.
+///
+inline ::sensory::api::v1::audio::TranscribeConfig* newTranscribeConfig(
+    const std::string& modelName,
+    const std::string& userID
+) {
+    auto config = new ::sensory::api::v1::audio::TranscribeConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
     return config;
 }
 

@@ -36,19 +36,9 @@ using sensory::token_manager::TokenManager;
 using sensory::service::OAuthService;
 using sensory::service::AudioService;
 
-TEST_CASE("Should create AudioService from Config and TokenManager") {
-    // Create the configuration that provides information about the remote host.
-    Config config("hostname.com", 443, "tenant ID", "device ID");
-    // Create the OAuth service for requesting and managing OAuth tokens through
-    // a token manager instance.
-    OAuthService oauthService(config);
-    // Create a credential store for keeping the clientID, clientSecret,
-    // token, and expiration time.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
-    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
-    // Create the actual audio service from the config and token manager.
-    AudioService<InsecureCredentialStore> service(config, tokenManager);
-}
+// ---------------------------------------------------------------------------
+// MARK: newAudioConfig
+// ---------------------------------------------------------------------------
 
 SCENARIO("A user needs to create an AudioConfig") {
     GIVEN("parameters for an audio config that describe the input stream") {
@@ -75,6 +65,10 @@ SCENARIO("A user needs to create an AudioConfig") {
         }
     }
 }
+
+// ---------------------------------------------------------------------------
+// MARK: newCreateEnrollmentConfig
+// ---------------------------------------------------------------------------
 
 SCENARIO("A user needs to create a CreateEnrollmentConfig") {
     GIVEN("parameters for the enrollment based on a text-independent model") {
@@ -153,4 +147,100 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
             }
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: newAuthenticateConfig
+// ---------------------------------------------------------------------------
+
+SCENARIO("A user needs to create an AuthenticateConfig") {
+    GIVEN("parameters for an authentication stream") {
+        const std::string enrollmentID = "enrollmentID";
+        const bool isLivenessEnabled = true;
+        const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
+            sensory::api::v1::audio::ThresholdSensitivity::LOW;
+        const sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity security =
+            sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW;
+        WHEN("an audio config is dynamically allocated from the parameters") {
+            auto config = sensory::service::newAuthenticateConfig(
+                enrollmentID,
+                isLivenessEnabled,
+                sensitivity,
+                security
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->enrollmentid() == enrollmentID);
+                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
+                REQUIRE(config->sensitivity() == sensitivity);
+                REQUIRE(config->security() == security);
+            }
+            delete config;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: newValidateEventConfig
+// ---------------------------------------------------------------------------
+
+SCENARIO("A user needs to create a ValidateEventConfig") {
+    GIVEN("parameters for an event validation stream") {
+        const std::string modelName = "modelName";
+        const std::string userID = "userID";
+        const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
+            sensory::api::v1::audio::ThresholdSensitivity::LOW;
+        WHEN("an audio config is dynamically allocated from the parameters") {
+            auto config = sensory::service::newValidateEventConfig(
+                modelName,
+                userID,
+                sensitivity
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->sensitivity() == sensitivity);
+            }
+            delete config;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: newTranscribeConfig
+// ---------------------------------------------------------------------------
+
+SCENARIO("A user needs to create a TranscribeConfig") {
+    GIVEN("parameters for an audio transcription stream") {
+        const std::string modelName = "modelName";
+        const std::string userID = "userID";
+        WHEN("an audio config is dynamically allocated from the parameters") {
+            auto config = sensory::service::newTranscribeConfig(modelName, userID);
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+            }
+            delete config;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: AudioService
+// ---------------------------------------------------------------------------
+
+TEST_CASE("Should create AudioService from Config and TokenManager") {
+    // Create the configuration that provides information about the remote host.
+    Config config("hostname.com", 443, "tenant ID", "device ID");
+    // Create the OAuth service for requesting and managing OAuth tokens through
+    // a token manager instance.
+    OAuthService oauthService(config);
+    // Create a credential store for keeping the clientID, clientSecret,
+    // token, and expiration time.
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
+    // Create the actual audio service from the config and token manager.
+    AudioService<InsecureCredentialStore> service(config, tokenManager);
 }
