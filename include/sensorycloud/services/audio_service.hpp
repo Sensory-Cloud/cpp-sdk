@@ -131,8 +131,8 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentCon
 inline ::sensory::api::v1::audio::AuthenticateConfig* newAuthenticateConfig(
     const std::string& enrollmentID,
     const bool& isLivenessEnabled,
-    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,              // ::sensory::api::v1::audio::ThresholdSensitivity::LOW
-    const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security  // ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,
+    const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security
 ) {
     auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
     config->set_enrollmentid(enrollmentID);
