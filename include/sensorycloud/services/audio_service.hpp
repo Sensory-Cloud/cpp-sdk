@@ -41,6 +41,28 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+/// @brief Create a new audio config for an audio streaming application.
+///
+/// @param encoding The encoding of the samples in the byte-stream.
+/// @param sampleRateHertz The sample rate of the audio stream.
+/// @param audioChannelCount The number of audio channels in the audio.
+/// @param languageCode The language code for the speech in the audio.
+/// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
+///
+static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
+    const ::sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding,
+    const float& sampleRateHertz,
+    const uint32_t& audioChannelCount,
+    const std::string& languageCode
+) {
+    auto audioConfig = new ::sensory::api::v1::audio::AudioConfig;
+    audioConfig->set_encoding(encoding);
+    audioConfig->set_sampleratehertz(sampleRateHertz);
+    audioConfig->set_audiochannelcount(audioChannelCount);
+    audioConfig->set_languagecode(languageCode);
+    return audioConfig;
+}
+
 /// @brief A service for audio data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.
@@ -76,28 +98,6 @@ class AudioService {
     /// This assignment operator is private to prevent copying of this object.
     ///
     void operator=(const AudioService& other) = delete;
-
-    /// @brief Create a new audio config for an audio streaming application.
-    ///
-    /// @param encoding The encoding of the samples in the byte-stream.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param audioChannelCount The number of audio channels in the audio.
-    /// @param languageCode The language code for the speech in the audio.
-    /// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
-    ///
-    static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
-        const ::sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding,
-        const float& sampleRateHertz,
-        const uint32_t& audioChannelCount,
-        const std::string& languageCode
-    ) {
-        auto audioConfig = new ::sensory::api::v1::audio::AudioConfig;
-        audioConfig->set_encoding(encoding);
-        audioConfig->set_sampleratehertz(sampleRateHertz);
-        audioConfig->set_audiochannelcount(audioChannelCount);
-        audioConfig->set_languagecode(languageCode);
-        return audioConfig;
-    }
 
  public:
     /// @brief Initialize a new audio service.

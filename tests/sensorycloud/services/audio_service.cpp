@@ -26,3 +26,52 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include "sensorycloud/services/audio_service.hpp"
+#include "sensorycloud/services/oauth_service.hpp"
+#include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/token_manager/insecure_credential_store.hpp"
+
+using sensory::Config;
+using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::TokenManager;
+using sensory::service::OAuthService;
+using sensory::service::AudioService;
+
+TEST_CASE("Should create AudioService from Config and TokenManager") {
+    // Create the configuration that provides information about the remote host.
+    Config config("hostname.com", 443, "tenant ID", "device ID");
+    // Create the OAuth service for requesting and managing OAuth tokens through
+    // a token manager instance.
+    OAuthService oauthService(config);
+    // Create a credential store for keeping the clientID, clientSecret,
+    // token, and expiration time.
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
+    // Create the actual audio service from the config and token manager.
+    AudioService<InsecureCredentialStore> service(config, tokenManager);
+}
+
+SCENARIO("A user needs to create an AudioConfig") {
+    GIVEN("parameters for an audio config that describe the input stream") {
+        const sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding =
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16;
+        const float sampleRateHertz = 16000;
+        const uint32_t audioChannelCount = 1;
+        const std::string languageCode = "en-US";
+        WHEN("an audio config is dynamically allocated from the parameters") {
+            auto audioConfig = sensory::service::newAudioConfig(
+                encoding,
+                sampleRateHertz,
+                audioChannelCount,
+                languageCode
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(audioConfig != nullptr);
+                REQUIRE(audioConfig->encoding() == encoding);
+                REQUIRE(audioConfig->sampleratehertz() == sampleRateHertz);
+                REQUIRE(audioConfig->audiochannelcount() == audioChannelCount);
+                REQUIRE(audioConfig->languagecode() == languageCode);
+            }
+            delete audioConfig;
+        }
+    }
+}
