@@ -370,8 +370,7 @@ class AudioService {
         ::sensory::api::v1::audio::CreateEnrollmentRequest request;
         request.set_allocated_config(enrollmentConfig);
         // Create the stream and write the initial configuration request.
-        CreateEnrollmentStream stream =
-            biometricStub->CreateEnrollment(context);
+        CreateEnrollmentStream stream = biometricStub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
@@ -491,10 +490,10 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param authenticateConfig The enrollment configuration for the stream.
-    /// Use `newAuthenticateConfig` to create a new enrollment config.
-    /// _Ownership of the dynamically allocated configuration is implicitly
-    /// transferred to the stream_.
+    /// @param authenticateConfig The authentication configuration for the
+    /// stream. Use `newAuthenticateConfig` to create a new authentication
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
@@ -538,10 +537,10 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param authenticateConfig The enrollment configuration for the stream.
-    /// Use `newAuthenticateConfig` to create a new enrollment config.
-    /// _Ownership of the dynamically allocated configuration is implicitly
-    /// transferred to the stream_.
+    /// @param authenticateConfig The authentication configuration for the
+    /// stream. Use `newAuthenticateConfig` to create a new authentication
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -590,10 +589,10 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param authenticateConfig The enrollment configuration for the stream.
-    /// Use `newAuthenticateConfig` to create a new enrollment config.
-    /// _Ownership of the dynamically allocated configuration is implicitly
-    /// transferred to the stream_.
+    /// @param authenticateConfig The authentication configuration for the
+    /// stream. Use `newAuthenticateConfig` to create a new authentication
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     ///
     /// @details
     /// This call will automatically send the `AuthenticateConfig` message to
@@ -633,46 +632,32 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param modelName The name of the model to use to validate the trigger.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The ID of the user making the request.
-    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @param validateEventConfig The trigger validation configuration for the
+    /// stream. Use `newValidateEventConfig` to create a new trigger validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
     /// @details
-    /// This call will automatically send the initial `ValidateEventConfig`
-    /// message to the server.
+    /// This call will automatically send the `ValidateEventConfig` message to
+    /// the server.
     ///
     inline ValidateTriggerStream validateTrigger(
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        const std::string& modelName,
-        const std::string& userID,
-        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
         // Create a context for the client for a bidirectional stream.
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the validate event message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto validateEventConfig =
-            new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(audioConfig);
-        validateEventConfig->set_modelname(modelName);
-        validateEventConfig->set_userid(userID);
-        validateEventConfig->set_sensitivity(sensitivity);
-
         // Create the request with the pointer to the enrollment config.
+        validateEventConfig->set_allocated_audio(audioConfig);
         ::sensory::api::v1::audio::ValidateEventRequest request;
         request.set_allocated_config(validateEventConfig);
-
         // Create the stream and write the initial configuration request.
-        ValidateTriggerStream stream =
-            eventsStub->ValidateEvent(context);
+        ValidateTriggerStream stream = eventsStub->ValidateEvent(context);
         stream->Write(request);
         return stream;
     }
@@ -694,46 +679,37 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param modelName The name of the model to use to validate the trigger.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The ID of the user making the request.
-    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @param validateEventConfig The trigger validation configuration for the
+    /// stream. Use `newValidateEventConfig` to create a new trigger validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
+    /// @details
+    /// This call will **NOT** automatically send the `ValidateEventConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
     inline ValidateEventAsyncCall* validateTrigger(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        const std::string& modelName,
-        const std::string& userID,
-        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new ValidateEventAsyncCall);
-        // Set the client context for a unary call.
+        // Set the client context for a bidirectional stream.
         config.setupBidiClientContext(call->context, tokenManager);
-
-        // Create the validate event message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto validateEventConfig =
-            new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(audioConfig);
-        validateEventConfig->set_modelname(modelName);
-        validateEventConfig->set_userid(userID);
-        validateEventConfig->set_sensitivity(sensitivity);
-
         // Create the request with the pointer to the enrollment config.
+        validateEventConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(validateEventConfig);
-
         // Start the asynchronous RPC with the call's context and queue.
         call->rpc = eventsStub->AsyncValidateEvent(&call->context, queue, static_cast<void*>(call));
-
         return call;
     }
 
@@ -755,39 +731,26 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param modelName The name of the model to use to validate the trigger.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The ID of the user making the request.
-    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @param validateEventConfig The trigger validation configuration for the
+    /// stream. Use `newValidateEventConfig` to create a new trigger validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     ///
     /// @details
-    /// This call will automatically send the initial `ValidateEventConfig`
-    /// message to the server.
+    /// This call will automatically send the `ValidateEventConfig` message to
+    /// the server.
     ///
     template<typename Reactor>
     inline void validateTrigger(Reactor* reactor,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        const std::string& modelName,
-        const std::string& userID,
-        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-
-        // Create the validate event message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto validateEventConfig =
-            new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(audioConfig);
-        validateEventConfig->set_modelname(modelName);
-        validateEventConfig->set_userid(userID);
-        validateEventConfig->set_sensitivity(sensitivity);
-
         // Create the request with the pointer to the enrollment config.
+        validateEventConfig->set_allocated_audio(audioConfig);
         reactor->request.set_allocated_config(validateEventConfig);
-
         // Create the stream and write the initial configuration request.
         eventsStub->async()->ValidateEvent(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
