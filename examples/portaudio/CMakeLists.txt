@@ -37,17 +37,6 @@ FetchContent_MakeAvailable(portaudio)
 # Setup the includes for the portaudio library
 include_directories(${portaudio_BINARY_DIR} ${portaudio_SOURCE_DIR})
 
-# --- PortAudio Examples -------------------------------------------------------
-
-add_executable(paex_record paex_record.c)
-target_link_libraries(paex_record PRIVATE portaudio)
-
-add_executable(paex_read_write_wire paex_read_write_wire.c)
-target_link_libraries(paex_read_write_wire PRIVATE portaudio)
-
-add_executable(pa_devs pa_devs.c)
-target_link_libraries(pa_devs PRIVATE portaudio)
-
 # --- Wake Word ----------------------------------------------------------------
 
 add_executable(wakeword wake_word.cpp)
