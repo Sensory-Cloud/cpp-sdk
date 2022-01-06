@@ -284,7 +284,13 @@ int main(int argc, const char** argv) {
     // Initialize the stream with the reactor for callbacks, given audio model,
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to transcribe audio.
-    audioService.transcribeAudio(&reactor, MODEL, buffer.getSampleRate(), LANGUAGE, USER_ID);
+    audioService.transcribeAudio(&reactor,
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            buffer.getSampleRate(), 1, LANGUAGE
+        ),
+        sensory::service::newTranscribeConfig(MODEL, USER_ID)
+    );
     reactor.StartCall();
     // Wait for the call to terminate and check the final status.
     status = reactor.await();
