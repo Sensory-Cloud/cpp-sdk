@@ -84,7 +84,7 @@ point for integrating the Sensory Cloud SDK into your project.
 To install the build tools for Debian-based Linux:
 
 ```shell
-apt-get install -y build-essential autoconf libtool pkg-config cmake git libssl-dev
+apt-get install -y build-essential autoconf libtool pkg-config cmake git
 ```
 
 ### RedHat / CentOS
@@ -92,7 +92,7 @@ apt-get install -y build-essential autoconf libtool pkg-config cmake git libssl-
 To install the build tools for RedHat-based Linux:
 
 ```shell
-yum install -y autoconf libtool pkg-config gcc gcc-c++ git openssl-devel
+yum install -y autoconf libtool pkg-config gcc gcc-c++ cmake git
 ```
 
 ### MacOS
@@ -101,7 +101,7 @@ To install the build tools for MacOS:
 
 ```shell
 xcode-select --install
-brew install autoconf automake libtool shtool cmake
+brew install autoconf automake libtool shtool cmake git
 ```
 
 ### Windows
@@ -120,8 +120,8 @@ to your `CMakeLists.txt`.
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    GIT_REPOSITORY TODO
-    GIT_TAG        TODO
+    GIT_REPOSITORY https://github.com/Sensory-Cloud/cpp-sdk.git
+    GIT_TAG        v0.6.0
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```

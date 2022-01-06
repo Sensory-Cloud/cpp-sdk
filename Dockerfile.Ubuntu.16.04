@@ -44,7 +44,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get -y upgrade
 # Install dependencies for the SDK.
-RUN apt-get install -y build-essential autoconf libtool pkg-config git libssl-dev
+RUN apt-get install -y build-essential autoconf libtool pkg-config git
 
 # Install the latest version of CMake. This is based on the official CMake
 # documentation for Ubuntu 16.04 here: https://apt.kitware.com/
