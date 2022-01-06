@@ -142,11 +142,15 @@ int main(int argc, const char** argv) {
 
     // Create the network stream
     auto stream = audioService.validateTrigger(
-        audioModel,
-        SAMPLE_RATE,
-        "en-US",
-        userID,
-        sensory::api::v1::audio::ThresholdSensitivity::LOW
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, "en-US"
+        ),
+        sensory::service::newValidateEventConfig(
+            audioModel,
+            userID,
+            sensory::api::v1::audio::ThresholdSensitivity::LOW
+        )
     );
 
     // Initialize the portaudio driver.

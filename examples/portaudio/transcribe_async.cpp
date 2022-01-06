@@ -170,10 +170,11 @@ int main(int argc, const char** argv) {
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
     auto stream = audioService.transcribeAudio(&queue,
-        audioModel,
-        SAMPLE_RATE,
-        "en-US",
-        userID
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, "en-US"
+        ),
+        sensory::service::newTranscribeConfig(audioModel, userID)
     );
 
     /// Tagged events in the CompletionQueue handler.

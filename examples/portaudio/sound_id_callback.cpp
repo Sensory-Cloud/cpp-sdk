@@ -309,11 +309,15 @@ int main(int argc, const char** argv) {
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to detect audio events.
     audioService.validateTrigger(&reactor,
-        audioModel,
-        SAMPLE_RATE,
-        "en-US",
-        userID,
-        sensory::api::v1::audio::ThresholdSensitivity::LOW
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, "en-US"
+        ),
+        sensory::service::newValidateEventConfig(
+            audioModel,
+            userID,
+            sensory::api::v1::audio::ThresholdSensitivity::LOW
+        )
     );
     reactor.StartCall();
     auto status = reactor.await();

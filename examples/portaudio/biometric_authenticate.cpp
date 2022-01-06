@@ -185,12 +185,16 @@ int main(int argc, const char** argv) {
 
     // Create the network stream
     auto stream = audioService.authenticate(
-        enrollmentID,
-        SAMPLE_RATE,
-        "en-US",
-        isLivenessEnabled,
-        sensory::api::v1::audio::ThresholdSensitivity::LOW,
-        sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, "en-US"
+        ),
+        sensory::service::newAuthenticateConfig(
+            enrollmentID,
+            isLivenessEnabled,
+            sensory::api::v1::audio::ThresholdSensitivity::LOW,
+            sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        )
     );
 
     // Initialize the portaudio driver.

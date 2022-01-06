@@ -338,12 +338,16 @@ int main(int argc, const char** argv) {
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to detect audio events.
     audioService.authenticate(&reactor,
-        enrollmentID,
-        SAMPLE_RATE,
-        "en-US",
-        isLivenessEnabled,
-        sensory::api::v1::audio::ThresholdSensitivity::LOW,
-        sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, "en-US"
+        ),
+        sensory::service::newAuthenticateConfig(
+            enrollmentID,
+            isLivenessEnabled,
+            sensory::api::v1::audio::ThresholdSensitivity::LOW,
+            sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        )
     );
     reactor.StartCall();
     status = reactor.await();

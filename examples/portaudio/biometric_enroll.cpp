@@ -160,15 +160,19 @@ int main(int argc, const char** argv) {
     std::cin.ignore();
     std::getline(std::cin, description);
 
-    // Determine whether to conduct a voice liveness check.
-    sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore>::CreateEnrollmentStream stream;
-    stream = audioService.createEnrollment(
-        audioModel,
-        sampleRate,
-        "en-US",
-        userID,
-        description,
-        isLivenessEnabled
+    // Initialize the stream for creating the enrollment.
+    auto stream = audioService.createEnrollment(
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            sampleRate, 1, "en-US"
+        ),
+        sensory::service::newCreateEnrollmentConfig(
+            audioModel,
+            userID,
+            description,
+            isLivenessEnabled,
+            0, 0
+        )
     );
 
     // the maximal duration of the recording in seconds

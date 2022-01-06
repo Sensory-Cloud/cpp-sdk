@@ -198,12 +198,17 @@ int main(int argc, const char** argv) {
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
     auto stream = audioService.createEnrollment(&queue,
-        audioModel,
-        sampleRate,
-        "en-US",
-        userID,
-        description,
-        isLivenessEnabled
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            sampleRate, 1, "en-US"
+        ),
+        sensory::service::newCreateEnrollmentConfig(
+            audioModel,
+            userID,
+            description,
+            isLivenessEnabled,
+            0, 0
+        )
     );
 
     /// Tagged events in the CompletionQueue handler.

@@ -346,12 +346,17 @@ int main(int argc, const char** argv) {
     // human readable explanation of the enrollment. For some models, an
     // optional liveness check may also be conducted during the enrollment.
     audioService.createEnrollment(&reactor,
-        audioModel,
-        sampleRate,
-        "en-US",
-        userID,
-        description,
-        isLivenessEnabled
+        sensory::service::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            sampleRate, 1, "en-US"
+        ),
+        sensory::service::newCreateEnrollmentConfig(
+            audioModel,
+            userID,
+            description,
+            isLivenessEnabled,
+            0, 0
+        )
     );
     reactor.StartCall();
     auto status = reactor.await();
