@@ -54,6 +54,7 @@ constexpr EnrollmentResponse::EnrollmentResponse(
   , deviceid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , userid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , devicename_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , referenceid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , createdat_(nullptr)
   , updatedat_(nullptr)
   , compression_(nullptr)
@@ -199,6 +200,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fmanagement_2fenrollment_2
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollmentResponse, compression_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollmentResponse, devicename_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollmentResponse, didenrollwithliveness_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollmentResponse, referenceid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::GetEnrollmentGroupsResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -261,12 +263,12 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 0, -1, -1, sizeof(::sensory::api::v1::management::GetEnrollmentsRequest)},
   { 7, -1, -1, sizeof(::sensory::api::v1::management::GetEnrollmentsResponse)},
   { 15, -1, -1, sizeof(::sensory::api::v1::management::EnrollmentResponse)},
-  { 33, -1, -1, sizeof(::sensory::api::v1::management::GetEnrollmentGroupsResponse)},
-  { 40, -1, -1, sizeof(::sensory::api::v1::management::EnrollmentGroupResponse)},
-  { 56, -1, -1, sizeof(::sensory::api::v1::management::CreateEnrollmentGroupRequest)},
-  { 68, -1, -1, sizeof(::sensory::api::v1::management::AppendEnrollmentGroupRequest)},
-  { 76, -1, -1, sizeof(::sensory::api::v1::management::DeleteEnrollmentRequest)},
-  { 83, -1, -1, sizeof(::sensory::api::v1::management::DeleteEnrollmentGroupRequest)},
+  { 34, -1, -1, sizeof(::sensory::api::v1::management::GetEnrollmentGroupsResponse)},
+  { 41, -1, -1, sizeof(::sensory::api::v1::management::EnrollmentGroupResponse)},
+  { 57, -1, -1, sizeof(::sensory::api::v1::management::CreateEnrollmentGroupRequest)},
+  { 69, -1, -1, sizeof(::sensory::api::v1::management::AppendEnrollmentGroupRequest)},
+  { 77, -1, -1, sizeof(::sensory::api::v1::management::DeleteEnrollmentRequest)},
+  { 84, -1, -1, sizeof(::sensory::api::v1::management::DeleteEnrollmentGroupRequest)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -289,7 +291,7 @@ const char descriptor_table_protodef_v1_2fmanagement_2fenrollment_2eproto[] PROT
   "est\022\031\n\006userId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\"x\n\026GetEnr"
   "ollmentsResponse\022B\n\013enrollments\030\001 \003(\0132-."
   "sensory.api.v1.management.EnrollmentResp"
-  "onse\022\032\n\022isRequestorTrusted\030\002 \001(\010\"\206\003\n\022Enr"
+  "onse\022\032\n\022isRequestorTrusted\030\002 \001(\010\"\233\003\n\022Enr"
   "ollmentResponse\022\n\n\002id\030\001 \001(\t\022-\n\tcreatedAt"
   "\030\002 \001(\0132\032.google.protobuf.Timestamp\022-\n\tup"
   "datedAt\030\003 \001(\0132\032.google.protobuf.Timestam"
@@ -299,52 +301,52 @@ const char descriptor_table_protodef_v1_2fmanagement_2fenrollment_2eproto[] PROT
   "iceId\030\010 \001(\t\022\016\n\006userId\030\t \001(\t\022A\n\013compressi"
   "on\030\n \001(\0132,.sensory.api.common.Compressio"
   "nConfiguration\022\022\n\ndeviceName\030\013 \001(\t\022\035\n\025di"
-  "dEnrollWithLiveness\030\014 \001(\010\"k\n\033GetEnrollme"
-  "ntGroupsResponse\022L\n\020enrollmentGroups\030\001 \003"
-  "(\01322.sensory.api.v1.management.Enrollmen"
-  "tGroupResponse\"\325\002\n\027EnrollmentGroupRespon"
-  "se\022\n\n\002id\030\001 \001(\t\022-\n\tcreatedAt\030\002 \001(\0132\032.goog"
-  "le.protobuf.Timestamp\022-\n\tupdatedAt\030\003 \001(\013"
-  "2\032.google.protobuf.Timestamp\022\014\n\004name\030\004 \001"
-  "(\t\022\023\n\013description\030\005 \001(\t\022\021\n\tmodelName\030\006 \001"
-  "(\t\0220\n\tmodelType\030\007 \001(\0162\035.sensory.api.comm"
-  "on.ModelType\022\024\n\014modelVersion\030\010 \001(\t\022\016\n\006us"
-  "erId\030\t \001(\t\022B\n\013enrollments\030\n \003(\0132-.sensor"
-  "y.api.v1.management.EnrollmentResponse\"\277"
-  "\001\n\034CreateEnrollmentGroupRequest\022\025\n\002id\030\001 "
-  "\001(\tB\t\372B\006r\004\020\001\030\177\022\030\n\004name\030\002 \001(\tB\n\372B\007r\005\020\001\030\377\001"
-  "\022\035\n\013description\030\003 \001(\tB\010\372B\005r\003\030\377\007\022\035\n\tmodel"
-  "Name\030\004 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031\n\006userId\030\005 \001(\tB\t"
-  "\372B\006r\004\020\001\030\177\022\025\n\renrollmentIds\030\006 \003(\t\"Q\n\034Appe"
-  "ndEnrollmentGroupRequest\022\032\n\007groupId\030\001 \001("
-  "\tB\t\372B\006r\004\020\001\030\177\022\025\n\renrollmentIds\030\002 \003(\t\"/\n\027D"
-  "eleteEnrollmentRequest\022\024\n\002id\030\001 \001(\tB\010\372B\005r"
-  "\003\260\001\001\"5\n\034DeleteEnrollmentGroupRequest\022\025\n\002"
-  "id\030\001 \001(\tB\t\372B\006r\004\020\001\030\1772\244\006\n\021EnrollmentServic"
-  "e\022w\n\016GetEnrollments\0220.sensory.api.v1.man"
-  "agement.GetEnrollmentsRequest\0321.sensory."
-  "api.v1.management.GetEnrollmentsResponse"
-  "\"\000\022\201\001\n\023GetEnrollmentGroups\0220.sensory.api"
-  ".v1.management.GetEnrollmentsRequest\0326.s"
-  "ensory.api.v1.management.GetEnrollmentGr"
-  "oupsResponse\"\000\022\206\001\n\025CreateEnrollmentGroup"
-  "\0227.sensory.api.v1.management.CreateEnrol"
-  "lmentGroupRequest\0322.sensory.api.v1.manag"
-  "ement.EnrollmentGroupResponse\"\000\022\206\001\n\025Appe"
-  "ndEnrollmentGroup\0227.sensory.api.v1.manag"
-  "ement.AppendEnrollmentGroupRequest\0322.sen"
-  "sory.api.v1.management.EnrollmentGroupRe"
-  "sponse\"\000\022w\n\020DeleteEnrollment\0222.sensory.a"
-  "pi.v1.management.DeleteEnrollmentRequest"
-  "\032-.sensory.api.v1.management.EnrollmentR"
-  "esponse\"\000\022\206\001\n\025DeleteEnrollmentGroup\0227.se"
-  "nsory.api.v1.management.DeleteEnrollment"
-  "GroupRequest\0322.sensory.api.v1.management"
-  ".EnrollmentGroupResponse\"\000B\210\001\n\034io.sensor"
-  "y.api.v1.managementB%SensoryApiV1Managem"
-  "entEnrollmentProtoP\001Z\?gitlab.com/sensory"
-  "-cloud/server/titan.git/pkg/api/v1/manag"
-  "ementb\006proto3"
+  "dEnrollWithLiveness\030\014 \001(\010\022\023\n\013referenceId"
+  "\030\r \001(\t\"k\n\033GetEnrollmentGroupsResponse\022L\n"
+  "\020enrollmentGroups\030\001 \003(\01322.sensory.api.v1"
+  ".management.EnrollmentGroupResponse\"\325\002\n\027"
+  "EnrollmentGroupResponse\022\n\n\002id\030\001 \001(\t\022-\n\tc"
+  "reatedAt\030\002 \001(\0132\032.google.protobuf.Timesta"
+  "mp\022-\n\tupdatedAt\030\003 \001(\0132\032.google.protobuf."
+  "Timestamp\022\014\n\004name\030\004 \001(\t\022\023\n\013description\030\005"
+  " \001(\t\022\021\n\tmodelName\030\006 \001(\t\0220\n\tmodelType\030\007 \001"
+  "(\0162\035.sensory.api.common.ModelType\022\024\n\014mod"
+  "elVersion\030\010 \001(\t\022\016\n\006userId\030\t \001(\t\022B\n\013enrol"
+  "lments\030\n \003(\0132-.sensory.api.v1.management"
+  ".EnrollmentResponse\"\277\001\n\034CreateEnrollment"
+  "GroupRequest\022\025\n\002id\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\030\n\004n"
+  "ame\030\002 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013description\030\003 \001"
+  "(\tB\010\372B\005r\003\030\377\007\022\035\n\tmodelName\030\004 \001(\tB\n\372B\007r\005\020\001"
+  "\030\377\001\022\031\n\006userId\030\005 \001(\tB\t\372B\006r\004\020\001\030\177\022\025\n\renroll"
+  "mentIds\030\006 \003(\t\"Q\n\034AppendEnrollmentGroupRe"
+  "quest\022\032\n\007groupId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\025\n\renr"
+  "ollmentIds\030\002 \003(\t\"/\n\027DeleteEnrollmentRequ"
+  "est\022\024\n\002id\030\001 \001(\tB\010\372B\005r\003\260\001\001\"5\n\034DeleteEnrol"
+  "lmentGroupRequest\022\025\n\002id\030\001 \001(\tB\t\372B\006r\004\020\001\030\177"
+  "2\244\006\n\021EnrollmentService\022w\n\016GetEnrollments"
+  "\0220.sensory.api.v1.management.GetEnrollme"
+  "ntsRequest\0321.sensory.api.v1.management.G"
+  "etEnrollmentsResponse\"\000\022\201\001\n\023GetEnrollmen"
+  "tGroups\0220.sensory.api.v1.management.GetE"
+  "nrollmentsRequest\0326.sensory.api.v1.manag"
+  "ement.GetEnrollmentGroupsResponse\"\000\022\206\001\n\025"
+  "CreateEnrollmentGroup\0227.sensory.api.v1.m"
+  "anagement.CreateEnrollmentGroupRequest\0322"
+  ".sensory.api.v1.management.EnrollmentGro"
+  "upResponse\"\000\022\206\001\n\025AppendEnrollmentGroup\0227"
+  ".sensory.api.v1.management.AppendEnrollm"
+  "entGroupRequest\0322.sensory.api.v1.managem"
+  "ent.EnrollmentGroupResponse\"\000\022w\n\020DeleteE"
+  "nrollment\0222.sensory.api.v1.management.De"
+  "leteEnrollmentRequest\032-.sensory.api.v1.m"
+  "anagement.EnrollmentResponse\"\000\022\206\001\n\025Delet"
+  "eEnrollmentGroup\0227.sensory.api.v1.manage"
+  "ment.DeleteEnrollmentGroupRequest\0322.sens"
+  "ory.api.v1.management.EnrollmentGroupRes"
+  "ponse\"\000B\210\001\n\034io.sensory.api.v1.management"
+  "B%SensoryApiV1ManagementEnrollmentProtoP"
+  "\001Z\?gitlab.com/sensory-cloud/server/titan"
+  ".git/pkg/api/v1/managementb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fmanagement_2fenrollment_2eproto_deps[3] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -353,7 +355,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fmanagement_2fenrollment_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fmanagement_2fenrollment_2eproto = {
-  false, false, 2493, descriptor_table_protodef_v1_2fmanagement_2fenrollment_2eproto, "v1/management/enrollment.proto", 
+  false, false, 2514, descriptor_table_protodef_v1_2fmanagement_2fenrollment_2eproto, "v1/management/enrollment.proto", 
   &descriptor_table_v1_2fmanagement_2fenrollment_2eproto_once, descriptor_table_v1_2fmanagement_2fenrollment_2eproto_deps, 3, 9,
   schemas, file_default_instances, TableStruct_v1_2fmanagement_2fenrollment_2eproto::offsets,
   file_level_metadata_v1_2fmanagement_2fenrollment_2eproto, file_level_enum_descriptors_v1_2fmanagement_2fenrollment_2eproto, file_level_service_descriptors_v1_2fmanagement_2fenrollment_2eproto,
@@ -863,6 +865,11 @@ EnrollmentResponse::EnrollmentResponse(const EnrollmentResponse& from)
     devicename_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_devicename(), 
       GetArenaForAllocation());
   }
+  referenceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_referenceid().empty()) {
+    referenceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_referenceid(), 
+      GetArenaForAllocation());
+  }
   if (from._internal_has_createdat()) {
     createdat_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from.createdat_);
   } else {
@@ -892,6 +899,7 @@ modelversion_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStrin
 deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 devicename_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+referenceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&createdat_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&didenrollwithliveness_) -
@@ -914,6 +922,7 @@ inline void EnrollmentResponse::SharedDtor() {
   deviceid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   userid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   devicename_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  referenceid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete createdat_;
   if (this != internal_default_instance()) delete updatedat_;
   if (this != internal_default_instance()) delete compression_;
@@ -942,6 +951,7 @@ void EnrollmentResponse::Clear() {
   deviceid_.ClearToEmpty();
   userid_.ClearToEmpty();
   devicename_.ClearToEmpty();
+  referenceid_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && createdat_ != nullptr) {
     delete createdat_;
   }
@@ -1073,6 +1083,16 @@ const char* EnrollmentResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
       case 12:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 96)) {
           didenrollwithliveness_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string referenceId = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 106)) {
+          auto str = _internal_mutable_referenceid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.EnrollmentResponse.referenceId"));
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1213,6 +1233,16 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(12, this->_internal_didenrollwithliveness(), target);
   }
 
+  // string referenceId = 13;
+  if (!this->_internal_referenceid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_referenceid().data(), static_cast<int>(this->_internal_referenceid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.EnrollmentResponse.referenceId");
+    target = stream->WriteStringMaybeAliased(
+        13, this->_internal_referenceid(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1276,6 +1306,13 @@ size_t EnrollmentResponse::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_devicename());
+  }
+
+  // string referenceId = 13;
+  if (!this->_internal_referenceid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_referenceid());
   }
 
   // .google.protobuf.Timestamp createdAt = 2;
@@ -1353,6 +1390,9 @@ void EnrollmentResponse::MergeFrom(const EnrollmentResponse& from) {
   if (!from._internal_devicename().empty()) {
     _internal_set_devicename(from._internal_devicename());
   }
+  if (!from._internal_referenceid().empty()) {
+    _internal_set_referenceid(from._internal_referenceid());
+  }
   if (from._internal_has_createdat()) {
     _internal_mutable_createdat()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_createdat());
   }
@@ -1421,6 +1461,11 @@ void EnrollmentResponse::InternalSwap(EnrollmentResponse* other) {
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &devicename_, lhs_arena,
       &other->devicename_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &referenceid_, lhs_arena,
+      &other->referenceid_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(EnrollmentResponse, didenrollwithliveness_)

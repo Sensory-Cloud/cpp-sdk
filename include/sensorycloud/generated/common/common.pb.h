@@ -171,12 +171,13 @@ enum TechnologyType : int {
   TSSV = 1,
   TS = 2,
   TNL = 3,
+  STT = 4,
   TechnologyType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   TechnologyType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool TechnologyType_IsValid(int value);
 constexpr TechnologyType TechnologyType_MIN = NOT_SET;
-constexpr TechnologyType TechnologyType_MAX = TNL;
+constexpr TechnologyType TechnologyType_MAX = STT;
 constexpr int TechnologyType_ARRAYSIZE = TechnologyType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TechnologyType_descriptor();
