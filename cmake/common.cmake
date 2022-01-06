@@ -29,7 +29,7 @@ endif()
 find_package(Threads REQUIRED)
 
 option(GRPC_AS_SUBMODULE "Install with gRPC as a submodule" OFF)
-option(GRPC_FETCHCONTENT "Install with gRPC using FetchContent" OFF)
+option(GRPC_FETCHCONTENT "Install with gRPC using FetchContent" ON)
 option(CMAKE_CROSSCOMPILING "Use system protoc compiler" OFF)
 
 if(GRPC_AS_SUBMODULE)
@@ -90,10 +90,11 @@ elseif(GRPC_FETCHCONTENT)
         find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
     else()
         set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
-    endif()
-else()
+    endif()  # CMAKE_CROSSCOMPILING
+else()  # gRPC from system-wide installation
     # This branch assumes that gRPC and all its dependencies are already installed
     # on this system, so they can be located by find_package().
+    message(STATUS "Using system-wide installation of protobuf and gRPC")
 
     # Find Protobuf installation
     # Looks for protobuf-config.cmake file installed by Protobuf's cmake installation.
@@ -102,12 +103,11 @@ else()
     message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
     set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
-    set(_REFLECTION gRPC::grpc++_reflection)
     if(CMAKE_CROSSCOMPILING)
         find_program(_PROTOBUF_PROTOC protoc)
     else()
         set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
-    endif()
+    endif()  # CMAKE_CROSSCOMPILING
 
     # Find gRPC installation
     # Looks for gRPCConfig.cmake file installed by gRPC's cmake installation.
@@ -115,9 +115,10 @@ else()
     message(STATUS "Using gRPC ${gRPC_VERSION}")
 
     set(_GRPC_GRPCPP gRPC::grpc++)
+    set(_REFLECTION gRPC::grpc++_reflection)
     if(CMAKE_CROSSCOMPILING)
         find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
     else()
         set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
-    endif()
+    endif()  # CMAKE_CROSSCOMPILING
 endif()
