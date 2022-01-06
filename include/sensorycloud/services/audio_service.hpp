@@ -774,42 +774,32 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param modelName The name of the model to use to transcribe the audio.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The ID of the user making the request.
+    /// @param transcribeConfig The audio transcription configuration for the
+    /// stream. Use `newTranscribeConfig` to create a new audio transcription
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
     /// @details
-    /// This call will automatically send the initial `TranscribeConfig`
-    /// message to the server.
+    /// This call will automatically send the `TranscribeConfig` message to the
+    /// server.
     ///
     inline TranscribeAudioStream transcribeAudio(
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        const std::string& modelName,
-        const std::string& userID
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
         // Create a context for the client for a bidirectional stream.
         // TODO: will the stream automatically free this dynamically allocated
         // context?
         auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the transcribe audio message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(audioConfig);
-        transcribeConfig->set_modelname(modelName);
-        transcribeConfig->set_userid(userID);
-
         // Create the request with the pointer to the enrollment config.
+        transcribeConfig->set_allocated_audio(audioConfig);
         ::sensory::api::v1::audio::TranscribeRequest request;
         request.set_allocated_config(transcribeConfig);
-
         // Create the stream and write the initial configuration request.
-        TranscribeAudioStream stream =
-            transcriptionsStub->Transcribe(context);
+        TranscribeAudioStream stream = transcriptionsStub->Transcribe(context);
         stream->Write(request);
         return stream;
     }
@@ -831,20 +821,25 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param modelName The name of the model to use to transcribe the audio.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The ID of the user making the request.
+    /// @param transcribeConfig The audio transcription configuration for the
+    /// stream. Use `newTranscribeConfig` to create a new audio transcription
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
+    /// @details
+    /// This call will **NOT** automatically send the `ValidateEventConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
     inline TranscribeAsyncCall* transcribeAudio(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        const std::string& modelName,
-        const std::string& userID
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -852,21 +847,11 @@ class AudioService {
         auto call(new TranscribeAsyncCall);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
-
-        // Create the transcribe audio message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(audioConfig);
-        transcribeConfig->set_modelname(modelName);
-        transcribeConfig->set_userid(userID);
-
         // Create the request with the pointer to the enrollment config.
+        transcribeConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(transcribeConfig);
-
         // Start the asynchronous RPC with the call's context and queue.
         call->rpc = transcriptionsStub->AsyncTranscribe(&call->context, queue, static_cast<void*>(call));
-
         return call;
     }
 
@@ -888,35 +873,26 @@ class AudioService {
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
     /// is implicitly transferred to the stream_.
-    /// @param modelName The name of the model to use to transcribe the audio.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param userID The ID of the user making the request.
+    /// @param transcribeConfig The audio transcription configuration for the
+    /// stream. Use `newTranscribeConfig` to create a new audio transcription
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     ///
     /// @details
-    /// This call will automatically send the initial `TranscribeConfig`
-    /// message to the server.
+    /// This call will automatically send the `TranscribeConfig` message to the
+    /// server.
     ///
     template<typename Reactor>
     inline void transcribeAudio(Reactor* reactor,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        const std::string& modelName,
-        const std::string& userID
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-
-        // Create the transcribe audio message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(audioConfig);
-        transcribeConfig->set_modelname(modelName);
-        transcribeConfig->set_userid(userID);
-
         // Create the request with the pointer to the enrollment config.
+        transcribeConfig->set_allocated_audio(audioConfig);
         reactor->request.set_allocated_config(transcribeConfig);
-
         // Create the stream and write the initial configuration request.
         transcriptionsStub->async()->Transcribe(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
