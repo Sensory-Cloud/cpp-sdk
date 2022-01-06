@@ -63,6 +63,8 @@ inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
     return audioConfig;
 }
 
+// TODO: implement `referenceId` for CreateEnrollmentConfig?
+
 /// @brief Allocate a new configuration object for enrollment creation.
 ///
 /// @param modelName The name of the model to use to create the enrollment.
@@ -98,7 +100,7 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentCon
     const std::string& description,
     const bool& isLivenessEnabled,
     const float enrollmentDuration = 0.f,
-    const int32_t numUtterances = 0
+    const uint32_t numUtterances = 0
 ) {
     // The number of utterances and the enrollment duration cannot both be
     // specified in the message, so check for sentinel "null" values and if
@@ -117,6 +119,9 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentCon
         config->set_enrollmentnumutterances(numUtterances);
     return config;
 }
+
+// TODO: Implement `doIncludeToken` for AuthenticateConfig?
+// TODO: Update to support enrollment group IDs
 
 /// @brief Allocate a new configuration object for enrollment authentication.
 ///
@@ -157,6 +162,77 @@ inline ::sensory::api::v1::audio::ValidateEventConfig* newValidateEventConfig(
     auto config = new ::sensory::api::v1::audio::ValidateEventConfig;
     config->set_modelname(modelName);
     config->set_userid(userID);
+    config->set_sensitivity(sensitivity);
+    return config;
+}
+
+// TODO: implement `referenceId` for CreateEnrollmentEventConfig?
+
+/// @brief Allocate a new configuration object for creating enrolled events.
+///
+/// @param modelName The name of the model to use to create the enrollment.
+/// @param userID The ID of the user making the request.
+/// @param description The description of the enrollment.
+/// @param enrollmentDuration The duration in seconds for text-independent
+/// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
+/// with liveness enabled.
+/// @param numUtterances The number of utterances that should be required
+/// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+///
+/// @returns A pointer to the `CreateEnrollmentEventConfig` object.
+///
+/// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
+/// are both specified. For _text-independent_ models, an enrollment
+/// duration can be specified, but the number of utterances do not apply.
+/// Conversely, for _text-dependent_ enrollments, a number of utterances
+/// may be provided, but an enrollment duration does not apply.
+///
+/// @details
+/// The enrollment duration for text-independent enrollments controls the
+/// maximal amount of time allowed for authentication.
+///
+/// The number of utterances for text-dependent enrollments controls the
+/// number of uttered phrases that must be emitted to authenticate.
+///
+inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* newCreateEnrollmentEventConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const std::string& description,
+    const float enrollmentDuration = 0.f,
+    const uint32_t numUtterances = 0
+) {
+    // The number of utterances and the enrollment duration cannot both be
+    // specified in the message, so check for sentinel "null" values and if
+    // both are provided, throw an error. This check is conducted before
+    // allocation of the config to prevent memory leaks.
+    if (enrollmentDuration > 0 && numUtterances > 0)
+        throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
+    auto config = new ::sensory::api::v1::audio::CreateEnrollmentEventConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_description(description);
+    if (enrollmentDuration > 0)  // enrollment duration provided
+        config->set_enrollmentduration(enrollmentDuration);
+    else if (numUtterances > 0)  // number of utterances provided
+        config->set_enrollmentnumutterances(numUtterances);
+    return config;
+}
+
+// TODO: Update to support enrollment group IDs
+
+/// @brief Allocate a new configuration object for enrolled event validation.
+///
+/// @param enrollmentID The enrollment ID to validate against. This can
+/// be either an enrollment ID or a group ID.
+/// @param sensitivity The sensitivity of the model.
+/// @returns A pointer to the `ValidateEnrolledEventConfig` object.
+///
+inline ::sensory::api::v1::audio::ValidateEnrolledEventConfig* newValidateEnrolledEventConfig(
+    const std::string& enrollmentID,
+    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+) {
+    auto config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
+    config->set_enrollmentid(enrollmentID);
     config->set_sensitivity(sensitivity);
     return config;
 }

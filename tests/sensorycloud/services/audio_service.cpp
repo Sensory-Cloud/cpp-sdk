@@ -127,7 +127,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
             delete config;
         }
     }
-    GIVEN("invalid parameters for the enrollment (both enrollmentDuration and numUtterances provided)") {
+    GIVEN("both enrollmentDuration and numUtterances provided") {
         const std::string& modelName = "modelName";
         const std::string& userID = "userID";
         const std::string& description = "Description";
@@ -200,6 +200,105 @@ SCENARIO("A user needs to create a ValidateEventConfig") {
                 REQUIRE(config != nullptr);
                 REQUIRE(config->modelname() == modelName);
                 REQUIRE(config->userid() == userID);
+                REQUIRE(config->sensitivity() == sensitivity);
+            }
+            delete config;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: newCreateEnrollmentEventConfig
+// ---------------------------------------------------------------------------
+
+SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
+    GIVEN("parameters for the enrollment based on a text-independent model") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const float enrollmentDuration = 10.f;
+        const int32_t numUtterances = 0;
+        WHEN("a CreateEnrollmentEventConfig is allocated from the parameters") {
+            auto config = sensory::service::newCreateEnrollmentEventConfig(
+                modelName,
+                userID,
+                description,
+                enrollmentDuration,
+                numUtterances
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->enrollmentduration() == enrollmentDuration);
+                REQUIRE(config->enrollmentnumutterances() == numUtterances);
+            }
+            delete config;
+        }
+    }
+    GIVEN("parameters for the enrollment based on a text-independent model") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const float enrollmentDuration = 0.f;
+        const int32_t numUtterances = 4;
+        WHEN("a CreateEnrollmentEventConfig is allocated from the parameters") {
+            auto config = sensory::service::newCreateEnrollmentEventConfig(
+                modelName,
+                userID,
+                description,
+                enrollmentDuration,
+                numUtterances
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->enrollmentduration() == enrollmentDuration);
+                REQUIRE(config->enrollmentnumutterances() == numUtterances);
+            }
+            delete config;
+        }
+    }
+    GIVEN("both enrollmentDuration and numUtterances provided") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const float enrollmentDuration = 10.f;
+        const int32_t numUtterances = 4;
+        WHEN("a CreateEnrollmentEventConfig is allocated from the parameters") {
+            THEN("an error is thrown") {
+                REQUIRE_THROWS(sensory::service::newCreateEnrollmentEventConfig(
+                    modelName,
+                    userID,
+                    description,
+                    enrollmentDuration,
+                    numUtterances
+                ));
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: newValidateEnrolledEventConfig
+// ---------------------------------------------------------------------------
+
+SCENARIO("A user needs to create an ValidateEnrolledEventConfig") {
+    GIVEN("parameters for an authentication stream") {
+        const std::string enrollmentID = "enrollmentID";
+        const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
+            sensory::api::v1::audio::ThresholdSensitivity::LOW;
+        WHEN("an audio config is dynamically allocated from the parameters") {
+            auto config = sensory::service::newValidateEnrolledEventConfig(
+                enrollmentID,
+                sensitivity
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->enrollmentid() == enrollmentID);
                 REQUIRE(config->sensitivity() == sensitivity);
             }
             delete config;
