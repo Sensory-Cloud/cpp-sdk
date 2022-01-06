@@ -104,7 +104,7 @@ server.
 // The name of the biometric model to enroll the user with.
 std::string modelName("face_biometric_hektor");
 // The unique ID of the user that is being enrolled.
-std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string userId("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // A human readable description of the enrollment.
 std::string enrollmentDescription("My Enrollment");
 // Whether to perform a liveness check while executing the enrollment.
@@ -120,7 +120,7 @@ server.
 
 ```c++
 // The ID for the enrollment for a particular user
-std::string enrollmentID("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string enrollmentID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // a flag determining whether a liveness check should be conducted before
 // authenticating against the enrollment.
 bool isLivenessEnabled(false);
@@ -139,7 +139,7 @@ server.
 // The particular model to use for liveness detection.
 std::string videoModel("face_recognition_mathilde");
 // The unique user ID of the user being validated for liveness
-std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string userId("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // The security threshold for the optional liveness check.
 auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 

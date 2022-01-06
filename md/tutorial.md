@@ -76,8 +76,8 @@ This information is provided to the SDK using a `sensory::Config` object:
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 ```
 
@@ -95,8 +95,8 @@ so via the following:
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 
 // Create a health service for performing server health queries.
@@ -179,8 +179,8 @@ manager.
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 
 // Create the secure credential store for the token manager. You may use your
@@ -206,8 +206,8 @@ create an `OAuthService` and register a device for the first time.
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 
 // Create the secure credential store for the token manager. You may use your
@@ -258,8 +258,8 @@ your app communicates with multiple Sensory Cloud servers.
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 
 // Create the secure credential store for the token manager. You may use your
@@ -332,8 +332,8 @@ your app communicates with multiple Sensory Cloud servers.
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 
 // Create the secure credential store for the token manager. You may use your
@@ -379,7 +379,7 @@ server.
 // The name of the biometric model to enroll the user with.
 std::string modelName("face_biometric_hektor");
 // The unique ID of the user that is being enrolled.
-std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string userId("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // A human readable description of the enrollment.
 std::string enrollmentDescription("My Enrollment");
 // Whether to perform a liveness check while executing the enrollment.
@@ -425,7 +425,7 @@ server.
 
 ```c++
 // The ID for the enrollment for a particular user
-std::string enrollmentID("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string enrollmentID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // a flag determining whether a liveness check should be conducted before
 // authenticating against the enrollment.
 bool isLivenessEnabled(false);
@@ -471,7 +471,7 @@ server.
 // The particular model to use for liveness detection.
 std::string videoModel("face_recognition_mathilde");
 // The unique user ID of the user being validated for liveness
-std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string userId("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // The security threshold for the optional liveness check.
 auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
@@ -509,8 +509,8 @@ Sensory Cloud, such as deleting enrollments or creating enrollment groups.
 sensory::Config config(
     "io.stage.cloud.sensory.com",            // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3"   // a unique device ID
 );
 
 // Create the secure credential store for the token manager. You may use your
