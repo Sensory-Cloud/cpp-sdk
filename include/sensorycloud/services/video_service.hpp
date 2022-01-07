@@ -340,7 +340,7 @@ class VideoService {
     /// a completion queue loop.
     ///
     /// @details
-    /// This call will **NOT** automatically send the `AuthenticateConfig`
+    /// This call will **NOT** automatically send the `CreateEnrollmentConfig`
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
