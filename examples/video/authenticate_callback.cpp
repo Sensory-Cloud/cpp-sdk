@@ -195,7 +195,7 @@ int main(int argc, const char** argv) {
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
         .help("THRESHOLD The security threshold for conducting the liveness check.");
-    parser.add_argument({ "-d", "--device" })
+    parser.add_argument({ "-D", "--device" })
         .default_value(0)
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
