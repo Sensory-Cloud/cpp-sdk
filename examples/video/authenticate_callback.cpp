@@ -66,14 +66,17 @@ class OpenCVReactor :
     /// A mutual exclusion for locking access to the frame between foreground
     /// (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
+    /// Whether to produce verbose output from the reactor
+    bool verbose = false;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
-    OpenCVReactor() :
+    OpenCVReactor(const bool& verbose_ = false) :
         VideoService<InsecureCredentialStore>::AuthenticateBidiReactor(),
         isAuthenticated(false),
         score(100),
-        isLive(false) { }
+        isLive(false),
+        verbose(verbose_) { }
 
     /// @brief Return true if the user successfully authenticated
     inline bool getIsAuthenticated() const { return isAuthenticated; }
@@ -110,10 +113,12 @@ class OpenCVReactor :
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         // Log information about the response to the terminal.
-        std::cout << "Frame Response:" << std::endl;
-        std::cout << "\tSuccess: "  << response.success() << std::endl;
-        std::cout << "\tScore: "    << response.score() << std::endl;
-        std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+        if (verbose) {
+            std::cout << "Frame Response:" << std::endl;
+            std::cout << "\tSuccess: "  << response.success() << std::endl;
+            std::cout << "\tScore: "    << response.score() << std::endl;
+            std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+        }
         // Set the authentication flag to the success of the response.
         isAuthenticated = response.success();
         score = response.score();
@@ -320,7 +325,7 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream.
-    OpenCVReactor reactor;
+    OpenCVReactor reactor(VERBOSE);
     videoService.authenticate(&reactor,
         sensory::service::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD));
     // Wait for the stream to conclude. This is necessary to check the final
