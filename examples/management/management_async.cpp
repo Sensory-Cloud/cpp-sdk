@@ -80,7 +80,7 @@ int login(
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>& tokenManager
 ) {
     int errorCode = 0;
-    if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
+    if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
         const auto credentials = tokenManager.generateCredentials();
 
