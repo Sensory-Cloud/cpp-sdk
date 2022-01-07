@@ -31,7 +31,6 @@
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
 #include <sensorycloud/services/management_service.hpp>
-#include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
@@ -167,10 +166,13 @@ int main(int argc, const char** argv) {
 
     // Create the stream
     auto stream = videoService.createEnrollment(
-        videoModel,
-        userID,
-        description,
-        isLivenessEnabled
+        sensory::service::newCreateEnrollmentConfig(
+            videoModel,
+            userID,
+            description,
+            isLivenessEnabled,
+            sensory::api::v1::video::RecognitionThreshold::LOW
+        )
     );
 
     // Create an image capture object

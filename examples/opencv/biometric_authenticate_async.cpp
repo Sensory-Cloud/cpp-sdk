@@ -213,7 +213,13 @@ int main(int argc, const char** argv) {
 
     // Create the enrollment stream.
     grpc::CompletionQueue queue;
-    auto stream = videoService.authenticate(&queue, enrollmentID, isLivenessEnabled);
+    auto stream = videoService.authenticate(&queue,
+        sensory::service::newAuthenticateConfig(
+            enrollmentID,
+            isLivenessEnabled,
+            sensory::api::v1::video::RecognitionThreshold::LOW
+        )
+    );
 
     /// Tagged events in the CompletionQueue handler.
     enum class Events {

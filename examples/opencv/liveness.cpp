@@ -141,8 +141,13 @@ int main(int argc, const char** argv) {
     std::cin >> videoModel;
 
     // Create the stream
-    auto stream = videoService.validateLiveness(videoModel, userID,
-        sensory::api::v1::video::RecognitionThreshold::LOW);
+    auto stream = videoService.validateLiveness(
+        sensory::service::newValidateRecognitionConfig(
+            videoModel,
+            userID,
+            sensory::api::v1::video::RecognitionThreshold::LOW
+        )
+    );
 
     // Create an image capture object
     cv::VideoCapture capture;

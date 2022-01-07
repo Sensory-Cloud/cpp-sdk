@@ -325,10 +325,13 @@ int main(int argc, const char** argv) {
     // Create the stream.
     OpenCVReactor reactor;
     videoService.createEnrollment(&reactor,
-        videoModel,
-        userID,
-        description,
-        isLivenessEnabled
+        sensory::service::newCreateEnrollmentConfig(
+            videoModel,
+            userID,
+            description,
+            isLivenessEnabled,
+            sensory::api::v1::video::RecognitionThreshold::LOW
+        )
     );
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
