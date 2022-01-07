@@ -38,6 +38,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
+#include "dep/argparse.hpp"
 
 enum class FaceAlignment : int {
     Valid = 0,
@@ -50,12 +51,59 @@ enum class FaceAlignment : int {
 };
 
 int main(int argc, const char** argv) {
-    cv::CommandLineParser parser(argc, argv, "{help h||}{@device||}");
-    std::string device = parser.get<std::string>("@device");
-    if (!parser.check()) {
-        parser.printErrors();
-        return 0;
-    }
+    // Create an argument parser to parse inputs from the command line.
+    auto parser = argparse::ArgumentParser(argc, argv)
+        .prog("authenticate")
+        .description("A tool for authenticating with face biometrics using Sensory Cloud.");
+    parser.add_argument({ "-H", "--host" })
+        .required(true)
+        .help("HOST The hostname of a Sensory Cloud inference server.");
+    parser.add_argument({ "-P", "--port" })
+        .required(true)
+        .help("PORT The port number that the Sensory Cloud inference server is running at.");
+    parser.add_argument({ "-T", "--tenant" })
+        .required(true)
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-I", "--insecure" })
+        .action("store_true")
+        .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-g", "--getmodels" })
+        .action("store_true")
+        .help("GETMODELS Whether to query for a list of available models.");
+    parser.add_argument({ "-m", "--model" })
+        .help("MODEL The model to use for the enrollment.");
+    parser.add_argument({ "-u", "--userid" })
+        .help("USERID The name of the user ID to query the enrollments for.");
+    parser.add_argument({ "-t", "--threshold" })
+        .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
+        .default_value("HIGH")
+        .help("THRESHOLD The security threshold for conducting the liveness check.");
+    parser.add_argument({ "-D", "--device" })
+        .default_value(0)
+        .help("DEVICE The ID of the OpenCV device to use.");
+    parser.add_argument({ "-v", "--verbose" })
+        .action("store_true")
+        .help("VERBOSE Produce verbose output during authentication.");
+    // Parse the arguments from the command line.
+    const auto args = parser.parse_args();
+    const auto HOSTNAME = args.get<std::string>("host");
+    const auto PORT = args.get<uint16_t>("port");
+    const auto TENANT = args.get<std::string>("tenant");
+    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto GETMODELS = args.get<bool>("getmodels");
+    const auto MODEL = args.get<std::string>("model");
+    const auto USER_ID = args.get<std::string>("userid");
+    sensory::api::v1::video::RecognitionThreshold THRESHOLD;
+    if (args.get<std::string>("threshold") == "LOW")
+        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::LOW;
+    else if (args.get<std::string>("threshold") == "MEDIUM")
+        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::MEDIUM;
+    else if (args.get<std::string>("threshold") == "HIGH")
+        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::HIGH;
+    else if (args.get<std::string>("threshold") == "HIGHEST")
+        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::HIGHEST;
+    const auto DEVICE = args.get<int>("device");
+    const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
@@ -64,15 +112,7 @@ int main(int argc, const char** argv) {
     const auto DEVICE_ID(keychain.at("deviceID"));
 
     // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        DEVICE_ID
-    );
-    std::cout << "Connecting to remote host: " << config.getFullyQualifiedDomainName() << std::endl;
-
-    // ------ Check server health ----------------------------------------------
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
 
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
@@ -82,20 +122,21 @@ int main(int argc, const char** argv) {
         std::cout << "Failed to get server health with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
+    } else if (VERBOSE) {
+        // Report the health of the remote service
+        std::cout << "Server status:" << std::endl;
+        std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
+        std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
+        std::cout << "\tid: " << serverHealth.id() << std::endl;
     }
-    // Report the health of the remote service
-    std::cout << "Server status:" << std::endl;
-    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-    std::cout << "\tid: " << serverHealth.id() << std::endl;
 
-    // ------ Authorize the current user ---------------------------------------
+    // ------ Authorize the current device -------------------------------------
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
+    if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
         const auto credentials = tokenManager.generateCredentials();
 
@@ -135,51 +176,39 @@ int main(int argc, const char** argv) {
     // Start an asynchronous RPC to fetch the names of the available models. The
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
-    auto getModelsRPC = videoService.getModels(&queue);
 
-    // Execute the asynchronous RPC in this thread (which will block like a
-    // synchronous call).
-    void* tag(nullptr);
-    bool ok(false);
-    queue.Next(&tag, &ok);
-    if (ok && tag == getModelsRPC) {
-        if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to get video models with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
-        }
-        for (auto& model : getModelsRPC->getResponse().models()) {
-            if (model.modeltype() != sensory::api::common::FACE_RECOGNITION)
-                continue;
-            std::cout << "\t" << model.name() << std::endl;
+    if (GETMODELS) {
+        auto getModelsRPC = videoService.getModels(&queue);
+        // Execute the asynchronous RPC in this thread (which will block like a
+        // synchronous call).
+        void* tag(nullptr);
+        bool ok(false);
+        queue.Next(&tag, &ok);
+        int errCode = 0;
+        if (ok && tag == getModelsRPC) {
+            if (!status.ok()) {  // the call failed, print a descriptive message
+                std::cout << "Failed to get video models with\n\t" <<
+                    status.error_code() << ": " << status.error_message() << std::endl;
+                errCode = 1;
+            } else {
+                for (auto& model : getModelsRPC->getResponse().models()) {
+                    if (model.modeltype() != sensory::api::common::FACE_RECOGNITION)
+                        continue;
+                    std::cout << model.name() << std::endl;
+                }
+            }
         }
         delete getModelsRPC;
+        return errCode;
     }
-
-    std::string videoModel = "";
-    std::cout << "Video model: ";
-    std::cin >> videoModel;
-
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
 
     // ------ Create a new video enrollment ------------------------------------
 
     // Create an image capture object
     cv::VideoCapture capture;
-    // Look for a device ID from the command line
-    if (device.empty() || (isdigit(device[0]) && device.size() == 1)) {
-        // Default to device 0 if the device was not provided. Use ASCII
-        // subtraction to convert the digit to an integer.
-        int camera = device.empty() ? 0 : device[0] - '0';
-        if (!capture.open(camera)) {
-            std::cout << "Capture from camera #" << camera << " didn't work" << std::endl;
-            return 1;
-        }
-    } else {  // Device ID was not a valid integer value.
-        std::cout << "Device ID \"" << device << "\" is not a valid integer!" << std::endl;
+    if (!capture.open(DEVICE)) {
+        std::cout << "Capture from camera #" << DEVICE << " failed" << std::endl;
+        return 1;
     }
 
     // A flag determining whether the last sent frame was detected as live.
@@ -194,11 +223,7 @@ int main(int argc, const char** argv) {
 
     // Create the enrollment stream.
     auto stream = videoService.validateLiveness(&queue,
-        sensory::service::newValidateRecognitionConfig(
-            videoModel,
-            userID,
-            sensory::api::v1::video::RecognitionThreshold::LOW
-        )
+        sensory::service::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
     );
 
     /// Tagged events in the CompletionQueue handler.
@@ -271,7 +296,6 @@ int main(int argc, const char** argv) {
                         << stream->getStatus().error_code() << ": "
                         << stream->getStatus().error_message() << std::endl;
                 }
-                delete stream;
                 // By this point, we can guarantee that no write/read events
                 // will be coming to the completion queue. Break out of the
                 // event loop to terminate the background processing thread.
@@ -343,6 +367,8 @@ int main(int argc, const char** argv) {
     } else {
         std::cout << "Successfully created enrollment!" << std::endl;
     }
+
+    delete stream;
 
     return 0;
 }
