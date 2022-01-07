@@ -25,7 +25,6 @@
 
 #include <portaudio.h>
 #include <iostream>
-#include <thread>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
