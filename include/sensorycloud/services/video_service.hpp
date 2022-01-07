@@ -41,6 +41,83 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+/// @brief Allocation a create enrollment config for initializing an
+/// enrollment creation stream.
+///
+/// @param modelName The name of the model to use to create the enrollment.
+/// Use `getModels()` to fetch a list of available models.
+/// @param userID The ID of the user performing the request.
+/// @param description The description of the enrollment.
+/// @param isLivenessEnabled `true` to perform a liveness check in addition
+/// to an enrollment, `false` to perform the enrollment without the liveness
+/// check.
+/// @param livenessThreshold The liveness threshold for the optional
+/// liveness check.
+/// @returns A pointer to a new
+/// `sensory::api::v1::video::CreateEnrollmentConfig`.
+///
+inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const std::string& description,
+    const bool& isLivenessEnabled,
+    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold
+) {
+    auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_description(description);
+    config->set_islivenessenabled(isLivenessEnabled);
+    config->set_livenessthreshold(livenessThreshold);
+    return config;
+}
+
+/// @brief Allocation an authentication config for initializing an
+/// authentication stream.
+///
+/// @param enrollmentID The enrollment ID to authenticate against. This can
+/// be either an enrollment ID or a group ID.
+/// @param isLivenessEnabled `true` to perform a liveness check before the
+/// authentication, `false` to only perform the authentication.
+/// @param livenessThreshold The liveness threshold for the optional
+/// liveness check.
+/// @returns A pointer to a new `sensory::api::v1::video::AuthenticateConfig`.
+///
+inline ::sensory::api::v1::video::AuthenticateConfig* newAuthenticateConfig(
+    const std::string& enrollmentID,
+    const bool& isLivenessEnabled,
+    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold
+) {
+    auto config = new ::sensory::api::v1::video::AuthenticateConfig;
+    config->set_enrollmentid(enrollmentID);
+    config->set_islivenessenabled(isLivenessEnabled);
+    config->set_livenessthreshold(livenessThreshold);
+    return config;
+}
+
+/// @brief Allocation a recognition config for initializing a liveness
+/// validation stream.
+///
+/// @param modelName The name of the model to use. Use `getModels()` to
+/// fetch a list of available models.
+/// @param userID The ID of the user performing the request.
+/// @param threshold The threshold of how confident the model has to be to
+/// give a positive liveness result.
+/// @returns A pointer to a new
+/// `sensory::api::v1::video::ValidateRecognitionConfig`.
+///
+inline ::sensory::api::v1::video::ValidateRecognitionConfig* newValidateRecognitionConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const ::sensory::api::v1::video::RecognitionThreshold& threshold
+) {
+    auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_threshold(threshold);
+    return config;
+}
+
 /// @brief A service for video data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.
