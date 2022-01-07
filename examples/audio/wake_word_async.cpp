@@ -32,6 +32,7 @@
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
+#include "dep/argparse.hpp"
 
 using sensory::token_manager::TokenManager;
 using sensory::token_manager::InsecureCredentialStore;
@@ -51,138 +52,82 @@ inline int describe_pa_error(const PaError& err) {
     return 1;
 }
 
-/// @brief A bidirection stream reactor for biometric enrollments from audio
-/// stream data.
-///
-/// @details
-/// Input data for the stream is provided by a PortAudio capture device.
-///
-class PortAudioReactor :
-    public AudioService<InsecureCredentialStore>::ValidateEventBidiReactor {
- private:
-    /// The capture device that input audio is streaming in from.
-    PaStream* capture;
-    /// The number of channels in the input audio.
-    uint32_t numChannels;
-    /// The number of bytes per audio sample (i.e., 2 for 16-bit audio)
-    uint32_t sampleSize;
-    /// The sample rate of the audio input stream.
-    uint32_t sampleRate;
-    /// The number of frames per block of audio.
-    uint32_t framesPerBlock;
-    /// The maximum duration of the stream in seconds.
-    float duration;
-    /// The buffer for the block of samples from the port audio input device.
-    std::unique_ptr<uint8_t> sampleBlock;
-    /// The number of blocks that have been written to the server.
-    std::atomic<uint32_t> blocks_written;
-
- public:
-    /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
-    ///
-    /// @param capture_ The PortAudio capture device.
-    /// @param numChannels_ The number of channels in the input stream.
-    /// @param sampleSize_ The number of bytes in an individual frame.
-    /// @param sampleRate_ The sampling rate of the audio stream.
-    /// @param framesPerBlock_ The number of frames in a block of audio.
-    /// @param duration_ the maximum duration for the audio capture
-    ///
-    PortAudioReactor(PaStream* capture_,
-        uint32_t numChannels_ = 1,
-        uint32_t sampleSize_ = 2,
-        uint32_t sampleRate_ = 16000,
-        uint32_t framesPerBlock_ = 4096,
-        float duration_ = 60
-    ) :
-        AudioService<InsecureCredentialStore>::ValidateEventBidiReactor(),
-        capture(capture_),
-        numChannels(numChannels_),
-        sampleSize(sampleSize_),
-        sampleRate(sampleRate_),
-        framesPerBlock(framesPerBlock_),
-        duration(duration_),
-        sampleBlock(static_cast<uint8_t*>(malloc(framesPerBlock_ * numChannels_ * sampleSize_))),
-        blocks_written(0) {
-        if (capture == nullptr)
-            throw std::runtime_error("capture must point to an allocated stream.");
-    }
-
-    /// @brief React to a _write done_ event.
-    ///
-    /// @param ok whether the write succeeded.
-    ///
-    void OnWriteDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
-        if (!ok) return;
-        // Read a block of samples from the ADC.
-        auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
-        if (err) {
-            describe_pa_error(err);
-            return;
-        }
-        // Set the audio content for the request and start the write request
-        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
-        // If the number of blocks written surpasses the maximal length, close
-        // the stream.
-        if (++blocks_written > (duration * sampleRate) / framesPerBlock)
-            StartWritesDone();
-        else  // Send the data to the server to validate the audio event.
-            StartWrite(&request);
-    }
-
-    /// @brief React to a _read done_ event.
-    ///
-    /// @param ok whether the read succeeded.
-    ///
-    void OnReadDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
-        if (!ok) return;
-        // Log the current audio event status to the terminal.
-        std::cout << "Response" << std::endl;
-        std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
-        std::cout << "\tSuccess:      " << response.success()     << std::endl;
-        std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
-        std::cout << "\tScore:        " << response.score()       << std::endl;
-        // Start the next read request
-        StartRead(&response);
-    }
-};
-
 int main(int argc, const char** argv) {
+    // Create an argument parser to parse inputs from the command line.
+    auto parser = argparse::ArgumentParser(argc, argv)
+        .prog("wake_word")
+        .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
+    parser.add_argument({ "-H", "--host" }).required(true)
+        .help("HOST The hostname of a Sensory Cloud inference server.");
+    parser.add_argument({ "-P", "--port" }).required(true)
+        .help("PORT The port number that the Sensory Cloud inference server is running at.");
+    parser.add_argument({ "-T", "--tenant" }).required(true)
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-I", "--insecure" }).action("store_true")
+        .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-g", "--getmodels" })
+        .action("store_true")
+        .help("GETMODELS Whether to query for a list of available models.");
+    parser.add_argument({ "-m", "--model" })
+        .help("MODEL The name of the transcription model to use.");
+    parser.add_argument({ "-u", "--userid" })
+        .help("USERID The name of the user ID for the transcription.");
+    parser.add_argument({ "-t", "--threshold" })
+        .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
+        .default_value("HIGH")
+        .help("THRESHOLD The sensitivity threshold for detecting audio events.");
+    parser.add_argument({ "-l", "--language" })
+        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    // parser.add_argument({ "-C", "--chunksize" })
+    //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+    //     .default_value(4096);
+    parser.add_argument({ "-v", "--verbose" }).action("store_true")
+        .help("VERBOSE Produce verbose output during transcription.");
+    // Parse the arguments from the command line.
+    const auto args = parser.parse_args();
+    const auto HOSTNAME = args.get<std::string>("host");
+    const auto PORT = args.get<uint16_t>("port");
+    const auto TENANT = args.get<std::string>("tenant");
+    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto GETMODELS = args.get<bool>("getmodels");
+    const auto MODEL = args.get<std::string>("model");
+    const auto USER_ID = args.get<std::string>("userid");
+    sensory::api::v1::audio::ThresholdSensitivity THRESHOLD;
+    if (args.get<std::string>("threshold") == "LOW")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::LOW;
+    else if (args.get<std::string>("threshold") == "MEDIUM")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::MEDIUM;
+    else if (args.get<std::string>("threshold") == "HIGH")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::HIGH;
+    else if (args.get<std::string>("threshold") == "HIGHEST")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::HIGHEST;
+    const auto LANGUAGE = args.get<std::string>("language");
+    // const auto CHUNK_SIZE = args.get<int>("chunksize");
+    const auto VERBOSE = args.get<bool>("verbose");
+
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
 
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        DEVICE_ID
-    );
+    // Initialize the configuration for the service.
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
 
     // Query the health of the remote service.
-    HealthService healthService(config);
-    // Query the health of the remote service.
-    healthService.getHealth([](HealthService::GetHealthCallData* call) {
-        if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to get server health with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-        }
-        // Report the health of the remote service
+    sensory::service::HealthService healthService(config);
+    sensory::api::common::ServerHealthResponse serverHealthResponse;
+    auto status = healthService.getHealth(&serverHealthResponse);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to get server health with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    } else if (VERBOSE) {
         std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << call->getResponse().ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << call->getResponse().serverversion() << std::endl;
-        std::cout << "\tID:             " << call->getResponse().id()            << std::endl;
-    })->await();
-
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
+        std::cout << "\tIs Healthy:     " << serverHealthResponse.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << serverHealthResponse.serverversion() << std::endl;
+        std::cout << "\tID:             " << serverHealthResponse.id()            << std::endl;
+    }
 
     // Create an OAuth service
     OAuthService oauthService(config);
@@ -225,25 +170,26 @@ int main(int argc, const char** argv) {
 
     // ------ Query the available audio models ---------------------------------
 
-    std::cout << "Available audio models:" << std::endl;
-    audioService.getModels([](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
-        if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to get audio models with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-        }
-        // Iterate over the models returned in the response
-        for (auto& model : call->getResponse().models()) {
-            // Ignore models that aren't face biometric models.
-            if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
-                continue;
-            std::cout << "\t" << model.name() << std::endl;
-        }
-    })->await();
-
-    std::string audioModel = "";
-    std::cout << "Audio model: ";
-    std::cin >> audioModel;
+    if (GETMODELS) {
+        int errCode = 0;
+        audioService.getModels([&errCode](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
+            if (!call->getStatus().ok()) {  // The call failed.
+                std::cout << "Failed to get audio models with\n\t" <<
+                    call->getStatus().error_code() << ": " <<
+                    call->getStatus().error_message() << std::endl;
+                errCode = 1;
+            } else {
+                // Iterate over the models returned in the response
+                for (auto& model : call->getResponse().models()) {
+                    // Ignore models that aren't face biometric models.
+                    if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
+                        continue;
+                    std::cout << model.name() << std::endl;
+                }
+            }
+        })->await();
+        return errCode;
+    }
 
     // the maximal duration of the recording in seconds
     static constexpr auto DURATION = 60;
@@ -268,13 +214,9 @@ int main(int argc, const char** argv) {
     auto stream = audioService.validateTrigger(&queue,
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, "en-US"
+            SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::newValidateEventConfig(
-            audioModel,
-            userID,
-            sensory::api::v1::audio::ThresholdSensitivity::LOW
-        )
+        sensory::service::newValidateEventConfig(MODEL, USER_ID, THRESHOLD)
     );
 
     /// Tagged events in the CompletionQueue handler.
@@ -290,10 +232,10 @@ int main(int argc, const char** argv) {
     };
 
     // start the stream event thread in the background to handle events.
-    std::thread audioThread([&stream, &queue](){
+    std::thread audioThread([&](){
         // The number of audio blocks written for detecting expiration of the
         // stream.
-        uint32_t blocks_written;
+        uint32_t blocks_written = 0;
         // The sample block of audio.
         std::unique_ptr<uint8_t> sampleBlock(static_cast<uint8_t*>(malloc(BYTES_PER_BLOCK)));
 
@@ -365,11 +307,16 @@ int main(int argc, const char** argv) {
                 else  // Send the data to the server to authenticate the user.
                     stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
-                std::cout << "Response" << std::endl;
-                std::cout << "\tAudio Energy: " << stream->getResponse().audioenergy() << std::endl;
-                std::cout << "\tSuccess:      " << stream->getResponse().success()     << std::endl;
-                std::cout << "\tResult ID:    " << stream->getResponse().resultid()    << std::endl;
-                std::cout << "\tScore:        " << stream->getResponse().score()       << std::endl;
+                if (VERBOSE) {
+                    std::cout << "Response" << std::endl;
+                    std::cout << "\tAudio Energy: " << stream->getResponse().audioenergy() << std::endl;
+                    std::cout << "\tSuccess:      " << stream->getResponse().success()     << std::endl;
+                    std::cout << "\tResult ID:    " << stream->getResponse().resultid()    << std::endl;
+                    std::cout << "\tScore:        " << stream->getResponse().score()       << std::endl;
+                } else if (stream->getResponse().success()) {
+                    std::cout << "Detected trigger \""
+                        << stream->getResponse().resultid() << "\"" << std::endl;
+                }
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::WritesDone) {  // Respond to `WritesDone`
                 // Finish the stream and terminate.

@@ -32,41 +32,96 @@
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
+#include "dep/argparse.hpp"
+
+/// @brief Print a description of a PortAudio error that occurred.
+///
+/// @param err The error that was thrown by PortAudio.
+/// @returns The OS-level error code for the message.
+///
+inline int describe_pa_error(const PaError& err) {
+    fprintf(stderr, "An error occured while using the portaudio stream\n");
+    fprintf(stderr, "Error number: %d\n", err);
+    fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
+    return 1;
+}
 
 int main(int argc, const char** argv) {
+    // Create an argument parser to parse inputs from the command line.
+    auto parser = argparse::ArgumentParser(argc, argv)
+        .prog("wake_word")
+        .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
+    parser.add_argument({ "-H", "--host" }).required(true)
+        .help("HOST The hostname of a Sensory Cloud inference server.");
+    parser.add_argument({ "-P", "--port" }).required(true)
+        .help("PORT The port number that the Sensory Cloud inference server is running at.");
+    parser.add_argument({ "-T", "--tenant" }).required(true)
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-I", "--insecure" }).action("store_true")
+        .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-g", "--getmodels" })
+        .action("store_true")
+        .help("GETMODELS Whether to query for a list of available models.");
+    parser.add_argument({ "-m", "--model" })
+        .help("MODEL The name of the transcription model to use.");
+    parser.add_argument({ "-u", "--userid" })
+        .help("USERID The name of the user ID for the transcription.");
+    parser.add_argument({ "-t", "--threshold" })
+        .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
+        .default_value("HIGH")
+        .help("THRESHOLD The sensitivity threshold for detecting audio events.");
+    parser.add_argument({ "-l", "--language" })
+        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    // parser.add_argument({ "-C", "--chunksize" })
+    //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+    //     .default_value(4096);
+    parser.add_argument({ "-v", "--verbose" }).action("store_true")
+        .help("VERBOSE Produce verbose output during transcription.");
+    // Parse the arguments from the command line.
+    const auto args = parser.parse_args();
+    const auto HOSTNAME = args.get<std::string>("host");
+    const auto PORT = args.get<uint16_t>("port");
+    const auto TENANT = args.get<std::string>("tenant");
+    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto GETMODELS = args.get<bool>("getmodels");
+    const auto MODEL = args.get<std::string>("model");
+    const auto USER_ID = args.get<std::string>("userid");
+    sensory::api::v1::audio::ThresholdSensitivity THRESHOLD;
+    if (args.get<std::string>("threshold") == "LOW")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::LOW;
+    else if (args.get<std::string>("threshold") == "MEDIUM")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::MEDIUM;
+    else if (args.get<std::string>("threshold") == "HIGH")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::HIGH;
+    else if (args.get<std::string>("threshold") == "HIGHEST")
+        THRESHOLD = sensory::api::v1::audio::ThresholdSensitivity::HIGHEST;
+    const auto LANGUAGE = args.get<std::string>("language");
+    // const auto CHUNK_SIZE = args.get<int>("chunksize");
+    const auto VERBOSE = args.get<bool>("verbose");
+
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
 
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        DEVICE_ID
-    );
+    // Initialize the configuration for the service.
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
 
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
+    sensory::api::common::ServerHealthResponse serverHealthResponse;
+    auto status = healthService.getHealth(&serverHealthResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
+    } else if (VERBOSE) {
+        std::cout << "Server status" << std::endl;
+        std::cout << "\tIs Healthy:     " << serverHealthResponse.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << serverHealthResponse.serverversion() << std::endl;
+        std::cout << "\tID:             " << serverHealthResponse.id()            << std::endl;
     }
-    // Report the health of the remote service
-    std::cout << "Server status:" << std::endl;
-    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-    std::cout << "\tid: " << serverHealth.id() << std::endl;
-
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
@@ -102,29 +157,31 @@ int main(int argc, const char** argv) {
         }
     }
 
-    // Query the available audio models
-    std::cout << "Available audio models:" << std::endl;
+    // ------ Create the audio service -----------------------------------------
+
     sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore>
         audioService(config, tokenManager);
-    sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
-    status = audioService.getModels(&audioModelsResponse);
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get audio models with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-    for (auto& model : audioModelsResponse.models()) {
-        if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
-            continue;
-        std::cout << "\t" << model.name() << std::endl;
-    }
 
-    std::string audioModel = "";
-    std::cout << "Audio model: ";
-    std::cin >> audioModel;
+    // ------ Query the available audio models ---------------------------------
+
+    if (GETMODELS) {
+        sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
+        status = audioService.getModels(&audioModelsResponse);
+        if (!status.ok()) {  // the call failed, print a descriptive message
+            std::cout << "Failed to get audio models with\n\t" <<
+                status.error_code() << ": " << status.error_message() << std::endl;
+            return 1;
+        }
+        for (auto& model : audioModelsResponse.models()) {
+            if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
+                continue;
+            std::cout << model.name() << std::endl;
+        }
+        return 0;
+    }
 
     // the maximal duration of the recording in seconds
-    static constexpr auto DURATION = 10;
+    static constexpr auto DURATION = 60;
     // the sample rate of the input audio stream. This should match the sample
     // rate of the selected model
     static constexpr auto SAMPLE_RATE = 16000;
@@ -144,19 +201,15 @@ int main(int argc, const char** argv) {
     auto stream = audioService.validateTrigger(
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, "en-US"
+            SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::newValidateEventConfig(
-            audioModel,
-            userID,
-            sensory::api::v1::audio::ThresholdSensitivity::LOW
-        )
+        sensory::service::newValidateEventConfig(MODEL, USER_ID, THRESHOLD)
     );
 
     // Initialize the portaudio driver.
     PaError err = paNoError;
     err = Pa_Initialize();
-    if (err != paNoError) goto paerror;
+    if (err != paNoError) return describe_pa_error(err);
 
     // Setup the input parameters for the port audio stream.
     PaStreamParameters inputParameters;
@@ -182,11 +235,11 @@ int main(int argc, const char** argv) {
         NULL,       // using the blocking interface (no callback)
         NULL        // no data for the callback since there is none
     );
-    if (err != paNoError) goto paerror;
+    if (err != paNoError) return describe_pa_error(err);
 
     // Start the audio input stream.
     err = Pa_StartStream(audioStream);
-    if (err != paNoError) goto paerror;
+    if (err != paNoError) return describe_pa_error(err);
 
     // Create a buffer for the audio samples based on the number of bytes in
     // a block of samples.
@@ -194,7 +247,7 @@ int main(int argc, const char** argv) {
     for (int i = 0; i < (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK; ++i) {
         // Read a block of samples from the ADC.
         err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
-        if (err) goto paerror;
+        if (err) return describe_pa_error(err);
 
         // Create a new validate event request with the audio content.
         sensory::api::v1::audio::ValidateEventRequest request;
@@ -204,25 +257,24 @@ int main(int argc, const char** argv) {
         sensory::api::v1::audio::ValidateEventResponse response;
         stream->Read(&response);
         // Log the result of the request to the terminal.
-        std::cout << "Response" << std::endl;
-        std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
-        std::cout << "\tSuccess:      " << response.success()     << std::endl;
-        std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
-        std::cout << "\tScore:        " << response.score()       << std::endl;
+        if (VERBOSE) {
+            std::cout << "Response" << std::endl;
+            std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
+            std::cout << "\tSuccess:      " << response.success()     << std::endl;
+            std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
+            std::cout << "\tScore:        " << response.score()       << std::endl;
+        } else if (response.success()) {
+            std::cout << "Detected trigger \""
+                << response.resultid() << "\"" << std::endl;
+        }
     }
 
     // Stop the audio stream.
     err = Pa_StopStream(audioStream);
-    if (err != paNoError) goto paerror;
+    if (err != paNoError) return describe_pa_error(err);
 
     // Terminate the port audio session.
     Pa_Terminate();
 
     return 0;
-
-paerror:
-    fprintf(stderr, "An error occured while using the portaudio stream\n");
-    fprintf(stderr, "Error number: %d\n", err);
-    fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-    return 1;
 }
