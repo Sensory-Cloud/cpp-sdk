@@ -63,11 +63,11 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
         .help("GETMODELS Whether to query for a list of available models.");
-    parser.add_argument({ "-m", "--model" }).required(true)
+    parser.add_argument({ "-m", "--model" })
         .help("MODEL The name of the transcription model to use.");
-    parser.add_argument({ "-u", "--userid" }).required(true)
+    parser.add_argument({ "-u", "--userid" })
         .help("USERID The name of the user ID for the transcription.");
-    parser.add_argument({ "-l", "--language" }).required(true)
+    parser.add_argument({ "-l", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
