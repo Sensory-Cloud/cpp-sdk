@@ -33,6 +33,7 @@
 #include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
+#include "dep/argparse.hpp"
 
 /// @brief Print a description of a PortAudio error that occurred.
 ///
@@ -47,39 +48,68 @@ inline int describe_pa_error(const PaError& err) {
 }
 
 int main(int argc, const char** argv) {
+    // Create an argument parser to parse inputs from the command line.
+    auto parser = argparse::ArgumentParser(argc, argv)
+        .prog("transcribe")
+        .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
+    parser.add_argument({ "-H", "--host" }).required(true)
+        .help("HOST The hostname of a Sensory Cloud inference server.");
+    parser.add_argument({ "-P", "--port" }).required(true)
+        .help("PORT The port number that the Sensory Cloud inference server is running at.");
+    parser.add_argument({ "-T", "--tenant" }).required(true)
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-I", "--insecure" }).action("store_true")
+        .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-g", "--getmodels" })
+        .action("store_true")
+        .help("GETMODELS Whether to query for a list of available models.");
+    parser.add_argument({ "-m", "--model" }).required(true)
+        .help("MODEL The name of the transcription model to use.");
+    parser.add_argument({ "-u", "--userid" }).required(true)
+        .help("USERID The name of the user ID for the transcription.");
+    parser.add_argument({ "-l", "--language" }).required(true)
+        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    parser.add_argument({ "-C", "--chunksize" })
+        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+        .default_value(0);
+    parser.add_argument({ "-v", "--verbose" }).action("store_true")
+        .help("VERBOSE Produce verbose output during transcription.");
+    // Parse the arguments from the command line.
+    const auto args = parser.parse_args();
+    const auto HOSTNAME = args.get<std::string>("host");
+    const auto PORT = args.get<uint16_t>("port");
+    const auto TENANT = args.get<std::string>("tenant");
+    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto GETMODELS = args.get<bool>("getmodels");
+    const auto MODEL = args.get<std::string>("model");
+    const auto USER_ID = args.get<std::string>("userid");
+    const auto LANGUAGE = args.get<std::string>("language");
+    const auto CHUNK_SIZE = args.get<int>("chunksize");
+    const auto VERBOSE = args.get<bool>("verbose");
+
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
 
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        DEVICE_ID
-    );
+    // Initialize the configuration for the service.
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
 
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
+    sensory::api::common::ServerHealthResponse serverHealthResponse;
+    auto status = healthService.getHealth(&serverHealthResponse);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
+    } else if (VERBOSE) {
+        std::cout << "Server status" << std::endl;
+        std::cout << "\tIs Healthy:     " << serverHealthResponse.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << serverHealthResponse.serverversion() << std::endl;
+        std::cout << "\tID:             " << serverHealthResponse.id()            << std::endl;
     }
-    // Report the health of the remote service
-    std::cout << "Server status:" << std::endl;
-    std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-    std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-    std::cout << "\tid: " << serverHealth.id() << std::endl;
-
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
 
     // Create an OAuth service
     sensory::service::OAuthService oauthService(config);
@@ -115,26 +145,28 @@ int main(int argc, const char** argv) {
         }
     }
 
-    // Query the available audio models
-    std::cout << "Available audio models:" << std::endl;
+    // ------ Create the audio service -----------------------------------------
+
     sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore>
         audioService(config, tokenManager);
-    sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
-    status = audioService.getModels(&audioModelsResponse);
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get audio models with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-    for (auto& model : audioModelsResponse.models()) {
-        if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_COMMAND_AND_SEARCH)
-            continue;
-        std::cout << "\t" << model.name() << std::endl;
-    }
 
-    std::string audioModel = "";
-    std::cout << "Audio model: ";
-    std::cin >> audioModel;
+    // ------ Query the available audio models ---------------------------------
+
+    if (GETMODELS) {
+        sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
+        status = audioService.getModels(&audioModelsResponse);
+        if (!status.ok()) {  // the call failed, print a descriptive message
+            std::cout << "Failed to get audio models with\n\t" <<
+                status.error_code() << ": " << status.error_message() << std::endl;
+            return 1;
+        }
+        for (auto& model : audioModelsResponse.models()) {
+            if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_COMMAND_AND_SEARCH)
+                continue;
+            std::cout << model.name() << std::endl;
+        }
+        return 0;
+    }
 
     // the maximal duration of the recording in seconds
     static constexpr auto DURATION = 60;
@@ -157,9 +189,9 @@ int main(int argc, const char** argv) {
     auto stream = audioService.transcribeAudio(
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, "en-US"
+            SAMPLE_RATE, NUM_CHANNELS, LANGUAGE
         ),
-        sensory::service::newTranscribeConfig(audioModel, userID)
+        sensory::service::newTranscribeConfig(MODEL, USER_ID)
     );
 
     // Initialize the portaudio driver.
@@ -200,16 +232,25 @@ int main(int argc, const char** argv) {
     // Create a thread to poll read requests in the background. Audio
     // transcription has a bursty response pattern, so a locked read-write loop
     // will not work with this service.
-    std::thread receipt_thread([&stream](){
+    std::thread receipt_thread([&stream, &VERBOSE](){
         while (true) {
             // Read a message and break out of the loop if the read fails.
             sensory::api::v1::audio::TranscribeResponse response;
             if (!stream->Read(&response)) break;
             // Log the current transcription to the terminal.
-            std::cout << "Response" << std::endl;
-            std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
-            std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
-            std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+            if (VERBOSE) {
+                std::cout << "Response" << std::endl;
+                std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
+                std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
+                std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+            } else {
+                #if defined(_WIN32) || defined(_WIN64)  // Windows
+                    std::system("clr");
+                #else
+                    std::system("clear");
+                #endif
+                std::cout << response.transcript() << std::endl;
+            }
         }
     });
 
@@ -229,6 +270,7 @@ int main(int argc, const char** argv) {
     }
 
     // Close the stream and check the status code in case the stream broke.
+    stream->WritesDone();
     status = stream->Finish();
 
     // Stop the background receipt process and join the thread back in.
