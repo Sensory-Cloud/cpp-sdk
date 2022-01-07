@@ -159,18 +159,18 @@ int main(int argc, const char** argv) {
     auto parser = argparse::ArgumentParser(argc, argv)
         .prog("transcribe")
         .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
-    parser.add_argument({ "-i", "--input" }).required(true)
-        .help("INPUT The input audio file to stream to Sensory Cloud.");
-    parser.add_argument({ "-o", "--output" }).required(true)
-        .help("OUTPUT The output file to write the transcription to.");
     parser.add_argument({ "-H", "--host" }).required(true)
         .help("HOST The hostname of a Sensory Cloud inference server.");
     parser.add_argument({ "-P", "--port" }).required(true)
         .help("PORT The port number that the Sensory Cloud inference server is running at.");
-    parser.add_argument({ "-t", "--tenant" }).required(true)
+    parser.add_argument({ "-T", "--tenant" }).required(true)
         .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
     parser.add_argument({ "-I", "--insecure" }).action("store_true")
         .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-i", "--input" }).required(true)
+        .help("INPUT The input audio file to stream to Sensory Cloud.");
+    parser.add_argument({ "-o", "--output" }).required(true)
+        .help("OUTPUT The output file to write the transcription to.");
     parser.add_argument({ "-m", "--model" }).required(true)
         .help("MODEL The name of the transcription model to use.");
     parser.add_argument({ "-u", "--userid" }).required(true)

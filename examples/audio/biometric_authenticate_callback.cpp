@@ -187,7 +187,7 @@ int main(int argc, const char** argv) {
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasSavedCredentials()) {  // the device is not registered
+    if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
         const auto credentials = tokenManager.generateCredentials();
 
