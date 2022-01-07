@@ -41,6 +41,9 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+// TODO: implement `compression`?
+// TODO: implement `referenceId`?
+
 /// @brief Allocation a create enrollment config for initializing an
 /// enrollment creation stream.
 ///
@@ -71,6 +74,9 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentCon
     config->set_livenessthreshold(livenessThreshold);
     return config;
 }
+
+// TODO: implement `compression`?
+// TODO: implement `doIncludeToken`?
 
 /// @brief Allocation an authentication config for initializing an
 /// authentication stream.
