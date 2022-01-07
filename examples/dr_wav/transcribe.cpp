@@ -169,6 +169,8 @@ int main(int argc, const char** argv) {
         .help("PORT The port number that the Sensory Cloud inference server is running at.");
     parser.add_argument({ "-t", "--tenant" }).required(true)
         .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-I", "--insecure" }).action("store_true")
+        .help("INSECURE Disable TLS.");
     parser.add_argument({ "-m", "--model" }).required(true)
         .help("MODEL The name of the transcription model to use.");
     parser.add_argument({ "-u", "--userid" }).required(true)
@@ -187,6 +189,7 @@ int main(int argc, const char** argv) {
     const auto HOSTNAME = args.get<std::string>("host");
     const auto PORT = args.get<uint16_t>("port");
     const auto TENANT = args.get<std::string>("tenant");
+    const auto IS_SECURE = !args.get<bool>("insecure");
     const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
     const auto LANGUAGE = args.get<std::string>("language");
@@ -200,7 +203,7 @@ int main(int argc, const char** argv) {
     const auto DEVICE_ID(keychain.at("deviceID"));
 
     // Initialize the configuration for the service.
-    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID);
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
 
     // Query the health of the remote service.
     sensory::service::HealthService healthService(config);
