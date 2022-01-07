@@ -47,7 +47,7 @@ SCENARIO("A user needs to create an AudioConfig") {
         const float sampleRateHertz = 16000;
         const uint32_t audioChannelCount = 1;
         const std::string languageCode = "en-US";
-        WHEN("an audio config is dynamically allocated from the parameters") {
+        WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::newAudioConfig(
                 encoding,
                 sampleRateHertz,
@@ -78,7 +78,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const bool& isLivenessEnabled = true;
         const float enrollmentDuration = 10.f;
         const int32_t numUtterances = 0;
-        WHEN("a CreateEnrollmentConfig is allocated from the parameters") {
+        WHEN("the config is allocated from the parameters") {
             auto config = sensory::service::newCreateEnrollmentConfig(
                 modelName,
                 userID,
@@ -106,7 +106,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const bool& isLivenessEnabled = true;
         const float enrollmentDuration = 0.f;
         const int32_t numUtterances = 4;
-        WHEN("a CreateEnrollmentConfig is allocated from the parameters") {
+        WHEN("the config is allocated from the parameters") {
             auto config = sensory::service::newCreateEnrollmentConfig(
                 modelName,
                 userID,
@@ -134,7 +134,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const bool& isLivenessEnabled = true;
         const float enrollmentDuration = 10.f;
         const int32_t numUtterances = 4;
-        WHEN("a CreateEnrollmentConfig is allocated from the parameters") {
+        WHEN("the config is allocated from the parameters") {
             THEN("an error is thrown") {
                 REQUIRE_THROWS(sensory::service::newCreateEnrollmentConfig(
                     modelName,
@@ -161,7 +161,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
             sensory::api::v1::audio::ThresholdSensitivity::LOW;
         const sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity security =
             sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW;
-        WHEN("an audio config is dynamically allocated from the parameters") {
+        WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::newAuthenticateConfig(
                 enrollmentID,
                 isLivenessEnabled,
@@ -190,7 +190,7 @@ SCENARIO("A user needs to create a ValidateEventConfig") {
         const std::string userID = "userID";
         const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
             sensory::api::v1::audio::ThresholdSensitivity::LOW;
-        WHEN("an audio config is dynamically allocated from the parameters") {
+        WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::newValidateEventConfig(
                 modelName,
                 userID,
@@ -218,7 +218,7 @@ SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
         const std::string& description = "Description";
         const float enrollmentDuration = 10.f;
         const int32_t numUtterances = 0;
-        WHEN("a CreateEnrollmentEventConfig is allocated from the parameters") {
+        WHEN("the config is allocated from the parameters") {
             auto config = sensory::service::newCreateEnrollmentEventConfig(
                 modelName,
                 userID,
@@ -243,7 +243,7 @@ SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
         const std::string& description = "Description";
         const float enrollmentDuration = 0.f;
         const int32_t numUtterances = 4;
-        WHEN("a CreateEnrollmentEventConfig is allocated from the parameters") {
+        WHEN("the config is allocated from the parameters") {
             auto config = sensory::service::newCreateEnrollmentEventConfig(
                 modelName,
                 userID,
@@ -268,7 +268,7 @@ SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
         const std::string& description = "Description";
         const float enrollmentDuration = 10.f;
         const int32_t numUtterances = 4;
-        WHEN("a CreateEnrollmentEventConfig is allocated from the parameters") {
+        WHEN("the config is allocated from the parameters") {
             THEN("an error is thrown") {
                 REQUIRE_THROWS(sensory::service::newCreateEnrollmentEventConfig(
                     modelName,
@@ -291,7 +291,7 @@ SCENARIO("A user needs to create an ValidateEnrolledEventConfig") {
         const std::string enrollmentID = "enrollmentID";
         const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
             sensory::api::v1::audio::ThresholdSensitivity::LOW;
-        WHEN("an audio config is dynamically allocated from the parameters") {
+        WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::newValidateEnrolledEventConfig(
                 enrollmentID,
                 sensitivity
@@ -314,7 +314,7 @@ SCENARIO("A user needs to create a TranscribeConfig") {
     GIVEN("parameters for an audio transcription stream") {
         const std::string modelName = "modelName";
         const std::string userID = "userID";
-        WHEN("an audio config is dynamically allocated from the parameters") {
+        WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::newTranscribeConfig(modelName, userID);
             THEN("a pointer is returned with the variables set") {
                 REQUIRE(config != nullptr);
