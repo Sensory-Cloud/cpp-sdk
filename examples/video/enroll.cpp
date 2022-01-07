@@ -143,17 +143,13 @@ int main(int argc, const char** argv) {
 
         // Query the shared pass-phrase
         std::string password = "";
-        std::cout << "password: ";
+        std::cout << "Password: ";
         std::cin >> password;
 
         // Register this device with the remote host
         sensory::api::v1::management::DeviceResponse registerResponse;
         auto status = oauthService.registerDevice(&registerResponse,
-            name,
-            password,
-            credentials.id,
-            credentials.secret
-        );
+            name, password, credentials.id, credentials.secret);
         if (!status.ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to register device with\n\t" <<
                 status.error_code() << ": " << status.error_message() << std::endl;

@@ -284,15 +284,12 @@ int main(int argc, const char** argv) {
 
         // Query the shared pass-phrase
         std::string password = "";
-        std::cout << "password: ";
+        std::cout << "Password: ";
         std::cin >> password;
 
         // Register this device with the remote host
         oauthService.registerDevice(
-            name,
-            password,
-            credentials.id,
-            credentials.secret,
+            name, password, credentials.id, credentials.secret,
             [](OAuthService::RegisterDeviceCallData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to register device with\n\t" <<
@@ -305,8 +302,7 @@ int main(int argc, const char** argv) {
     // ------ Create the video service -----------------------------------------
 
     // Create the video service based on the configuration and token manager.
-    VideoService<InsecureCredentialStore>
-        videoService(config, tokenManager);
+    VideoService<InsecureCredentialStore> videoService(config, tokenManager);
 
     // ------ Query the available video models ---------------------------------
 
