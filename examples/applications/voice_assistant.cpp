@@ -412,11 +412,15 @@ int main(int argc, const char** argv) {
         // model, the sample rate of the audio and the expected language. A
         // user ID is also necessary to detect audio events.
         audioService.validateTrigger(&validateTriggerReactor,
-            "wakeword-16kHz-alexa.trg",
-            SAMPLE_RATE,
-            "en-US",
-            userID,
-            sensory::api::v1::audio::ThresholdSensitivity::HIGHEST
+            sensory::service::newAudioConfig(
+                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+                SAMPLE_RATE, 1, "en-US"
+            ),
+            sensory::service::newValidateEventConfig(
+                "wakeword-16kHz-alexa.trg",
+                userID,
+                sensory::api::v1::audio::ThresholdSensitivity::HIGHEST
+            )
         );
         validateTriggerReactor.StartCall();
         auto status = validateTriggerReactor.await();
@@ -443,10 +447,11 @@ int main(int argc, const char** argv) {
         // the sample rate of the audio and the expected language. A user ID is also
         // necessary to transcribe audio.
         audioService.transcribeAudio(&reactor,
-            "vad-lvcsr-broad-enUS-2.3.0.snsr",
-            SAMPLE_RATE,
-            "en-US",
-            userID
+            sensory::service::newAudioConfig(
+                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+                SAMPLE_RATE, 1, "en-US"
+            ),
+            sensory::service::newTranscribeConfig("speech_recognition_en", userID)
         );
         reactor.StartCall();
         status = reactor.await();
