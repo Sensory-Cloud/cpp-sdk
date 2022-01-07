@@ -75,9 +75,9 @@ int main(int argc, const char** argv) {
         .help("USERID The name of the user ID for the transcription.");
     parser.add_argument({ "-l", "--language" }).required(true)
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
-    parser.add_argument({ "-C", "--chunksize" })
-        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
-        .default_value(0);
+    // parser.add_argument({ "-C", "--chunksize" })
+    //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+    //     .default_value(4096);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("VERBOSE Produce verbose output during transcription.");
     // Parse the arguments from the command line.
@@ -90,7 +90,7 @@ int main(int argc, const char** argv) {
     const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
     const auto LANGUAGE = args.get<std::string>("language");
-    const auto CHUNK_SIZE = args.get<int>("chunksize");
+    // const auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
