@@ -187,7 +187,7 @@ class OpenCVReactor :
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
-        .prog("authenticate")
+        .prog("liveness")
         .description("A tool for authenticating with face biometrics using Sensory Cloud.");
     parser.add_argument({ "-H", "--host" })
         .required(true)
