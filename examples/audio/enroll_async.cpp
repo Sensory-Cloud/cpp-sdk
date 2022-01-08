@@ -53,6 +53,65 @@ inline int describe_pa_error(const PaError& err) {
 }
 
 int main(int argc, const char** argv) {
+    // Create an argument parser to parse inputs from the command line.
+    auto parser = argparse::ArgumentParser(argc, argv)
+        .prog("enroll")
+        .description("A tool for authenticating with face biometrics using Sensory Cloud.");
+    parser.add_argument({ "-H", "--host" })
+        .required(true)
+        .help("HOST The hostname of a Sensory Cloud inference server.");
+    parser.add_argument({ "-P", "--port" })
+        .required(true)
+        .help("PORT The port number that the Sensory Cloud inference server is running at.");
+    parser.add_argument({ "-T", "--tenant" })
+        .required(true)
+        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
+    parser.add_argument({ "-I", "--insecure" })
+        .action("store_true")
+        .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-g", "--getmodels" })
+        .action("store_true")
+        .help("GETMODELS Whether to query for a list of available models.");
+    parser.add_argument({ "-m", "--model" })
+        .help("MODEL The model to use for the enrollment.");
+    parser.add_argument({ "-u", "--userid" })
+        .help("USERID The name of the user ID to query the enrollments for.");
+    parser.add_argument({ "-d", "--description" })
+        .help("DESCRIPTION A text description of the enrollment.");
+    parser.add_argument({ "-l", "--liveness" })
+        .action("store_true")
+        .help("LIVENESS Whether to conduct a liveness check in addition to the enrollment.");
+    parser.add_argument({ "-n", "--numutterances" })
+        .default_value(0)
+        .help("NUMUTTERANCES The number of utterances for a text independent enrollment.");
+    parser.add_argument({ "-D", "--duration" })
+        .default_value(0)
+        .help("DURATION The duration of a text-dependent enrollment.");
+    parser.add_argument({ "-L", "--language" })
+        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    // parser.add_argument({ "-C", "--chunksize" })
+    //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+    //     .default_value(4096);
+    parser.add_argument({ "-v", "--verbose" })
+        .action("store_true")
+        .help("VERBOSE Produce verbose output during authentication.");
+    // Parse the arguments from the command line.
+    const auto args = parser.parse_args();
+    const auto HOSTNAME = args.get<std::string>("host");
+    const auto PORT = args.get<uint16_t>("port");
+    const auto TENANT = args.get<std::string>("tenant");
+    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto GETMODELS = args.get<bool>("getmodels");
+    const auto MODEL = args.get<std::string>("model");
+    const auto USER_ID = args.get<std::string>("userid");
+    const auto DESCRIPTION = args.get<std::string>("description");
+    const auto LIVENESS = args.get<bool>("liveness");
+    const auto NUM_UTTERANCES = args.get<uint32_t>("numutterances");
+    const auto DURATION = args.get<float>("duration");
+    const auto LANGUAGE = args.get<std::string>("language");
+    // const auto CHUNK_SIZE = args.get<int>("chunksize");
+    const auto VERBOSE = args.get<bool>("verbose");
+
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
@@ -60,33 +119,23 @@ int main(int argc, const char** argv) {
     const auto DEVICE_ID(keychain.at("deviceID"));
 
     // Initialize the configuration to the host for given address and port
-    sensory::Config config(
-        "io.stage.cloud.sensory.com",
-        443,
-        "cabb7700-206f-4cc7-8e79-cd7f288aa78d",
-        DEVICE_ID
-    );
+    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
 
     // Query the health of the remote service.
-    HealthService healthService(config);
-    // Query the health of the remote service.
-    healthService.getHealth([](HealthService::GetHealthCallData* call) {
-        if (!call->getStatus().ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to get server health with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-        }
+    sensory::service::HealthService healthService(config);
+    sensory::api::common::ServerHealthResponse serverHealth;
+    auto status = healthService.getHealth(&serverHealth);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to get server health with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    } else if (VERBOSE) {
         // Report the health of the remote service
-        std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << call->getResponse().ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << call->getResponse().serverversion() << std::endl;
-        std::cout << "\tID:             " << call->getResponse().id()            << std::endl;
-    })->await();
-
-    // Query the user ID
-    std::string userID = "";
-    std::cout << "user ID: ";
-    std::cin >> userID;
+        std::cout << "Server status:" << std::endl;
+        std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
+        std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
+        std::cout << "\tid: " << serverHealth.id() << std::endl;
+    }
 
     // Create an OAuth service
     OAuthService oauthService(config);
@@ -109,10 +158,7 @@ int main(int argc, const char** argv) {
 
         // Register this device with the remote host
         oauthService.registerDevice(
-            name,
-            password,
-            credentials.id,
-            credentials.secret,
+            name, password, credentials.id, credentials.secret,
             [](OAuthService::RegisterDeviceCallData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to register device with\n\t" <<
@@ -129,60 +175,33 @@ int main(int argc, const char** argv) {
 
     // ------ Query the available audio models ---------------------------------
 
-    std::cout << "Available audio models:" << std::endl;
-    audioService.getModels([](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
-        if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to get audio models with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-        }
-        // Iterate over the models returned in the response
-        for (auto& model : call->getResponse().models()) {
-            // Ignore models that aren't face biometric models.
-            if (model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_DEPENDENT &&
-                model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_INDEPENDENT &&
-                model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD
-            ) continue;
-            std::cout << "\t" << model.name() << std::endl;
-        }
-    })->await();
-
-    std::string audioModel = "";
-    std::cout << "Audio model: ";
-    std::cin >> audioModel;
-
-    // Determine the sample rate of the model.
-    int32_t sampleRate(0);
-    if (audioModel.find("8kHz") != std::string::npos)
-        sampleRate = 8000;
-    else if (audioModel.find("16kHz") != std::string::npos)
-        sampleRate = 16000;
-
-    // Determine whether to conduct a liveness check.
-    std::string liveness;
-    bool isLivenessEnabled(false);
-    while (true) {
-        std::cout << "Liveness Check [yes|y, no|n]: ";
-        std::cin >> liveness;
-        if (liveness == "yes" || liveness == "y") {
-            isLivenessEnabled = true;
-            break;
-        } else if (liveness == "no" || liveness == "n") {
-            isLivenessEnabled = false;
-            break;
-        } else {
-            continue;
-        }
+    if (GETMODELS) {
+        int errCode = 0;
+        audioService.getModels([&errCode](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
+            if (!call->getStatus().ok()) {  // The call failed.
+                std::cout << "Failed to get audio models with\n\t" <<
+                    call->getStatus().error_code() << ": " <<
+                    call->getStatus().error_message() << std::endl;
+                errCode = 1;
+            } else {
+                for (auto& model : call->getResponse().models()) {
+                    // Ignore models that aren't face biometric models.
+                    if (model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_DEPENDENT &&
+                        model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_INDEPENDENT &&
+                        model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD
+                    ) continue;
+                    std::cout << model.name() << std::endl;
+                }
+            }
+        })->await();
+        return errCode;
     }
 
-    // Get the description of the model.
-    std::string description;
-    std::cout << "Description: ";
-    std::cin.ignore();
-    std::getline(std::cin, description);
-
     // the maximal duration of the recording in seconds
-    static constexpr auto DURATION = 60;
+    static constexpr auto MAX_DURATION = 60;
+    // the sample rate of the input audio stream. This should match the sample
+    // rate of the selected model
+    static constexpr auto SAMPLE_RATE = 16000;
     // The number of input channels from the microphone. This should always be
     // mono.
     static constexpr auto NUM_CHANNELS = 1;
@@ -201,14 +220,15 @@ int main(int argc, const char** argv) {
     auto stream = audioService.createEnrollment(&queue,
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            sampleRate, 1, "en-US"
+            SAMPLE_RATE, 1, LANGUAGE
         ),
         sensory::service::newCreateEnrollmentConfig(
-            audioModel,
-            userID,
-            description,
-            isLivenessEnabled,
-            0, 0
+            MODEL,
+            USER_ID,
+            DESCRIPTION,
+            LIVENESS,
+            DURATION,
+            NUM_UTTERANCES
         )
     );
 
@@ -225,7 +245,7 @@ int main(int argc, const char** argv) {
     };
 
     // start the stream event thread in the background to handle events.
-    std::thread audioThread([&stream, &queue, &sampleRate](){
+    std::thread audioThread([&stream, &queue, &VERBOSE](){
         // The sample block of audio.
         std::unique_ptr<uint8_t> sampleBlock(static_cast<uint8_t*>(malloc(BYTES_PER_BLOCK)));
         // A flag determining whether the user has been enrolled.
@@ -254,7 +274,7 @@ int main(int argc, const char** argv) {
         err = Pa_OpenStream(&capture,
             &inputParameters,
             NULL,       // no output parameters for an input stream
-            sampleRate,
+            SAMPLE_RATE,
             FRAMES_PER_BLOCK,
             paClipOff,  // we won't output out-of-range samples so don't clip them
             NULL,       // using the blocking interface (no callback)
@@ -299,18 +319,46 @@ int main(int argc, const char** argv) {
                 else  // Send the data to the server to authenticate the user.
                     stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
-                // std::cout << "Response" << std::endl;
-                // std::cout << "\tPercent Complete:         " << response.percentcomplete()        << std::endl;
-                // std::cout << "\tPercent Segment Complete: " << response.percentsegmentcomplete() << std::endl;
-                // std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
-                // std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
-                // std::cout << "\tModel Name:               " << response.modelname()              << std::endl;
-                // std::cout << "\tModel Version:            " << response.modelversion()           << std::endl;
-                // std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
-                if (stream->getResponse().percentcomplete() < 100)  // Start the next read request
-                    stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
-                else  // Enrollment succeeded, stop reading.
+                // Log the result of the request to the terminal.
+                if (VERBOSE) {  // Verbose output, dump the message to the terminal
+                    std::cout << "Response" << std::endl;
+                    std::cout << "\tPercent Complete:         " << stream->getResponse().percentcomplete()        << std::endl;
+                    std::cout << "\tPercent Segment Complete: " << stream->getResponse().percentsegmentcomplete() << std::endl;
+                    std::cout << "\tAudio Energy:             " << stream->getResponse().audioenergy()            << std::endl;
+                    std::cout << "\tEnrollment ID:            " << stream->getResponse().enrollmentid()           << std::endl;
+                    std::cout << "\tModel Name:               " << stream->getResponse().modelname()              << std::endl;
+                    std::cout << "\tModel Version:            " << stream->getResponse().modelversion()           << std::endl;
+                    std::cout << "\tModel Prompt:             " << stream->getResponse().modelprompt()            << std::endl;
+                } else {  // Friendly output, use a progress bar and display the prompt
+                    std::vector<std::string> progress{
+                        "[          ] 0%   ",
+                        "[*         ] 10%  ",
+                        "[**        ] 20%  ",
+                        "[***       ] 30%  ",
+                        "[****      ] 40%  ",
+                        "[*****     ] 50%  ",
+                        "[******    ] 60%  ",
+                        "[*******   ] 70%  ",
+                        "[********  ] 80%  ",
+                        "[********* ] 90%  ",
+                        "[**********] 100% "
+                    };
+                    auto prompt = stream->getResponse().modelprompt().length() > 0 ?
+                        "Prompt: \"" + stream->getResponse().modelprompt() + "\"" :
+                        "Text-independent model, say anything";
+                    std::cout << '\r'
+                        << progress[int(stream->getResponse().percentcomplete() / 10.f)]
+                        << prompt << std::flush;
+                }
+                // Check for enrollment success
+                if (stream->getResponse().percentcomplete() >= 100) {
+                    std::cout << std::endl;
+                    std::cout << "Successfully enrolled with ID: "
+                        << stream->getResponse().enrollmentid() << std::endl;
                     isEnrolled = true;
+                } else { // Start the next read request
+                    stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
+                }
             } else if (tag == (void*) Events::WritesDone) {  // Respond to `WritesDone`
                 // Finish the stream and terminate.
                 stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
@@ -327,12 +375,6 @@ int main(int argc, const char** argv) {
                 // event loop to terminate the background processing thread.
                 break;
             }
-        }
-
-        if (isEnrolled) {
-            std::cout << "Successfully enrolled!" << std::endl;
-        } else {
-            std::cout << "Enrollment failed!" << std::endl;
         }
 
         // Stop the audio stream.
