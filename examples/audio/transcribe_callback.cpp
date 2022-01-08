@@ -181,7 +181,7 @@ int main(int argc, const char** argv) {
         .help("MODEL The name of the transcription model to use.");
     parser.add_argument({ "-u", "--userid" })
         .help("USERID The name of the user ID for the transcription.");
-    parser.add_argument({ "-l", "--language" })
+    parser.add_argument({ "-L", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")

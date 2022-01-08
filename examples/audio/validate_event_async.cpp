@@ -76,7 +76,7 @@ int main(int argc, const char** argv) {
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
         .help("THRESHOLD The sensitivity threshold for detecting audio events.");
-    parser.add_argument({ "-l", "--language" })
+    parser.add_argument({ "-L", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
