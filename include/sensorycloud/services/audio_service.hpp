@@ -719,7 +719,7 @@ class AudioService {
     /// This call will automatically send the `ValidateEventConfig` message to
     /// the server.
     ///
-    inline ValidateTriggerStream validateTrigger(
+    inline ValidateTriggerStream validateEvent(
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
@@ -770,7 +770,7 @@ class AudioService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline ValidateEventAsyncCall* validateTrigger(
+    inline ValidateEventAsyncCall* validateEvent(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
@@ -817,7 +817,7 @@ class AudioService {
     /// the server.
     ///
     template<typename Reactor>
-    inline void validateTrigger(Reactor* reactor,
+    inline void validateEvent(Reactor* reactor,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
