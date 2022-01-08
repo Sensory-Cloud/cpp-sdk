@@ -199,7 +199,7 @@ int main(int argc, const char** argv) {
     // Start an asynchronous RPC to fetch the names of the available models. The
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
-    auto stream = audioService.transcribeAudio(&queue,
+    auto stream = audioService.transcribe(&queue,
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, NUM_CHANNELS, LANGUAGE

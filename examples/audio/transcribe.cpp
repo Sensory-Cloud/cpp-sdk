@@ -186,7 +186,7 @@ int main(int argc, const char** argv) {
         FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Create the network stream
-    auto stream = audioService.transcribeAudio(
+    auto stream = audioService.transcribe(
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, NUM_CHANNELS, LANGUAGE
