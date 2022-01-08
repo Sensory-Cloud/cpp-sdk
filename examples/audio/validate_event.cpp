@@ -173,7 +173,10 @@ int main(int argc, const char** argv) {
             return 1;
         }
         for (auto& model : audioModelsResponse.models()) {
-            if (model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD)
+            if (
+                model.modeltype() != sensory::api::common::VOICE_EVENT_WAKEWORD &&
+                model.modeltype() != sensory::api::common::SOUND_EVENT_FIXED
+            )
                 continue;
             std::cout << model.name() << std::endl;
         }
@@ -198,7 +201,7 @@ int main(int argc, const char** argv) {
         FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Create the network stream
-    auto stream = audioService.validateTrigger(
+    auto stream = audioService.validateEvent(
         sensory::service::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE
