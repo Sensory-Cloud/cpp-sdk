@@ -37,33 +37,21 @@ FetchContent_MakeAvailable(portaudio)
 # Setup the includes for the portaudio library
 include_directories(${portaudio_BINARY_DIR} ${portaudio_SOURCE_DIR})
 
-# --- Wake Word ----------------------------------------------------------------
+include_directories(dep)
 
-add_executable(wakeword wake_word.cpp)
-target_link_libraries(wakeword PRIVATE sensorycloud)
-target_link_libraries(wakeword PRIVATE portaudio)
+# --- Events -------------------------------------------------------------------
 
-add_executable(wakeword_async wake_word_async.cpp)
-target_link_libraries(wakeword_async PRIVATE sensorycloud)
-target_link_libraries(wakeword_async PRIVATE portaudio)
+add_executable(validate_event validate_event.cpp)
+target_link_libraries(validate_event PRIVATE sensorycloud)
+target_link_libraries(validate_event PRIVATE portaudio)
 
-add_executable(wakeword_callback wake_word_callback.cpp)
-target_link_libraries(wakeword_callback PRIVATE sensorycloud)
-target_link_libraries(wakeword_callback PRIVATE portaudio)
+add_executable(validate_event_async validate_event_async.cpp)
+target_link_libraries(validate_event_async PRIVATE sensorycloud)
+target_link_libraries(validate_event_async PRIVATE portaudio)
 
-# --- Sound ID -----------------------------------------------------------------
-
-add_executable(sound_id sound_id.cpp)
-target_link_libraries(sound_id PRIVATE sensorycloud)
-target_link_libraries(sound_id PRIVATE portaudio)
-
-add_executable(sound_id_async sound_id_async.cpp)
-target_link_libraries(sound_id_async PRIVATE sensorycloud)
-target_link_libraries(sound_id_async PRIVATE portaudio)
-
-add_executable(sound_id_callback sound_id_callback.cpp)
-target_link_libraries(sound_id_callback PRIVATE sensorycloud)
-target_link_libraries(sound_id_callback PRIVATE portaudio)
+add_executable(validate_event_callback validate_event_callback.cpp)
+target_link_libraries(validate_event_callback PRIVATE sensorycloud)
+target_link_libraries(validate_event_callback PRIVATE portaudio)
 
 # --- Transcribe ---------------------------------------------------------------
 
