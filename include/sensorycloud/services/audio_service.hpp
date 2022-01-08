@@ -861,7 +861,7 @@ class AudioService {
     /// This call will automatically send the `TranscribeConfig` message to the
     /// server.
     ///
-    inline TranscribeAudioStream transcribeAudio(
+    inline TranscribeAudioStream transcribe(
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
@@ -912,7 +912,7 @@ class AudioService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline TranscribeAsyncCall* transcribeAudio(
+    inline TranscribeAsyncCall* transcribe(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
@@ -959,7 +959,7 @@ class AudioService {
     /// server.
     ///
     template<typename Reactor>
-    inline void transcribeAudio(Reactor* reactor,
+    inline void transcribe(Reactor* reactor,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
