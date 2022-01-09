@@ -91,7 +91,7 @@ class HealthService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         HealthService,
         ::sensory::api::health::HealthRequest,
         ::sensory::api::common::ServerHealthResponse

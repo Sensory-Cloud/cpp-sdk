@@ -125,7 +125,7 @@ class OAuthService {
 
     /// @brief A type for encapsulating data for asynchronous `GetToken` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         OAuthService,
         ::sensory::api::v1::management::EnrollDeviceRequest,
         ::sensory::api::v1::management::DeviceResponse
@@ -282,7 +282,7 @@ class OAuthService {
 
     /// @brief A type for encapsulating data for asynchronous `GetToken` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         OAuthService,
         ::sensory::api::oauth::TokenRequest,
         ::sensory::api::common::TokenResponse

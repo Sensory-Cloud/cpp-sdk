@@ -197,7 +197,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::GetModelsRequest,
         ::sensory::api::v1::video::GetModelsResponse
@@ -321,7 +321,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::CreateEnrollmentRequest,
         ::sensory::api::v1::video::CreateEnrollmentResponse
@@ -451,7 +451,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `Authenticate`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::AuthenticateRequest,
         ::sensory::api::v1::video::AuthenticateResponse
@@ -581,7 +581,7 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `ValidateLiveness`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::ValidateRecognitionRequest,
         ::sensory::api::v1::video::LivenessRecognitionResponse

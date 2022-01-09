@@ -109,7 +109,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentsResponse
@@ -223,7 +223,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `DeleteEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentRequest,
         ::sensory::api::v1::management::EnrollmentResponse
@@ -338,7 +338,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse
@@ -474,7 +474,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
@@ -626,7 +626,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
@@ -747,7 +747,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse

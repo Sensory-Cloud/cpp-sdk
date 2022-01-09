@@ -329,7 +329,7 @@ class AudioService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::GetModelsRequest,
         ::sensory::api::v1::audio::GetModelsResponse
@@ -456,7 +456,7 @@ class AudioService {
 
     /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::CreateEnrollmentRequest,
         ::sensory::api::v1::audio::CreateEnrollmentResponse
@@ -599,7 +599,7 @@ class AudioService {
 
     /// @brief A type for encapsulating data for asynchronous `Authenticate`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::AuthenticateRequest,
         ::sensory::api::v1::audio::AuthenticateResponse
@@ -739,7 +739,7 @@ class AudioService {
 
     /// @brief A type for encapsulating data for asynchronous `ValidateEvent`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::ValidateEventRequest,
         ::sensory::api::v1::audio::ValidateEventResponse
@@ -879,7 +879,7 @@ class AudioService {
 
     /// @brief A type for encapsulating data for asynchronous `Transcribe`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::TranscribeRequest,
         ::sensory::api::v1::audio::TranscribeResponse
