@@ -322,12 +322,12 @@ int main(int argc, const char** argv) {
     }
     std::cout << std::endl;
 
+    // Close the stream and check the status code in case the stream broke.
     stream->WritesDone();
     status = stream->Finish();
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Authentication stream broke with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
     }
 
     // Stop the audio stream.

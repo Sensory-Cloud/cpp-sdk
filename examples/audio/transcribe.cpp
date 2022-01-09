@@ -268,17 +268,15 @@ int main(int argc, const char** argv) {
         if (!stream->Write(request)) break;
     }
 
-    // Close the stream and check the status code in case the stream broke.
-    stream->WritesDone();
-    status = stream->Finish();
-
     // Stop the background receipt process and join the thread back in.
     receipt_thread.join();
 
+    // Close the stream and check the status code in case the stream broke.
+    stream->WritesDone();
+    status = stream->Finish();
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Transcription stream broke with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
     }
 
     // Stop the audio stream.

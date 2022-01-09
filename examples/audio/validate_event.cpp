@@ -273,6 +273,14 @@ int main(int argc, const char** argv) {
         }
     }
 
+    // Close the stream and check the status code in case the stream broke.
+    stream->WritesDone();
+    status = stream->Finish();
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Event validation stream broke with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+    }
+
     // Stop the audio stream.
     err = Pa_StopStream(audioStream);
     if (err != paNoError) return describe_pa_error(err);
