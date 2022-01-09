@@ -261,7 +261,7 @@ int main(int argc, const char** argv) {
 
         // Create a new validate event request with the audio content.
         sensory::api::v1::audio::CreateEnrollmentRequest request;
-        request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
+        request.set_audiocontent(sampleBlock, BYTES_PER_BLOCK);
         // Send the data to the server to validate the trigger.
         stream->Write(request);
         sensory::api::v1::audio::CreateEnrollmentResponse response;

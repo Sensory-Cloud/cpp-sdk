@@ -279,7 +279,7 @@ int main(int argc, const char** argv) {
 
         // Create a new request with the audio content.
         sensory::api::v1::audio::AuthenticateRequest request;
-        request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
+        request.set_audiocontent(sampleBlock, BYTES_PER_BLOCK);
         if (!stream->Write(request)) break;
 
         // Read a new response from the server.

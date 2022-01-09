@@ -116,7 +116,7 @@ class ValidateEventReactor :
             return;
         }
         // Set the audio content for the request and start the write request
-        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
+        request.set_audiocontent(sampleBlock.get(), numChannels * framesPerBlock * sampleSize);
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
         if (!didTrigger)  // Send the data to the server to validate the audio event.
@@ -225,7 +225,7 @@ class AudioTranscriptionReactor :
             return;
         }
         // Set the audio content for the request and start the write request
-        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
+        request.set_audiocontent(sampleBlock.get(), numChannels * framesPerBlock * sampleSize);
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
         if (++blocks_written > (duration * sampleRate) / framesPerBlock || isFinishedTranscribing)

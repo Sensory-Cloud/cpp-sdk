@@ -86,7 +86,7 @@ class AudioFileReactor :
         buffer(buffer_),
         numChannels(numChannels_),
         sampleRate(sampleRate_),
-        framesPerBlock(framesPerBlock_),
+        framesPerBlock(numChannels_ * framesPerBlock_),
         verbose(verbose_),
         bar(buffer_.size() / static_cast<float>(framesPerBlock_), "frame") { }
 

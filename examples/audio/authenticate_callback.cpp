@@ -122,7 +122,7 @@ class PortAudioReactor :
             return;
         }
         // Set the audio content for the request and start the write request
-        request.set_audiocontent(sampleBlock.get(), framesPerBlock * sampleSize);
+        request.set_audiocontent(sampleBlock.get(), numChannels * framesPerBlock * sampleSize);
         // If the user has been authenticated, close the stream.
         if (authenticated)
             StartWritesDone();

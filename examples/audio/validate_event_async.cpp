@@ -303,7 +303,7 @@ int main(int argc, const char** argv) {
                     break;
                 }
                 // Set the audio content for the request and start the write request
-                stream->getRequest().set_audiocontent(sampleBlock.get(), FRAMES_PER_BLOCK * SAMPLE_SIZE);
+                stream->getRequest().set_audiocontent(sampleBlock.get(), BYTES_PER_BLOCK);
                 // If the user has been authenticated, close the stream.
                 if (++blocks_written > (DURATION * SAMPLE_RATE) / FRAMES_PER_BLOCK)
                     stream->getCall()->WritesDone((void*) Events::WritesDone);
