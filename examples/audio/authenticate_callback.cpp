@@ -114,7 +114,12 @@ class PortAudioReactor :
     ///
     void OnWriteDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
-        if (!ok || authenticated) return;
+        if (!ok) return;
+        // If authentication succeeded, send the writes done signal
+        if (authenticated) {
+            StartWritesDone();
+            return;
+        }
         // Read a block of samples from the ADC.
         auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
         if (err) {
@@ -123,11 +128,7 @@ class PortAudioReactor :
         }
         // Set the audio content for the request and start the write request
         request.set_audiocontent(sampleBlock.get(), numChannels * framesPerBlock * sampleSize);
-        // If the user has been authenticated, close the stream.
-        if (authenticated)
-            StartWritesDone();
-        else  // Send the data to the server to authenticate the user.
-            StartWrite(&request);
+        StartWrite(&request);
     }
 
     /// @brief React to a _read done_ event.

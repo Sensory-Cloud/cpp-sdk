@@ -325,6 +325,11 @@ int main(int argc, const char** argv) {
                 stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Write) {  // Respond to a write event.
+                // If the user has been authenticated, close the stream.
+                if (authenticated) {
+                    stream->getCall()->WritesDone((void*) Events::WritesDone);
+                    continue;
+                }
                 // Read a block of samples from the ADC.
                 auto err = Pa_ReadStream(capture, sampleBlock.get(), CHUNK_SIZE);
                 if (err) {
@@ -333,11 +338,7 @@ int main(int argc, const char** argv) {
                 }
                 // Set the audio content for the request and start the write request
                 stream->getRequest().set_audiocontent(sampleBlock.get(), BYTES_PER_BLOCK);
-                // If the user has been authenticated, close the stream.
-                if (authenticated)
-                    stream->getCall()->WritesDone((void*) Events::WritesDone);
-                else  // Send the data to the server to authenticate the user.
-                    stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
+                stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
                 // Log the result of the request to the terminal.
                 if (VERBOSE) {  // Verbose output, dump the message to the terminal

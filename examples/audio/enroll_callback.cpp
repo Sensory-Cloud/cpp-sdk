@@ -119,6 +119,11 @@ class PortAudioReactor :
     void OnWriteDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
+        // If enrollment succeeded, send the writes done signal
+        if (isEnrolled) {
+            StartWritesDone();
+            return;
+        }
         // Read a block of samples from the ADC.
         auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
         if (err) {
@@ -127,12 +132,7 @@ class PortAudioReactor :
         }
         // Set the audio content for the request and start the write request
         request.set_audiocontent(sampleBlock.get(), numChannels * framesPerBlock * sampleSize);
-        // If the number of blocks written surpasses the maximal length, close
-        // the stream.
-        if (isEnrolled)
-            StartWritesDone();
-        else  // Send the data to the server to validate the audio event.
-            StartWrite(&request);
+        StartWrite(&request);
     }
 
     /// @brief React to a _read done_ event.
