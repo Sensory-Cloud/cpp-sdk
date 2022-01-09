@@ -57,7 +57,7 @@ inline int describe_pa_error(const PaError& err) {
 /// @details
 /// Input data for the stream is provided by a PortAudio capture device.
 ///
-class ValidateTriggerReactor :
+class ValidateEventReactor :
     public AudioService<InsecureCredentialStore>::ValidateEventBidiReactor {
  private:
     /// The capture device that input audio is streaming in from.
@@ -84,7 +84,7 @@ class ValidateTriggerReactor :
     /// @param sampleRate_ The sampling rate of the audio stream.
     /// @param framesPerBlock_ The number of frames in a block of audio.
     ///
-    ValidateTriggerReactor(PaStream* capture_,
+    ValidateEventReactor(PaStream* capture_,
         uint32_t numChannels_ = 1,
         uint32_t sampleSize_ = 2,
         uint32_t sampleRate_ = 16000,
@@ -402,7 +402,7 @@ int main(int argc, const char** argv) {
 
     while (true) {
         // Create the gRPC reactor to respond to streaming events.
-        ValidateTriggerReactor validateTriggerReactor(capture,
+        ValidateEventReactor validateEventReactor(capture,
             NUM_CHANNELS,
             SAMPLE_SIZE,
             SAMPLE_RATE,
@@ -411,7 +411,7 @@ int main(int argc, const char** argv) {
         // Initialize the stream with the reactor for callbacks, given audio
         // model, the sample rate of the audio and the expected language. A
         // user ID is also necessary to detect audio events.
-        audioService.validateTrigger(&validateTriggerReactor,
+        audioService.validateEvent(&validateEventReactor,
             sensory::service::newAudioConfig(
                 sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
                 SAMPLE_RATE, 1, "en-US"
@@ -422,8 +422,8 @@ int main(int argc, const char** argv) {
                 sensory::api::v1::audio::ThresholdSensitivity::HIGHEST
             )
         );
-        validateTriggerReactor.StartCall();
-        auto status = validateTriggerReactor.await();
+        validateEventReactor.StartCall();
+        auto status = validateEventReactor.await();
 
         if (!status.ok()) {  // The call failed, print a descriptive message.
             std::cout << "Wake-word stream broke with\n\t" <<
@@ -431,7 +431,7 @@ int main(int argc, const char** argv) {
             return 1;
         }
 
-        if (!validateTriggerReactor.getDidTrigger()) continue;
+        if (!validateEventReactor.getDidTrigger()) continue;
 
         std::cout << "yes?" << std::endl;
 
@@ -446,7 +446,7 @@ int main(int argc, const char** argv) {
         // Initialize the stream with the reactor for callbacks, given audio model,
         // the sample rate of the audio and the expected language. A user ID is also
         // necessary to transcribe audio.
-        audioService.transcribeAudio(&reactor,
+        audioService.transcribe(&reactor,
             sensory::service::newAudioConfig(
                 sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
                 SAMPLE_RATE, 1, "en-US"
