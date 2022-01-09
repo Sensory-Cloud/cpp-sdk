@@ -149,7 +149,6 @@ class Config {
             throw ConfigError(ConfigError::Code::InvalidTenantID);
         if (deviceID.empty())  // the device ID is not valid
             throw ConfigError(ConfigError::Code::InvalidDeviceID);
-        connect();
     }
 
     /// @brief Create the connection for the service.
