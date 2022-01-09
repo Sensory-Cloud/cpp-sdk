@@ -215,7 +215,7 @@ int main(int argc, const char** argv) {
     // Create a thread to poll read requests in the background. Audio
     // transcription has a bursty response pattern, so a locked read-write loop
     // will not work with this service.
-    std::thread networkThread([&stream, &isAuthenticated, &score, &isLive, &frame, &frameMutex, &VERBOSE](){
+    std::thread networkThread([&](){
         while (!isAuthenticated) {
             std::vector<unsigned char> buffer;
             {  // Lock the mutex and encode the frame with JPEG into a buffer.
@@ -238,6 +238,8 @@ int main(int argc, const char** argv) {
             }
             // Set the authentication flag to the success of the response.
             isAuthenticated = response.success();
+            if (LIVENESS)
+                isAuthenticated = isAuthenticated && response.isalive();
             score = response.score();
             isLive = response.isalive();
             if (isAuthenticated)

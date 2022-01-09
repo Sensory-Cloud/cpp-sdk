@@ -66,16 +66,26 @@ class OpenCVReactor :
     /// A mutual exclusion for locking access to the frame between foreground
     /// (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
+    /// Whether liveness is enabled for the reactor
+    bool isLivenessEnabled = false;
     /// Whether to produce verbose output from the reactor
     bool verbose = false;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
-    OpenCVReactor(const bool& verbose_ = false) :
+    ///
+    /// @param isLivenessEnabled_ `true` to enable the liveness check interface,
+    /// `false` to disable the interface.
+    ///
+    OpenCVReactor(
+        const bool& isLivenessEnabled_ = false,
+        const bool& verbose_ = false
+    ) :
         VideoService<InsecureCredentialStore>::AuthenticateBidiReactor(),
         isAuthenticated(false),
         score(100),
         isLive(false),
+        isLivenessEnabled(isLivenessEnabled_),
         verbose(verbose_) { }
 
     /// @brief Return true if the user successfully authenticated
@@ -121,6 +131,8 @@ class OpenCVReactor :
         }
         // Set the authentication flag to the success of the response.
         isAuthenticated = response.success();
+        if (isLivenessEnabled)
+            isAuthenticated = isAuthenticated && response.isalive();
         score = response.score();
         isLive = response.isalive();
         if (!isAuthenticated)  // Start the next read request
@@ -130,10 +142,8 @@ class OpenCVReactor :
     /// @brief Stream video from an OpenCV capture device.
     ///
     /// @param capture The OpenCV capture device.
-    /// @param isLivenessEnabled `true` to enable the liveness check interface,
-    /// `false` to disable the interface.
     ///
-    ::grpc::Status streamVideo(cv::VideoCapture& capture, const bool& isLivenessEnabled) {
+    ::grpc::Status streamVideo(cv::VideoCapture& capture) {
         // Start the call to initiate the stream in the background.
         StartCall();
         // Start capturing frames from the device.
@@ -328,14 +338,14 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream.
-    OpenCVReactor reactor(VERBOSE);
+    OpenCVReactor reactor(LIVENESS, VERBOSE);
     videoService.authenticate(&reactor,
         sensory::service::video::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD));
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd
     // runtime errors can occur.
-    status = reactor.streamVideo(capture, LIVENESS);
+    status = reactor.streamVideo(capture);
 
     if (!status.ok()) {
         std::cout << "Failed to authenticate with\n\t" <<

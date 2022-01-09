@@ -238,7 +238,7 @@ int main(int argc, const char** argv) {
     );
 
     // start the stream event thread in the background to handle events.
-    std::thread eventThread([&stream, &queue, &isAuthenticated, &score, &isLive, &frame, &frameMutex, &VERBOSE](){
+    std::thread eventThread([&](){
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
@@ -285,6 +285,8 @@ int main(int argc, const char** argv) {
                     std::cout << "\tIs Alive: " << stream->getResponse().isalive() << std::endl;
                 }
                 isAuthenticated = stream->getResponse().success();
+                if (LIVENESS)
+                    isAuthenticated = isAuthenticated && stream->getResponse().isalive();
                 score = stream->getResponse().score();
                 isLive = stream->getResponse().isalive();
                 // If we're finished enrolling, don't issue a new read request.
@@ -321,10 +323,8 @@ int main(int argc, const char** argv) {
         if (c == 27 || c == 'q' || c == 'Q') break;
     }
 
-    std::cout << "joining" << std::endl;
     // Wait for the network thread to join back in.
     eventThread.join();
-    std::cout << "joined" << std::endl;
 
     if (!stream->getStatus().ok()) {
         std::cout << "Failed to authenticate with\n\t" <<
