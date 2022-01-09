@@ -630,6 +630,10 @@ class AudioService {
     /// stream. Use `newAuthenticateConfig` to create a new authentication
     /// config. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -644,7 +648,9 @@ class AudioService {
     inline AuthenticateAsyncStream* authenticate(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig
+        ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -655,8 +661,14 @@ class AudioService {
         // Create the request with the pointer to the enrollment config.
         authenticateConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(authenticateConfig);
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = biometricStub->AsyncAuthenticate(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = biometricStub->AsyncAuthenticate(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -770,6 +782,10 @@ class AudioService {
     /// stream. Use `newValidateEventConfig` to create a new trigger validation
     /// config. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -784,7 +800,9 @@ class AudioService {
     inline ValidateEventAsyncStream* validateEvent(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -795,8 +813,14 @@ class AudioService {
         // Create the request with the pointer to the enrollment config.
         validateEventConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(validateEventConfig);
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = eventsStub->AsyncValidateEvent(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = eventsStub->AsyncValidateEvent(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -910,6 +934,10 @@ class AudioService {
     /// stream. Use `newTranscribeConfig` to create a new audio transcription
     /// config. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -924,7 +952,9 @@ class AudioService {
     inline TranscribeAsyncStream* transcribe(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
-        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -935,8 +965,14 @@ class AudioService {
         // Create the request with the pointer to the enrollment config.
         transcribeConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(transcribeConfig);
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = transcriptionsStub->AsyncTranscribe(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = transcriptionsStub->AsyncTranscribe(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
