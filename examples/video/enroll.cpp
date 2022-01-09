@@ -235,6 +235,10 @@ int main(int argc, const char** argv) {
             isEnrolled = !response.enrollmentid().empty();
             percentComplete = response.percentcomplete() / 100.f;
             isLive = response.isalive();
+            if (isEnrolled) {
+                std::cout << "Successfully enrolled with ID: "
+                    << response.enrollmentid() << std::endl;
+            }
         }
     });
 

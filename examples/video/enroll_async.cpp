@@ -299,8 +299,12 @@ int main(int argc, const char** argv) {
                 percentComplete = stream->getResponse().percentcomplete() / 100.f;
                 isLive = stream->getResponse().isalive();
                 // If we're finished enrolling, don't issue a new read request.
-                if (!isEnrolled)
+                if (!isEnrolled) {
                     stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
+                } else {
+                    std::cout << "Successfully enrolled with ID: "
+                        << stream->getResponse().enrollmentid() << std::endl;
+                }
             } else if (tag == (void*) Events::Finish) break;
         }
     });
@@ -350,8 +354,6 @@ int main(int argc, const char** argv) {
         std::cout << "Failed to create enrollment with\n\t" <<
             stream->getStatus().error_code() << ": " <<
             stream->getStatus().error_message() << std::endl;
-    } else {
-        std::cout << "Successfully created enrollment!" << std::endl;
     }
 
     delete stream;

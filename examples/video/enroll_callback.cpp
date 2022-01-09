@@ -123,8 +123,12 @@ class OpenCVReactor :
         percentComplete = response.percentcomplete() / 100.f;
         // Set the liveness status of the last frame.
         isLive = response.isalive();
-        if (!isEnrolled)  // Start the next read request.
+        if (!isEnrolled) {  // Start the next read request.
             StartRead(&response);
+        } else {
+            std::cout << "Successfully enrolled with ID: "
+                << response.enrollmentid() << std::endl;
+        }
     }
 
     /// @brief Stream video from an OpenCV capture device.
@@ -353,8 +357,6 @@ int main(int argc, const char** argv) {
         std::cout << "Failed to enroll with\n\t" <<
             status.error_code() << ": " <<
             status.error_message() << std::endl;
-    } else {
-        std::cout << "Successfully created enrollment!" << std::endl;
     }
 
     return 0;
