@@ -211,8 +211,12 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-L", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
-    //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
-    //     .default_value(4096);
+    //     .help("CHUNKSIZE The number of audio samples per message (default 4096).")
+    //     .default_value("4096");
+    // parser.add_argument({ "-S", "--samplerate" })
+    //     .help("SAMPLERATE The audio sample rate of the input stream.")
+    //     .choices({"9600", "11025", "12000", "16000", "22050", "24000", "32000", "44100", "48000", "88200", "96000", "192000"})
+    //     .default_value("16000");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
         .help("VERBOSE Produce verbose output during authentication.");
@@ -241,7 +245,8 @@ int main(int argc, const char** argv) {
     else if (args.get<std::string>("threshold") == "HIGH")
         THRESHOLD = sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_HIGH;
     const auto LANGUAGE = args.get<std::string>("language");
-    // const auto CHUNK_SIZE = args.get<int>("chunksize");
+    const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
+    const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
@@ -344,20 +349,14 @@ int main(int argc, const char** argv) {
     // Create the audio service based on the configuration and token manager.
     AudioService<InsecureCredentialStore> audioService(config, tokenManager);
 
-    // the sample rate of the input audio stream. This should match the sample
-    // rate of the selected model
-    static constexpr auto SAMPLE_RATE = 16000;
     // The number of input channels from the microphone. This should always be
     // mono.
-    static constexpr auto NUM_CHANNELS = 1;
-    // The size of the audio sample blocks, i.e., the number of samples to read
-    // from the ADC per step and send to Sensory, Cloud.
-    static constexpr auto FRAMES_PER_BLOCK = 4096;
+    const auto NUM_CHANNELS = 1;
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
-    static constexpr auto SAMPLE_SIZE = 2;
+    const auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
-    static constexpr auto BYTES_PER_BLOCK =
-        FRAMES_PER_BLOCK * NUM_CHANNELS * SAMPLE_SIZE;
+    const auto BYTES_PER_BLOCK =
+        CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Initialize the PortAudio driver.
     PaError err = paNoError;
@@ -383,7 +382,7 @@ int main(int argc, const char** argv) {
         &inputParameters,
         NULL,       // no output parameters for an input stream
         SAMPLE_RATE,
-        FRAMES_PER_BLOCK,
+        CHUNK_SIZE,
         paClipOff,  // we won't output out-of-range samples so don't clip them
         NULL,       // using the blocking interface (no callback)
         NULL        // no data for the callback since there is none
@@ -399,7 +398,7 @@ int main(int argc, const char** argv) {
         NUM_CHANNELS,
         SAMPLE_SIZE,
         SAMPLE_RATE,
-        FRAMES_PER_BLOCK,
+        CHUNK_SIZE,
         VERBOSE
     );
     // Initialize the stream with the reactor for callbacks, given audio model,

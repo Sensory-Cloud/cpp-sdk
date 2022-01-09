@@ -185,14 +185,14 @@ int main(int argc, const char** argv) {
     }
 
     // the maximal duration of the recording in seconds
-    static constexpr auto DURATION = 60;
+    const auto DURATION = 60;
     // The number of input channels from the microphone. This should always be
     // mono.
-    static constexpr auto NUM_CHANNELS = 1;
+    const auto NUM_CHANNELS = 1;
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
-    static constexpr auto SAMPLE_SIZE = 2;
+    const auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
-    static constexpr auto BYTES_PER_BLOCK =
+    const auto BYTES_PER_BLOCK =
         CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Start an asynchronous RPC to fetch the names of the available models. The
