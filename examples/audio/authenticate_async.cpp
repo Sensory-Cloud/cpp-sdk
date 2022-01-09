@@ -236,19 +236,6 @@ int main(int argc, const char** argv) {
     const auto BYTES_PER_BLOCK =
         CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
-    // Start an asynchronous RPC to fetch the names of the available models. The
-    // RPC will use the grpc::CompletionQueue as an event loop.
-    grpc::CompletionQueue queue;
-    auto stream = audioService.authenticate(&queue,
-        sensory::service::audio::newAudioConfig(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, LANGUAGE
-        ),
-        sensory::service::audio::newAuthenticateConfig(
-            ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD
-        )
-    );
-
     /// Tagged events in the CompletionQueue handler.
     enum class Events {
         /// The `Write` event for sending data up to the server.
@@ -260,6 +247,21 @@ int main(int argc, const char** argv) {
         /// The `Finish` event indicating that the stream has terminated.
         Finish = 4
     };
+
+    // Start an asynchronous RPC to fetch the names of the available models. The
+    // RPC will use the grpc::CompletionQueue as an event loop.
+    grpc::CompletionQueue queue;
+    auto stream = audioService.authenticate(&queue,
+        sensory::service::audio::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, LANGUAGE
+        ),
+        sensory::service::audio::newAuthenticateConfig(
+            ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD
+        ),
+        nullptr,
+        (void*) Events::Finish
+    );
 
     // start the stream event thread in the background to handle events.
     std::thread audioThread([&stream, &queue, &VERBOSE](){
@@ -302,8 +304,6 @@ int main(int argc, const char** argv) {
         // Start the audio input stream.
         err = Pa_StartStream(capture);
         if (err != paNoError) return describe_pa_error(err);
-
-        stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
 
         void* tag(nullptr);
         bool ok(false);

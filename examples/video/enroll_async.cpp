@@ -219,13 +219,6 @@ int main(int argc, const char** argv) {
     // (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
 
-    // Create the enrollment stream.
-    auto stream = videoService.createEnrollment(&queue,
-        sensory::service::video::newCreateEnrollmentConfig(
-            MODEL, USER_ID, DESCRIPTION, LIVENESS, THRESHOLD
-        )
-    );
-
     /// Tagged events in the CompletionQueue handler.
     enum class Events {
         /// The `Write` event for sending data up to the server.
@@ -238,9 +231,17 @@ int main(int argc, const char** argv) {
         Finish = 4
     };
 
+    // Create the enrollment stream.
+    auto stream = videoService.createEnrollment(&queue,
+        sensory::service::video::newCreateEnrollmentConfig(
+            MODEL, USER_ID, DESCRIPTION, LIVENESS, THRESHOLD
+        ),
+        nullptr,
+        (void*) Events::Finish
+    );
+
     // start the stream event thread in the background to handle events.
     std::thread eventThread([&stream, &queue, &isEnrolled, &percentComplete, &isLive, &frame, &frameMutex, &VERBOSE](){
-        stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {

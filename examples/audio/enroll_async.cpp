@@ -215,6 +215,18 @@ int main(int argc, const char** argv) {
     const auto BYTES_PER_BLOCK =
         CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
+    /// Tagged events in the CompletionQueue handler.
+    enum class Events {
+        /// The `Write` event for sending data up to the server.
+        Write = 1,
+        /// The `Read` event for receiving messages from the server.
+        Read = 2,
+        /// The `WritesDone` event indicating that no more data will be sent up.
+        WritesDone = 3,
+        /// The `Finish` event indicating that the stream has terminated.
+        Finish = 4
+    };
+
     // Start an asynchronous RPC to fetch the names of the available models. The
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
@@ -230,20 +242,10 @@ int main(int argc, const char** argv) {
             LIVENESS,
             DURATION,
             NUM_UTTERANCES
-        )
+        ),
+        nullptr,
+        (void*) Events::Finish
     );
-
-    /// Tagged events in the CompletionQueue handler.
-    enum class Events {
-        /// The `Write` event for sending data up to the server.
-        Write = 1,
-        /// The `Read` event for receiving messages from the server.
-        Read = 2,
-        /// The `WritesDone` event indicating that no more data will be sent up.
-        WritesDone = 3,
-        /// The `Finish` event indicating that the stream has terminated.
-        Finish = 4
-    };
 
     // start the stream event thread in the background to handle events.
     std::thread audioThread([&stream, &queue, &VERBOSE](){
@@ -286,8 +288,6 @@ int main(int argc, const char** argv) {
         // Start the audio input stream.
         err = Pa_StartStream(capture);
         if (err != paNoError) return describe_pa_error(err);
-
-        stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
 
         void* tag(nullptr);
         bool ok(false);

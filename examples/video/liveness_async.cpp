@@ -223,11 +223,6 @@ int main(int argc, const char** argv) {
     // (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
 
-    // Create the enrollment stream.
-    auto stream = videoService.validateLiveness(&queue,
-        sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
-    );
-
     /// Tagged events in the CompletionQueue handler.
     enum class Events {
         /// The `Write` event for sending data up to the server.
@@ -240,9 +235,15 @@ int main(int argc, const char** argv) {
         Finish = 4
     };
 
+    // Create the enrollment stream.
+    auto stream = videoService.validateLiveness(&queue,
+        sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD),
+        nullptr,
+        (void*) Events::Finish
+    );
+
     // start the stream event thread in the background to handle events.
     std::thread eventThread([&stream, &queue, &isLive, &alignmentCode, &frame, &frameMutex](){
-        stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
@@ -262,15 +263,6 @@ int main(int argc, const char** argv) {
                 stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Write) {  // Respond to a write event.
-                // If we successfully enrolled, there is no more data to send
-                // to the server, notify gRPC that there will be no more writes
-                // to half-close the stream. We'll give this a unique tag so
-                // we can respond to the completion of the `WritesDone` in
-                // another branch to fully terminate the stream.
-                // if (isEnrolled) {
-                //     stream->getCall()->WritesDone((void*) Events::WritesDone);
-                //     continue;
-                // }
                 // To send image data to the server, it must be JPEG compressed.
                 std::vector<unsigned char> buffer;
                 {  // Lock the mutex and encode the frame with JPEG into a buffer.
@@ -285,9 +277,8 @@ int main(int argc, const char** argv) {
                 isLive = stream->getResponse().isalive();
                 alignmentCode = stream->getResponse().score() < 100 ?
                     FaceAlignment::Valid : static_cast<FaceAlignment>(stream->getResponse().score());
-                // If we're finished enrolling, don't issue a new read request.
-                // if (!isEnrolled)
-                    stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
+                // Issue a new read request.
+                stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Finish) break;
         }
     });
