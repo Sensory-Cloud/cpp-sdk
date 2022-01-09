@@ -277,13 +277,14 @@ int main(int argc, const char** argv) {
         err = Pa_ReadStream(audioStream, sampleBlock, FRAMES_PER_BLOCK);
         if (err) return describe_pa_error(err);
 
-        // Create a new validate event request with the audio content.
+        // Create a new request with the audio content.
         sensory::api::v1::audio::AuthenticateRequest request;
         request.set_audiocontent(sampleBlock, FRAMES_PER_BLOCK * SAMPLE_SIZE);
-        // Send the data to the server to validate the trigger.
-        stream->Write(request);
+        if (!stream->Write(request)) break;
+
+        // Read a new response from the server.
         sensory::api::v1::audio::AuthenticateResponse response;
-        stream->Read(&response);
+        if (!stream->Read(&response)) break;
 
         // Log the result of the request to the terminal.
         if (VERBOSE) {  // Verbose output, dump the message to the terminal
@@ -319,6 +320,15 @@ int main(int argc, const char** argv) {
             std::cout << std::endl << "Successfully authenticated!" << std::endl;
             break;
         }
+    }
+    std::cout << std::endl;
+
+    stream->WritesDone();
+    status = stream->Finish();
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Authentication stream broke with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
     }
 
     // Stop the audio stream.
