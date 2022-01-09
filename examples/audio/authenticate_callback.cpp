@@ -283,6 +283,8 @@ int main(int argc, const char** argv) {
         // Generate a new clientID and clientSecret for this device
         const auto credentials = tokenManager.generateCredentials();
 
+        std::cout << "Registering device with server..." << std::endl;
+
         // Query the friendly device name
         std::string name = "";
         std::cout << "Device Name: ";
@@ -295,10 +297,7 @@ int main(int argc, const char** argv) {
 
         // Register this device with the remote host
         oauthService.registerDevice(
-            name,
-            password,
-            credentials.id,
-            credentials.secret,
+            name, password, credentials.id, credentials.secret,
             [](OAuthService::RegisterDeviceCallData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to register device with\n\t" <<
