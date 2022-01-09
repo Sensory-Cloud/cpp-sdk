@@ -363,6 +363,7 @@ int main(int argc, const char** argv) {
 
     // Initialize the configuration to the host for given address and port
     sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
+    config.connect();
 
     // Query the health of the remote service.
     HealthService healthService(config);
