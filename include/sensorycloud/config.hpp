@@ -118,6 +118,8 @@ class Config {
     const bool isSecure;
     /// the number of seconds to wait on a unary gRPC call before timing out
     uint32_t timeout = 10;
+    /// the gRPC channel associated with this config.
+    std::shared_ptr<::grpc::Channel> channel = nullptr;
 
  public:
     /// @brief Initialize a new Sensory Cloud configuration object.
@@ -147,6 +149,18 @@ class Config {
             throw ConfigError(ConfigError::Code::InvalidTenantID);
         if (deviceID.empty())  // the device ID is not valid
             throw ConfigError(ConfigError::Code::InvalidDeviceID);
+        connect();
+    }
+
+    /// @brief Create the connection for the service.
+    void connect() {
+        // Create the credentials for the channel based on the security setting.
+        // Use TLS (SSL) if `isSecure` is true, otherwise default to insecure
+        // channel credentials.
+        channel = ::grpc::CreateChannel(getFullyQualifiedDomainName(), isSecure ?
+            ::grpc::SslCredentials(::grpc::SslCredentialsOptions()) :
+            ::grpc::InsecureChannelCredentials()
+        );
     }
 
     /// @brief Return the name of the remote host.
@@ -213,13 +227,9 @@ class Config {
     /// @returns A new gRPC channel to connect a service to.
     ///
     inline std::shared_ptr<::grpc::Channel> getChannel() const {
-        // Create the credentials for the channel based on the security setting.
-        // Use TLS (SSL) if `isSecure` is true, otherwise default to insecure
-        // channel credentials.
-        return ::grpc::CreateChannel(getFullyQualifiedDomainName(), isSecure ?
-            ::grpc::SslCredentials(::grpc::SslCredentialsOptions()) :
-            ::grpc::InsecureChannelCredentials()
-        );
+        if (channel == nullptr)
+            throw std::runtime_error("Attempt to get channel before Config::connect() has been called.");
+        return channel;
     }
 
     /// @brief Setup an existing client context for unary gRPC calls.
