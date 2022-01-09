@@ -9,7 +9,8 @@ before_script:
   - docker info
 build_image:
   script:
-    - docker compose build --parallel
+    - docker build -f Dockerfile.Ubuntu.20.04 -t sensory-cloud-cpp-sdk:Ubuntu20.04 .
+    - docker run sensory-cloud-cpp-sdk:Ubuntu20.04 bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
 stages:
 - test
 sast:
