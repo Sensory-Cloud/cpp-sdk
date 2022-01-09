@@ -124,7 +124,6 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentCon
 }
 
 // TODO: Implement `doIncludeToken` for AuthenticateConfig?
-// TODO: Update to support enrollment group IDs
 
 /// @brief Allocate a new configuration object for enrollment authentication.
 ///
@@ -134,16 +133,23 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentCon
 /// authentication, `false` to only perform the authentication.
 /// @param sensitivity The sensitivity of the model.
 /// @param security The security level of the model.
+/// @param isEnrollmentGroup `true` if the enrollment ID references an
+/// enrollment group, `false` is the enrollment ID references a single
+/// enrollment.
 /// @returns A pointer to the `AuthenticateConfig` object.
 ///
 inline ::sensory::api::v1::audio::AuthenticateConfig* newAuthenticateConfig(
     const std::string& enrollmentID,
     const bool& isLivenessEnabled,
     const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,
-    const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security
+    const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security,
+    const bool& isEnrollmentGroup = false
 ) {
     auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
-    config->set_enrollmentid(enrollmentID);
+    if (isEnrollmentGroup)
+        config->set_enrollmentgroupid(enrollmentID);
+    else
+        config->set_enrollmentid(enrollmentID);
     config->set_islivenessenabled(isLivenessEnabled);
     config->set_sensitivity(sensitivity);
     config->set_security(security);

@@ -171,6 +171,25 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
             THEN("a pointer is returned with the variables set") {
                 REQUIRE(config != nullptr);
                 REQUIRE(config->enrollmentid() == enrollmentID);
+                REQUIRE(config->enrollmentgroupid() == "");
+                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
+                REQUIRE(config->sensitivity() == sensitivity);
+                REQUIRE(config->security() == security);
+            }
+            delete config;
+        }
+        WHEN("the config is dynamically allocated as an enrollment group") {
+            auto config = sensory::service::audio::newAuthenticateConfig(
+                enrollmentID,
+                isLivenessEnabled,
+                sensitivity,
+                security,
+                true
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->enrollmentid() == "");
+                REQUIRE(config->enrollmentgroupid() == enrollmentID);
                 REQUIRE(config->islivenessenabled() == isLivenessEnabled);
                 REQUIRE(config->sensitivity() == sensitivity);
                 REQUIRE(config->security() == security);

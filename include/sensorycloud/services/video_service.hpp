@@ -90,15 +90,22 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentCon
 /// authentication, `false` to only perform the authentication.
 /// @param livenessThreshold The liveness threshold for the optional
 /// liveness check.
+/// @param isEnrollmentGroup `true` if the enrollment ID references an
+/// enrollment group, `false` is the enrollment ID references a single
+/// enrollment.
 /// @returns A pointer to a new `sensory::api::v1::video::AuthenticateConfig`.
 ///
 inline ::sensory::api::v1::video::AuthenticateConfig* newAuthenticateConfig(
     const std::string& enrollmentID,
     const bool& isLivenessEnabled,
-    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold
+    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold,
+    const bool& isEnrollmentGroup = false
 ) {
     auto config = new ::sensory::api::v1::video::AuthenticateConfig;
-    config->set_enrollmentid(enrollmentID);
+    if (isEnrollmentGroup)
+        config->set_enrollmentgroupid(enrollmentID);
+    else
+        config->set_enrollmentid(enrollmentID);
     config->set_islivenessenabled(isLivenessEnabled);
     config->set_livenessthreshold(livenessThreshold);
     return config;

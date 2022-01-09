@@ -2072,6 +2072,12 @@ class AuthenticateConfig final :
   static const AuthenticateConfig& default_instance() {
     return *internal_default_instance();
   }
+  enum AuthIdCase {
+    kEnrollmentId = 1,
+    kEnrollmentGroupId = 2,
+    AUTHID_NOT_SET = 0,
+  };
+
   static inline const AuthenticateConfig* internal_default_instance() {
     return reinterpret_cast<const AuthenticateConfig*>(
                &_AuthenticateConfig_default_instance_);
@@ -2148,27 +2154,14 @@ class AuthenticateConfig final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kCompressionFieldNumber = 5,
+    kLivenessThresholdFieldNumber = 4,
+    kIsLivenessEnabledFieldNumber = 3,
+    kDoIncludeTokenFieldNumber = 6,
     kEnrollmentIdFieldNumber = 1,
-    kCompressionFieldNumber = 4,
-    kLivenessThresholdFieldNumber = 3,
-    kIsLivenessEnabledFieldNumber = 2,
-    kDoIncludeTokenFieldNumber = 5,
+    kEnrollmentGroupIdFieldNumber = 2,
   };
-  // string enrollmentId = 1 [(.validate.rules) = {
-  void clear_enrollmentid();
-  const std::string& enrollmentid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_enrollmentid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_enrollmentid();
-  PROTOBUF_MUST_USE_RESULT std::string* release_enrollmentid();
-  void set_allocated_enrollmentid(std::string* enrollmentid);
-  private:
-  const std::string& _internal_enrollmentid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_enrollmentid(const std::string& value);
-  std::string* _internal_mutable_enrollmentid();
-  public:
-
-  // .sensory.api.common.CompressionConfiguration compression = 4;
+  // .sensory.api.common.CompressionConfiguration compression = 5;
   bool has_compression() const;
   private:
   bool _internal_has_compression() const;
@@ -2186,7 +2179,7 @@ class AuthenticateConfig final :
       ::sensory::api::common::CompressionConfiguration* compression);
   ::sensory::api::common::CompressionConfiguration* unsafe_arena_release_compression();
 
-  // .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 3 [(.validate.rules) = {
+  // .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 4 [(.validate.rules) = {
   void clear_livenessthreshold();
   ::sensory::api::v1::video::RecognitionThreshold livenessthreshold() const;
   void set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
@@ -2195,7 +2188,7 @@ class AuthenticateConfig final :
   void _internal_set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
   public:
 
-  // bool isLivenessEnabled = 2;
+  // bool isLivenessEnabled = 3;
   void clear_islivenessenabled();
   bool islivenessenabled() const;
   void set_islivenessenabled(bool value);
@@ -2204,7 +2197,7 @@ class AuthenticateConfig final :
   void _internal_set_islivenessenabled(bool value);
   public:
 
-  // bool doIncludeToken = 5;
+  // bool doIncludeToken = 6;
   void clear_doincludetoken();
   bool doincludetoken() const;
   void set_doincludetoken(bool value);
@@ -2213,19 +2206,69 @@ class AuthenticateConfig final :
   void _internal_set_doincludetoken(bool value);
   public:
 
+  // string enrollmentId = 1 [(.validate.rules) = {
+  bool has_enrollmentid() const;
+  private:
+  bool _internal_has_enrollmentid() const;
+  public:
+  void clear_enrollmentid();
+  const std::string& enrollmentid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_enrollmentid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_enrollmentid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_enrollmentid();
+  void set_allocated_enrollmentid(std::string* enrollmentid);
+  private:
+  const std::string& _internal_enrollmentid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_enrollmentid(const std::string& value);
+  std::string* _internal_mutable_enrollmentid();
+  public:
+
+  // string enrollmentGroupId = 2;
+  bool has_enrollmentgroupid() const;
+  private:
+  bool _internal_has_enrollmentgroupid() const;
+  public:
+  void clear_enrollmentgroupid();
+  const std::string& enrollmentgroupid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_enrollmentgroupid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_enrollmentgroupid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_enrollmentgroupid();
+  void set_allocated_enrollmentgroupid(std::string* enrollmentgroupid);
+  private:
+  const std::string& _internal_enrollmentgroupid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_enrollmentgroupid(const std::string& value);
+  std::string* _internal_mutable_enrollmentgroupid();
+  public:
+
+  void clear_authId();
+  AuthIdCase authId_case() const;
   // @@protoc_insertion_point(class_scope:sensory.api.v1.video.AuthenticateConfig)
  private:
   class _Internal;
+  void set_has_enrollmentid();
+  void set_has_enrollmentgroupid();
+
+  inline bool has_authId() const;
+  inline void clear_has_authId();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmentid_;
   ::sensory::api::common::CompressionConfiguration* compression_;
   int livenessthreshold_;
   bool islivenessenabled_;
   bool doincludetoken_;
+  union AuthIdUnion {
+    constexpr AuthIdUnion() : _constinit_{} {}
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmentid_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmentgroupid_;
+  } authId_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
+
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3977,18 +4020,33 @@ inline void CreateEnrollmentConfig::set_allocated_referenceid(std::string* refer
 // AuthenticateConfig
 
 // string enrollmentId = 1 [(.validate.rules) = {
+inline bool AuthenticateConfig::_internal_has_enrollmentid() const {
+  return authId_case() == kEnrollmentId;
+}
+inline bool AuthenticateConfig::has_enrollmentid() const {
+  return _internal_has_enrollmentid();
+}
+inline void AuthenticateConfig::set_has_enrollmentid() {
+  _oneof_case_[0] = kEnrollmentId;
+}
 inline void AuthenticateConfig::clear_enrollmentid() {
-  enrollmentid_.ClearToEmpty();
+  if (_internal_has_enrollmentid()) {
+    authId_.enrollmentid_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+    clear_has_authId();
+  }
 }
 inline const std::string& AuthenticateConfig::enrollmentid() const {
   // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateConfig.enrollmentId)
   return _internal_enrollmentid();
 }
 template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AuthenticateConfig::set_enrollmentid(ArgT0&& arg0, ArgT... args) {
- 
- enrollmentid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void AuthenticateConfig::set_enrollmentid(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_enrollmentid()) {
+    clear_authId();
+    set_has_enrollmentid();
+    authId_.enrollmentid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  authId_.enrollmentid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateConfig.enrollmentId)
 }
 inline std::string* AuthenticateConfig::mutable_enrollmentid() {
@@ -3997,32 +4055,135 @@ inline std::string* AuthenticateConfig::mutable_enrollmentid() {
   return _s;
 }
 inline const std::string& AuthenticateConfig::_internal_enrollmentid() const {
-  return enrollmentid_.Get();
+  if (_internal_has_enrollmentid()) {
+    return authId_.enrollmentid_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
 }
 inline void AuthenticateConfig::_internal_set_enrollmentid(const std::string& value) {
-  
-  enrollmentid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  if (!_internal_has_enrollmentid()) {
+    clear_authId();
+    set_has_enrollmentid();
+    authId_.enrollmentid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  authId_.enrollmentid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
 inline std::string* AuthenticateConfig::_internal_mutable_enrollmentid() {
-  
-  return enrollmentid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  if (!_internal_has_enrollmentid()) {
+    clear_authId();
+    set_has_enrollmentid();
+    authId_.enrollmentid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  return authId_.enrollmentid_.Mutable(
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* AuthenticateConfig::release_enrollmentid() {
   // @@protoc_insertion_point(field_release:sensory.api.v1.video.AuthenticateConfig.enrollmentId)
-  return enrollmentid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  if (_internal_has_enrollmentid()) {
+    clear_has_authId();
+    return authId_.enrollmentid_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  } else {
+    return nullptr;
+  }
 }
 inline void AuthenticateConfig::set_allocated_enrollmentid(std::string* enrollmentid) {
-  if (enrollmentid != nullptr) {
-    
-  } else {
-    
+  if (has_authId()) {
+    clear_authId();
   }
-  enrollmentid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), enrollmentid,
-      GetArenaForAllocation());
+  if (enrollmentid != nullptr) {
+    set_has_enrollmentid();
+    authId_.enrollmentid_.UnsafeSetDefault(enrollmentid);
+    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
+    if (arena != nullptr) {
+      arena->Own(enrollmentid);
+    }
+  }
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateConfig.enrollmentId)
 }
 
-// bool isLivenessEnabled = 2;
+// string enrollmentGroupId = 2;
+inline bool AuthenticateConfig::_internal_has_enrollmentgroupid() const {
+  return authId_case() == kEnrollmentGroupId;
+}
+inline bool AuthenticateConfig::has_enrollmentgroupid() const {
+  return _internal_has_enrollmentgroupid();
+}
+inline void AuthenticateConfig::set_has_enrollmentgroupid() {
+  _oneof_case_[0] = kEnrollmentGroupId;
+}
+inline void AuthenticateConfig::clear_enrollmentgroupid() {
+  if (_internal_has_enrollmentgroupid()) {
+    authId_.enrollmentgroupid_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+    clear_has_authId();
+  }
+}
+inline const std::string& AuthenticateConfig::enrollmentgroupid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateConfig.enrollmentGroupId)
+  return _internal_enrollmentgroupid();
+}
+template <typename ArgT0, typename... ArgT>
+inline void AuthenticateConfig::set_enrollmentgroupid(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_enrollmentgroupid()) {
+    clear_authId();
+    set_has_enrollmentgroupid();
+    authId_.enrollmentgroupid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  authId_.enrollmentgroupid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateConfig.enrollmentGroupId)
+}
+inline std::string* AuthenticateConfig::mutable_enrollmentgroupid() {
+  std::string* _s = _internal_mutable_enrollmentgroupid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.video.AuthenticateConfig.enrollmentGroupId)
+  return _s;
+}
+inline const std::string& AuthenticateConfig::_internal_enrollmentgroupid() const {
+  if (_internal_has_enrollmentgroupid()) {
+    return authId_.enrollmentgroupid_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+}
+inline void AuthenticateConfig::_internal_set_enrollmentgroupid(const std::string& value) {
+  if (!_internal_has_enrollmentgroupid()) {
+    clear_authId();
+    set_has_enrollmentgroupid();
+    authId_.enrollmentgroupid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  authId_.enrollmentgroupid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* AuthenticateConfig::_internal_mutable_enrollmentgroupid() {
+  if (!_internal_has_enrollmentgroupid()) {
+    clear_authId();
+    set_has_enrollmentgroupid();
+    authId_.enrollmentgroupid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  return authId_.enrollmentgroupid_.Mutable(
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* AuthenticateConfig::release_enrollmentgroupid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.video.AuthenticateConfig.enrollmentGroupId)
+  if (_internal_has_enrollmentgroupid()) {
+    clear_has_authId();
+    return authId_.enrollmentgroupid_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  } else {
+    return nullptr;
+  }
+}
+inline void AuthenticateConfig::set_allocated_enrollmentgroupid(std::string* enrollmentgroupid) {
+  if (has_authId()) {
+    clear_authId();
+  }
+  if (enrollmentgroupid != nullptr) {
+    set_has_enrollmentgroupid();
+    authId_.enrollmentgroupid_.UnsafeSetDefault(enrollmentgroupid);
+    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
+    if (arena != nullptr) {
+      arena->Own(enrollmentgroupid);
+    }
+  }
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateConfig.enrollmentGroupId)
+}
+
+// bool isLivenessEnabled = 3;
 inline void AuthenticateConfig::clear_islivenessenabled() {
   islivenessenabled_ = false;
 }
@@ -4042,7 +4203,7 @@ inline void AuthenticateConfig::set_islivenessenabled(bool value) {
   // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateConfig.isLivenessEnabled)
 }
 
-// .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 3 [(.validate.rules) = {
+// .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 4 [(.validate.rules) = {
 inline void AuthenticateConfig::clear_livenessthreshold() {
   livenessthreshold_ = 0;
 }
@@ -4062,7 +4223,7 @@ inline void AuthenticateConfig::set_livenessthreshold(::sensory::api::v1::video:
   // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateConfig.livenessThreshold)
 }
 
-// .sensory.api.common.CompressionConfiguration compression = 4;
+// .sensory.api.common.CompressionConfiguration compression = 5;
 inline bool AuthenticateConfig::_internal_has_compression() const {
   return this != internal_default_instance() && compression_ != nullptr;
 }
@@ -4148,7 +4309,7 @@ inline void AuthenticateConfig::set_allocated_compression(::sensory::api::common
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateConfig.compression)
 }
 
-// bool doIncludeToken = 5;
+// bool doIncludeToken = 6;
 inline void AuthenticateConfig::clear_doincludetoken() {
   doincludetoken_ = false;
 }
@@ -4168,6 +4329,15 @@ inline void AuthenticateConfig::set_doincludetoken(bool value) {
   // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateConfig.doIncludeToken)
 }
 
+inline bool AuthenticateConfig::has_authId() const {
+  return authId_case() != AUTHID_NOT_SET;
+}
+inline void AuthenticateConfig::clear_has_authId() {
+  _oneof_case_[0] = AUTHID_NOT_SET;
+}
+inline AuthenticateConfig::AuthIdCase AuthenticateConfig::authId_case() const {
+  return AuthenticateConfig::AuthIdCase(_oneof_case_[0]);
+}
 // -------------------------------------------------------------------
 
 // ValidateRecognitionConfig
