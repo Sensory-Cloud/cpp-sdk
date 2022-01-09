@@ -288,11 +288,11 @@ int main(int argc, const char** argv) {
     // the sample rate of the audio and the expected language. A user ID is also
     // necessary to transcribe audio.
     audioService.transcribe(&reactor,
-        sensory::service::newAudioConfig(
+        sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             buffer.getSampleRate(), 1, LANGUAGE
         ),
-        sensory::service::newTranscribeConfig(MODEL, USER_ID)
+        sensory::service::audio::newTranscribeConfig(MODEL, USER_ID)
     );
     reactor.StartCall();
     // Wait for the call to terminate and check the final status.

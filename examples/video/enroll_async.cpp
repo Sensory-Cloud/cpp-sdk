@@ -221,7 +221,7 @@ int main(int argc, const char** argv) {
 
     // Create the enrollment stream.
     auto stream = videoService.createEnrollment(&queue,
-        sensory::service::newCreateEnrollmentConfig(
+        sensory::service::video::newCreateEnrollmentConfig(
             MODEL, USER_ID, DESCRIPTION, LIVENESS, THRESHOLD
         )
     );

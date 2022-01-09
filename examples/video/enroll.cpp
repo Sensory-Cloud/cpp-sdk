@@ -180,7 +180,7 @@ int main(int argc, const char** argv) {
 
     // Create the stream
     auto stream = videoService.createEnrollment(
-        sensory::service::newCreateEnrollmentConfig(
+        sensory::service::video::newCreateEnrollmentConfig(
             MODEL, USER_ID, DESCRIPTION, LIVENESS, THRESHOLD
         )
     );

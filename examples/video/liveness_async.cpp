@@ -225,7 +225,7 @@ int main(int argc, const char** argv) {
 
     // Create the enrollment stream.
     auto stream = videoService.validateLiveness(&queue,
-        sensory::service::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
+        sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
     );
 
     /// Tagged events in the CompletionQueue handler.

@@ -184,11 +184,11 @@ int main(int argc, const char** argv) {
 
     // Create the network stream
     auto stream = audioService.transcribe(
-        sensory::service::newAudioConfig(
+        sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, NUM_CHANNELS, LANGUAGE
         ),
-        sensory::service::newTranscribeConfig(MODEL, USER_ID)
+        sensory::service::audio::newTranscribeConfig(MODEL, USER_ID)
     );
 
     // Initialize the portaudio driver.

@@ -329,7 +329,7 @@ int main(int argc, const char** argv) {
     // Create the stream.
     OpenCVReactor reactor(VERBOSE);
     videoService.authenticate(&reactor,
-        sensory::service::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD));
+        sensory::service::video::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD));
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd

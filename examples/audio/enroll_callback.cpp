@@ -406,11 +406,11 @@ int main(int argc, const char** argv) {
     // human readable explanation of the enrollment. For some models, an
     // optional liveness check may also be conducted during the enrollment.
     audioService.createEnrollment(&reactor,
-        sensory::service::newAudioConfig(
+        sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::newCreateEnrollmentConfig(
+        sensory::service::audio::newCreateEnrollmentConfig(
             MODEL,
             USER_ID,
             DESCRIPTION,

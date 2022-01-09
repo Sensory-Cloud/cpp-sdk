@@ -240,11 +240,11 @@ int main(int argc, const char** argv) {
     // RPC will use the grpc::CompletionQueue as an event loop.
     grpc::CompletionQueue queue;
     auto stream = audioService.authenticate(&queue,
-        sensory::service::newAudioConfig(
+        sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::newAuthenticateConfig(
+        sensory::service::audio::newAuthenticateConfig(
             ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD
         )
     );

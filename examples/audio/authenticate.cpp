@@ -224,11 +224,11 @@ int main(int argc, const char** argv) {
 
     // Create the network stream
     auto stream = audioService.authenticate(
-        sensory::service::newAudioConfig(
+        sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::newAuthenticateConfig(
+        sensory::service::audio::newAuthenticateConfig(
             ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD
         )
     );

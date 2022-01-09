@@ -180,7 +180,7 @@ int main(int argc, const char** argv) {
 
     // Create the stream
     auto stream = videoService.validateLiveness(
-        sensory::service::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
+        sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
     );
 
     // Create an image capture object

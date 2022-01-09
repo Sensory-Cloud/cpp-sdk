@@ -187,7 +187,7 @@ int main(int argc, const char** argv) {
     sensory::service::VideoService<sensory::token_manager::InsecureCredentialStore>
         videoService(config, tokenManager);
     auto stream = videoService.authenticate(
-        sensory::service::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD)
+        sensory::service::video::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD)
     );
 
     // Create an image capture object

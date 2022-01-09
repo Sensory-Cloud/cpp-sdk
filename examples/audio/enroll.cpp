@@ -203,11 +203,11 @@ int main(int argc, const char** argv) {
 
     // Initialize the stream for creating the enrollment.
     auto stream = audioService.createEnrollment(
-        sensory::service::newAudioConfig(
+        sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::newCreateEnrollmentConfig(
+        sensory::service::audio::newCreateEnrollmentConfig(
             MODEL,
             USER_ID,
             DESCRIPTION,
