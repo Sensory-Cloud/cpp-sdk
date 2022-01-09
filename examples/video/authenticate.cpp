@@ -220,12 +220,13 @@ int main(int argc, const char** argv) {
                 std::lock_guard<std::mutex> lock(frameMutex);
                 cv::imencode(".jpg", frame, buffer);
             }
-            // Create the request from the encoded image data.
+            // Create a new request with the video content.
             sensory::api::v1::video::AuthenticateRequest request;
             request.set_imagecontent(buffer.data(), buffer.size());
-            stream->Write(request);
+            if (!stream->Write(request)) break;
+            // Read a new response from the server.
             sensory::api::v1::video::AuthenticateResponse response;
-            stream->Read(&response);
+            if (!stream->Read(&response)) break;
             // Log information about the response to the terminal.
             if (VERBOSE) {
                 std::cout << "Frame Response:" << std::endl;

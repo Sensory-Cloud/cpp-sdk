@@ -251,13 +251,15 @@ int main(int argc, const char** argv) {
         err = Pa_ReadStream(audioStream, sampleBlock, CHUNK_SIZE);
         if (err) return describe_pa_error(err);
 
-        // Create a new validate event request with the audio content.
+        // Create a new request with the audio content.
         sensory::api::v1::audio::ValidateEventRequest request;
         request.set_audiocontent(sampleBlock, BYTES_PER_BLOCK);
-        // Send the data to the server to validate the trigger.
-        stream->Write(request);
+        if (!stream->Write(request)) break;
+
+        // Read a new response from the server.
         sensory::api::v1::audio::ValidateEventResponse response;
-        stream->Read(&response);
+        if (!stream->Read(&response)) break;
+
         // Log the result of the request to the terminal.
         if (VERBOSE) {
             std::cout << "Response" << std::endl;
