@@ -514,7 +514,7 @@ class AudioService {
         // Finish the call to set the output status. If the finish tag is a
         // nullptr, assign it to the call pointer.
         finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
-        call->rpc->Finish(&call.status, finishTag);
+        call->rpc->Finish(&call->status, finishTag);
 
         return call;
     }
