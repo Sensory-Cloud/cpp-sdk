@@ -73,7 +73,7 @@ int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialSt
         if (!status.ok()) {  // The call failed, print a descriptive message.
             std::cout << "Failed to register device with\n\t" <<
                 status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
+            return status.error_code();
         }
     }
     return 0;
