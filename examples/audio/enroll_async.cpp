@@ -56,7 +56,7 @@ int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
         .prog("enroll")
-        .description("A tool for authenticating with face biometrics using Sensory Cloud.");
+        .description("A tool for authenticating with voice biometrics using Sensory Cloud.");
     parser.add_argument({ "-H", "--host" })
         .required(true)
         .help("HOST The hostname of a Sensory Cloud inference server.");
@@ -75,7 +75,7 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-m", "--model" })
         .help("MODEL The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID to query the enrollments for.");
+        .help("USERID The name of the user ID to create the enrollment for.");
     parser.add_argument({ "-d", "--description" })
         .help("DESCRIPTION A text description of the enrollment.");
     parser.add_argument({ "-l", "--liveness" })

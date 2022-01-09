@@ -49,8 +49,8 @@ inline int describe_pa_error(const PaError& err) {
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
-        .prog("wake_word")
-        .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
+        .prog("validate_event")
+        .description("A tool for streaming audio files to Sensory Cloud for audio event validation.");
     parser.add_argument({ "-H", "--host" }).required(true)
         .help("HOST The hostname of a Sensory Cloud inference server.");
     parser.add_argument({ "-P", "--port" }).required(true)
@@ -63,9 +63,9 @@ int main(int argc, const char** argv) {
         .action("store_true")
         .help("GETMODELS Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The name of the transcription model to use.");
+        .help("MODEL The name of the event validation model to use.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID for the transcription.");
+        .help("USERID The name of the user ID for the event validation.");
     parser.add_argument({ "-t", "--threshold" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
@@ -76,7 +76,7 @@ int main(int argc, const char** argv) {
     //     .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
     //     .default_value(4096);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
-        .help("VERBOSE Produce verbose output during transcription.");
+        .help("VERBOSE Produce verbose output during event validation.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
