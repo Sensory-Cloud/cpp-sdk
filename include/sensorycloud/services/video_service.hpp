@@ -272,7 +272,7 @@ class VideoService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }

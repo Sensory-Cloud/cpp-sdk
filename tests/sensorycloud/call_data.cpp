@@ -30,6 +30,83 @@
 #include "sensorycloud/generated/health/health.grpc.pb.h"
 
 // -----------------------------------------------------------------------------
+// MARK: AsyncResponseReaderCall
+// -----------------------------------------------------------------------------
+
+// (No functional components to test as of 2021/01/09)
+
+// -----------------------------------------------------------------------------
+// MARK: AsyncReaderWriterCall
+// -----------------------------------------------------------------------------
+
+// (No functional components to test as of 2021/01/09)
+
+// -----------------------------------------------------------------------------
+// MARK: CallData
+// -----------------------------------------------------------------------------
+
+/// @brief A dummy type acting as the encapsulating type of the reactor.
+struct DummyCallDataFriend {
+    /// @brief Set the is done flag of the call data instance.
+    ///
+    /// @tparam T The MockCallData type (templated instead of forward declared).
+    /// @param t The MockCallData instance.
+    ///
+    /// @details
+    /// This function is intended to be used with DummyCallDataFriend as the
+    /// friend parent of the MockCallData. This allows the scope of the
+    /// DummyCallDataFriend to extend into the private scope of CallData in
+    /// order to call private functions and mutate types.
+    ///
+    template <typename T>
+    inline static void setIsDone(T& t) { t.setIsDone(); }
+};
+/// @brief The mock call data to test based on arbitrary SDK messages.
+typedef sensory::CallData<
+    DummyCallDataFriend,                          // Set the friend (parent) type to a dummy value
+    ::sensory::api::health::HealthRequest,        // Use an arbitrary request from the SDK
+    ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
+> MockCallData;
+
+TEST_CASE("When the call data is in its initial status, isDone should be false") {
+    MockCallData callData;
+    WHEN("The call data is in its initial state") {
+        THEN("getIsDone evaluates to false") {
+            REQUIRE_FALSE(callData.getIsDone());
+        }
+        THEN("The status is ok") {
+            REQUIRE(callData.getStatus().ok());
+        }
+    }
+}
+
+SCENARIO("A user wants to wait for the callback to fire from a CallData") {
+    GIVEN("an arbitrary call data structure") {
+        MockCallData callData;
+        WHEN("The onDone callback is triggered synchronously") {
+            DummyCallDataFriend::setIsDone(callData);
+            THEN("getIsDone evaluates to true") {
+                REQUIRE(callData.getIsDone());
+            }
+        }
+        WHEN("The onDone callback is triggered asynchronously") {
+            // Trigger the callback in the background thread.
+            std::thread thread([&callData](){
+                DummyCallDataFriend::setIsDone(callData);
+            });
+            // Wait for the OnDone callback to trigger
+            callData.await();
+            // Join the background thread back in
+            thread.join();
+            // Check the outputs to the call data and from await().
+            THEN("getIsDone evaluates to true") {
+                REQUIRE(callData.getIsDone());
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
 // MARK: AwaitableBidiReactor
 // -----------------------------------------------------------------------------
 
@@ -42,7 +119,7 @@ typedef sensory::AwaitableBidiReactor<
     ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
 > MockAwaitableBidiReactor;
 
-TEST_CASE("When the reactor is in its initial status, onDone should be false") {
+TEST_CASE("When the reactor is in its initial status, isDone should be false") {
     MockAwaitableBidiReactor reactor;
     WHEN("The reactor is in its initial state") {
         THEN("getIsDone evaluates to false") {

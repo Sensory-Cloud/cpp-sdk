@@ -204,8 +204,6 @@ struct AsyncReaderWriterCall {
     inline ::grpc::ClientAsyncReaderWriter<Request, Response>* getCall() const {
         return rpc.get();
     }
-
-    // inline void finish(void* tag) { rpc->Finish(&status, tag); }
 };
 
 // -----------------------------------------------------------------------------
@@ -237,10 +235,11 @@ struct CallData {
     /// The response to process after the RPC completes.
     Response response;
     /// A flag determining whether the asynchronous has terminated.
-    std::atomic<bool> isDone;
-
-    /// @brief Initialize a new call.
-    CallData() : isDone(false) { }
+    bool isDone = false;
+    /// A mutex for guarding access to the `isDone` and `status` variables.
+    std::mutex mutex;
+    /// A condition variable for signalling to an awaiting process.
+    std::condition_variable conditionVariable;
 
     /// @brief Create a copy of this object.
     ///
@@ -259,19 +258,23 @@ struct CallData {
     ///
     void operator=(const CallData& other) = delete;
 
+    /// @brief Set the is done flag.
+    inline void setIsDone() {
+        // Lock the critical section for updating the `isDone` flag.
+        std::lock_guard<std::mutex> lock(mutex);
+        isDone = true;
+        // Notify the awaiting thread that the condition variable has changed.
+        conditionVariable.notify_one();
+    }
+
     // Mark the Factory type as a friend to allow it to have write access to
     // the internal types. This allows the parent scope to have mutability, but
     // all other scopes must access data through the immutable `get` interface.
     friend Factory;
 
  public:
-    /// @brief Wait for the asynchronous call to complete.
-    ///
-    /// @details
-    /// This will block the calling thread until the asynchronous call returns
-    /// with a response.
-    ///
-    inline void await() { while (!isDone) continue; }
+    /// @brief Initialize a new call.
+    CallData() { }
 
     /// @brief Return the context that the call was created with.
     ///
@@ -297,11 +300,29 @@ struct CallData {
     ///
     inline const Response& getResponse() const { return response; }
 
-    /// @brief Return a flag determining if the call has concluded.
+    /// @brief Return a flag determining if the stream has concluded.
     ///
     /// @returns `true` if the stream has resolved, `false` otherwise.
     ///
-    inline const bool& getIsDone() const { return isDone; }
+    inline bool getIsDone() {
+        // Lock the critical section for querying the `isDone` flag.
+        std::lock_guard<std::mutex> lock(mutex);
+        return isDone;
+    }
+
+    /// @brief Wait for the asynchronous call to complete.
+    ///
+    /// @details
+    /// This will block the calling thread until the asynchronous call returns
+    /// with a response.
+    ///
+    inline void await() {
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::unique_lock<std::mutex> lock(mutex);
+        // Wait for the signal that the `isDone` flag has changed.
+        conditionVariable.wait(lock, [this] { return isDone; });
+    }
 };
 
 /// @brief A type for encapsulating data for asynchronous streaming calls.
@@ -359,19 +380,6 @@ class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response>
         conditionVariable.notify_one();
     }
 
-    /// @brief Block until the `onDone` callback is triggered in the background.
-    ///
-    /// @returns The final gRPC status of the stream.
-    ///
-    inline ::grpc::Status await() {
-        // Lock the critical section for updating the `isDone` flag and the
-        // gRPC `status` variable.
-        std::unique_lock<std::mutex> lock(mutex);
-        // Wait for the signal that the `isDone` flag has changed.
-        conditionVariable.wait(lock, [this] { return isDone; });
-        return status;
-    }
-
     /// @brief Return the status of the stream.
     ///
     /// @returns The gRPC status of the stream after completion.
@@ -390,6 +398,19 @@ class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response>
         // Lock the critical section for querying the `isDone` flag.
         std::lock_guard<std::mutex> lock(mutex);
         return isDone;
+    }
+
+    /// @brief Block until the `onDone` callback is triggered in the background.
+    ///
+    /// @returns The final gRPC status of the stream.
+    ///
+    inline ::grpc::Status await() {
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::unique_lock<std::mutex> lock(mutex);
+        // Wait for the signal that the `isDone` flag has changed.
+        conditionVariable.wait(lock, [this] { return isDone; });
+        return status;
     }
 };
 
