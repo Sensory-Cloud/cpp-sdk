@@ -305,10 +305,12 @@ int main(int argc, const char** argv) {
         err = Pa_StartStream(capture);
         if (err != paNoError) return describe_pa_error(err);
 
+        stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
+
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
-            if (!ok) break;
+            if (!ok) continue;
             if (tag == stream) {
                 // Respond to the start of stream succeeding. All Sensory Cloud
                 // AV streams require a configuration message to be sent to the
@@ -369,26 +371,12 @@ int main(int argc, const char** argv) {
                 // Check for successful authentication
                 if (stream->getResponse().success()) { // Authentication succeeded, stop reading.
                     authenticated = true;
-                    std::cout << std::endl << "Successfully authenticated!" << std::endl;
+                    std::cout << std::endl << "Successfully authenticated!";
                 } else  // Start the next read request
                     stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
-            } else if (tag == (void*) Events::WritesDone) {  // Respond to `WritesDone`
-                // Finish the stream and terminate.
-                stream->getCall()->Finish(&stream->getStatus(), (void*) Events::Finish);
-            } else if (tag == (void*) Events::Finish) {  // Respond to `Finish`
-                // Check the final status of the stream and delete the call
-                // handle now that the stream has terminated.
-                if (!stream->getStatus().ok()) {
-                    std::cout << "Authentication stream failed with\n\t"
-                        << stream->getStatus().error_code() << ": "
-                        << stream->getStatus().error_message() << std::endl;
-                }
-                // By this point, we can guarantee that no write/read events
-                // will be coming to the completion queue. Break out of the
-                // event loop to terminate the background processing thread.
-                break;
-            }
+            } else if (tag == (void*) Events::Finish) break;
         }
+        std::cout << std::endl;
 
         // Stop the audio stream.
         err = Pa_StopStream(capture);

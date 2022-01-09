@@ -167,7 +167,7 @@ class PortAudioReactor :
         }
         // Check for successful authentication
         if (response.success()) {  // Authentication succeeded, stop reading.
-            std::cout << std::endl << "Successfully authenticated!" << std::endl;
+            std::cout << std::endl << "Successfully authenticated!";
             authenticated = true;
         } else  // Start the next read request
             StartRead(&response);
@@ -416,6 +416,7 @@ int main(int argc, const char** argv) {
     );
     reactor.StartCall();
     status = reactor.await();
+    std::cout << std::endl;
 
     // Stop the audio stream.
     err = Pa_StopStream(capture);
@@ -425,7 +426,7 @@ int main(int argc, const char** argv) {
     Pa_Terminate();
 
     if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "Wake-word stream broke with\n\t" <<
+        std::cout << "Authentication stream broke with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }

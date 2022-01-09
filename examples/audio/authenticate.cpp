@@ -317,7 +317,7 @@ int main(int argc, const char** argv) {
         // Check for successful authentication
         if (response.success()) {
             authenticated = true;
-            std::cout << std::endl << "Successfully authenticated!" << std::endl;
+            std::cout << std::endl << "Successfully authenticated!";
             break;
         }
     }
