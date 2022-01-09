@@ -41,6 +41,9 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+/// @brief Sensory Cloud audio service.
+namespace audio {
+
 /// @brief Create a new audio config for an audio streaming application.
 ///
 /// @param encoding The encoding of the samples in the byte-stream.
@@ -252,6 +255,8 @@ inline ::sensory::api::v1::audio::TranscribeConfig* newTranscribeConfig(
     config->set_userid(userID);
     return config;
 }
+
+}  // namespace audio
 
 /// @brief A service for audio data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and

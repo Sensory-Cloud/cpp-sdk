@@ -49,7 +49,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const ::sensory::api::v1::video::RecognitionThreshold livenessThreshold =
             ::sensory::api::v1::video::RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = sensory::service::newCreateEnrollmentConfig(
+            auto config = sensory::service::video::newCreateEnrollmentConfig(
                 modelName,
                 userID,
                 description,
@@ -79,7 +79,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
         const ::sensory::api::v1::video::RecognitionThreshold livenessThreshold =
             ::sensory::api::v1::video::RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = sensory::service::newAuthenticateConfig(
+            auto config = sensory::service::video::newAuthenticateConfig(
                 enrollmentID,
                 isLivenessEnabled,
                 livenessThreshold
@@ -106,7 +106,7 @@ SCENARIO("A user needs to create a ValidateRecognitionConfig") {
         const ::sensory::api::v1::video::RecognitionThreshold threshold =
             ::sensory::api::v1::video::RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = sensory::service::newValidateRecognitionConfig(
+            auto config = sensory::service::video::newValidateRecognitionConfig(
                 modelName,
                 userID,
                 threshold

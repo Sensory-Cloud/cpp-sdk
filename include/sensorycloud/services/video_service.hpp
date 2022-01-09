@@ -41,6 +41,9 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+/// @brief Sensory Cloud video service.
+namespace video {
+
 // TODO: implement `compression`?
 // TODO: implement `referenceId`?
 
@@ -123,6 +126,8 @@ inline ::sensory::api::v1::video::ValidateRecognitionConfig* newValidateRecognit
     config->set_threshold(threshold);
     return config;
 }
+
+}  // namespace video
 
 /// @brief A service for video data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
