@@ -336,6 +336,10 @@ class VideoService {
     /// Use `newCreateEnrollmentConfig` to create a new enrollment config.
     /// _Ownership of the dynamically allocated configuration is implicitly
     /// transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -349,7 +353,9 @@ class VideoService {
     ///
     inline CreateEnrollmentAsyncStream* createEnrollment(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig
+        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -361,8 +367,14 @@ class VideoService {
         // Update the request with the pointer to the allocated config.
         enrollmentConfig->set_deviceid(config.getDeviceID());
         call->request.set_allocated_config(enrollmentConfig);
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = biometricsStub->AsyncCreateEnrollment(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = biometricsStub->AsyncCreateEnrollment(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -466,6 +478,10 @@ class VideoService {
     /// stream. Use `newAuthenticateConfig` to create a new authentication
     /// config. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -479,7 +495,9 @@ class VideoService {
     ///
     inline AuthenticateAsyncStream* authenticate(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig
+        ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -490,8 +508,14 @@ class VideoService {
         config.setupBidiClientContext(call->context, tokenManager);
         // Update the request with the pointer to the allocated config.
         call->request.set_allocated_config(authenticateConfig);
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = biometricsStub->AsyncAuthenticate(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = biometricsStub->AsyncAuthenticate(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -597,6 +621,10 @@ class VideoService {
     /// create a new recognition validation config. _Ownership of the
     /// dynamically allocated configuration is implicitly transferred to the
     /// stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -610,7 +638,9 @@ class VideoService {
     ///
     inline ValidateLivenessAsyncStream* validateLiveness(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig
+        ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -621,8 +651,14 @@ class VideoService {
         config.setupBidiClientContext(call->context, tokenManager);
         // Update the request with the pointer to the allocated config.
         call->request.set_allocated_config(recognitionConfig);
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = recognitionStub->AsyncValidateLiveness(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = recognitionStub->AsyncValidateLiveness(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
