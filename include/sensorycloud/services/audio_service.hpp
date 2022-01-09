@@ -421,6 +421,7 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating an audio enrollment.
     ///
+    /// @param context the gRPC context for the stream
     /// @param audioConfig The audio configuration that provides information
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
@@ -437,13 +438,10 @@ class AudioService {
     /// to the server.
     ///
     inline CreateEnrollmentStream createEnrollment(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::CreateEnrollmentConfig* enrollmentConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
         // Create the request with the pointer to the config.
         enrollmentConfig->set_allocated_audio(audioConfig);
@@ -567,6 +565,7 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// enrollment authentication.
     ///
+    /// @param context the gRPC context for the stream
     /// @param audioConfig The audio configuration that provides information
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
@@ -583,13 +582,10 @@ class AudioService {
     /// the server.
     ///
     inline AuthenticateStream authenticate(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
         // Create the request with the pointer to the enrollment config.
         authenticateConfig->set_allocated_audio(audioConfig);
@@ -709,6 +705,7 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// audio event validation.
     ///
+    /// @param context the gRPC context for the stream
     /// @param audioConfig The audio configuration that provides information
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
@@ -725,13 +722,10 @@ class AudioService {
     /// the server.
     ///
     inline ValidateTriggerStream validateEvent(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
         // Create the request with the pointer to the enrollment config.
         validateEventConfig->set_allocated_audio(audioConfig);
@@ -851,6 +845,7 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
     ///
+    /// @param context the gRPC context for the stream
     /// @param audioConfig The audio configuration that provides information
     /// about the input audio streams. Use `newAudioConfig` to generate the
     /// audio config. _Ownership of the dynamically allocated configuration
@@ -867,13 +862,10 @@ class AudioService {
     /// server.
     ///
     inline TranscribeAudioStream transcribe(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
         // Create the request with the pointer to the enrollment config.
         transcribeConfig->set_allocated_audio(audioConfig);

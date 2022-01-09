@@ -290,6 +290,7 @@ class VideoService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating a video enrollment.
     ///
+    /// @param context the gRPC context for the stream
     /// @param enrollmentConfig The enrollment configuration for the stream.
     /// Use `newCreateEnrollmentConfig` to create a new enrollment config.
     /// _Ownership of the dynamically allocated configuration is implicitly
@@ -302,12 +303,9 @@ class VideoService {
     /// to the server.
     ///
     inline CreateEnrollmentStream createEnrollment(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(*context, tokenManager);
@@ -423,6 +421,7 @@ class VideoService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// video authentication.
     ///
+    /// @param context the gRPC context for the stream
     /// @param authenticateConfig The authentication configuration for the
     /// stream. Use `newAuthenticateConfig` to create a new authentication
     /// config. _Ownership of the dynamically allocated configuration is
@@ -435,12 +434,9 @@ class VideoService {
     /// the server.
     ///
     inline AuthenticateStream authenticate(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(*context, tokenManager);
@@ -553,6 +549,7 @@ class VideoService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// validating the liveness of an image stream.
     ///
+    /// @param context the gRPC context for the stream
     /// @param validateRecognitionConfig The recognition validation
     /// configuration for the stream. Use `newValidateRecognitionConfig` to
     /// create a new recognition validation config. _Ownership of the
@@ -566,12 +563,9 @@ class VideoService {
     /// message to the server.
     ///
     inline ValidateLivenessStream validateLiveness(
+        ::grpc::ClientContext* context,
         ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(*context, tokenManager);
