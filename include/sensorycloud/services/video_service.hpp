@@ -325,7 +325,7 @@ class VideoService {
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::CreateEnrollmentRequest,
         ::sensory::api::v1::video::CreateEnrollmentResponse
-    > CreateEnrollmentAsyncCall;
+    > CreateEnrollmentAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating a video enrollment.
@@ -347,14 +347,14 @@ class VideoService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline CreateEnrollmentAsyncCall* createEnrollment(
+    inline CreateEnrollmentAsyncStream* createEnrollment(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new CreateEnrollmentAsyncCall);
+        auto call(new CreateEnrollmentAsyncStream);
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(call->context, tokenManager);
@@ -455,7 +455,7 @@ class VideoService {
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::AuthenticateRequest,
         ::sensory::api::v1::video::AuthenticateResponse
-    > AuthenticateAsyncCall;
+    > AuthenticateAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// video authentication.
@@ -477,14 +477,14 @@ class VideoService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline AuthenticateAsyncCall* authenticate(
+    inline AuthenticateAsyncStream* authenticate(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new AuthenticateAsyncCall);
+        auto call(new AuthenticateAsyncStream);
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(call->context, tokenManager);
@@ -585,7 +585,7 @@ class VideoService {
         VideoService<SecureCredentialStore>,
         ::sensory::api::v1::video::ValidateRecognitionRequest,
         ::sensory::api::v1::video::LivenessRecognitionResponse
-    > ValidateLivenessAsyncCall;
+    > ValidateLivenessAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// validating the liveness of an image stream.
@@ -608,14 +608,14 @@ class VideoService {
     /// `ValidateRecognitionConfig` message to the server, but will buffer it
     /// in the message for later transmission.
     ///
-    inline ValidateLivenessAsyncCall* validateLiveness(
+    inline ValidateLivenessAsyncStream* validateLiveness(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new ValidateLivenessAsyncCall);
+        auto call(new ValidateLivenessAsyncStream);
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(call->context, tokenManager);

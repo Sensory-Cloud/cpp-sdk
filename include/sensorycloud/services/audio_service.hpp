@@ -460,7 +460,7 @@ class AudioService {
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::CreateEnrollmentRequest,
         ::sensory::api::v1::audio::CreateEnrollmentResponse
-    > CreateEnrollmentAsyncCall;
+    > CreateEnrollmentAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating an audio enrollment.
@@ -486,7 +486,7 @@ class AudioService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline CreateEnrollmentAsyncCall* createEnrollment(
+    inline CreateEnrollmentAsyncStream* createEnrollment(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::CreateEnrollmentConfig* enrollmentConfig
@@ -494,7 +494,7 @@ class AudioService {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new CreateEnrollmentAsyncCall);
+        auto call(new CreateEnrollmentAsyncStream);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
         // Create the request with the pointer to the config.
@@ -603,7 +603,7 @@ class AudioService {
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::AuthenticateRequest,
         ::sensory::api::v1::audio::AuthenticateResponse
-    > AuthenticateAsyncCall;
+    > AuthenticateAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// enrollment authentication.
@@ -629,7 +629,7 @@ class AudioService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline AuthenticateAsyncCall* authenticate(
+    inline AuthenticateAsyncStream* authenticate(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig
@@ -637,7 +637,7 @@ class AudioService {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new AuthenticateAsyncCall);
+        auto call(new AuthenticateAsyncStream);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
         // Create the request with the pointer to the enrollment config.
@@ -700,7 +700,7 @@ class AudioService {
             ::sensory::api::v1::audio::ValidateEventRequest,
             ::sensory::api::v1::audio::ValidateEventResponse
         >
-    > ValidateTriggerStream;
+    > ValidateEventStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// audio event validation.
@@ -721,7 +721,7 @@ class AudioService {
     /// This call will automatically send the `ValidateEventConfig` message to
     /// the server.
     ///
-    inline ValidateTriggerStream validateEvent(
+    inline ValidateEventStream validateEvent(
         ::grpc::ClientContext* context,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
@@ -732,7 +732,7 @@ class AudioService {
         ::sensory::api::v1::audio::ValidateEventRequest request;
         request.set_allocated_config(validateEventConfig);
         // Create the stream and write the initial configuration request.
-        ValidateTriggerStream stream = eventsStub->ValidateEvent(context);
+        ValidateEventStream stream = eventsStub->ValidateEvent(context);
         stream->Write(request);
         return stream;
     }
@@ -743,7 +743,7 @@ class AudioService {
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::ValidateEventRequest,
         ::sensory::api::v1::audio::ValidateEventResponse
-    > ValidateEventAsyncCall;
+    > ValidateEventAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// audio event validation.
@@ -769,7 +769,7 @@ class AudioService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline ValidateEventAsyncCall* validateEvent(
+    inline ValidateEventAsyncStream* validateEvent(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
@@ -777,7 +777,7 @@ class AudioService {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new ValidateEventAsyncCall);
+        auto call(new ValidateEventAsyncStream);
         // Set the client context for a bidirectional stream.
         config.setupBidiClientContext(call->context, tokenManager);
         // Create the request with the pointer to the enrollment config.
@@ -840,7 +840,7 @@ class AudioService {
             ::sensory::api::v1::audio::TranscribeRequest,
             ::sensory::api::v1::audio::TranscribeResponse
         >
-    > TranscribeAudioStream;
+    > TranscribeStream;
 
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
@@ -861,7 +861,7 @@ class AudioService {
     /// This call will automatically send the `TranscribeConfig` message to the
     /// server.
     ///
-    inline TranscribeAudioStream transcribe(
+    inline TranscribeStream transcribe(
         ::grpc::ClientContext* context,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
@@ -872,7 +872,7 @@ class AudioService {
         ::sensory::api::v1::audio::TranscribeRequest request;
         request.set_allocated_config(transcribeConfig);
         // Create the stream and write the initial configuration request.
-        TranscribeAudioStream stream = transcriptionsStub->Transcribe(context);
+        TranscribeStream stream = transcriptionsStub->Transcribe(context);
         stream->Write(request);
         return stream;
     }
@@ -883,7 +883,7 @@ class AudioService {
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::TranscribeRequest,
         ::sensory::api::v1::audio::TranscribeResponse
-    > TranscribeAsyncCall;
+    > TranscribeAsyncStream;
 
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
@@ -909,7 +909,7 @@ class AudioService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline TranscribeAsyncCall* transcribe(
+    inline TranscribeAsyncStream* transcribe(
         ::grpc::CompletionQueue* queue,
         ::sensory::api::v1::audio::AudioConfig* audioConfig,
         ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
@@ -917,7 +917,7 @@ class AudioService {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new TranscribeAsyncCall);
+        auto call(new TranscribeAsyncStream);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
         // Create the request with the pointer to the enrollment config.

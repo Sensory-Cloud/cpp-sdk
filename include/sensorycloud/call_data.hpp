@@ -28,6 +28,7 @@
 
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
+#include <grpcpp/impl/codegen/client_callback.h>
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
