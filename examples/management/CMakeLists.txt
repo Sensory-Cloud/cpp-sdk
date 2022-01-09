@@ -1,4 +1,4 @@
-# cmake build file for basic Sensory Cloud applications.
+# cmake build file for Sensory Cloud management service demo applications.
 #
 # Copyright 2021 Sensory, Inc.
 #
@@ -18,7 +18,7 @@
 # Version 3.11 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.11)
 # Assign the name of the project
-project(sensory-cloud-basic-applications)
+project(sensory-cloud-management-applications)
 
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
@@ -28,12 +28,7 @@ FetchContent_Declare(sensorycloud
 )
 FetchContent_MakeAvailable(sensorycloud)
 
-# --- Hello, Cloud! ------------------------------------------------------------
-
-add_executable(hello_cloud hello_cloud.cpp)
-target_link_libraries(hello_cloud PRIVATE sensorycloud)
-
-# --- Management Service -------------------------------------------------------
+include_directories(dep)
 
 add_executable(management management.cpp)
 target_link_libraries(management PRIVATE sensorycloud)
