@@ -223,7 +223,8 @@ int main(int argc, const char** argv) {
         audioService(config, tokenManager);
 
     // Create the network stream
-    auto stream = audioService.authenticate(
+    grpc::ClientContext context;
+    auto stream = audioService.authenticate(&context,
         sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE

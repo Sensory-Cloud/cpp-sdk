@@ -198,7 +198,8 @@ int main(int argc, const char** argv) {
         CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Create the network stream
-    auto stream = audioService.validateEvent(
+    grpc::ClientContext context;
+    auto stream = audioService.validateEvent(&context,
         sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE

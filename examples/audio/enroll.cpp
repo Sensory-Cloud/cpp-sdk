@@ -202,7 +202,8 @@ int main(int argc, const char** argv) {
         CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Initialize the stream for creating the enrollment.
-    auto stream = audioService.createEnrollment(
+    grpc::ClientContext context;
+    auto stream = audioService.createEnrollment(&context,
         sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE

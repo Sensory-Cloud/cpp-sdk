@@ -179,7 +179,8 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream
-    auto stream = videoService.validateLiveness(
+    grpc::ClientContext context;
+    auto stream = videoService.validateLiveness(&context,
         sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
     );
 

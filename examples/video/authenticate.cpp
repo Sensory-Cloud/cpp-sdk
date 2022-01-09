@@ -186,7 +186,8 @@ int main(int argc, const char** argv) {
     // Create the stream
     sensory::service::VideoService<sensory::token_manager::InsecureCredentialStore>
         videoService(config, tokenManager);
-    auto stream = videoService.authenticate(
+    grpc::ClientContext context;
+    auto stream = videoService.authenticate(&context,
         sensory::service::video::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD)
     );
 

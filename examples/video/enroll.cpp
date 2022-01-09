@@ -179,7 +179,8 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream
-    auto stream = videoService.createEnrollment(
+    grpc::ClientContext context;
+    auto stream = videoService.createEnrollment(&context,
         sensory::service::video::newCreateEnrollmentConfig(
             MODEL, USER_ID, DESCRIPTION, LIVENESS, THRESHOLD
         )
