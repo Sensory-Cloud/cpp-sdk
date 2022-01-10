@@ -227,21 +227,26 @@ inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* newCreateEnrollme
     return config;
 }
 
-// TODO: Update to support enrollment group IDs
-
 /// @brief Allocate a new configuration object for enrolled event validation.
 ///
 /// @param enrollmentID The enrollment ID to validate against. This can
 /// be either an enrollment ID or a group ID.
 /// @param sensitivity The sensitivity of the model.
+/// @param isEnrollmentGroup `true` if the enrollment ID references an
+/// enrollment group, `false` is the enrollment ID references a single
+/// enrollment.
 /// @returns A pointer to the `ValidateEnrolledEventConfig` object.
 ///
 inline ::sensory::api::v1::audio::ValidateEnrolledEventConfig* newValidateEnrolledEventConfig(
     const std::string& enrollmentID,
-    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,
+    const bool& isEnrollmentGroup = false
 ) {
     auto config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
-    config->set_enrollmentid(enrollmentID);
+    if (isEnrollmentGroup)
+        config->set_enrollmentgroupid(enrollmentID);
+    else
+        config->set_enrollmentid(enrollmentID);
     config->set_sensitivity(sensitivity);
     return config;
 }

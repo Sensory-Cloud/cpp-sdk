@@ -318,6 +318,21 @@ SCENARIO("A user needs to create an ValidateEnrolledEventConfig") {
             THEN("a pointer is returned with the variables set") {
                 REQUIRE(config != nullptr);
                 REQUIRE(config->enrollmentid() == enrollmentID);
+                REQUIRE(config->enrollmentgroupid() == "");
+                REQUIRE(config->sensitivity() == sensitivity);
+            }
+            delete config;
+        }
+        WHEN("the config is dynamically allocated for group enrollment") {
+            auto config = sensory::service::audio::newValidateEnrolledEventConfig(
+                enrollmentID,
+                sensitivity,
+                true
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->enrollmentid() == "");
+                REQUIRE(config->enrollmentgroupid() == enrollmentID);
                 REQUIRE(config->sensitivity() == sensitivity);
             }
             delete config;
