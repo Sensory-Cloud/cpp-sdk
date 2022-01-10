@@ -50,8 +50,8 @@ inline int describe_pa_error(const PaError& err) {
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
-        .prog("enroll")
-        .description("A tool for authenticating with voice biometrics using Sensory Cloud.");
+        .prog("enroll_event")
+        .description("A tool for enrolling audio events using Sensory Cloud.");
     parser.add_argument({ "-H", "--host" })
         .required(true)
         .help("HOST The hostname of a Sensory Cloud inference server.");
@@ -178,9 +178,8 @@ int main(int argc, const char** argv) {
             return 1;
         }
         for (auto& model : audioModelsResponse.models()) {
-            if (
-                model.modeltype() != sensory::api::common::SOUND_EVENT_ENROLLABLE
-            ) continue;
+            if (model.modeltype() != sensory::api::common::SOUND_EVENT_ENROLLABLE)
+                continue;
             std::cout << model.name() << std::endl;
         }
         return 0;

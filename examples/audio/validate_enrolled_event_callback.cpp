@@ -1,4 +1,4 @@
-// An example of Sound ID triggers based on PortAudio blocking input streams.
+// An example of audio authentication based on PortAudio asynchronous input streams.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -35,12 +35,120 @@
 #include <sensorycloud/token_manager/token_manager.hpp>
 #include "dep/argparse.hpp"
 
-int describe_pa_error(const PaError& err) {
+using sensory::token_manager::TokenManager;
+using sensory::token_manager::InsecureCredentialStore;
+using sensory::service::HealthService;
+using sensory::service::AudioService;
+using sensory::service::OAuthService;
+
+/// @brief Print a description of a PortAudio error that occurred.
+///
+/// @param err The error that was thrown by PortAudio.
+/// @returns The OS-level error code for the message.
+///
+inline int describe_pa_error(const PaError& err) {
     fprintf(stderr, "An error occured while using the portaudio stream\n");
     fprintf(stderr, "Error number: %d\n", err);
     fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-    return err;
+    return 1;
 }
+
+/// @brief A bidirection stream reactor for biometric enrollments from audio
+/// stream data.
+///
+/// @details
+/// Input data for the stream is provided by a PortAudio capture device.
+///
+class PortAudioReactor :
+    public AudioService<InsecureCredentialStore>::ValidateEnrolledEventBidiReactor {
+ private:
+    /// The capture device that input audio is streaming in from.
+    PaStream* capture;
+    /// The number of channels in the input audio.
+    uint32_t numChannels;
+    /// The number of bytes per audio sample (i.e., 2 for 16-bit audio)
+    uint32_t sampleSize;
+    /// The sample rate of the audio input stream.
+    uint32_t sampleRate;
+    /// The number of frames per block of audio.
+    uint32_t framesPerBlock;
+    /// Whether to produce verbose output from the reactor.
+    bool verbose = false;
+    /// The buffer for the block of samples from the port audio input device.
+    std::unique_ptr<uint8_t> sampleBlock;
+
+ public:
+    /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
+    ///
+    /// @param capture_ The PortAudio capture device.
+    /// @param numChannels_ The number of channels in the input stream.
+    /// @param sampleSize_ The number of bytes in an individual frame.
+    /// @param sampleRate_ The sampling rate of the audio stream.
+    /// @param framesPerBlock_ The number of frames in a block of audio.
+    ///
+    PortAudioReactor(PaStream* capture_,
+        uint32_t numChannels_ = 1,
+        uint32_t sampleSize_ = 2,
+        uint32_t sampleRate_ = 16000,
+        uint32_t framesPerBlock_ = 4096,
+        const bool& verbose_ = false
+    ) :
+        AudioService<InsecureCredentialStore>::ValidateEnrolledEventBidiReactor(),
+        capture(capture_),
+        numChannels(numChannels_),
+        sampleSize(sampleSize_),
+        sampleRate(sampleRate_),
+        framesPerBlock(framesPerBlock_),
+        verbose(verbose_),
+        sampleBlock(static_cast<uint8_t*>(malloc(framesPerBlock_ * numChannels_ * sampleSize_))) {
+        if (capture == nullptr)
+            throw std::runtime_error("capture must point to an allocated stream.");
+    }
+
+    /// @brief React to a _write done_ event.
+    ///
+    /// @param ok whether the write succeeded.
+    ///
+    void OnWriteDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // If authentication succeeded, send the writes done signal
+        // if (authenticated) {
+        //     StartWritesDone();
+        //     return;
+        // }
+        // Read a block of samples from the ADC.
+        auto err = Pa_ReadStream(capture, sampleBlock.get(), framesPerBlock);
+        if (err) {
+            describe_pa_error(err);
+            return;
+        }
+        // Set the audio content for the request and start the write request
+        request.set_audiocontent(sampleBlock.get(), numChannels * framesPerBlock * sampleSize);
+        StartWrite(&request);
+    }
+
+    /// @brief React to a _read done_ event.
+    ///
+    /// @param ok whether the read succeeded.
+    ///
+    void OnReadDone(bool ok) override {
+        // If the status is not OK, then an error occurred during the stream.
+        if (!ok) return;
+        // Log the result of the request to the terminal.
+        if (verbose) {  // Verbose output, dump the message to the terminal
+            std::cout << "Response" << std::endl;
+            std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
+            std::cout << "\tUser ID:                  " << response.userid()                 << std::endl;
+            std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
+            std::cout << "\tSuccess:                  " << response.success()                << std::endl;
+            std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
+        } else if (response.success()) {  // detected event
+            std::cout << "Detected event!" << std::endl;
+        }
+        StartRead(&response);
+    }
+};
 
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
@@ -59,6 +167,8 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-I", "--insecure" })
         .action("store_true")
         .help("INSECURE Disable TLS.");
+    parser.add_argument({ "-m", "--model" })
+        .help("MODEL The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
         .help("USERID The name of the user ID to query the enrollments for.");
     parser.add_argument({ "-e", "--enrollmentid" })
@@ -88,6 +198,7 @@ int main(int argc, const char** argv) {
     const auto PORT = args.get<uint16_t>("port");
     const auto TENANT = args.get<std::string>("tenant");
     const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
     const auto ENROLLMENT_ID = args.get<std::string>("enrollmentid");
     sensory::api::v1::audio::ThresholdSensitivity SENSITIVITY;
@@ -99,7 +210,6 @@ int main(int argc, const char** argv) {
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::HIGH;
     else if (args.get<std::string>("sensitivity") == "HIGHEST")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::HIGHEST;
-    sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity THRESHOLD;
     const auto GROUP = args.get<bool>("group");
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
@@ -133,7 +243,7 @@ int main(int argc, const char** argv) {
     }
 
     // Create an OAuth service
-    sensory::service::OAuthService oauthService(config);
+    OAuthService oauthService(config);
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
@@ -154,15 +264,18 @@ int main(int argc, const char** argv) {
         std::cin >> password;
 
         // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse registerResponse;
-        status = oauthService.registerDevice(&registerResponse,
-            name, password, credentials.id, credentials.secret);
-        if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to register device with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
-        }
+        oauthService.registerDevice(
+            name, password, credentials.id, credentials.secret,
+            [](OAuthService::RegisterDeviceCallData* call) {
+            if (!call->getStatus().ok()) {  // The call failed.
+                std::cout << "Failed to register device with\n\t" <<
+                    call->getStatus().error_code() << ": " <<
+                    call->getStatus().error_message() << std::endl;
+            }
+        })->await();
     }
+
+    // ------ Fetch the metadata about the enrollment --------------------------
 
     // Query this user's active enrollments
     if (USER_ID != "") {
@@ -195,8 +308,11 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
-    // the maximal duration of the recording in seconds
-    const auto DURATION = 60;
+    // ------ Create the audio service -----------------------------------------
+
+    // Create the audio service based on the configuration and token manager.
+    AudioService<InsecureCredentialStore> audioService(config, tokenManager);
+
     // The number of input channels from the microphone. This should always be
     // mono.
     const auto NUM_CHANNELS = 1;
@@ -206,22 +322,7 @@ int main(int argc, const char** argv) {
     const auto BYTES_PER_BLOCK =
         CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
-    sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore>
-        audioService(config, tokenManager);
-
-    // Create the network stream
-    grpc::ClientContext context;
-    auto stream = audioService.validateEnrolledEvent(&context,
-        sensory::service::audio::newAudioConfig(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, LANGUAGE
-        ),
-        sensory::service::audio::newValidateEnrolledEventConfig(
-            ENROLLMENT_ID, SENSITIVITY, GROUP
-        )
-    );
-
-    // Initialize the portaudio driver.
+    // Initialize the PortAudio driver.
     PaError err = paNoError;
     err = Pa_Initialize();
     if (err != paNoError) return describe_pa_error(err);
@@ -239,9 +340,9 @@ int main(int argc, const char** argv) {
         Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
-    // Open the portaudio stream with the input device.
-    PaStream* audioStream;
-    err = Pa_OpenStream(&audioStream,
+    // Open the PortAudio stream with the input device.
+    PaStream* capture;
+    err = Pa_OpenStream(&capture,
         &inputParameters,
         NULL,       // no output parameters for an input stream
         SAMPLE_RATE,
@@ -253,54 +354,45 @@ int main(int argc, const char** argv) {
     if (err != paNoError) return describe_pa_error(err);
 
     // Start the audio input stream.
-    err = Pa_StartStream(audioStream);
+    err = Pa_StartStream(capture);
     if (err != paNoError) return describe_pa_error(err);
 
-    // Create a buffer for the audio samples based on the number of bytes in
-    // a block of samples.
-    uint8_t sampleBlock[BYTES_PER_BLOCK];
-    for (int i = 0; i < (DURATION * SAMPLE_RATE) / CHUNK_SIZE; ++i) {
-        // Read a block of samples from the ADC.
-        err = Pa_ReadStream(audioStream, sampleBlock, CHUNK_SIZE);
-        if (err) return describe_pa_error(err);
-
-        // Create a new request with the audio content.
-        sensory::api::v1::audio::ValidateEnrolledEventRequest request;
-        request.set_audiocontent(sampleBlock, BYTES_PER_BLOCK);
-        if (!stream->Write(request)) break;
-
-        // Read a new response from the server.
-        sensory::api::v1::audio::ValidateEnrolledEventResponse response;
-        if (!stream->Read(&response)) break;
-
-        // Log the result of the request to the terminal.
-        if (VERBOSE) {  // Verbose output, dump the message to the terminal
-            std::cout << "Response" << std::endl;
-            std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
-            std::cout << "\tUser ID:                  " << response.userid()                 << std::endl;
-            std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
-            std::cout << "\tSuccess:                  " << response.success()                << std::endl;
-            std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
-        } else if (response.success()) {  // detected event
-            std::cout << "Detected event!" << std::endl;
-        }
-    }
+    // Create the gRPC reactor to respond to streaming events.
+    PortAudioReactor reactor(capture,
+        NUM_CHANNELS,
+        SAMPLE_SIZE,
+        SAMPLE_RATE,
+        CHUNK_SIZE,
+        VERBOSE
+    );
+    // Initialize the stream with the reactor for callbacks, given audio model,
+    // the sample rate of the audio and the expected language. A user ID is also
+    // necessary to detect audio events.
+    audioService.validateEnrolledEvent(&reactor,
+        sensory::service::audio::newAudioConfig(
+            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+            SAMPLE_RATE, 1, LANGUAGE
+        ),
+        sensory::service::audio::newValidateEnrolledEventConfig(
+            ENROLLMENT_ID, SENSITIVITY, GROUP
+        )
+    );
+    reactor.StartCall();
+    status = reactor.await();
     std::cout << std::endl;
 
-    // Close the stream and check the status code in case the stream broke.
-    stream->WritesDone();
-    status = stream->Finish();
-    if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "Authentication stream broke with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-    }
-
     // Stop the audio stream.
-    err = Pa_StopStream(audioStream);
+    err = Pa_StopStream(capture);
     if (err != paNoError) return describe_pa_error(err);
 
     // Terminate the port audio session.
     Pa_Terminate();
+
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Authentication stream broke with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
