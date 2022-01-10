@@ -259,7 +259,6 @@ int main(int argc, const char** argv) {
     // Create a buffer for the audio samples based on the number of bytes in
     // a block of samples.
     uint8_t sampleBlock[BYTES_PER_BLOCK];
-    bool authenticated = false;
     for (int i = 0; i < (DURATION * SAMPLE_RATE) / CHUNK_SIZE; ++i) {
         // Read a block of samples from the ADC.
         err = Pa_ReadStream(audioStream, sampleBlock, CHUNK_SIZE);
@@ -282,32 +281,8 @@ int main(int argc, const char** argv) {
             std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
             std::cout << "\tSuccess:                  " << response.success()                << std::endl;
             std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
-        } else {  // Friendly output, use a progress bar and display the prompt
-            std::vector<std::string> progress{
-                "[          ] 0%   ",
-                "[*         ] 10%  ",
-                "[**        ] 20%  ",
-                "[***       ] 30%  ",
-                "[****      ] 40%  ",
-                "[*****     ] 50%  ",
-                "[******    ] 60%  ",
-                "[*******   ] 70%  ",
-                "[********  ] 80%  ",
-                "[********* ] 90%  ",
-                "[**********] 100% "
-            };
-            auto prompt = response.modelprompt().length() > 0 ?
-                "Prompt: \"" + response.modelprompt() + "\"" :
-                "Text-independent model, say anything";
-            std::cout << '\r'
-                // << progress[int(response.percentsegmentcomplete() / 10.f)]
-                << prompt << std::flush;
-        }
-        // Check for successful authentication
-        if (response.success()) {
-            authenticated = true;
-            std::cout << std::endl << "Successfully authenticated!";
-            break;
+        } else if (response.success()) {  // detected event
+            std::cout << "Detected event!" << std::endl;
         }
     }
     std::cout << std::endl;
