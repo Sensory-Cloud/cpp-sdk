@@ -94,3 +94,31 @@ target_link_libraries(authenticate_async PRIVATE portaudio)
 add_executable(authenticate_callback authenticate_callback.cpp)
 target_link_libraries(authenticate_callback PRIVATE sensorycloud)
 target_link_libraries(authenticate_callback PRIVATE portaudio)
+
+# --- Create Enrolled Event ----------------------------------------------------
+
+add_executable(enroll_event enroll_event.cpp)
+target_link_libraries(enroll_event PRIVATE sensorycloud)
+target_link_libraries(enroll_event PRIVATE portaudio)
+
+add_executable(enroll_event_async enroll_event_async.cpp)
+target_link_libraries(enroll_event_async PRIVATE sensorycloud)
+target_link_libraries(enroll_event_async PRIVATE portaudio)
+
+add_executable(enroll_event_callback enroll_event_callback.cpp)
+target_link_libraries(enroll_event_callback PRIVATE sensorycloud)
+target_link_libraries(enroll_event_callback PRIVATE portaudio)
+
+# --- Validate Enrolled Event --------------------------------------------------
+
+add_executable(validate_enrolled_event validate_enrolled_event.cpp)
+target_link_libraries(validate_enrolled_event PRIVATE sensorycloud)
+target_link_libraries(validate_enrolled_event PRIVATE portaudio)
+
+add_executable(validate_enrolled_event_async validate_enrolled_event_async.cpp)
+target_link_libraries(validate_enrolled_event_async PRIVATE sensorycloud)
+target_link_libraries(validate_enrolled_event_async PRIVATE portaudio)
+
+add_executable(validate_enrolled_event_callback validate_enrolled_event_callback.cpp)
+target_link_libraries(validate_enrolled_event_callback PRIVATE sensorycloud)
+target_link_libraries(validate_enrolled_event_callback PRIVATE portaudio)
