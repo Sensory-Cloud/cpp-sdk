@@ -1,4 +1,4 @@
-# cmake build file for Sensory Cloud Audio File Transcription Application.
+# cmake build file for Sensory Cloud audio applications based on file inputs.
 #
 # Copyright 2021 Sensory, Inc.
 #
@@ -23,18 +23,12 @@ project(sensory-cloud-audio-file-transcription)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
-    GIT_TAG        develop
+    GIT_REPOSITORY https://github.com/Sensory-Cloud/cpp-sdk.git
+    GIT_TAG        main
 )
 FetchContent_MakeAvailable(sensorycloud)
 
 # Add the application to the build chain.
-add_executable(dr_wav_transcribe_callback transcribe_callback.cpp
-    dr_wav.h
-    dr_flac.h
-    dr_mp3.h
-    audio_buffer.hpp
-    argparse.hpp
-    tqdm.hpp
-)
-target_link_libraries(dr_wav_transcribe_callback PRIVATE sensorycloud)
+include_directories(dep)
+add_executable(transcribe transcribe.cpp)
+target_link_libraries(transcribe PRIVATE sensorycloud)

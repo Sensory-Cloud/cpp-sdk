@@ -1,5 +1,6 @@
+---
 services:
-  # CentOS
+
   centos_7:
     image: sensory-cloud-cpp-sdk:CentOS7
     build:
@@ -14,7 +15,7 @@ services:
       dockerfile: Dockerfile.CentOS.8
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
-  # RHEL
+
   rhel_7:
     image: sensory-cloud-cpp-sdk:RHEL7
     build:
@@ -29,7 +30,7 @@ services:
       dockerfile: Dockerfile.RHEL.8
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
-  # Debian
+
   debian_9:
     image: sensory-cloud-cpp-sdk:Debian9
     build:
@@ -51,7 +52,7 @@ services:
       dockerfile: Dockerfile.Debian.11
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
-  # Ubuntu
+
   ubuntu_16_04:
     image: sensory-cloud-cpp-sdk:Ubuntu16.04
     build:

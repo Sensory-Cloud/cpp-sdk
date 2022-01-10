@@ -41,17 +41,17 @@ ARG DEBIAN_FRONTEND=noninteractive
 # ----------------------------------------------------------------------------
 
 # Update Debian software repositories.
-RUN apt-get update
+RUN apt-get --fix-missing update
 RUN apt-get -y upgrade
 # Install dependencies for the SDK.
-RUN apt-get install -y build-essential autoconf libtool pkg-config git libssl-dev
+RUN apt-get install -y build-essential autoconf libtool pkg-config git
 
 # Install the latest version of CMake. CMake does not officially support Debian
 # 10 anymore, so CMake must be compiled from source.
 RUN apt-get install -y wget
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz
 RUN tar -xvf cmake-3.22.1.tar.gz
-RUN cd /cmake-3.22.1 && ./bootstrap && make && make install
+RUN cd /cmake-3.22.1 && ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF && make && make install
 
 # ----------------------------------------------------------------------------
 # MARK: Protobuf and gRPC
@@ -77,5 +77,3 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
-# Remove any generated protobuf and gRPC code.
-RUN rm -rf /cpp-sdk/include/sensorycloud/generated/*

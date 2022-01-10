@@ -125,7 +125,7 @@ class OAuthService {
 
     /// @brief A type for encapsulating data for asynchronous `GetToken` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         OAuthService,
         ::sensory::api::v1::management::EnrollDeviceRequest,
         ::sensory::api::v1::management::DeviceResponse
@@ -250,7 +250,7 @@ class OAuthService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -282,7 +282,7 @@ class OAuthService {
 
     /// @brief A type for encapsulating data for asynchronous `GetToken` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         OAuthService,
         ::sensory::api::oauth::TokenRequest,
         ::sensory::api::common::TokenResponse
@@ -367,7 +367,7 @@ class OAuthService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }

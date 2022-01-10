@@ -8,7 +8,7 @@ will show you how to:
 -   implement secure credential storage, a token manager, and an OAuth service
     for maintaining access tokens,
 -   interact with biometric video and audio services, and
--   manage enrollments and enrollment groups for your organization.
+-   manage enrollments and enrollment groups.
 
 Because this SDK is built on [gRPC][gRPC], you may benefit from referring to
 the [gRPC Tutorial][gRPC Tutorial] and [gRPC Documentation][gRPC Documentation]
@@ -35,15 +35,13 @@ approach will result in the compilation and linkage of the protobuff and gRPC
 dependencies locally.
 
 ```cmake
-cmake_minimum_required(VERSION 3.5.1)
-project(Your Project)
-
-# Output built binaries to a `build` directory instead of the project root.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build")
+# CMake version 3.11 is required to use FetchContent
+cmake_minimum_required(VERSION 3.11)
 
 # C++11 with gcc >4.9 is required to compile the Sensory Cloud C++ SDK.
 set(CMAKE_CXX_STANDARD 11)
 
+# Use FetchContent to compile the SDK with your project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
     GIT_REPOSITORY https://github.com/sensorycloud/cpp-sdk.git
@@ -53,12 +51,10 @@ FetchContent_MakeAvailable(sensorycloud)
 
 ...
 
-# Define and executable and link to the sensorycloud library.
+# Define an executable and link with libsensorycloud.
 add_executable(hello_world hello_world.cpp)
 target_link_libraries(hello_world PRIVATE sensorycloud)
 ```
-
-<!-- TODO: Document installation with global protobuff / gRPC -->
 
 ## Connecting to the server
 
@@ -74,46 +70,42 @@ This information is provided to the SDK using a `sensory::Config` object:
 ```c++
 // Create a configuration specific to your tenant and device.
 sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
+    "example.company.com",                   // the host name of the server
     443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
+    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3",  // a unique device ID
+    true                                     // a flag for disabling TLS
 );
+// Create the gRPC channel and open an http/2 connection to the server.
+config.connect();
 ```
 
 A single instance of `sensory::Config` should be instantiated and maintained
 per instance of an application on a device. Using multiple configs for the same
 service in the same instance of an application may result in undefined behavior.
+You must call `connect` to generate the gRPC channel and open the HTTP/2
+connection to the server.
 
 ## Checking The Server Health
 
 It's important to check the health of your Sensory Inference server. You can do
-so via the following:
+so using the `HealthService` via the following:
 
 ```c++
-// Create a configuration specific to your tenant and device.
-sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
-    443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
-);
-
 // Create a health service for performing server health queries.
 sensory::service::HealthService healthService(config);
 // Create a response for the RPC.
-sensory::api::common::ServerHealthResponse serverHealth;
+sensory::api::common::ServerHealthResponse response;
 // Perform the RPC and check the status for errors.
-auto status = healthService.getHealth(&serverHealth);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to get server health with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
+auto status = healthService.getHealth(&response);
+if (!status.ok()) {  // The call failed, handle the error here.
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+} else {  // The call succeeded, handle the response here.
+    auto isHealthy = response.ishealthy();
+    auto serverVersion = response.serverversion();
+    auto serverID = response.id();
 }
-// Print the health of the remote service.
-std::cout << "Server status:" << std::endl;
-std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-std::cout << "\tid: " << serverHealth.id() << std::endl;
 ```
 
 ## Secure Credential Storage
@@ -170,19 +162,11 @@ struct SecureCredentialStore {
 
 The `TokenManger` template class handles requesting OAuth tokens when
 necessary. It utilizes an `OAuthService` to request new tokens when the local
-ones expire, and also utilizes a `SecureCredentialStore` implementation to
-securely store tokens. All secure services require a reference to a token
-manager.
+ones expire and also utilizes a `SecureCredentialStore` implementation to
+securely store tokens. All secure services (i.e., video, management, and audio)
+require a reference to a token manager.
 
 ```c++
-// Create a configuration specific to your tenant and device.
-sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
-    443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
-);
-
 // Create the secure credential store for the token manager. You may use your
 // own implementation of the `SecureCredentialStore` interface for your
 // application.
@@ -202,26 +186,7 @@ very simple and is provided as part of the SDK. The below example shows how to
 create an `OAuthService` and register a device for the first time.
 
 ```c++
-// Create a configuration specific to your tenant and device.
-sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
-    443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
-);
-
-// Create the secure credential store for the token manager. You may use your
-// own implementation of the `SecureCredentialStore` interface for your
-// application.
-sensory::token_manager::SecureCredentialStore keychain("com.product.company");
-// Create the OAuth service from the configuration.
-sensory::service::OAuthService oauthService(config);
-// Create the token manager for handling token requests from the OAuth service
-// and with a reference to the secure credential store.
-sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
-    tokenManager(oauthService, keychain);
-
-if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
+if (!tokenManager.hasToken()) {  // The device is not registered.
     // Generate a new `clientID` and `clientSecret` for this device and store
     // them securely in the keychain.
     auto credentials = tokenManager.generateCredentials();
@@ -233,15 +198,10 @@ if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
     sensory::api::v1::management::DeviceResponse response;
     // Perform the RPC and check the status for errors.
     auto status = oauthService.registerDevice(&response,
-        deviceName,
-        insecureSharedSecret,
-        credentials.id,
-        credentials.secret
-    );
-    if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "Failed to register device with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        // Handle error...
+        deviceName, insecureSharedSecret, credentials.id, credentials.secret);
+    if (!status.ok()) {  // The call failed, handle the error here
+        auto errorCode = status.error_code();
+        auto errorMessage = status.error_message();
     }
 }
 ```
@@ -249,31 +209,10 @@ if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
 ## Creating an `AudioService`
 
 `AudioService` provides methods to stream audio to Sensory Cloud. It is
-recommended to only have 1 instance of `AudioService` instantiated per
-`Config`. In most circumstances you will only ever have one `Config`, unless
-your app communicates with multiple Sensory Cloud servers.
+recommended to only have 1 instance of `AudioService` instantiated per `Config`.
 
 ```c++
-// Create a configuration specific to your tenant and device.
-sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
-    443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
-);
-
-// Create the secure credential store for the token manager. You may use your
-// own implementation of the `SecureCredentialStore` interface for your
-// application.
-sensory::token_manager::SecureCredentialStore keychain("com.product.company");
-// Create the OAuth service from the configuration.
-sensory::service::OAuthService oauthService(config);
-// Create the token manager for handling token requests from the OAuth service
-// and with a reference to the secure credential store.
-sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
-    tokenManager(oauthService, keychain);
-
-// Create the audio service based on the configuration and token manager.
+// Create the audio service using the configuration and token manager.
 sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>
     audioService(config, tokenManager);
 ```
@@ -289,20 +228,169 @@ which audio models are accessible to you, you can execute the below code.
 sensory::api::v1::audio::GetModelsResponse response;
 // Execute the RPC and check the status for errors.
 auto status = audioService.getModels(&response);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to get audio models with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
-    // Handle error...
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
 }
 ```
 
 ### Enrolling With Audio
 
+To create an audio enrollment:
+
+```c++
+// The sample rate of the audio stream.
+uint32_t sampleRate = 16000;
+// The IETF BCP 47 language tag for the input audio.
+std::string language = "en-US";
+// The name of the biometric model to enroll the user with.
+std::string model("wakeword-16kHz-alexa.ubm");
+// The unique ID of the user that is being enrolled.
+std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
+// A human readable description of the enrollment.
+std::string description("My Enrollment");
+// Whether to perform a liveness check while executing the enrollment.
+bool isLivenessEnabled(false);
+// The maximum duration for a text-independent enrollment
+float duration = 0.f;
+// The number of utterances for a text-dependent enrollment
+int numUtterances = 2;
+
+// Create the gRPC stream for a certain enroll-able model for a particular user.
+grpc::ClientContext context;
+auto stream = audioService.createEnrollment(&context,
+    sensory::service::audio::newAudioConfig(
+        sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+        sampleRate, 1, language
+    ),
+    sensory::service::audio::newCreateEnrollmentConfig(
+        model,
+        userID,
+        description,
+        isLivenessEnabled,
+        duration,
+        numUtterances
+    )
+);
+
+// Encode your audio date as 16-bit PCM
+std::vector<unsigned char> buffer = getChunkOfSamples();
+// Create the request from the encoded image data and write it to the stream.
+// This call will block the running thread until completion.
+sensory::api::v1::audio::CreateEnrollmentRequest request;
+request.set_imagecontent(buffer.data(), buffer.size());
+if (!stream->Write(request)) {
+    // Write failed, break out of IO loop
+}
+// Read a response from the server. This call will block the running thread
+// until completion.
+sensory::api::v1::audio::CreateEnrollmentResponse response;
+if (!stream->Read(&response)) {
+    // Read failed, break out of IO loop
+}
+```
+
+Instances of `CreateEnrollmentResponse` will have the following attributes:
+
+-   `response.modelprompt()` The interactive prompt for the user to respond to.
+    For enrollments with liveness this may be a string of digits like
+    `"1 7 4 8 4 3"`. For enrolled wakewords this would be a wakeword such as
+    `"computer"`.
+-   `response.percentcomplete()` the completion percentage of the enrollment
+    procedure as an integer between 0 and 100 (inclusive).
+-   `response.percentsegmentcomplete()` the completion percentage of the
+    particular segment in an enrollment procedure as an integer between 0 and
+    100 (inclusive).
+-   `response.audioenergy()` The level of the audio as a floating point value
+    between 0 and 1 (inclusive).
+-   `enrollmentid()` The ID of the enrollment if it was created. This value
+    is populated upon successful enrollment with the model.
+-   `modelname()` The name of the model used to perform the enrollment. This
+    value is populated upon successful enrollment with the model.
+-   `modelversion()` The version of the model being used to perform the
+    enrollment. This value is populated upon successful enrollment with the
+    model.
+
+### Authenticating With Audio
+
+To authenticate against an existing enrollment based on a known enrollment ID:
+
+```c++
+// The sample rate of the audio stream.
+uint32_t sampleRate = 16000;
+// The IETF BCP 47 language tag for the input audio.
+std::string language = "en-US";
+// The unique ID of the user that is being enrolled.
+std::string enrollmentID("60db6966-068f-4f6c-9a51-d2a3308db09b");
+// Whether to perform a liveness check while executing the enrollment.
+bool isLivenessEnabled(false);
+// The sensitivity level of the model to input audio levels
+auto sensitivity = sensory::api::v1::audio::ThresholdSensitivity::LOW;
+// The security threshold of the model in terms of FAs
+auto threshold = sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+// Whether the enrollment is an enrollment group or an individual enrollment
+bool isEnrollmentGroup(false);
+
+// Create the gRPC stream for a certain enroll-able model for a particular user.
+grpc::ClientContext context;
+auto stream = audioService.authenticate(&context,
+    sensory::service::audio::newAudioConfig(
+        sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+        sampleRate, 1, language
+    ),
+    sensory::service::audio::newAuthenticateConfig(
+        enrollmentID,
+        isLivenessEnabled,
+        sensitivity,
+        threshold,
+        isEnrollmentGroup
+    )
+);
+
+// Encode your audio date as 16-bit PCM
+std::vector<unsigned char> buffer = getChunkOfSamples();
+// Create the request from the encoded image data and write it to the stream.
+// This call will block the running thread until completion.
+sensory::api::v1::audio::AuthenticateRequest request;
+request.set_imagecontent(buffer.data(), buffer.size());
+if (!stream->Write(request)) {
+    // Write failed, break out of IO loop
+}
+// Read a response from the server. This call will block the running thread
+// until completion.
+sensory::api::v1::audio::AuthenticateResponse response;
+if (!stream->Read(&response)) {
+    // Read failed, break out of IO loop
+}
+```
+
+Instances of `AuthenticateResponse` will have the following attributes:
+
+-   `response.modelprompt()` The interactive prompt for the user to respond to.
+    For enrollments with liveness this may be a string of digits like
+    `"1 7 4 8 4 3"`. For enrolled wakewords this would be a wakeword such as
+    `"computer"`.
+-   `response.percentsegmentcomplete()` the completion percentage of the
+    particular segment in an authentication procedure as an integer between 0
+    and 100 (inclusive).
+-   `response.audioenergy()` The level of the audio as a floating point value
+    between 0 and 1 (inclusive).
+-   `response.success()` A flag that will be true when the user successfully
+    authenticates against the enrollment
+
+### Enrolling sound events
+
+To enroll sound events:
+
 ```c++
 TODO
 ```
 
-### Authenticating With Audio
+### Validating enrolled sound events
+
+To validate enrolled sound events against existing enrollments based on an
+enrollment ID:
 
 ```c++
 TODO
@@ -310,11 +398,61 @@ TODO
 
 ### Audio Events
 
+To detect audio trigger events, such as door knocks, coughs, glass breaks, etc.
+
 ```c++
-TODO
+// The sample rate of the audio stream.
+uint32_t sampleRate = 16000;
+// The IETF BCP 47 language tag for the input audio.
+std::string language = "en-US";
+// The name of the biometric model to enroll the user with.
+std::string model("wakeword-16kHz-alexa.ubm");
+// The unique ID of the user that is being enrolled.
+std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
+// The detection threshold for controlling the likelihood of an FA.
+auto threshold = sensory::api::v1::audio::ThresholdSensitivity::LOW;
+
+// Create the gRPC stream for a certain enroll-able model for a particular user.
+grpc::ClientContext context;
+auto stream = audioService.validateEvent(&context,
+    sensory::service::audio::newAudioConfig(
+        sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
+        sampleRate, 1, language
+    ),
+    sensory::service::audio::newValidateEventConfig(model, userID, threshold)
+);
+
+// Encode your audio date as 16-bit PCM
+std::vector<unsigned char> buffer = getChunkOfSamples();
+// Create the request from the encoded image data and write it to the stream.
+// This call will block the running thread until completion.
+sensory::api::v1::audio::ValidateEventRequest request;
+request.set_imagecontent(buffer.data(), buffer.size());
+if (!stream->Write(request)) {
+    // Write failed, break out of IO loop
+}
+// Read a response from the server. This call will block the running thread
+// until completion.
+sensory::api::v1::audio::ValidateEventResponse response;
+if (!stream->Read(&response)) {
+    // Read failed, break out of IO loop
+}
 ```
 
+Instances of `ValidateEventResponse` will have the following attributes:
+
+-   `response.audioenergy()` The level of the audio as a floating point value
+    between 0 and 1 (inclusive).
+-   `response.success()` A flag determining whether the modeled event was
+    detected.
+-   `response.resultid()` A string that describes the particular event that was
+    detected if `response.success()` is `true`.
+-   `response.score()` The score from the model based on the last processed
+    chunk of audio data.
+
 ### Audio Transcription
+
+To transcribe human speech into text (based on known language):
 
 ```c++
 TODO
@@ -328,25 +466,6 @@ recommended to only have 1 instance of `VideoService` instantiated per
 your app communicates with multiple Sensory Cloud servers.
 
 ```c++
-// Create a configuration specific to your tenant and device.
-sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
-    443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
-);
-
-// Create the secure credential store for the token manager. You may use your
-// own implementation of the `SecureCredentialStore` interface for your
-// application.
-sensory::token_manager::SecureCredentialStore keychain("com.product.company");
-// Create the OAuth service from the configuration.
-sensory::service::OAuthService oauthService(config);
-// Create the token manager for handling token requests from the OAuth service
-// and with a reference to the secure credential store.
-sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
-    tokenManager(oauthService, keychain);
-
 // Create the video service based on the configuration and token manager.
 sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
     videoService(config, tokenManager);
@@ -363,34 +482,39 @@ which video models are accessible to you, you can execute the below code.
 sensory::api::v1::video::GetModelsResponse response;
 // Execute the RPC and check the status for errors.
 auto status = videoService.getModels(&response);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to get video models with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
-    // Handle error...
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
 }
 ```
 
 ### Enrolling With Video
 
-The synchronous API provides a blocking interface for streaming data to the
-server.
+To create a new enrollment for a user with a video stream:
 
 ```c++
 // The name of the biometric model to enroll the user with.
-std::string modelName("face_biometric_hektor");
+std::string model("face_biometric_hektor");
 // The unique ID of the user that is being enrolled.
-std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // A human readable description of the enrollment.
-std::string enrollmentDescription("My Enrollment");
+std::string description("My Enrollment");
 // Whether to perform a liveness check while executing the enrollment.
 bool isLivenessEnabled(false);
+// the threshold for the liveness check
+auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
 // Create the gRPC stream for a certain enroll-able model for a particular user.
 auto stream = videoService.createEnrollment(
-    modelName,
-    userId,
-    enrollmentDescription,
-    isLivenessEnabled);
+    sensory::service::video::newCreateEnrollmentConfig(
+        model,
+        userID,
+        description,
+        isLivenessEnabled,
+        threshold
+    )
+);
 
 // Encode your image data using JPEG compression.
 std::vector<unsigned char> buffer;
@@ -399,33 +523,40 @@ encodeJPEG(yourImageData, buffer);
 // This call will block the running thread until completion.
 sensory::api::v1::video::CreateEnrollmentRequest request;
 request.set_imagecontent(buffer.data(), buffer.size());
-stream->Write(request);
+if (!stream->Write(request)) {
+    // Write failed, break out of IO loop
+}
 // Read a response from the server. This call will block the running thread
 // until completion.
 sensory::api::v1::video::CreateEnrollmentResponse response;
-stream->Read(&response);
+if (!stream->Read(&response)) {
+    // Read failed, break out of IO loop
+}
 ```
 
 Instances of `CreateEnrollmentResponse` will have the following attributes:
 
--   `percentcomplete()` the completion percentage of the enrollment procedure.
+-   `percentcomplete()` the completion percentage of the enrollment procedure
+    as an integer between 0 and 100 (inclusive).
 -   `isalive()` a boolean determining whether a live face was detected in the
-    frame. This attribute can only be true when creating an enrollment stream
-    with liveness enabled.
--   `enrollmentid()` The ID of the enrollment _if_ it was created. This value
+    frame based on the score and selected security threshold. This attribute
+    can only be true when the enrollment stream was started with liveness
+    enabled.
+-   `enrollmentid()` The ID of the enrollment if it was created. This value
     is populated upon successful enrollment with the model.
--   `modelname()` The name of the model being used to perform the enrollment
+-   `modelname()` The name of the model used to perform the enrollment. This
+    value is populated upon successful enrollment with the model.
 -   `modelversion()` The version of the model being used to perform the
-    enrollment
+    enrollment. This value is populated upon successful enrollment with the
+    model.
 
 ### Authenticating With Video
 
-The synchronous API provides a blocking interface for streaming data to the
-server.
+To authenticate with a video stream:
 
 ```c++
 // The ID for the enrollment for a particular user
-std::string enrollmentID("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string enrollmentID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // a flag determining whether a liveness check should be conducted before
 // authenticating against the enrollment.
 bool isLivenessEnabled(false);
@@ -435,9 +566,12 @@ auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 // Create the gRPC stream for to authenticate an enrollment for a particular
 // user based on enrollment ID.
 auto stream = videoService.authenticate(
-    enrollmentID,
-    isLivenessEnabled,
-    threshold);
+    sensory::service::video::newAuthenticateConfig(
+        enrollmentID,
+        isLivenessEnabled,
+        threshold
+    )
+);
 
 // Encode your image data using JPEG compression.
 std::vector<unsigned char> buffer;
@@ -446,17 +580,23 @@ encodeJPEG(yourImageData, buffer);
 // This call will block the running thread until completion.
 sensory::api::v1::video::AuthenticateRequest request;
 request.set_imagecontent(buffer.data(), buffer.size());
-stream->Write(request);
+if (!stream->Write(request)) {
+    // Write failed, break out of IO loop
+}
 // Read a response from the server. This call will block the running thread
 // until completion.
 sensory::api::v1::video::AuthenticateResponse response;
-stream->Read(&response);
+if (!stream->Read(&response)) {
+    // Read failed, break out of IO loop
+}
 ```
 
 Instances of `AuthenticateResponse` will have the following attributes:
 
 -   `response.success()` a boolean determining whether the authentication was
     successful. The stream will terminate if/when this flag goes to `true`.
+    If liveness is enabled the stream will terminated with this flag goes `true`
+    and the `response.isalive()` flag evaluates to `true`.
 -   `response.score()` The score from the liveness model.
 -   `response.isalive()` A boolean determining whether the last frame was
     detected as being live based on the score and selected threshold. This can
@@ -464,20 +604,25 @@ Instances of `AuthenticateResponse` will have the following attributes:
 
 ### Video Liveness
 
-The synchronous API provides a blocking interface for streaming data to the
-server.
+To validate liveness with a video stream:
 
 ```c++
 // The particular model to use for liveness detection.
 std::string videoModel("face_recognition_mathilde");
 // The unique user ID of the user being validated for liveness
-std::string userId("72f286b8-173f-436a-8869-6f7887789ee9");
+std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // The security threshold for the optional liveness check.
 auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
 // Create the gRPC stream for to authenticate an enrollment for a particular
 // user based on enrollment ID.
-auto stream = videoService.validateLiveness(videoModel, userID, threshold);
+auto stream = videoService.validateLiveness(
+    sensory::service::video::newValidateRecognitionConfig(
+        videoModel,
+        userID,
+        threshold
+    )
+);
 
 // Encode your image data using JPEG compression.
 std::vector<unsigned char> buffer;
@@ -486,11 +631,15 @@ encodeJPEG(yourImageData, buffer);
 // This call will block the running thread until completion.
 sensory::api::v1::video::ValidateRecognitionRequest request;
 request.set_imagecontent(buffer.data(), buffer.size());
-stream->Write(request);
+if (!stream->Write(request)) {
+    // Write failed, break out of IO loop
+}
 // Read a response from the server. This call will block the running thread
 // until completion.
 sensory::api::v1::video::LivenessRecognitionResponse response;
-stream->Read(&response);
+if (!stream->Read(&response)) {
+    // Read failed, break out of IO loop
+}
 ```
 
 Instances of `LivenessRecognitionResponse` will have the following attributes:
@@ -505,31 +654,14 @@ The `ManagementService` is used to manage typical _CRUD_ operations with
 Sensory Cloud, such as deleting enrollments or creating enrollment groups.
 
 ```c++
-// Create a configuration specific to your tenant and device.
-sensory::Config config(
-    "io.stage.cloud.sensory.com",            // the host name of the server
-    443,                                     // the port number of the service
-    "cabb7700-206f-4cc7-8e79-cd7f288aa78d",  // your tenant ID
-    "d895f447-91e8-486f-a783-6e3a33e4c7c5"   // a unique device ID
-);
-
-// Create the secure credential store for the token manager. You may use your
-// own implementation of the `SecureCredentialStore` interface for your
-// application.
-sensory::token_manager::SecureCredentialStore keychain("com.product.company");
-// Create the OAuth service from the configuration.
-sensory::service::OAuthService oauthService(config);
-// Create the token manager for handling token requests from the OAuth service
-// and with a reference to the secure credential store.
-sensory::token_manager::TokenManager<sensory::token_manager::SecureCredentialStore>
-    tokenManager(oauthService, keychain);
-
 // Create the management service based on the configuration and token manager.
 sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>
     mgmtService(config, tokenManager);
 ```
 
 ### Fetching Enrollments
+
+To fetch enrollments for a particular user:
 
 ```c++
 // The name of the user to fetch enrollments for.
@@ -538,29 +670,35 @@ std::string userID = "user";
 // Create a response for the RPC.
 sensory::api::v1::management::GetEnrollmentsResponse response;
 auto status = mgmtService.getEnrollments(&response, userID);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to get enrollments with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
-    // Handle error...
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
 }
 for (auto& enrollment : response.enrollments()) {
-    std::cout << "Description: "     << enrollment.description()  << std::endl;
-    std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
-    std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
-    std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-    std::cout << "\tUser ID: "       << enrollment.userid()       << std::endl;
-    std::cout << "\tDevice ID: "     << enrollment.deviceid()     << std::endl;
-    std::cout << "\tCreated: "
-        << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-        << std::endl;
-    std::cout << "\tUpdated: "
-        << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-        << std::endl;
-    std::cout << "\tID: "            << enrollment.id()    << std::endl;
+    // Handle each enrollment...
 }
 ```
 
+Each item in the list of enrollments in the response will have the following
+attributes:
+
+-   `enrollment.description()` a string description of the enrollment.
+-   `enrollment.modelname()` the name of the model used to create the
+    enrollment as a string.
+-   `enrollment.modeltype()` the type of the model used to create the
+    enrollment as a `sensory::api::common::ModelType` enum.
+-   `enrollment.modelversion()` the version of the model used to create the
+    enrollment as a string.
+-   `enrollment.userid()` the ID of the user that created the enrollment.
+-   `enrollment.deviceid()` the ID of the device used to create the enrollment.
+-   `enrollment.createdat()` a gRPC date representation of the creation date.
+-   `enrollment.updatedat()` a gRPC date representation of the last update date.
+-   `enrollment.id()` the UUID that uniquely identifies the enrollment.
+
 ### Deleting Enrollments
+
+To delete an enrollment by ID:
 
 ```c++
 // The UUID of the enrollment to delete.
@@ -568,9 +706,10 @@ std::string enrollmentID = "45ad3215-1d4c-42aa-aec4-2724e9ce1d99";
 
 sensory::api::v1::management::EnrollmentResponse response;
 auto status = mgmtService.deleteEnrollment(&response, enrollmentID);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to delete enrollment with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
 }
 ```
 
@@ -583,40 +722,86 @@ std::string userID = "user";
 // Create a response for the RPC.
 sensory::api::v1::management::GetEnrollmentGroupsResponse response;
 status = mgmtService.getEnrollmentGroups(&response, userID);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to get enrollment groups with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
-    // Handle error...
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
 }
 for (auto& enrollment : response.enrollmentgroups()) {
-    std::cout << "Description: "     << enrollment.description()  << std::endl;
-    std::cout << "\tModel Name: "    << enrollment.modelname()    << std::endl;
-    std::cout << "\tModel Type: "    << enrollment.modeltype()    << std::endl;
-    std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-    std::cout << "\tUser ID: "       << enrollment.userid()       << std::endl;
-    std::cout << "\tCreated: "
-        << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-        << std::endl;
-    std::cout << "\tUpdated: "
-        << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-        << std::endl;
-    std::cout << "\tID: "            << enrollment.id()    << std::endl;
+    // Handle each enrollment group...
 }
 ```
 
+Each item in the list of enrollment groups in the response will have the
+following attributes:
+
+-   `enrollment.description()` a string description of the enrollment group.
+-   `enrollment.modelname()` the name of the model used to create the
+    enrollment group as a string.
+-   `enrollment.modeltype()` the type of the model used to create the
+    enrollment group as a `sensory::api::common::ModelType` enum.
+-   `enrollment.modelversion()` the version of the model used to create the
+    enrollment group as a string.
+-   `enrollment.userid()` the ID of the user that created the enrollment group.
+-   `enrollment.createdat()` a gRPC date representation of the creation date of
+    the enrollment group.
+-   `enrollment.updatedat()` a gRPC date representation of the last update date
+    of the enrollment group.
+-   `enrollment.id()` the UUID that uniquely identifies the enrollment group.
+
 ### Creating Enrollment Groups
 
+To create a new enrollment group:
+
 ```c++
-TODO
+// The ID of the user that is creating the enrollment group.
+std::string userID = "userID";
+// The ID to use when creating the group, leave blank to automatically generate.
+std::string groupID = "";
+// The name of the enrollment group.
+std::string name = "Group Name";
+// A test description of the enrollment group.
+std::string description = "A description of the enrollment group";
+// The model to use for the enrollment group.
+std::string model = "face_biometric_hektor";
+
+sensory::api::v1::management::EnrollmentGroupResponse response;
+auto status = mgmtService.createEnrollmentGroup(
+    &response, userID, groupID, name, description, model);
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
+}
 ```
 
 ### Appending Enrollment Groups
 
+To append a list of enrollments to an enrollment group:
+
 ```c++
-TODO
+// The UUID of the group to append enrollments to
+std::string groupID = "f861f226-b608-47ad-95f4-02bf48ec351b";
+// A vector of unique enrollments to append to the group. These enrollments
+// should be based on the same model as the enrollment group.
+std::vector<std::string> enrollments{
+    "c437729b-3ce4-4af7-8f49-9da671cc89b2",
+    "eb1cfc5e-ff19-48aa-a702-55e19989fccb",
+    "076ec27d-a0ca-4f59-8a0e-42c5d4ccf03a"
+};
+
+sensory::api::v1::management::EnrollmentGroupResponse response;
+auto status = mgmtService.appendEnrollmentGroup(&response, groupID, enrollments);
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
+}
 ```
 
 ### Deleting Enrollment Groups
+
+To delete an enrollment group by ID:
 
 ```c++
 // The UUID of the group to delete.
@@ -624,8 +809,9 @@ std::string groupID = "13481e19-5853-47d0-ba61-6819914405bb";
 
 sensory::api::v1::management::EnrollmentGroupResponse response;
 auto status = mgmtService.deleteEnrollmentGroup(&response, groupID);
-if (!status.ok()) {  // The call failed, print a descriptive message.
-    std::cout << "Failed to delete enrollment group with\n\t" <<
-        status.error_code() << ": " << status.error_message() << std::endl;
+if (!status.ok()) {  // The call failed, handle the error here
+    auto errorCode = status.error_code();
+    auto errorMessage = status.error_message();
+    // ...
 }
 ```

@@ -41,6 +41,234 @@ namespace sensory {
 /// @brief Sensory Cloud services.
 namespace service {
 
+/// @brief Sensory Cloud audio service.
+namespace audio {
+
+/// @brief Create a new audio config for an audio streaming application.
+///
+/// @param encoding The encoding of the samples in the byte-stream.
+/// @param sampleRateHertz The sample rate of the audio stream.
+/// @param audioChannelCount The number of audio channels in the audio.
+/// @param languageCode The language code for the speech in the audio.
+/// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
+///
+inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
+    const ::sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding,
+    const float& sampleRateHertz,
+    const uint32_t& audioChannelCount,
+    const std::string& languageCode
+) {
+    auto audioConfig = new ::sensory::api::v1::audio::AudioConfig;
+    audioConfig->set_encoding(encoding);
+    audioConfig->set_sampleratehertz(sampleRateHertz);
+    audioConfig->set_audiochannelcount(audioChannelCount);
+    audioConfig->set_languagecode(languageCode);
+    return audioConfig;
+}
+
+// TODO: implement `referenceId` for CreateEnrollmentConfig?
+
+/// @brief Allocate a new configuration object for enrollment creation.
+///
+/// @param modelName The name of the model to use to create the enrollment.
+/// @param userID The ID of the user making the request.
+/// @param description The description of the enrollment.
+/// @param isLivenessEnabled `true` to perform a liveness check in addition
+/// to an enrollment, `false` to perform the enrollment without the liveness
+/// check.
+/// @param enrollmentDuration The duration in seconds for text-independent
+/// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
+/// with liveness enabled.
+/// @param numUtterances The number of utterances that should be required
+/// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+///
+/// @returns A pointer to the `CreateEnrollmentConfig` object.
+///
+/// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
+/// are both specified. For _text-independent_ models, an enrollment
+/// duration can be specified, but the number of utterances do not apply.
+/// Conversely, for _text-dependent_ enrollments, a number of utterances
+/// may be provided, but an enrollment duration does not apply.
+///
+/// @details
+/// The enrollment duration for text-independent enrollments controls the
+/// maximal amount of time allowed for authentication.
+///
+/// The number of utterances for text-dependent enrollments controls the
+/// number of uttered phrases that must be emitted to authenticate.
+///
+inline ::sensory::api::v1::audio::CreateEnrollmentConfig* newCreateEnrollmentConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const std::string& description,
+    const bool& isLivenessEnabled,
+    const float enrollmentDuration = 0.f,
+    const uint32_t numUtterances = 0
+) {
+    // The number of utterances and the enrollment duration cannot both be
+    // specified in the message, so check for sentinel "null" values and if
+    // both are provided, throw an error. This check is conducted before
+    // allocation of the config to prevent memory leaks.
+    if (enrollmentDuration > 0 && numUtterances > 0)
+        throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
+    auto config = new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_description(description);
+    config->set_islivenessenabled(isLivenessEnabled);
+    if (enrollmentDuration > 0)  // enrollment duration provided
+        config->set_enrollmentduration(enrollmentDuration);
+    else if (numUtterances > 0)  // number of utterances provided
+        config->set_enrollmentnumutterances(numUtterances);
+    return config;
+}
+
+// TODO: Implement `doIncludeToken` for AuthenticateConfig?
+
+/// @brief Allocate a new configuration object for enrollment authentication.
+///
+/// @param enrollmentID The enrollment ID to authenticate against. This can
+/// be either an enrollment ID or a group ID.
+/// @param isLivenessEnabled `true` to perform a liveness check before the
+/// authentication, `false` to only perform the authentication.
+/// @param sensitivity The sensitivity of the model.
+/// @param security The security level of the model.
+/// @param isEnrollmentGroup `true` if the enrollment ID references an
+/// enrollment group, `false` is the enrollment ID references a single
+/// enrollment.
+/// @returns A pointer to the `AuthenticateConfig` object.
+///
+inline ::sensory::api::v1::audio::AuthenticateConfig* newAuthenticateConfig(
+    const std::string& enrollmentID,
+    const bool& isLivenessEnabled,
+    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,
+    const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security,
+    const bool& isEnrollmentGroup = false
+) {
+    auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
+    if (isEnrollmentGroup)
+        config->set_enrollmentgroupid(enrollmentID);
+    else
+        config->set_enrollmentid(enrollmentID);
+    config->set_islivenessenabled(isLivenessEnabled);
+    config->set_sensitivity(sensitivity);
+    config->set_security(security);
+    return config;
+}
+
+/// @brief Allocate a new configuration object for trigger validation.
+///
+/// @param modelName The name of the model to use to validate the trigger.
+/// @param userID The ID of the user making the request.
+/// @param sensitivity The sensitivity of the model.
+/// @returns A pointer to the `ValidateEventConfig` object.
+///
+inline ::sensory::api::v1::audio::ValidateEventConfig* newValidateEventConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+) {
+    auto config = new ::sensory::api::v1::audio::ValidateEventConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_sensitivity(sensitivity);
+    return config;
+}
+
+// TODO: implement `referenceId` for CreateEnrollmentEventConfig?
+
+/// @brief Allocate a new configuration object for creating enrolled events.
+///
+/// @param modelName The name of the model to use to create the enrollment.
+/// @param userID The ID of the user making the request.
+/// @param description The description of the enrollment.
+/// @param enrollmentDuration The duration in seconds for text-independent
+/// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
+/// with liveness enabled.
+/// @param numUtterances The number of utterances that should be required
+/// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+///
+/// @returns A pointer to the `CreateEnrollmentEventConfig` object.
+///
+/// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
+/// are both specified. For _text-independent_ models, an enrollment
+/// duration can be specified, but the number of utterances do not apply.
+/// Conversely, for _text-dependent_ enrollments, a number of utterances
+/// may be provided, but an enrollment duration does not apply.
+///
+/// @details
+/// The enrollment duration for text-independent enrollments controls the
+/// maximal amount of time allowed for authentication.
+///
+/// The number of utterances for text-dependent enrollments controls the
+/// number of uttered phrases that must be emitted to authenticate.
+///
+inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* newCreateEnrollmentEventConfig(
+    const std::string& modelName,
+    const std::string& userID,
+    const std::string& description,
+    const float enrollmentDuration = 0.f,
+    const uint32_t numUtterances = 0
+) {
+    // The number of utterances and the enrollment duration cannot both be
+    // specified in the message, so check for sentinel "null" values and if
+    // both are provided, throw an error. This check is conducted before
+    // allocation of the config to prevent memory leaks.
+    if (enrollmentDuration > 0 && numUtterances > 0)
+        throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
+    auto config = new ::sensory::api::v1::audio::CreateEnrollmentEventConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    config->set_description(description);
+    if (enrollmentDuration > 0)  // enrollment duration provided
+        config->set_enrollmentduration(enrollmentDuration);
+    else if (numUtterances > 0)  // number of utterances provided
+        config->set_enrollmentnumutterances(numUtterances);
+    return config;
+}
+
+/// @brief Allocate a new configuration object for enrolled event validation.
+///
+/// @param enrollmentID The enrollment ID to validate against. This can
+/// be either an enrollment ID or a group ID.
+/// @param sensitivity The sensitivity of the model.
+/// @param isEnrollmentGroup `true` if the enrollment ID references an
+/// enrollment group, `false` is the enrollment ID references a single
+/// enrollment.
+/// @returns A pointer to the `ValidateEnrolledEventConfig` object.
+///
+inline ::sensory::api::v1::audio::ValidateEnrolledEventConfig* newValidateEnrolledEventConfig(
+    const std::string& enrollmentID,
+    const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity,
+    const bool& isEnrollmentGroup = false
+) {
+    auto config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
+    if (isEnrollmentGroup)
+        config->set_enrollmentgroupid(enrollmentID);
+    else
+        config->set_enrollmentid(enrollmentID);
+    config->set_sensitivity(sensitivity);
+    return config;
+}
+
+/// @brief Allocate a new configuration object for audio transcription.
+///
+/// @param modelName The name of the model to use to transcribe the audio.
+/// @param userID The ID of the user making the request.
+/// @returns A pointer to the `TranscribeConfig` object.
+///
+inline ::sensory::api::v1::audio::TranscribeConfig* newTranscribeConfig(
+    const std::string& modelName,
+    const std::string& userID
+) {
+    auto config = new ::sensory::api::v1::audio::TranscribeConfig;
+    config->set_modelname(modelName);
+    config->set_userid(userID);
+    return config;
+}
+
+}  // namespace audio
+
 /// @brief A service for audio data.
 /// @tparam SecureCredentialStore A secure key-value store for storing and
 /// fetching credentials and tokens.
@@ -77,28 +305,6 @@ class AudioService {
     ///
     void operator=(const AudioService& other) = delete;
 
-    /// @brief Create a new audio config for an audio streaming application.
-    ///
-    /// @param encoding The encoding of the samples in the byte-stream.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param audioChannelCount The number of audio channels in the audio.
-    /// @param languageCode The language code for the speech in the audio.
-    /// @returns A pointer to a new `::sensory::api::v1::audio::AudioConfig`.
-    ///
-    static inline ::sensory::api::v1::audio::AudioConfig* newAudioConfig(
-        const ::sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding,
-        const float& sampleRateHertz,
-        const uint32_t& audioChannelCount,
-        const std::string& languageCode
-    ) {
-        auto audioConfig = new ::sensory::api::v1::audio::AudioConfig;
-        audioConfig->set_encoding(encoding);
-        audioConfig->set_sampleratehertz(sampleRateHertz);
-        audioConfig->set_audiochannelcount(audioChannelCount);
-        audioConfig->set_languagecode(languageCode);
-        return audioConfig;
-    }
-
  public:
     /// @brief Initialize a new audio service.
     ///
@@ -134,7 +340,7 @@ class AudioService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::GetModelsRequest,
         ::sensory::api::v1::audio::GetModelsResponse
@@ -149,9 +355,7 @@ class AudioService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline GetModelsAsyncCall* getModels(
-        ::grpc::CompletionQueue* queue
-    ) const {
+    inline GetModelsAsyncCall* getModels(::grpc::CompletionQueue* queue) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
@@ -210,7 +414,7 @@ class AudioService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -228,190 +432,100 @@ class AudioService {
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating an audio enrollment.
     ///
-    /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param description The description of the enrollment.
-    /// @param isLivenessEnabled `true` to perform a liveness check in addition
-    /// to an enrollment, `false` to perform the enrollment without the liveness
-    /// check.
-    /// @param enrollmentDuration The duration in seconds for text-independent
-    /// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
-    /// with liveness enabled.
-    /// @param numUtterances The number of utterances that should be required
-    /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrollmentConfig` to create a new enrollment config.
+    /// _Ownership of the dynamically allocated configuration is implicitly
+    /// transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
-    /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
-    /// are both specified. For _text-independent_ models, an enrollment
-    /// duration can be specified, but the number of utterances do not apply.
-    /// Conversely, for _text-dependent_ enrollments, a number of utterances
-    /// may be provided, but an enrollment duration does not apply.
-    ///
     /// @details
-    /// This call will automatically send the initial `CreateEnrollmentConfig`
-    /// message to the server.
-    ///
-    /// The enrollment duration for text-independent enrollments controls the
-    /// maximal amount of time allowed for authentication.
-    ///
-    /// The number of utterances for text-dependent enrollments controls the
-    /// number of uttered phrases that must be emitted to authenticate.
+    /// This call will automatically send the `CreateEnrollmentConfig` message
+    /// to the server.
     ///
     inline CreateEnrollmentStream createEnrollment(
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const std::string& description = "",
-        const bool& isLivenessEnabled = false,
-        const float enrollmentDuration = -1.f,
-        const int32_t numUtterances = -1
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentConfig* enrollmentConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the enrollment config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto enrollmentConfig =
-            new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollmentConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        enrollmentConfig->set_modelname(modelName);
-        enrollmentConfig->set_userid(userID);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
         enrollmentConfig->set_deviceid(config.getDeviceID());
-        enrollmentConfig->set_description(description);
-        enrollmentConfig->set_islivenessenabled(isLivenessEnabled);
-        // Set the model dependent metadata based on the passed in values. The
-        // number of utterances and the enrollment duration cannot both be
-        // specified in the message, so check for sentinel "null" values and if
-        // both are provided, throw an error. Otherwise, only set the parameter
-        // that was specified. The sentinel value for both is any negative
-        // number. If neither is specified, provide neither and fall back on the
-        // default values used on the server.
-        if (enrollmentDuration > 0.f && numUtterances > 0)
-            throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
-        else if (enrollmentDuration > 0.f)
-            enrollmentConfig->set_enrollmentduration(isLivenessEnabled ? 8.f : 12.5f);
-        else if (numUtterances > 0)
-            enrollmentConfig->set_enrollmentnumutterances(numUtterances);
-
-        // Create the request with the pointer to the enrollment config.
         ::sensory::api::v1::audio::CreateEnrollmentRequest request;
         request.set_allocated_config(enrollmentConfig);
-
         // Create the stream and write the initial configuration request.
-        CreateEnrollmentStream stream =
-            biometricStub->CreateEnrollment(context);
+        CreateEnrollmentStream stream = biometricStub->CreateEnrollment(context);
         stream->Write(request);
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::CreateEnrollmentRequest,
         ::sensory::api::v1::audio::CreateEnrollmentResponse
-    > CreateEnrollmentAsyncCall;
+    > CreateEnrollmentAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// creating an audio enrollment.
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
-    /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param description The description of the enrollment.
-    /// @param isLivenessEnabled `true` to perform a liveness check in addition
-    /// to an enrollment, `false` to perform the enrollment without the liveness
-    /// check.
-    /// @param enrollmentDuration The duration in seconds for text-independent
-    /// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
-    /// with liveness enabled.
-    /// @param numUtterances The number of utterances that should be required
-    /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
-    ///
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrollmentConfig` to create a new enrollment config.
+    /// _Ownership of the dynamically allocated configuration is implicitly
+    /// transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
-    /// are both specified. For _text-independent_ models, an enrollment
-    /// duration can be specified, but the number of utterances do not apply.
-    /// Conversely, for _text-dependent_ enrollments, a number of utterances
-    /// may be provided, but an enrollment duration does not apply.
-    ///
     /// @details
-    /// The enrollment duration for text-independent enrollments controls the
-    /// maximal amount of time allowed for authentication.
+    /// This call will **NOT** automatically send the `CreateEnrollmentConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
     ///
-    /// The number of utterances for text-dependent enrollments controls the
-    /// number of uttered phrases that must be emitted to authenticate.
-    ///
-    inline CreateEnrollmentAsyncCall* createEnrollment(
+    inline CreateEnrollmentAsyncStream* createEnrollment(
         ::grpc::CompletionQueue* queue,
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const std::string& description = "",
-        const bool& isLivenessEnabled = false,
-        const float enrollmentDuration = -1.f,
-        const int32_t numUtterances = -1
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentConfig* enrollmentConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new CreateEnrollmentAsyncCall);
+        auto call(new CreateEnrollmentAsyncStream);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
-
-        // Create the enrollment config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto enrollmentConfig =
-            new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollmentConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        enrollmentConfig->set_modelname(modelName);
-        enrollmentConfig->set_userid(userID);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
         enrollmentConfig->set_deviceid(config.getDeviceID());
-        enrollmentConfig->set_description(description);
-        enrollmentConfig->set_islivenessenabled(isLivenessEnabled);
-        // Set the model dependent metadata based on the passed in values. The
-        // number of utterances and the enrollment duration cannot both be
-        // specified in the message, so check for sentinel "null" values and if
-        // both are provided, throw an error. Otherwise, only set the parameter
-        // that was specified. The sentinel value for both is any negative
-        // number. If neither is specified, provide neither and fall back on the
-        // default values used on the server.
-        if (enrollmentDuration > 0.f && numUtterances > 0)
-            throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
-        else if (enrollmentDuration > 0.f)
-            enrollmentConfig->set_enrollmentduration(isLivenessEnabled ? 8.f : 12.5f);
-        else if (numUtterances > 0)
-            enrollmentConfig->set_enrollmentnumutterances(numUtterances);
-
-        // Create the request with the pointer to the enrollment config.
         call->request.set_allocated_config(enrollmentConfig);
-
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = biometricStub->AsyncCreateEnrollment(&call->context, queue, static_cast<void*>(call));
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = biometricStub->AsyncCreateEnrollment(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
 
         return call;
     }
@@ -430,82 +544,31 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
-    /// @param modelName The name of the model to use to create the enrollment.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param description The description of the enrollment.
-    /// @param isLivenessEnabled `true` to perform a liveness check in addition
-    /// to an enrollment, `false` to perform the enrollment without the liveness
-    /// check.
-    /// @param enrollmentDuration The duration in seconds for text-independent
-    /// enrollments, defaults to \f$12.5\f$ without liveness enabled and \f$8\f$
-    /// with liveness enabled.
-    /// @param numUtterances The number of utterances that should be required
-    /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
-    ///
-    /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
-    /// are both specified. For _text-independent_ models, an enrollment
-    /// duration can be specified, but the number of utterances do not apply.
-    /// Conversely, for _text-dependent_ enrollments, a number of utterances
-    /// may be provided, but an enrollment duration does not apply.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrollmentConfig` to create a new enrollment config.
+    /// _Ownership of the dynamically allocated configuration is implicitly
+    /// transferred to the stream_.
     ///
     /// @details
-    /// This call will automatically send the initial `CreateEnrollmentConfig`
-    /// message to the server.
-    ///
-    /// The enrollment duration for text-independent enrollments controls the
-    /// maximal amount of time allowed for authentication.
-    ///
-    /// The number of utterances for text-dependent enrollments controls the
-    /// number of uttered phrases that must be emitted to authenticate.
+    /// This call will automatically send the `CreateEnrollmentConfig` message
+    /// to the server.
     ///
     template<typename Reactor>
     inline void createEnrollment(Reactor* reactor,
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const std::string& description = "",
-        const bool& isLivenessEnabled = false,
-        const float enrollmentDuration = -1.f,
-        const int32_t numUtterances = -1
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentConfig* enrollmentConfig
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-
-        // Create the enrollment config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto enrollmentConfig =
-            new ::sensory::api::v1::audio::CreateEnrollmentConfig;
-        enrollmentConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        enrollmentConfig->set_modelname(modelName);
-        enrollmentConfig->set_userid(userID);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
         enrollmentConfig->set_deviceid(config.getDeviceID());
-        enrollmentConfig->set_description(description);
-        enrollmentConfig->set_islivenessenabled(isLivenessEnabled);
-        // Set the model dependent metadata based on the passed in values. The
-        // number of utterances and the enrollment duration cannot both be
-        // specified in the message, so check for sentinel "null" values and if
-        // both are provided, throw an error. Otherwise, only set the parameter
-        // that was specified. The sentinel value for both is any negative
-        // number. If neither is specified, provide neither and fall back on the
-        // default values used on the server.
-        if (enrollmentDuration > 0.f && numUtterances > 0)
-            throw std::runtime_error("enrollmentDuration and numUterrances cannot both be specified.");
-        else if (enrollmentDuration > 0.f)
-            enrollmentConfig->set_enrollmentduration(isLivenessEnabled ? 8.f : 12.5f);
-        else if (numUtterances > 0)
-            enrollmentConfig->set_enrollmentnumutterances(numUtterances);
-
-        // Create the request with the pointer to the enrollment config.
         reactor->request.set_allocated_config(enrollmentConfig);
-
         // Create the stream and write the initial configuration request.
         biometricStub->async()->CreateEnrollment(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
@@ -523,123 +586,100 @@ class AudioService {
     > AuthenticateStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
-    /// authentication.
+    /// enrollment authentication.
     ///
-    /// @param enrollmentID The enrollment ID to authenticate against. This can
-    /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param isLivenessEnabled `true` to perform a liveness check before the
-    /// authentication, `false` to only perform the authentication.
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param authenticateConfig The authentication configuration for the
+    /// stream. Use `newAuthenticateConfig` to create a new authentication
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
     /// @details
-    /// This call will automatically send the initial `AuthenticateConfig`
-    /// message to the server.
+    /// This call will automatically send the `AuthenticateConfig` message to
+    /// the server.
     ///
     inline AuthenticateStream authenticate(
-        const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const bool& isLivenessEnabled = false,
-        const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
-            ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
-        const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security =
-            ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the authenticate config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto authenticateConfig =
-            new ::sensory::api::v1::audio::AuthenticateConfig;
-        authenticateConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        authenticateConfig->set_enrollmentid(enrollmentID);
-        authenticateConfig->set_islivenessenabled(isLivenessEnabled);
-        authenticateConfig->set_sensitivity(sensitivity);
-        authenticateConfig->set_security(security);
-
         // Create the request with the pointer to the enrollment config.
+        authenticateConfig->set_allocated_audio(audioConfig);
         ::sensory::api::v1::audio::AuthenticateRequest request;
         request.set_allocated_config(authenticateConfig);
-
         // Create the stream and write the initial configuration request.
-        AuthenticateStream stream =
-            biometricStub->Authenticate(context);
+        AuthenticateStream stream = biometricStub->Authenticate(context);
         stream->Write(request);
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `Authenticate`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::AuthenticateRequest,
         ::sensory::api::v1::audio::AuthenticateResponse
-    > AuthenticateAsyncCall;
+    > AuthenticateAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
-    /// audio event validation.
+    /// enrollment authentication.
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
-    /// @param enrollmentID The enrollment ID to authenticate against. This can
-    /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param isLivenessEnabled `true` to perform a liveness check before the
-    /// authentication, `false` to only perform the authentication.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param authenticateConfig The authentication configuration for the
+    /// stream. Use `newAuthenticateConfig` to create a new authentication
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline AuthenticateAsyncCall* authenticate(
+    /// @details
+    /// This call will **NOT** automatically send the `AuthenticateConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
+    inline AuthenticateAsyncStream* authenticate(
         ::grpc::CompletionQueue* queue,
-        const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const bool& isLivenessEnabled = false,
-        const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
-            ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
-        const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security =
-            ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new AuthenticateAsyncCall);
+        auto call(new AuthenticateAsyncStream);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
-
-        // Create the authenticate config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto authenticateConfig =
-            new ::sensory::api::v1::audio::AuthenticateConfig;
-        authenticateConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        authenticateConfig->set_enrollmentid(enrollmentID);
-        authenticateConfig->set_islivenessenabled(isLivenessEnabled);
-        authenticateConfig->set_sensitivity(sensitivity);
-        authenticateConfig->set_security(security);
-
         // Create the request with the pointer to the enrollment config.
+        authenticateConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(authenticateConfig);
-
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = biometricStub->AsyncAuthenticate(&call->context, queue, static_cast<void*>(call));
-
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = biometricStub->AsyncAuthenticate(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -652,53 +692,35 @@ class AudioService {
     > AuthenticateBidiReactor;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
-    /// audio event validation.
+    /// enrollment authentication.
     ///
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
-    /// @param enrollmentID The enrollment ID to authenticate against. This can
-    /// be either an enrollment ID or a group ID.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param isLivenessEnabled `true` to perform a liveness check before the
-    /// authentication, `false` to only perform the authentication.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param authenticateConfig The authentication configuration for the
+    /// stream. Use `newAuthenticateConfig` to create a new authentication
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     ///
     /// @details
-    /// This call will automatically send the initial `AuthenticateConfig`
-    /// message to the server.
+    /// This call will automatically send the `AuthenticateConfig` message to
+    /// the server.
     ///
     template<typename Reactor>
     inline void authenticate(Reactor* reactor,
-        const std::string& enrollmentID,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const bool& isLivenessEnabled = false,
-        const ::sensory::api::v1::audio::ThresholdSensitivity& sensitivity =
-            ::sensory::api::v1::audio::ThresholdSensitivity::LOW,
-        const ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity& security =
-            ::sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::AuthenticateConfig* authenticateConfig
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-
-        // Create the authenticate config message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto authenticateConfig =
-            new ::sensory::api::v1::audio::AuthenticateConfig;
-        authenticateConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        authenticateConfig->set_enrollmentid(enrollmentID);
-        authenticateConfig->set_islivenessenabled(isLivenessEnabled);
-        authenticateConfig->set_sensitivity(sensitivity);
-        authenticateConfig->set_security(security);
-
         // Create the request with the pointer to the enrollment config.
+        authenticateConfig->set_allocated_audio(audioConfig);
         reactor->request.set_allocated_config(authenticateConfig);
-
         // Create the stream and write the initial configuration request.
         biometricStub->async()->Authenticate(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
@@ -713,118 +735,103 @@ class AudioService {
             ::sensory::api::v1::audio::ValidateEventRequest,
             ::sensory::api::v1::audio::ValidateEventResponse
         >
-    > ValidateTriggerStream;
+    > ValidateEventStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// audio event validation.
     ///
-    /// @param modelName The name of the model to use to validate the trigger.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateEventConfig The trigger validation configuration for the
+    /// stream. Use `newValidateEventConfig` to create a new trigger validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
     /// @details
-    /// This call will automatically send the initial `ValidateEventConfig`
-    /// message to the server.
+    /// This call will automatically send the `ValidateEventConfig` message to
+    /// the server.
     ///
-    inline ValidateTriggerStream validateTrigger(
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+    inline ValidateEventStream validateEvent(
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the validate event message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto validateEventConfig =
-            new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        validateEventConfig->set_modelname(modelName);
-        validateEventConfig->set_userid(userID);
-        validateEventConfig->set_sensitivity(sensitivity);
-
         // Create the request with the pointer to the enrollment config.
+        validateEventConfig->set_allocated_audio(audioConfig);
         ::sensory::api::v1::audio::ValidateEventRequest request;
         request.set_allocated_config(validateEventConfig);
-
         // Create the stream and write the initial configuration request.
-        ValidateTriggerStream stream =
-            eventsStub->ValidateEvent(context);
+        ValidateEventStream stream = eventsStub->ValidateEvent(context);
         stream->Write(request);
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `ValidateEvent`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::ValidateEventRequest,
         ::sensory::api::v1::audio::ValidateEventResponse
-    > ValidateEventAsyncCall;
+    > ValidateEventAsyncStream;
 
     /// @brief Open a bidirectional stream to the server for the purpose of
     /// audio event validation.
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
-    /// @param modelName The name of the model to use to validate the trigger.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateEventConfig The trigger validation configuration for the
+    /// stream. Use `newValidateEventConfig` to create a new trigger validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline ValidateEventAsyncCall* validateTrigger(
+    /// @details
+    /// This call will **NOT** automatically send the `ValidateEventConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
+    inline ValidateEventAsyncStream* validateEvent(
         ::grpc::CompletionQueue* queue,
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new ValidateEventAsyncCall);
-        // Set the client context for a unary call.
+        auto call(new ValidateEventAsyncStream);
+        // Set the client context for a bidirectional stream.
         config.setupBidiClientContext(call->context, tokenManager);
-
-        // Create the validate event message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto validateEventConfig =
-            new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        validateEventConfig->set_modelname(modelName);
-        validateEventConfig->set_userid(userID);
-        validateEventConfig->set_sensitivity(sensitivity);
-
         // Create the request with the pointer to the enrollment config.
+        validateEventConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(validateEventConfig);
-
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = eventsStub->AsyncValidateEvent(&call->context, queue, static_cast<void*>(call));
-
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = eventsStub->AsyncValidateEvent(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -842,46 +849,337 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
-    /// @param modelName The name of the model to use to validate the trigger.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
-    /// @param sensitivity How sensitive the model should be to false accepts.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateEventConfig The trigger validation configuration for the
+    /// stream. Use `newValidateEventConfig` to create a new trigger validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     ///
     /// @details
-    /// This call will automatically send the initial `ValidateEventConfig`
-    /// message to the server.
+    /// This call will automatically send the `ValidateEventConfig` message to
+    /// the server.
     ///
     template<typename Reactor>
-    inline void validateTrigger(Reactor* reactor,
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID,
-        const sensory::api::v1::audio::ThresholdSensitivity& sensitivity
+    inline void validateEvent(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEventConfig* validateEventConfig
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-
-        // Create the validate event message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto validateEventConfig =
-            new ::sensory::api::v1::audio::ValidateEventConfig;
-        validateEventConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        validateEventConfig->set_modelname(modelName);
-        validateEventConfig->set_userid(userID);
-        validateEventConfig->set_sensitivity(sensitivity);
-
         // Create the request with the pointer to the enrollment config.
+        validateEventConfig->set_allocated_audio(audioConfig);
         reactor->request.set_allocated_config(validateEventConfig);
-
         // Create the stream and write the initial configuration request.
         eventsStub->async()->ValidateEvent(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
+    // ----- Create Enrolled Event ---------------------------------------------
+
+    /// A type for biometric enrollment streams.
+    typedef std::unique_ptr<
+        ::grpc::ClientReaderWriter<
+            ::sensory::api::v1::audio::CreateEnrolledEventRequest,
+            ::sensory::api::v1::audio::CreateEnrollmentResponse
+        >
+    > CreateEnrolledEventStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating an audio enrollment.
+    ///
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrolledEventConfig` to create a new enrollment
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the `CreateEnrollmentEventConfig`
+    /// message to the server.
+    ///
+    inline CreateEnrolledEventStream createEventEnrollment(
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentEventConfig* enrollmentConfig
+    ) const {
+        config.setupBidiClientContext(*context, tokenManager);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
+        ::sensory::api::v1::audio::CreateEnrolledEventRequest request;
+        request.set_allocated_config(enrollmentConfig);
+        // Create the stream and write the initial configuration request.
+        CreateEnrolledEventStream stream = eventsStub->CreateEnrolledEvent(context);
+        stream->Write(request);
+        return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
+    /// calls based on CompletionQueue event loops.
+    typedef ::sensory::AsyncReaderWriterCall<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::CreateEnrolledEventRequest,
+        ::sensory::api::v1::audio::CreateEnrollmentResponse
+    > CreateEnrolledEventAsyncStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating an audio enrollment.
+    ///
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrolledEventConfig` to create a new enrollment
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    /// @details
+    /// This call will **NOT** automatically send the
+    /// `CreateEnrollmentEventConfig` message to the server, but will buffer
+    /// it in the message for later transmission.
+    ///
+    inline CreateEnrolledEventAsyncStream* createEventEnrollment(
+        ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentEventConfig* enrollmentConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new CreateEnrolledEventAsyncStream);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
+        call->request.set_allocated_config(enrollmentConfig);
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = eventsStub->AsyncCreateEnrolledEvent(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
+
+        return call;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `CreateEnrolledEvent` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::CreateEnrolledEventRequest,
+        ::sensory::api::v1::audio::CreateEnrollmentResponse
+    > CreateEnrolledEventBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating an audio enrollment.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrolledEventConfig` to create a new enrollment config.
+    /// _Ownership of the dynamically allocated configuration is implicitly
+    /// transferred to the stream_.
+    ///
+    /// @details
+    /// This call will automatically send the `CreateEnrollmentEventConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void createEventEnrollment(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentEventConfig* enrollmentConfig
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
+        reactor->request.set_allocated_config(enrollmentConfig);
+        // Create the stream and write the initial configuration request.
+        eventsStub->async()->CreateEnrolledEvent(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
+    // ----- Validate Enrolled Event -------------------------------------------
+
+    /// A type for event validation streams.
+    typedef std::unique_ptr<
+        ::grpc::ClientReaderWriter<
+            ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
+            ::sensory::api::v1::audio::ValidateEnrolledEventResponse
+        >
+    > ValidateEnrolledEventStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// event enrollment validation.
+    ///
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateConfig The validation configuration for the
+    /// stream. Use `newValidateEnrolledEventConfig` to create a new validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the `ValidateEnrolledEventConfig`
+    /// message to the server.
+    ///
+    inline ValidateEnrolledEventStream validateEnrolledEvent(
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEnrolledEventConfig* validateConfig
+    ) const {
+        config.setupBidiClientContext(*context, tokenManager);
+        // Create the request with the pointer to the enrollment config.
+        validateConfig->set_allocated_audio(audioConfig);
+        ::sensory::api::v1::audio::ValidateEnrolledEventRequest request;
+        request.set_allocated_config(validateConfig);
+        // Create the stream and write the initial configuration request.
+        ValidateEnrolledEventStream stream = eventsStub->ValidateEnrolledEvent(context);
+        stream->Write(request);
+        return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `ValidateEnrolledEvent` calls based on CompletionQueue event loops.
+    typedef ::sensory::AsyncReaderWriterCall<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
+        ::sensory::api::v1::audio::ValidateEnrolledEventResponse
+    > ValidateEnrolledEventAsyncStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// event enrollment validation.
+    ///
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateConfig The validation configuration for the
+    /// stream. Use `newValidateEnrolledEventConfig` to create a new validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    /// @details
+    /// This call will **NOT** automatically send the `ValidateEnrolledEventConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
+    inline ValidateEnrolledEventAsyncStream* validateEnrolledEvent(
+        ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEnrolledEventConfig* validateConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new ValidateEnrolledEventAsyncStream);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+        // Create the request with the pointer to the enrollment config.
+        validateConfig->set_allocated_audio(audioConfig);
+        call->request.set_allocated_config(validateConfig);
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = eventsStub->AsyncValidateEnrolledEvent(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
+        return call;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `ValidateEnrolledEvent` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
+        ::sensory::api::v1::audio::ValidateEnrolledEventResponse
+    > ValidateEnrolledEventBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// event enrollment validation.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateConfig The validation configuration for the
+    /// stream. Use `newValidateEnrolledEventConfig` to create a new validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    ///
+    /// @details
+    /// This call will automatically send the `ValidateEnrolledEventConfig` message to
+    /// the server.
+    ///
+    template<typename Reactor>
+    inline void validateEnrolledEvent(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEnrolledEventConfig* validateConfig
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the request with the pointer to the enrollment config.
+        validateConfig->set_allocated_audio(audioConfig);
+        reactor->request.set_allocated_config(validateConfig);
+        // Create the stream and write the initial configuration request.
+        eventsStub->async()->ValidateEnrolledEvent(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
         reactor->StartRead(&reactor->response);
     }
@@ -894,110 +1192,103 @@ class AudioService {
             ::sensory::api::v1::audio::TranscribeRequest,
             ::sensory::api::v1::audio::TranscribeResponse
         >
-    > TranscribeAudioStream;
+    > TranscribeStream;
 
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
     ///
-    /// @param modelName The name of the model to use to transcribe the audio.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param transcribeConfig The audio transcription configuration for the
+    /// stream. Use `newTranscribeConfig` to create a new audio transcription
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send audio data to
     /// the server.
     ///
     /// @details
-    /// This call will automatically send the initial `TranscribeConfig`
-    /// message to the server.
+    /// This call will automatically send the `TranscribeConfig` message to the
+    /// server.
     ///
-    inline TranscribeAudioStream transcribeAudio(
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID
+    inline TranscribeStream transcribe(
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
-        // Create a context for the client for a bidirectional stream.
-        // TODO: will the stream automatically free this dynamically allocated
-        // context?
-        auto context = new ::grpc::ClientContext;
         config.setupBidiClientContext(*context, tokenManager);
-
-        // Create the transcribe audio message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        transcribeConfig->set_modelname(modelName);
-        transcribeConfig->set_userid(userID);
-
         // Create the request with the pointer to the enrollment config.
+        transcribeConfig->set_allocated_audio(audioConfig);
         ::sensory::api::v1::audio::TranscribeRequest request;
         request.set_allocated_config(transcribeConfig);
-
         // Create the stream and write the initial configuration request.
-        TranscribeAudioStream stream =
-            transcriptionsStub->Transcribe(context);
+        TranscribeStream stream = transcriptionsStub->Transcribe(context);
         stream->Write(request);
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `Transcribe`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncReaderWriterCall<
+    typedef ::sensory::AsyncReaderWriterCall<
         AudioService<SecureCredentialStore>,
         ::sensory::api::v1::audio::TranscribeRequest,
         ::sensory::api::v1::audio::TranscribeResponse
-    > TranscribeAsyncCall;
+    > TranscribeAsyncStream;
 
     /// @brief Open a bidirectional stream to the server that provides a
     /// transcription of the provided audio data.
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
-    /// @param modelName The name of the model to use to transcribe the audio.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param transcribeConfig The audio transcription configuration for the
+    /// stream. Use `newTranscribeConfig` to create a new audio transcription
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline TranscribeAsyncCall* transcribeAudio(
+    /// @details
+    /// This call will **NOT** automatically send the `ValidateEventConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
+    inline TranscribeAsyncStream* transcribe(
         ::grpc::CompletionQueue* queue,
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
-        auto call(new TranscribeAsyncCall);
+        auto call(new TranscribeAsyncStream);
         // Set the client context for a unary call.
         config.setupBidiClientContext(call->context, tokenManager);
-
-        // Create the transcribe audio message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        transcribeConfig->set_modelname(modelName);
-        transcribeConfig->set_userid(userID);
-
         // Create the request with the pointer to the enrollment config.
+        transcribeConfig->set_allocated_audio(audioConfig);
         call->request.set_allocated_config(transcribeConfig);
-
-        // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = transcriptionsStub->AsyncTranscribe(&call->context, queue, static_cast<void*>(call));
-
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = transcriptionsStub->AsyncTranscribe(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
         return call;
     }
 
@@ -1015,40 +1306,30 @@ class AudioService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
-    /// @param modelName The name of the model to use to transcribe the audio.
-    /// Use `getModels()` to obtain a list of available models.
-    /// @param sampleRate The sample rate of the audio stream.
-    /// @param langaugeCode The language code of the audio stream.
-    /// @param userID The ID of the user making the request.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param transcribeConfig The audio transcription configuration for the
+    /// stream. Use `newTranscribeConfig` to create a new audio transcription
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
     ///
     /// @details
-    /// This call will automatically send the initial `TranscribeConfig`
-    /// message to the server.
+    /// This call will automatically send the `TranscribeConfig` message to the
+    /// server.
     ///
     template<typename Reactor>
-    inline void transcribeAudio(Reactor* reactor,
-        const std::string& modelName,
-        const int32_t& sampleRate,
-        const std::string& languageCode,
-        const std::string& userID
+    inline void transcribe(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::TranscribeConfig* transcribeConfig
     ) const {
         // Setup the context of the reactor for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
         config.setupBidiClientContext(reactor->context, tokenManager);
-
-        // Create the transcribe audio message. gRPC expects a dynamically
-        // allocated message and will free the pointer when exiting the scope
-        // of the request.
-        auto transcribeConfig = new ::sensory::api::v1::audio::TranscribeConfig;
-        transcribeConfig->set_allocated_audio(
-            newAudioConfig(::sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16, sampleRate, 1, languageCode)
-        );
-        transcribeConfig->set_modelname(modelName);
-        transcribeConfig->set_userid(userID);
-
         // Create the request with the pointer to the enrollment config.
+        transcribeConfig->set_allocated_audio(audioConfig);
         reactor->request.set_allocated_config(transcribeConfig);
-
         // Create the stream and write the initial configuration request.
         transcriptionsStub->async()->Transcribe(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);

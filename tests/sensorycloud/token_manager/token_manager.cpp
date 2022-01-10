@@ -66,6 +66,8 @@ SCENARIO("a user wants to create a TokenManager based on an STL key-store") {
             "tenantID",
             "deviceID"
         );
+        config.connect();
+
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         WHEN("a TokenManager is initialized with an empty key-value store") {
@@ -110,6 +112,8 @@ SCENARIO("a user wants to generate credentials in an empty secure store") {
             "tenantID",
             "deviceID"
         );
+        config.connect();
+
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
@@ -137,6 +141,8 @@ SCENARIO("a user wants to overwrite credentials in a secure store") {
             "tenantID",
             "deviceID"
         );
+        config.connect();
+
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         keychain.emplace(TAGS.ClientID, "foo");
@@ -166,6 +172,8 @@ SCENARIO("a user wants to erase credentials in a secure store") {
             "tenantID",
             "deviceID"
         );
+        config.connect();
+
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         keychain.emplace(TAGS.ClientID, "foo");
