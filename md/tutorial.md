@@ -245,11 +245,11 @@ uint32_t sampleRate = 16000;
 // The IETF BCP 47 language tag for the input audio.
 std::string language = "en-US";
 // The name of the biometric model to enroll the user with.
-std::string modelName("wakeword-16kHz-alexa.ubm");
+std::string model("wakeword-16kHz-alexa.ubm");
 // The unique ID of the user that is being enrolled.
 std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // A human readable description of the enrollment.
-std::string enrollmentDescription("My Enrollment");
+std::string description("My Enrollment");
 // Whether to perform a liveness check while executing the enrollment.
 bool isLivenessEnabled(false);
 // The maximum duration for a text-independent enrollment
@@ -265,9 +265,9 @@ auto stream = audioService.createEnrollment(&context,
         sampleRate, 1, language
     ),
     sensory::service::audio::newCreateEnrollmentConfig(
-        modelName,
+        model,
         userID,
-        enrollmentDescription,
+        description,
         isLivenessEnabled,
         duration,
         numUtterances
@@ -495,11 +495,11 @@ To create a new enrollment for a user with a video stream:
 
 ```c++
 // The name of the biometric model to enroll the user with.
-std::string modelName("face_biometric_hektor");
+std::string model("face_biometric_hektor");
 // The unique ID of the user that is being enrolled.
 std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // A human readable description of the enrollment.
-std::string enrollmentDescription("My Enrollment");
+std::string description("My Enrollment");
 // Whether to perform a liveness check while executing the enrollment.
 bool isLivenessEnabled(false);
 // the threshold for the liveness check
@@ -507,11 +507,14 @@ auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
 // Create the gRPC stream for a certain enroll-able model for a particular user.
 auto stream = videoService.createEnrollment(
-    modelName,
-    userID,
-    enrollmentDescription,
-    isLivenessEnabled,
-    threshold);
+    sensory::service::video::newCreateEnrollmentConfig(
+        model,
+        userID,
+        description,
+        isLivenessEnabled,
+        threshold
+    )
+);
 
 // Encode your image data using JPEG compression.
 std::vector<unsigned char> buffer;
@@ -563,9 +566,12 @@ auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 // Create the gRPC stream for to authenticate an enrollment for a particular
 // user based on enrollment ID.
 auto stream = videoService.authenticate(
-    enrollmentID,
-    isLivenessEnabled,
-    threshold);
+    sensory::service::video::newAuthenticateConfig(
+        enrollmentID,
+        isLivenessEnabled,
+        threshold
+    )
+);
 
 // Encode your image data using JPEG compression.
 std::vector<unsigned char> buffer;
@@ -610,7 +616,13 @@ auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
 // Create the gRPC stream for to authenticate an enrollment for a particular
 // user based on enrollment ID.
-auto stream = videoService.validateLiveness(videoModel, userID, threshold);
+auto stream = videoService.validateLiveness(
+    sensory::service::video::newValidateRecognitionConfig(
+        videoModel,
+        userID,
+        threshold
+    )
+);
 
 // Encode your image data using JPEG compression.
 std::vector<unsigned char> buffer;
