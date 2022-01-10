@@ -59,8 +59,6 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-I", "--insecure" })
         .action("store_true")
         .help("INSECURE Disable TLS.");
-    parser.add_argument({ "-m", "--model" })
-        .help("MODEL The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
         .help("USERID The name of the user ID to query the enrollments for.");
     parser.add_argument({ "-e", "--enrollmentid" })
@@ -97,18 +95,17 @@ int main(int argc, const char** argv) {
     const auto PORT = args.get<uint16_t>("port");
     const auto TENANT = args.get<std::string>("tenant");
     const auto IS_SECURE = !args.get<bool>("insecure");
-    const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
     const auto ENROLLMENT_ID = args.get<std::string>("enrollmentid");
     const auto LIVENESS = args.get<bool>("liveness");
     sensory::api::v1::audio::ThresholdSensitivity SENSITIVITY;
-    if (args.get<std::string>("threshold") == "LOW")
+    if (args.get<std::string>("sensitivity") == "LOW")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::LOW;
-    else if (args.get<std::string>("threshold") == "MEDIUM")
+    else if (args.get<std::string>("sensitivity") == "MEDIUM")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::MEDIUM;
-    else if (args.get<std::string>("threshold") == "HIGH")
+    else if (args.get<std::string>("sensitivity") == "HIGH")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::HIGH;
-    else if (args.get<std::string>("threshold") == "HIGHEST")
+    else if (args.get<std::string>("sensitivity") == "HIGHEST")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::HIGHEST;
     sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity THRESHOLD;
     if (args.get<std::string>("threshold") == "LOW")

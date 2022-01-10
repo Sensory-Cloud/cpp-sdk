@@ -113,13 +113,13 @@ int main(int argc, const char** argv) {
     const auto ENROLLMENT_ID = args.get<std::string>("enrollmentid");
     const auto LIVENESS = args.get<bool>("liveness");
     sensory::api::v1::audio::ThresholdSensitivity SENSITIVITY;
-    if (args.get<std::string>("threshold") == "LOW")
+    if (args.get<std::string>("sensitivity") == "LOW")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::LOW;
-    else if (args.get<std::string>("threshold") == "MEDIUM")
+    else if (args.get<std::string>("sensitivity") == "MEDIUM")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::MEDIUM;
-    else if (args.get<std::string>("threshold") == "HIGH")
+    else if (args.get<std::string>("sensitivity") == "HIGH")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::HIGH;
-    else if (args.get<std::string>("threshold") == "HIGHEST")
+    else if (args.get<std::string>("sensitivity") == "HIGHEST")
         SENSITIVITY = sensory::api::v1::audio::ThresholdSensitivity::HIGHEST;
     sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity THRESHOLD;
     if (args.get<std::string>("threshold") == "LOW")
