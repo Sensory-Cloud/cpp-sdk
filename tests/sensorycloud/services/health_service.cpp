@@ -33,6 +33,7 @@ using sensory::service::HealthService;
 TEST_CASE("Should create HealthService from Config") {
     // Create the configuration that provides information about the remote host.
     Config config("hostname.com", 443, "tenant ID", "device ID");
+    config.connect();
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
     HealthService service(config);

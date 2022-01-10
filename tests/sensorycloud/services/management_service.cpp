@@ -39,6 +39,7 @@ using sensory::service::ManagementService;
 TEST_CASE("Should create ManagementService from Config and TokenManager") {
     // Create the configuration that provides information about the remote host.
     Config config("hostname.com", 443, "tenant ID", "device ID");
+    config.connect();
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
     OAuthService oauthService(config);
