@@ -76,6 +76,9 @@ int main(int argc, const char** argv) {
         .choices(std::vector<std::string>{"LOW", "HIGH"})
         .default_value("HIGH")
         .help("THRESHOLD The security threshold for the authentication.");
+    parser.add_argument({ "-g", "--group" })
+        .action("store_true")
+        .help("GROUP A flag determining whether the enrollment ID is for an enrollment group.");
     parser.add_argument({ "-L", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
@@ -112,6 +115,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW;
     else if (args.get<std::string>("threshold") == "HIGH")
         THRESHOLD = sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_HIGH;
+    const auto GROUP = args.get<bool>("group");
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
@@ -231,7 +235,7 @@ int main(int argc, const char** argv) {
             SAMPLE_RATE, 1, LANGUAGE
         ),
         sensory::service::audio::newAuthenticateConfig(
-            ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD
+            ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD, GROUP
         )
     );
 

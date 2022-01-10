@@ -205,6 +205,9 @@ int main(int argc, const char** argv) {
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
         .help("THRESHOLD The security threshold for conducting the liveness check.");
+    parser.add_argument({ "-g", "--group" })
+        .action("store_true")
+        .help("GROUP A flag determining whether the enrollment ID is for an enrollment group.");
     parser.add_argument({ "-D", "--device" })
         .default_value(0)
         .help("DEVICE The ID of the OpenCV device to use.");
@@ -229,6 +232,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = sensory::api::v1::video::RecognitionThreshold::HIGH;
     else if (args.get<std::string>("threshold") == "HIGHEST")
         THRESHOLD = sensory::api::v1::video::RecognitionThreshold::HIGHEST;
+    const auto GROUP = args.get<bool>("group");
     const auto DEVICE = args.get<int>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
@@ -340,7 +344,7 @@ int main(int argc, const char** argv) {
     // Create the stream.
     OpenCVReactor reactor(LIVENESS, VERBOSE);
     videoService.authenticate(&reactor,
-        sensory::service::video::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD));
+        sensory::service::video::newAuthenticateConfig(ENROLLMENT_ID, LIVENESS, THRESHOLD, GROUP));
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd
