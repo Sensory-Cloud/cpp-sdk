@@ -879,6 +879,311 @@ class AudioService {
         reactor->StartRead(&reactor->response);
     }
 
+    // ----- Create Enrolled Event ---------------------------------------------
+
+    /// A type for biometric enrollment streams.
+    typedef std::unique_ptr<
+        ::grpc::ClientReaderWriter<
+            ::sensory::api::v1::audio::CreateEnrolledEventRequest,
+            ::sensory::api::v1::audio::CreateEnrollmentResponse
+        >
+    > CreateEnrolledEventStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating an audio enrollment.
+    ///
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrolledEventConfig` to create a new enrollment
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the `CreateEnrollmentEventConfig`
+    /// message to the server.
+    ///
+    inline CreateEnrolledEventStream createEventEnrollment(
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentEventConfig* enrollmentConfig
+    ) const {
+        config.setupBidiClientContext(*context, tokenManager);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
+        ::sensory::api::v1::audio::CreateEnrolledEventRequest request;
+        request.set_allocated_config(enrollmentConfig);
+        // Create the stream and write the initial configuration request.
+        CreateEnrolledEventStream stream = eventsStub->CreateEnrolledEvent(context);
+        stream->Write(request);
+        return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
+    /// calls based on CompletionQueue event loops.
+    typedef ::sensory::AsyncReaderWriterCall<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::CreateEnrolledEventRequest,
+        ::sensory::api::v1::audio::CreateEnrollmentResponse
+    > CreateEnrolledEventAsyncStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating an audio enrollment.
+    ///
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrolledEventConfig` to create a new enrollment
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    /// @details
+    /// This call will **NOT** automatically send the
+    /// `CreateEnrollmentEventConfig` message to the server, but will buffer
+    /// it in the message for later transmission.
+    ///
+    inline CreateEnrolledEventAsyncStream* createEventEnrollment(
+        ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentEventConfig* enrollmentConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new CreateEnrolledEventAsyncStream);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
+        call->request.set_allocated_config(enrollmentConfig);
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = eventsStub->AsyncCreateEnrolledEvent(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
+
+        return call;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `CreateEnrolledEvent` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::CreateEnrolledEventRequest,
+        ::sensory::api::v1::audio::CreateEnrollmentResponse
+    > CreateEnrolledEventBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// creating an audio enrollment.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param enrollmentConfig The enrollment configuration for the stream.
+    /// Use `newCreateEnrolledEventConfig` to create a new enrollment config.
+    /// _Ownership of the dynamically allocated configuration is implicitly
+    /// transferred to the stream_.
+    ///
+    /// @details
+    /// This call will automatically send the `CreateEnrollmentEventConfig`
+    /// message to the server.
+    ///
+    template<typename Reactor>
+    inline void createEventEnrollment(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::CreateEnrollmentEventConfig* enrollmentConfig
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the request with the pointer to the config.
+        enrollmentConfig->set_allocated_audio(audioConfig);
+        reactor->request.set_allocated_config(enrollmentConfig);
+        // Create the stream and write the initial configuration request.
+        eventsStub->async()->CreateEnrolledEvent(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
+    // ----- Validate Enrolled Event -------------------------------------------
+
+    /// A type for event validation streams.
+    typedef std::unique_ptr<
+        ::grpc::ClientReaderWriter<
+            ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
+            ::sensory::api::v1::audio::ValidateEnrolledEventResponse
+        >
+    > ValidateEnrolledEventStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// event enrollment validation.
+    ///
+    /// @param context the gRPC context for the stream
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateConfig The validation configuration for the
+    /// stream. Use `newValidateEnrolledEventConfig` to create a new validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @returns A bidirectional stream that can be used to send audio data to
+    /// the server.
+    ///
+    /// @details
+    /// This call will automatically send the `ValidateEnrolledEventConfig`
+    /// message to the server.
+    ///
+    inline ValidateEnrolledEventStream validateEnrolledEvent(
+        ::grpc::ClientContext* context,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEnrolledEventConfig* validateConfig
+    ) const {
+        config.setupBidiClientContext(*context, tokenManager);
+        // Create the request with the pointer to the enrollment config.
+        validateConfig->set_allocated_audio(audioConfig);
+        ::sensory::api::v1::audio::ValidateEnrolledEventRequest request;
+        request.set_allocated_config(validateConfig);
+        // Create the stream and write the initial configuration request.
+        ValidateEnrolledEventStream stream = eventsStub->ValidateEnrolledEvent(context);
+        stream->Write(request);
+        return stream;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `ValidateEnrolledEvent` calls based on CompletionQueue event loops.
+    typedef ::sensory::AsyncReaderWriterCall<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
+        ::sensory::api::v1::audio::ValidateEnrolledEventResponse
+    > ValidateEnrolledEventAsyncStream;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// event enrollment validation.
+    ///
+    /// @param queue The `::grpc::CompletionQueue` instance for handling
+    /// asynchronous callbacks.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateConfig The validation configuration for the
+    /// stream. Use `newValidateEnrolledEventConfig` to create a new validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// use the pointer as the tag.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    /// @details
+    /// This call will **NOT** automatically send the `ValidateEnrolledEventConfig`
+    /// message to the server, but will buffer it in the message for later
+    /// transmission.
+    ///
+    inline ValidateEnrolledEventAsyncStream* validateEnrolledEvent(
+        ::grpc::CompletionQueue* queue,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEnrolledEventConfig* validateConfig,
+        void* initTag = nullptr,
+        void* finishTag = nullptr
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new ValidateEnrolledEventAsyncStream);
+        // Set the client context for a unary call.
+        config.setupBidiClientContext(call->context, tokenManager);
+        // Create the request with the pointer to the enrollment config.
+        validateConfig->set_allocated_audio(audioConfig);
+        call->request.set_allocated_config(validateConfig);
+        // Start the asynchronous RPC with the call's context and queue. If the
+        // initial tag is a nullptr, assign it to the call pointer.
+        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
+        call->rpc = eventsStub->AsyncValidateEnrolledEvent(&call->context, queue, initTag);
+        // Finish the call to set the output status. If the finish tag is a
+        // nullptr, assign it to the call pointer.
+        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
+        call->rpc->Finish(&call->status, finishTag);
+        return call;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous
+    /// `ValidateEnrolledEvent` calls.
+    typedef ::sensory::AwaitableBidiReactor<
+        AudioService<SecureCredentialStore>,
+        ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
+        ::sensory::api::v1::audio::ValidateEnrolledEventResponse
+    > ValidateEnrolledEventBidiReactor;
+
+    /// @brief Open a bidirectional stream to the server for the purpose of
+    /// event enrollment validation.
+    ///
+    /// @tparam Reactor The type of the reactor for handling callbacks.
+    /// @param reactor The reactor for receiving callbacks and managing the
+    /// context of the stream.
+    /// @param audioConfig The audio configuration that provides information
+    /// about the input audio streams. Use `newAudioConfig` to generate the
+    /// audio config. _Ownership of the dynamically allocated configuration
+    /// is implicitly transferred to the stream_.
+    /// @param validateConfig The validation configuration for the
+    /// stream. Use `newValidateEnrolledEventConfig` to create a new validation
+    /// config. _Ownership of the dynamically allocated configuration is
+    /// implicitly transferred to the stream_.
+    ///
+    /// @details
+    /// This call will automatically send the `ValidateEnrolledEventConfig` message to
+    /// the server.
+    ///
+    template<typename Reactor>
+    inline void validateEnrolledEvent(Reactor* reactor,
+        ::sensory::api::v1::audio::AudioConfig* audioConfig,
+        ::sensory::api::v1::audio::ValidateEnrolledEventConfig* validateConfig
+    ) const {
+        // Setup the context of the reactor for a bidirectional stream. This
+        // will add the Bearer token to the header of the RPC.
+        config.setupBidiClientContext(reactor->context, tokenManager);
+        // Create the request with the pointer to the enrollment config.
+        validateConfig->set_allocated_audio(audioConfig);
+        reactor->request.set_allocated_config(validateConfig);
+        // Create the stream and write the initial configuration request.
+        eventsStub->async()->ValidateEnrolledEvent(&reactor->context, reactor);
+        reactor->StartWrite(&reactor->request);
+        reactor->StartRead(&reactor->response);
+    }
+
     // ----- Transcribe Audio --------------------------------------------------
 
     /// a type for biometric transcription streams
