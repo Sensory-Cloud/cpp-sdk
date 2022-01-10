@@ -20,7 +20,10 @@ block the calling thread; the callback will be executed in the background upon
 receipt of the response from the server.
 
 ```c++
-healthService.asyncGetHealth([](sensory::service::HealthService::GetHealthCallData* call) {
+// Create a health service for performing server health queries.
+sensory::service::HealthService healthService(config);
+// Start the health query asynchronously using lambda function.
+healthService.getHealth([](sensory::service::HealthService::GetHealthCallData* call) {
     if (!call->getStatus().ok()) {  // The call failed, handle the error here.
         auto errorCode = call->getStatus().error_code();
         auto errorMessage = call->getStatus().error_message();
@@ -39,7 +42,7 @@ very simple and is provided as part of the SDK. The below example shows how to
 create an `OAuthService` and register a device for the first time.
 
 ```c++
-if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
+if (!tokenManager.hasToken()) {  // The device is not registered.
     // Generate a new `clientID` and `clientSecret` for this device and store
     // them securely in the secure credential store.
     auto credentials = tokenManager.generateCredentials();
@@ -48,11 +51,8 @@ if (!tokenManager.hasSavedCredentials()) {  // The device is not registered.
     // Use a shared secret, i.e., pass-phrase to authenticate the device.
     std::string insecureSharedSecret("password");
     // Register this device with the remote host
-    oauthService.asyncRegisterDevice(
-        deviceName,
-        insecureSharedSecret,
-        credentials.id,
-        credentials.secret,
+    oauthService.registerDevice(
+        deviceName, insecureSharedSecret, credentials.id, credentials.secret,
         [](sensory::service::OAuthService::RegisterDeviceCallData* call) {
             if (!call->getStatus().ok()) {  // The call failed, handle the error here.
                 auto errorCode = call->getStatus().error_code();
@@ -78,7 +78,7 @@ that are configured for your instance of Sensory Cloud. In order to determine
 which audio models are accessible to you, you can execute the below code.
 
 ```c++
-audioService.asyncGetModels([](sensory::service::AudioService<SecureCredentialStore>::GetModelsCallData* call) {
+audioService.getModels([](sensory::service::AudioService<SecureCredentialStore>::GetModelsCallData* call) {
     if (!call->getStatus().ok()) {  // The call failed, handle the error here.
         auto errorCode = call->getStatus().error_code();
         auto errorMessage = call->getStatus().error_message();
@@ -136,7 +136,7 @@ which video models are accessible to you, you can execute the below cod based
 on a callback pattern.
 
 ```c++
-videoService.asyncGetModels([](sensory::service::VideoService<SecureCredentialStore>::GetModelsCallData* call) {
+videoService.getModels([](sensory::service::VideoService<SecureCredentialStore>::GetModelsCallData* call) {
     if (!call->getStatus().ok()) {  // The call failed, handle the error here.
         auto errorCode = call->getStatus().error_code();
         auto errorMessage = call->getStatus().error_message();
@@ -263,7 +263,7 @@ class CreateEnrollmentReactor :
 // The name of the biometric model to enroll the user with.
 std::string modelName("face_biometric_hektor");
 // The unique ID of the user that is being enrolled.
-std::string userId("60db6966-068f-4f6c-9a51-d2a3308db09b");
+std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // A human readable description of the enrollment.
 std::string enrollmentDescription("My Enrollment");
 // Whether to perform a liveness check while executing the enrollment.
@@ -271,9 +271,9 @@ bool isLivenessEnabled(false);
 
 // Create the stream with the reactor defined above.
 CreateEnrollmentReactor reactor;
-videoService.asyncCreateEnrollment(&reactor,
+videoService.createEnrollment(&reactor,
     modelName,
-    userId,
+    userID,
     enrollmentDescription,
     isLivenessEnabled
 );
@@ -399,7 +399,7 @@ auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
 // Create the stream.
 VideoAuthenticationReactor reactor;
-videoService.asyncAuthenticate(&reactor, enrollmentID, isLivenessEnabled, threshold);
+videoService.authenticate(&reactor, enrollmentID, isLivenessEnabled, threshold);
 // Wait for the stream to conclude. This is necessary to check the final
 // status of the call and allow any dynamically allocated data to be cleaned
 // up. If the stream is destroyed before the final `onDone` callback, odd
@@ -538,13 +538,13 @@ class VideoLivenessReactor :
 // The particular model to use for liveness detection.
 std::string videoModel("face_recognition_mathilde");
 // The unique user ID of the user being validated for liveness
-std::string userId("60db6966-068f-4f6c-9a51-d2a3308db09b");
+std::string userID("60db6966-068f-4f6c-9a51-d2a3308db09b");
 // The security threshold for the liveness check.
 auto threshold = sensory::api::v1::video::RecognitionThreshold::LOW;
 
 // Create the stream.
 VideoLivenessReactor reactor;
-videoService.asyncValidateLiveness(&reactor, videoModel, userId, threshold);
+videoService.validateLiveness(&reactor, videoModel, userID, threshold);
 // Wait for the stream to conclude. This is necessary to check the final
 // status of the call and allow any dynamically allocated data to be cleaned
 // up. If the stream is destroyed before the final `onDone` callback, odd
@@ -571,7 +571,7 @@ callback interface for the management service.
 // The name of the user to fetch enrollments for.
 std::string userID = "user";
 
-mgmtService.asyncGetEnrollments(userID,
+mgmtService.getEnrollments(userID,
     [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::GetEnrollmentsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed, handle the error here.
             auto errorCode = call->getStatus().error_code();
@@ -617,7 +617,7 @@ mgmtService.asyncGetEnrollments(userID,
 // The UUID of the enrollment to delete.
 std::string enrollmentID = "45ad3215-1d4c-42aa-aec4-2724e9ce1d99";
 
-mgmtService.asyncDeleteEnrollment(enrollmentID,
+mgmtService.deleteEnrollment(enrollmentID,
     [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::DeleteEnrollmentCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed, handle the error here.
             auto errorCode = call->getStatus().error_code();
@@ -633,7 +633,7 @@ mgmtService.asyncDeleteEnrollment(enrollmentID,
 // The name of the user to fetch enrollment groups for.
 std::string userID = "user";
 
-mgmtService.asyncGetEnrollmentGroups(userID,
+mgmtService.getEnrollmentGroups(userID,
     [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::GetEnrollmentGroupsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed, handle the error here.
             auto errorCode = call->getStatus().error_code();
@@ -683,7 +683,7 @@ std::string description = "A demo face biometric group";
 // The name of the model used for the enrollment group.
 std::string modelName = "face_biometric_hektor";
 
-mgmtService.asyncCreateEnrollmentGroup(userID, "", groupName, description, modelName,
+mgmtService.createEnrollmentGroup(userID, "", groupName, description, modelName,
     [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::CreateEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed, handle the error here.
             auto errorCode = call->getStatus().error_code();
@@ -705,7 +705,7 @@ std::vector<std::string> enrollments{
     "59908f63-eb5e-4626-bb58-041ebb6da593"
 };
 
-mgmtService.asyncAppendEnrollmentGroup(groupID, enrollments,
+mgmtService.appendEnrollmentGroup(groupID, enrollments,
     [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::AppendEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed, handle the error here.
             auto errorCode = call->getStatus().error_code();
@@ -721,7 +721,7 @@ mgmtService.asyncAppendEnrollmentGroup(groupID, enrollments,
 // The UUID of the group to delete.
 std::string groupID = "13481e19-5853-47d0-ba61-6819914405bb";
 
-mgmtService.asyncDeleteEnrollmentGroup(groupID,
+mgmtService.deleteEnrollmentGroup(groupID,
     [](sensory::service::ManagementService<sensory::token_manager::SecureCredentialStore>::DeleteEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed, handle the error here.
             auto errorCode = call->getStatus().error_code();
