@@ -42,7 +42,7 @@ ENV TZ=US/Mountain
 RUN yum -y update
 RUN yum -y upgrade
 # Install dependencies for the SDK.
-RUN yum install -y autoconf libtool pkg-config gcc gcc-c++ git openssl-devel cmake
+RUN yum install -y autoconf libtool pkg-config gcc gcc-c++ git cmake
 
 # Install the latest version of CMake. CMake does not officially support RHEL
 # 8 anymore, so CMake must be compiled from source.
@@ -50,7 +50,7 @@ RUN yum install -y autoconf libtool pkg-config gcc gcc-c++ git openssl-devel cma
 # RUN yum install -y wget
 # RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz
 # RUN tar -xvf cmake-3.22.1.tar.gz
-# RUN cd /cmake-3.22.1 && ./bootstrap && make && make install
+# RUN cd /cmake-3.22.1 && ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF && make && make install
 
 # ----------------------------------------------------------------------------
 # MARK: Protobuf and gRPC
@@ -76,5 +76,3 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
-# Remove any generated protobuf and gRPC code.
-RUN rm -rf /cpp-sdk/include/sensorycloud/generated/*

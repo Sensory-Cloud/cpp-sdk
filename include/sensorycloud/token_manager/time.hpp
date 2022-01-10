@@ -28,8 +28,8 @@
 
 #include <chrono>
 #include <ctime>
+#include <utility>
 #include <string>
-#include <sstream>
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -45,10 +45,13 @@ namespace token_manager {
 inline std::string timepoint_to_timestamp(const std::chrono::system_clock::time_point& time_point) {
     // Convert the time point to a time_t object
     const auto tt = std::chrono::system_clock::to_time_t(time_point);
-    // Stream the time contents (GMT format) into a string stream
-    std::ostringstream stream;
-    stream << std::put_time(gmtime(&tt), "%FT%TZ");
-    return stream.str();
+    // Format the time point into a character buffer (as a string).
+    std::string output("0000-00-00T00:00:00Z");
+    // use a local `std::tm` buffer and the accompanying `gmtime_r` function
+    // instead of the static memory used by `gmtime`. This is for thread safety.
+    std::tm tm;
+    strftime(&output[0], output.length(), "%Y-%m-%dT%H:%M:%SZ", gmtime_r(&tt, &tm));
+    return std::move(output);
 }
 
 /// @brief Convert a UTC ISO8601 timestamp to a time point.
@@ -57,11 +60,9 @@ inline std::string timepoint_to_timestamp(const std::chrono::system_clock::time_
 /// @returns The input timestamp converted to a native time point.
 ///
 inline std::chrono::system_clock::time_point timestamp_to_timepoint(const std::string& timestamp) {
-    // Create an input stream from the time string
-    std::istringstream stream(timestamp);
     // Stream the contents of the timestamp string into the tm structure
     std::tm tm = {};
-    stream >> std::get_time(&tm, "%FT%TZ");
+    strptime(timestamp.c_str(), "%Y-%m-%dT%H:%M:%SZ", &tm);
     // Convert tm -> time_t in GMT format -> time_point
     return std::chrono::system_clock::from_time_t(timegm(&tm));
 }

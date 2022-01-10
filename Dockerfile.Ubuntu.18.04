@@ -41,10 +41,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 # ----------------------------------------------------------------------------
 
 # Update Ubuntu software repositories.
-RUN apt-get update
+RUN apt-get --fix-missing update
 RUN apt-get -y upgrade
 # Install dependencies for the SDK.
-RUN apt-get install -y build-essential autoconf libtool pkg-config git libssl-dev
+RUN apt-get install -y build-essential autoconf libtool pkg-config git
 
 # Install the latest version of CMake. This is based on the official CMake
 # documentation for Ubuntu 18.04 here: https://apt.kitware.com/
@@ -78,5 +78,3 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
-# Remove any generated protobuf and gRPC code.
-RUN rm -rf /cpp-sdk/include/sensorycloud/generated/*

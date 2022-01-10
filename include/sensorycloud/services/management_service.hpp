@@ -33,8 +33,8 @@
 #include "sensorycloud/generated/v1/management/enrollment.pb.h"
 #include "sensorycloud/generated/v1/management/enrollment.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/call_data.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/call_data.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -109,7 +109,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentsResponse
@@ -191,7 +191,7 @@ class ManagementService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -223,7 +223,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `DeleteEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentRequest,
         ::sensory::api::v1::management::EnrollmentResponse
@@ -308,7 +308,7 @@ class ManagementService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -338,7 +338,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse
@@ -422,7 +422,7 @@ class ManagementService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -474,7 +474,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
@@ -592,7 +592,7 @@ class ManagementService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -626,7 +626,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
@@ -718,7 +718,7 @@ class ManagementService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }
@@ -747,7 +747,7 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef AsyncResponseReaderCall<
+    typedef ::sensory::AsyncResponseReaderCall<
         ManagementService<SecureCredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
@@ -829,7 +829,7 @@ class ManagementService {
                 // ownership is not being transferred.
                 callback(call.get());
                 // Mark the call as done for any awaiting process.
-                call->isDone = true;
+                call->setIsDone();
             });
         return call;
     }

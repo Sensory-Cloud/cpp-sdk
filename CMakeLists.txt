@@ -28,6 +28,7 @@ include(FetchContent)
 
 # Setup the optional arguments for augmenting the compilation of the library.
 option(SENSORY_CLOUD_BUILD_TESTS "Build test cases" OFF)
+option(SENSORY_CLOUD_GENERATE_PROTO "Generate proto header and source files" OFF)
 option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore" OFF)
 
 # --- Proto Files ------------------------------------------------------------
@@ -35,37 +36,44 @@ option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore"
 # Iterate over the proto files to compile them with protoc. The proto files are
 # expected to be in the ./proto directory. Generated code (headers and source)
 # will go to the ./include/sensorycloud/generated directory.
-file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS proto/*.proto)
-foreach(PROTO IN ITEMS ${PROTOS})
-    # Create the protobuf header file
-    string(REPLACE ".proto" ".pb.h" PROTO_HDR ${PROTO})
-    string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_HDR ${PROTO_HDR})
-    list(APPEND PROTO_HDRS ${PROTO_HDR})
-    # Create the protobuf definition file
-    string(REPLACE ".proto" ".pb.cc" PROTO_SRC ${PROTO})
-    string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_SRC ${PROTO_SRC})
-    list(APPEND PROTO_SRCS ${PROTO_SRC})
-    # Create the gRPC header file
-    string(REPLACE ".proto" ".grpc.pb.h" GRPC_HDR ${PROTO})
-    string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_HDR ${GRPC_HDR})
-    list(APPEND GRPC_HDRS ${GRPC_HDR})
-    # Create the gRPC definition file
-    string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
-    string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_SRC ${GRPC_SRC})
-    list(APPEND GRPC_SRCS ${GRPC_SRC})
-    # Create the command to generate the protobuf and gRPC code
-    add_custom_command(
-        OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
-        COMMAND ${_PROTOBUF_PROTOC}
-        ARGS --grpc_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
-            --cpp_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
-            --proto_path="${PROJECT_SOURCE_DIR}/proto"
-            --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-            -I="${protobuf_SOURCE_DIR}/../src"
-            "${PROTO}"
-        DEPENDS "${PROTO}"
-    )
-endforeach()
+if(SENSORY_CLOUD_GENERATE_PROTO)
+    file(GLOB_RECURSE PROTOS CONFIGURE_DEPENDS proto/*.proto)
+    foreach(PROTO IN ITEMS ${PROTOS})
+        # Create the protobuf header file
+        string(REPLACE ".proto" ".pb.h" PROTO_HDR ${PROTO})
+        string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_HDR ${PROTO_HDR})
+        list(APPEND PROTO_HDRS ${PROTO_HDR})
+        # Create the protobuf definition file
+        string(REPLACE ".proto" ".pb.cc" PROTO_SRC ${PROTO})
+        string(REPLACE "proto/" "include/sensorycloud/generated/" PROTO_SRC ${PROTO_SRC})
+        list(APPEND PROTO_SRCS ${PROTO_SRC})
+        # Create the gRPC header file
+        string(REPLACE ".proto" ".grpc.pb.h" GRPC_HDR ${PROTO})
+        string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_HDR ${GRPC_HDR})
+        list(APPEND GRPC_HDRS ${GRPC_HDR})
+        # Create the gRPC definition file
+        string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
+        string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_SRC ${GRPC_SRC})
+        list(APPEND GRPC_SRCS ${GRPC_SRC})
+        # Create the command to generate the protobuf and gRPC code
+        add_custom_command(
+            OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
+            COMMAND ${_PROTOBUF_PROTOC}
+            ARGS --grpc_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
+                --cpp_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
+                --proto_path="${PROJECT_SOURCE_DIR}/proto"
+                --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+                -I="${protobuf_SOURCE_DIR}/../src"
+                "${PROTO}"
+            DEPENDS "${PROTO}"
+        )
+    endforeach()
+else()
+    file(GLOB_RECURSE PROTO_HDRS CONFIGURE_DEPENDS include/*.pb.h)
+    file(GLOB_RECURSE PROTO_SRCS CONFIGURE_DEPENDS include/*.pb.cc)
+    file(GLOB_RECURSE GRPC_HDRS CONFIGURE_DEPENDS include/*.grpc.h)
+    file(GLOB_RECURSE GRPC_SRCS CONFIGURE_DEPENDS include/*.grpc.cc)
+endif()  # SENSORY_CLOUD_GENERATE_PROTO
 
 # --- Library ----------------------------------------------------------------
 
