@@ -49,7 +49,8 @@ using sensory::service::ManagementService;
 int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialStore>& tokenManager) {
     if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.generateCredentials();
+        const auto credentials = tokenManager.hasSavedCredentials() ?
+            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
 
         std::cout << "Registering device with server..." << std::endl;
 

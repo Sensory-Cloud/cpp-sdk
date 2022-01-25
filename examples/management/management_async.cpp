@@ -50,7 +50,8 @@ int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialSt
     int errCode = 0;
     if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.generateCredentials();
+        const auto credentials = tokenManager.hasSavedCredentials() ?
+            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
 
         std::cout << "Registering device with server..." << std::endl;
 
