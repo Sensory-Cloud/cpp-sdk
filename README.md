@@ -121,7 +121,7 @@ to your `CMakeLists.txt`.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
     GIT_REPOSITORY https://github.com/Sensory-Cloud/cpp-sdk.git
-    GIT_TAG        v0.6.0
+    GIT_TAG        v0.6.1
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```
