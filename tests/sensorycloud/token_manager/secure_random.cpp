@@ -30,11 +30,16 @@
 // the number of repetitions for sampling UUIDs during testing
 #define REPETITIONS 100
 
+/// The expected tokens from the secure random strings.
+const std::string TOKENS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
 TEST_CASE("secure_random strings should have 8 characters") {
     for (int i = 0; i < REPETITIONS; ++i) {
         SECTION(std::string("Sample ") + std::to_string(i)) {
             const auto uuid = sensory::token_manager::secure_random<8>();
             REQUIRE(8 == uuid.length());
+            for (std::size_t i = 0; i < 8; i++)
+                REQUIRE(TOKENS.find(uuid[i]) != std::string::npos);
         }
     }
 }
@@ -44,6 +49,8 @@ TEST_CASE("secure_random strings should have 16 characters") {
         SECTION(std::string("Sample ") + std::to_string(i)) {
             const auto uuid = sensory::token_manager::secure_random<16>();
             REQUIRE(16 == uuid.length());
+            for (std::size_t i = 0; i < 16; i++)
+                REQUIRE(TOKENS.find(uuid[i]) != std::string::npos);
         }
     }
 }
@@ -53,6 +60,8 @@ TEST_CASE("secure_random strings should have 32 characters") {
         SECTION(std::string("Sample ") + std::to_string(i)) {
             const auto uuid = sensory::token_manager::secure_random<32>();
             REQUIRE(32 == uuid.length());
+            for (std::size_t i = 0; i < 32; i++)
+                REQUIRE(TOKENS.find(uuid[i]) != std::string::npos);
         }
     }
 }
