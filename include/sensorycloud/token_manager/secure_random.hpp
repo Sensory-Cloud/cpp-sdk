@@ -44,12 +44,11 @@ namespace token_manager {
 ///
 template<std::size_t length>
 std::string secure_random() {
-    static constexpr uint8_t NUM_TOKENS = 10 + 26 + 26 - 1;
     // Initialize an empty string of the specified length.
     std::string uuid(length, ' ');
     // Iterate over the characters in the string to generate random characters.
     for (unsigned i = 0; i < length; i++)
-        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[std::min(arc4_getbyte(), NUM_TOKENS)];
+        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[arc4_getbyte() % (10 + 26 + 26)];
     // Move the output string to the caller's container.
     return std::move(uuid);
 }
