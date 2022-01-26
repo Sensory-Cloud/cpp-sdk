@@ -39,30 +39,19 @@ namespace token_manager {
 
 /// @brief Generate a cryptographic-ally secure random number.
 ///
-/// @tparam length The length of the hex string to generate.
-/// @returns A cryptographic-ally secure random hex string.
+/// @tparam length The length of the alpha-numeric string to generate.
+/// @returns A cryptographic-ally secure random alpha-numeric string.
 ///
 template<std::size_t length>
 std::string secure_random() {
-    // This function operates on nibbles and data must be byte aligned. This
-    // means the requested length must be divisible by 2. Perform this assertion
-    // statically since the value will be known at compile time.
-    static_assert(!(length % 2), "length must be a multiple of 2");
-    // Generate a buffer of bytes half the size of the requested string.
-    uint8_t data[length / 2];
-    // The old implementation of this function utilized the <openssl/rand.h>
-    // header to use the RAND_bytes function defined in that header.
-    // RAND_bytes((unsigned char*) data, sizeof(data));
-    // The current portable implementation incorporates arc4random from BSD.
-    arc4random_buf((unsigned char*) data, sizeof(data));
-    // Create a stream to write the string data to
-    std::stringstream stream;
-    stream << std::hex;
-    // Iterate over the random numbers and convert them to hex characters
-    for (int i = 0; i < length / 2; i++)
-        stream << std::setw(2) << std::setfill('0') << data[i];
-    // Flush the stream to a std::string object
-    return stream.str();
+    static constexpr uint8_t NUM_TOKENS = 10 + 26 + 26 - 1;
+    // Initialize an empty string of the specified length.
+    std::string uuid(length, ' ');
+    // Iterate over the characters in the string to generate random characters.
+    for (unsigned i = 0; i < length; i++)
+        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[std::min(arc4_getbyte(), NUM_TOKENS)];
+    // Move the output string to the caller's container.
+    return std::move(uuid);
 }
 
 }  // namespace token_manager
