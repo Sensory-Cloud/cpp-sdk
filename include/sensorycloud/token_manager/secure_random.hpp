@@ -47,7 +47,7 @@ std::string secure_random() {
     // Initialize an empty string of the specified length.
     std::string uuid(length, ' ');
     // Iterate over the characters in the string to generate random characters.
-    for (unsigned i = 0; i < length; i++)
+    for (std::size_t i = 0; i < length; i++)
         uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[arc4_getbyte() % (10 + 26 + 26)];
     // Move the output string to the caller's container.
     return std::move(uuid);
