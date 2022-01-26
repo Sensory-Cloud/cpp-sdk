@@ -55,8 +55,6 @@ int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialSt
 
         std::cout << "Registering device with server..." << std::endl;
 
-        std::cout << "Registering device with server..." << std::endl;
-
         // Query the friendly device name
         std::string name = "";
         std::cout << "Device Name: ";
