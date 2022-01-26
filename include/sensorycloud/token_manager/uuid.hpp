@@ -73,7 +73,7 @@ std::string uuid_v4() {
     std::mt19937_64 generator(std::random_device("/dev/random")());
     // Create the UUID from randomly generated digits
     std::string uuid(36, '-');
-    for (unsigned i = 0; i < uuid.size(); i++) {
+    for (unsigned i = 0; i < 36; i++) {
         if (i == 8 || i == 13 || i == 18 || i == 23)  // hyphenated position
             continue;
         else if (i == 14)  // character 14 is always A
