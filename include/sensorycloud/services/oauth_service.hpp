@@ -407,14 +407,14 @@ class OAuthService {
         return call;
     }
 
+    // ----- Who Am I (Device) -------------------------------------------------
+
     // TODO: What is the best way to support this functionality? Currently the
     // token manager relies on an instance of OAuth service on construction, and
     // thus imposes a circular dependency for GetWhoAmI that requires the token
     // manager to look up credentials. The token manager itself could be a good
     // place for these functions to live potentially since they are related to
     // information that should be in the token manager locally anyway.
-
-    // ----- Who Am I (Device) -------------------------------------------------
 
     // /// @brief Request to obtain information based on the authorization token.
     // ///
@@ -629,14 +629,22 @@ class OAuthService {
         return call;
     }
 
+    // ----- Sign Token --------------------------------------------------------
+
+    // TODO: Implement sign token endpoint.
+
+    // ----- Get Public Key ----------------------------------------------------
+
+    // TODO: Implement get public key endpoint.
+
+    // ----- Who Am I (Oauth) --------------------------------------------------
+
     // TODO: What is the best way to support this functionality? Currently the
     // token manager relies on an instance of OAuth service on construction, and
     // thus imposes a circular dependency for GetWhoAmI that requires the token
     // manager to look up credentials. The token manager itself could be a good
     // place for these functions to live potentially since they are related to
     // information that should be in the token manager locally anyway.
-
-    // ----- Who Am I (Oauth) --------------------------------------------------
 
     // /// @brief Request to obtain information based on the authorization token.
     // ///
