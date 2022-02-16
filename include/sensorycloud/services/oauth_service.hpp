@@ -255,6 +255,158 @@ class OAuthService {
         return call;
     }
 
+    // ----- Renew Credential --------------------------------------------------
+
+    /// @brief Renew a device's credential with the Sensory Cloud service.
+    ///
+    /// @param response The device response to store the result of the RPC into.
+    /// @param credential A credential string to authenticate that this device
+    /// is allowed to renew its credentials.
+    /// @param clientID The client ID associated with the device.
+    /// @returns The status of the synchronous gRPC call.
+    ///
+    /// @details
+    /// The credential string authenticates that this device is allowed to
+    /// renew. Depending on the server configuration the credential string
+    /// may be one of multiple values:
+    /// -   An empty string if no authentication is configured on the server,
+    /// -   a shared secret (password), or
+    /// -   a signed JWT.
+    ///
+    ::grpc::Status renewCredential(
+        ::sensory::api::v1::management::DeviceResponse* response,
+        const std::string& credential,
+        const std::string& clientID
+    ) {
+        // Create a context for the client. Most requests require the existence
+        // of a authorization Bearer token, but this request does not.
+        ::grpc::ClientContext context;
+        // Create the request from the parameters.
+        ::sensory::api::v1::management::RenewDeviceCredentialRequest request;
+        request.set_deviceid(config.getDeviceID());
+        request.set_tenantid(config.getTenantID());
+        request.set_credential(credential);
+        request.set_clientid(clientID);
+        // Execute the RPC synchronously and return the status
+        return deviceStub->RenewDeviceCredential(&context, request, response);
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `GetToken` calls
+    /// based on CompletionQueue event loops.
+    typedef ::sensory::AsyncResponseReaderCall<
+        OAuthService,
+        ::sensory::api::v1::management::RenewDeviceCredentialRequest,
+        ::sensory::api::v1::management::DeviceResponse
+    > RenewCredentialAsyncCall;
+
+    /// @brief Renew a device's credential with the Sensory Cloud service.
+    ///
+    /// @param queue The completion queue handling the event-loop processing.
+    /// @param credential A credential string to authenticate that this device
+    /// is allowed to renew its credentials.
+    /// @param clientID The client ID associated with the device.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the call data associated with this asynchronous
+    /// call. This pointer can be used to identify the call in the event-loop
+    /// as the `tag` of the event. Ownership of the pointer passes to the
+    /// caller and the caller should `delete` the pointer after it appears in
+    /// a completion queue loop.
+    ///
+    /// @details
+    /// The credential string authenticates that this device is allowed to
+    /// renew. Depending on the server configuration the credential string
+    /// may be one of multiple values:
+    /// -   An empty string if no authentication is configured on the server,
+    /// -   a shared secret (password), or
+    /// -   a signed JWT.
+    ///
+    inline RenewCredentialAsyncCall* renewCredential(
+        ::grpc::CompletionQueue* queue,
+        const std::string& credential,
+        const std::string& clientID
+    ) const {
+        // Create a call data object to store the client context, the response,
+        // the status of the call, and the response reader. The ownership of
+        // this object is passed to the caller.
+        auto call(new RenewCredentialAsyncCall);
+        // Start the asynchronous RPC with the call's context and queue.
+        call->request.set_deviceid(config.getDeviceID());
+        call->request.set_tenantid(config.getTenantID());
+        call->request.set_credential(credential);
+        call->request.set_clientid(clientID);
+        call->rpc = deviceStub->AsyncRenewDeviceCredential(&call->context, call->request, queue);
+        // Finish the RPC to tell it where the response and status buffers are
+        // located within the call object. Use the address of the call as the
+        // tag for identifying the call in the event-loop.
+        call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+        // Return the pointer to the call. This both transfers the ownership
+        // of the instance to the caller, and provides the caller with an
+        // identifier for detecting the result of this call in the completion
+        // queue.
+        return call;
+    }
+
+    /// @brief A type for encapsulating data for asynchronous `EnrollDevice`
+    /// calls.
+    typedef ::sensory::CallData<
+        OAuthService,
+        ::sensory::api::v1::management::RenewDeviceCredentialRequest,
+        ::sensory::api::v1::management::DeviceResponse
+    > RenewCredentialCallData;
+
+    /// @brief Renew a device's credential with the Sensory Cloud service.
+    ///
+    /// @tparam Callback The type of the callback function. The callback should
+    /// accept a single pointer of type `RenewCredentialCallData*`.
+    /// @param credential A credential string to authenticate that this device
+    /// is allowed to renew its credentials.
+    /// @param clientID The client ID associated with the device.
+    /// @param callback The callback to execute when the response arrives.
+    /// @returns A pointer to the asynchronous call spawned by this call.
+    ///
+    /// @details
+    /// The credential string authenticates that this device is allowed to
+    /// renew. Depending on the server configuration the credential string
+    /// may be one of multiple values:
+    /// -   An empty string if no authentication is configured on the server,
+    /// -   a shared secret (password), or
+    /// -   a signed JWT.
+    ///
+    template<typename Callback>
+    inline std::shared_ptr<RenewCredentialCallData> renewCredential(
+        const std::string& credential,
+        const std::string& clientID,
+        const Callback& callback
+    ) const {
+        // Create a call to encapsulate data that needs to exist throughout the
+        // scope of the call. This call is initiated as a shared pointer in
+        // order to reference count between the parent and child context. This
+        // also allows the caller to safely use `await()` without the
+        // possibility of a race condition.
+        std::shared_ptr<RenewCredentialCallData>
+            call(new RenewCredentialCallData);
+        call->request.set_deviceid(config.getDeviceID());
+        call->request.set_tenantid(config.getTenantID());
+        call->request.set_credential(credential);
+        call->request.set_clientid(clientID);
+        // Start the asynchronous call with the data from the request and
+        // forward the input callback into the reactor callback.
+        deviceStub->async()->RenewDeviceCredential(
+            &call->context,
+            &call->request,
+            &call->response,
+            [call, callback](::grpc::Status status) {
+                // Copy the status to the call.
+                call->status = std::move(status);
+                // Call the callback function with a raw pointer because
+                // ownership is not being transferred.
+                callback(call.get());
+                // Mark the call as done for any awaiting process.
+                call->setIsDone();
+            });
+        return call;
+    }
+
     // ----- Get Token ---------------------------------------------------------
 
     /// @brief Request a new OAuth token from the server.
