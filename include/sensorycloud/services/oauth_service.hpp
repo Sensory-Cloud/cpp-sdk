@@ -523,6 +523,111 @@ class OAuthService {
             });
         return call;
     }
+
+    // TODO: What is the best way to support this functionality? Currently the
+    // token manager relies on an instance of OAuth service on construction, and
+    // thus imposes a circular dependency for GetWhoAmI that requires the token
+    // manager to look up credentials. The token manager itself could be a good
+    // place for these functions to live potentially since they are related to
+    // information that should be in the token manager locally anyway.
+
+    // ----- Who Am I (Oauth) --------------------------------------------------
+
+    // /// @brief Request to obtain information based on the authorization token.
+    // ///
+    // /// @param response The device response to store the result of the RPC into.
+    // /// @returns The status of the synchronous gRPC call.
+    // ///
+    // ::grpc::Status getWhoAmI(::sensory::api::oauth::WhoAmIResponse* response) {
+    //     ::grpc::ClientContext context;
+    //     config.setupUnaryClientContext(context, tokenManager);
+    //     return oauthStub->GetWhoAmI(&context, {}, response);
+    // }
+
+    // /// @brief A type for encapsulating data for asynchronous `GetToken` calls
+    // /// based on CompletionQueue event loops.
+    // typedef ::sensory::AsyncResponseReaderCall<
+    //     OAuthService,
+    //     ::sensory::api::oauth::WhoAmIRequest,
+    //     ::sensory::api::oauth::WhoAmIResponse
+    // > WhoAmIAsyncCall;
+
+    // /// @brief Request to obtain information based on the authorization token.
+    // ///
+    // /// @param queue The completion queue handling the event-loop processing.
+    // /// @param callback The callback to execute when the response arrives.
+    // /// @returns A pointer to the call data associated with this asynchronous
+    // /// call. This pointer can be used to identify the call in the event-loop
+    // /// as the `tag` of the event. Ownership of the pointer passes to the
+    // /// caller and the caller should `delete` the pointer after it appears in
+    // /// a completion queue loop.
+    // ///
+    // inline WhoAmIAsyncCall* getWhoAmI(::grpc::CompletionQueue* queue) const {
+    //     // Create a call data object to store the client context, the response,
+    //     // the status of the call, and the response reader. The ownership of
+    //     // this object is passed to the caller.
+    //     auto call(new WhoAmIAsyncCall);
+    //     // Set the client context for a unary call.
+    //     config.setupUnaryClientContext(call->context, tokenManager);
+    //     // Start the asynchronous RPC with the call's context and queue.
+    //     call->rpc = oauthStub->AsyncGetWhoAmI(&call->context, call->request, queue);
+    //     // Finish the RPC to tell it where the response and status buffers are
+    //     // located within the call object. Use the address of the call as the
+    //     // tag for identifying the call in the event-loop.
+    //     call->rpc->Finish(&call->response, &call->status, static_cast<void*>(call));
+    //     // Return the pointer to the call. This both transfers the ownership
+    //     // of the instance to the caller, and provides the caller with an
+    //     // identifier for detecting the result of this call in the completion
+    //     // queue.
+    //     return call;
+    // }
+
+    // /// @brief A type for encapsulating data for asynchronous `GetWhoAmI`
+    // /// calls.
+    // typedef ::sensory::CallData<
+    //     OAuthService,
+    //     ::sensory::api::oauth::WhoAmIRequest,
+    //     ::sensory::api::oauth::WhoAmIResponse
+    // > WhoAmICallData;
+
+    // /// @brief Request to obtain information based on the authorization token.
+    // ///
+    // /// @tparam Callback The type of the callback function. The callback should
+    // /// accept a single pointer of type `WhoAmICallData*`.
+    // /// @param name The friendly name of the device that is being registered.
+    // /// @param credential A credential string to authenticate that this device
+    // /// is allowed to register.
+    // /// @param clientID The client ID to use for OAuth token generation.
+    // /// @param clientSecret The client secret to use for OAuth token generation.
+    // /// @param callback The callback to execute when the response arrives.
+    // /// @returns A pointer to the asynchronous call spawned by this call.
+    // ///
+    // template<typename Callback>
+    // inline std::shared_ptr<WhoAmICallData> getWhoAmI(const Callback& callback) const {
+    //     // Create a call to encapsulate data that needs to exist throughout the
+    //     // scope of the call. This call is initiated as a shared pointer in
+    //     // order to reference count between the parent and child context. This
+    //     // also allows the caller to safely use `await()` without the
+    //     // possibility of a race condition.
+    //     std::shared_ptr<WhoAmICallData> call(new WhoAmICallData);
+    //     config.setupUnaryClientContext(call->context, tokenManager);
+    //     // Start the asynchronous call with the data from the request and
+    //     // forward the input callback into the reactor callback.
+    //     oauthStub->async()->GetWhoAmI(
+    //         &call->context,
+    //         &call->request,
+    //         &call->response,
+    //         [call, callback](::grpc::Status status) {
+    //             // Copy the status to the call.
+    //             call->status = std::move(status);
+    //             // Call the callback function with a raw pointer because
+    //             // ownership is not being transferred.
+    //             callback(call.get());
+    //             // Mark the call as done for any awaiting process.
+    //             call->setIsDone();
+    //         });
+    //     return call;
+    // }
 };
 
 }  // namespace service
