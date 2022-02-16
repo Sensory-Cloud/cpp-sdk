@@ -26,6 +26,7 @@ namespace management {
 
 static const char* DeviceService_method_names[] = {
   "/sensory.api.v1.management.DeviceService/EnrollDevice",
+  "/sensory.api.v1.management.DeviceService/RenewDeviceCredential",
   "/sensory.api.v1.management.DeviceService/GetWhoAmI",
 };
 
@@ -37,7 +38,8 @@ std::unique_ptr< DeviceService::Stub> DeviceService::NewStub(const std::shared_p
 
 DeviceService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_EnrollDevice_(DeviceService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetWhoAmI_(DeviceService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RenewDeviceCredential_(DeviceService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetWhoAmI_(DeviceService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status DeviceService::Stub::EnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) {
@@ -59,6 +61,29 @@ void DeviceService::Stub::async::EnrollDevice(::grpc::ClientContext* context, co
 ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::AsyncEnrollDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncEnrollDeviceRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status DeviceService::Stub::RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::sensory::api::v1::management::DeviceResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_RenewDeviceCredential_, context, request, response);
+}
+
+void DeviceService::Stub::async::RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RenewDeviceCredential_, context, request, response, std::move(f));
+}
+
+void DeviceService::Stub::async::RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RenewDeviceCredential_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::PrepareAsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::DeviceResponse, ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_RenewDeviceCredential_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::AsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncRenewDeviceCredentialRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -100,6 +125,16 @@ DeviceService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       DeviceService_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DeviceService::Service, ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DeviceService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::RenewDeviceCredentialRequest* req,
+             ::sensory::api::v1::management::DeviceResponse* resp) {
+               return service->RenewDeviceCredential(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DeviceService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< DeviceService::Service, ::sensory::api::v1::management::DeviceGetWhoAmIRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](DeviceService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -113,6 +148,13 @@ DeviceService::Service::~Service() {
 }
 
 ::grpc::Status DeviceService::Service::EnrollDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DeviceService::Service::RenewDeviceCredential(::grpc::ServerContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response) {
   (void) context;
   (void) request;
   (void) response;

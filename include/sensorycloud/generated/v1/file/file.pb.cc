@@ -60,7 +60,8 @@ struct FileCatalogRequestDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FileCatalogRequestDefaultTypeInternal _FileCatalogRequest_default_instance_;
 constexpr FileCompleteCatalogRequest::FileCompleteCatalogRequest(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct FileCompleteCatalogRequestDefaultTypeInternal {
   constexpr FileCompleteCatalogRequestDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -101,6 +102,7 @@ constexpr FileInfo::FileInfo(
   , absolutepath_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , contenttype_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , hash_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , size_(int64_t{0}){}
 struct FileInfoDefaultTypeInternal {
   constexpr FileInfoDefaultTypeInternal()
@@ -179,6 +181,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2ffile_2ffile_2eproto::offs
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileCompleteCatalogRequest, tenantid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileCatalogResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -205,6 +208,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2ffile_2ffile_2eproto::offs
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileInfo, size_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileInfo, contenttype_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileInfo, hash_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileInfo, tenantid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::file::FileCatalog, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -227,11 +231,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 9, -1, -1, sizeof(::sensory::api::v1::file::FileResponse)},
   { 19, -1, -1, sizeof(::sensory::api::v1::file::FileCatalogRequest)},
   { 26, -1, -1, sizeof(::sensory::api::v1::file::FileCompleteCatalogRequest)},
-  { 32, -1, -1, sizeof(::sensory::api::v1::file::FileCatalogResponse)},
-  { 39, -1, -1, sizeof(::sensory::api::v1::file::FileChunk)},
-  { 47, -1, -1, sizeof(::sensory::api::v1::file::FileInfo)},
-  { 58, -1, -1, sizeof(::sensory::api::v1::file::FileCatalog)},
-  { 66, -1, -1, sizeof(::sensory::api::v1::file::VersionedFileCategory)},
+  { 33, -1, -1, sizeof(::sensory::api::v1::file::FileCatalogResponse)},
+  { 40, -1, -1, sizeof(::sensory::api::v1::file::FileChunk)},
+  { 48, -1, -1, sizeof(::sensory::api::v1::file::FileInfo)},
+  { 60, -1, -1, sizeof(::sensory::api::v1::file::FileCatalog)},
+  { 68, -1, -1, sizeof(::sensory::api::v1::file::VersionedFileCategory)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -257,41 +261,42 @@ const char descriptor_table_protodef_v1_2ffile_2ffile_2eproto[] PROTOBUF_SECTION
   "1.file.FileChunkH\000\022\020\n\010complete\030\003 \001(\010B\023\n\021"
   "streamingResponse\"^\n\022FileCatalogRequest\022"
   "H\n\ncategories\030\001 \003(\0132*.sensory.api.v1.fil"
-  "e.VersionedFileCategoryB\010\372B\005\222\001\002\010\001\"\034\n\032Fil"
-  "eCompleteCatalogRequest\"H\n\023FileCatalogRe"
-  "sponse\0221\n\007catalog\030\001 \003(\0132 .sensory.api.v1"
-  ".file.FileCatalog\"*\n\tFileChunk\022\r\n\005bytes\030"
-  "\001 \001(\014\022\016\n\006offset\030\002 \001(\003\"_\n\010FileInfo\022\014\n\004fil"
-  "e\030\001 \001(\t\022\024\n\014absolutePath\030\002 \001(\t\022\014\n\004size\030\003 "
-  "\001(\003\022\023\n\013contentType\030\004 \001(\t\022\014\n\004hash\030\005 \001(\t\"y"
-  "\n\013FileCatalog\022,\n\005files\030\001 \003(\0132\035.sensory.a"
-  "pi.v1.file.FileInfo\022<\n\010category\030\002 \001(\0132*."
-  "sensory.api.v1.file.VersionedFileCategor"
-  "y\"g\n\025VersionedFileCategory\022=\n\010category\030\001"
-  " \001(\0162!.sensory.api.v1.file.FileCategoryB"
-  "\010\372B\005\202\001\002\020\001\022\017\n\007version\030\002 \001(\t*L\n\014FileCatego"
-  "ry\022\016\n\nTSSV_MODEL\020\000\022\020\n\014FENRIR_MODEL\020\001\022\r\n\t"
-  "TNL_MODEL\020\002\022\013\n\007UNKNOWN\020d2\377\002\n\004File\022L\n\007Get"
-  "Info\022 .sensory.api.v1.file.FileRequest\032\035"
-  ".sensory.api.v1.file.FileInfo\"\000\022a\n\nGetCa"
-  "talog\022\'.sensory.api.v1.file.FileCatalogR"
-  "equest\032(.sensory.api.v1.file.FileCatalog"
-  "Response\"\000\022q\n\022GetCompleteCatalog\022/.senso"
-  "ry.api.v1.file.FileCompleteCatalogReques"
-  "t\032(.sensory.api.v1.file.FileCatalogRespo"
-  "nse\"\000\022S\n\010Download\022 .sensory.api.v1.file."
-  "FileRequest\032!.sensory.api.v1.file.FileRe"
-  "sponse\"\0000\001Bl\n\026io.sensory.api.v1.fileB\025Se"
-  "nsoryApiV1FileProtoP\001Z9gitlab.com/sensor"
-  "y-cloud/server/titan.git/pkg/api/v1/file"
-  "b\006proto3"
+  "e.VersionedFileCategoryB\010\372B\005\222\001\002\010\001\".\n\032Fil"
+  "eCompleteCatalogRequest\022\020\n\010tenantId\030\001 \001("
+  "\t\"H\n\023FileCatalogResponse\0221\n\007catalog\030\001 \003("
+  "\0132 .sensory.api.v1.file.FileCatalog\"*\n\tF"
+  "ileChunk\022\r\n\005bytes\030\001 \001(\014\022\016\n\006offset\030\002 \001(\003\""
+  "q\n\010FileInfo\022\014\n\004file\030\001 \001(\t\022\024\n\014absolutePat"
+  "h\030\002 \001(\t\022\014\n\004size\030\003 \001(\003\022\023\n\013contentType\030\004 \001"
+  "(\t\022\014\n\004hash\030\005 \001(\t\022\020\n\010tenantId\030\006 \001(\t\"y\n\013Fi"
+  "leCatalog\022,\n\005files\030\001 \003(\0132\035.sensory.api.v"
+  "1.file.FileInfo\022<\n\010category\030\002 \001(\0132*.sens"
+  "ory.api.v1.file.VersionedFileCategory\"g\n"
+  "\025VersionedFileCategory\022=\n\010category\030\001 \001(\016"
+  "2!.sensory.api.v1.file.FileCategoryB\010\372B\005"
+  "\202\001\002\020\001\022\017\n\007version\030\002 \001(\t*L\n\014FileCategory\022\016"
+  "\n\nTSSV_MODEL\020\000\022\020\n\014FENRIR_MODEL\020\001\022\r\n\tTNL_"
+  "MODEL\020\002\022\013\n\007UNKNOWN\020d2\377\002\n\004File\022L\n\007GetInfo"
+  "\022 .sensory.api.v1.file.FileRequest\032\035.sen"
+  "sory.api.v1.file.FileInfo\"\000\022a\n\nGetCatalo"
+  "g\022\'.sensory.api.v1.file.FileCatalogReque"
+  "st\032(.sensory.api.v1.file.FileCatalogResp"
+  "onse\"\000\022q\n\022GetCompleteCatalog\022/.sensory.a"
+  "pi.v1.file.FileCompleteCatalogRequest\032(."
+  "sensory.api.v1.file.FileCatalogResponse\""
+  "\000\022S\n\010Download\022 .sensory.api.v1.file.File"
+  "Request\032!.sensory.api.v1.file.FileRespon"
+  "se\"\0000\001Bl\n\026io.sensory.api.v1.fileB\025Sensor"
+  "yApiV1FileProtoP\001Z9gitlab.com/sensory-cl"
+  "oud/server/titan.git/pkg/api/v1/fileb\006pr"
+  "oto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2ffile_2ffile_2eproto_deps[1] = {
   &::descriptor_table_validate_2fvalidate_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2ffile_2ffile_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2ffile_2ffile_2eproto = {
-  false, false, 1488, descriptor_table_protodef_v1_2ffile_2ffile_2eproto, "v1/file/file.proto", 
+  false, false, 1524, descriptor_table_protodef_v1_2ffile_2ffile_2eproto, "v1/file/file.proto", 
   &descriptor_table_v1_2ffile_2ffile_2eproto_once, descriptor_table_v1_2ffile_2ffile_2eproto_deps, 1, 9,
   schemas, file_default_instances, TableStruct_v1_2ffile_2ffile_2eproto::offsets,
   file_level_metadata_v1_2ffile_2ffile_2eproto, file_level_enum_descriptors_v1_2ffile_2ffile_2eproto, file_level_service_descriptors_v1_2ffile_2ffile_2eproto,
@@ -1114,30 +1119,188 @@ class FileCompleteCatalogRequest::_Internal {
 
 FileCompleteCatalogRequest::FileCompleteCatalogRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
   // @@protoc_insertion_point(arena_constructor:sensory.api.v1.file.FileCompleteCatalogRequest)
 }
 FileCompleteCatalogRequest::FileCompleteCatalogRequest(const FileCompleteCatalogRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.file.FileCompleteCatalogRequest)
 }
 
+void FileCompleteCatalogRequest::SharedCtor() {
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
 
+FileCompleteCatalogRequest::~FileCompleteCatalogRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.file.FileCompleteCatalogRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
 
+inline void FileCompleteCatalogRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
 
+void FileCompleteCatalogRequest::ArenaDtor(void* object) {
+  FileCompleteCatalogRequest* _this = reinterpret_cast< FileCompleteCatalogRequest* >(object);
+  (void)_this;
+}
+void FileCompleteCatalogRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void FileCompleteCatalogRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void FileCompleteCatalogRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.file.FileCompleteCatalogRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  tenantid_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* FileCompleteCatalogRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string tenantId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.file.FileCompleteCatalogRequest.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* FileCompleteCatalogRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.file.FileCompleteCatalogRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string tenantId = 1;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.file.FileCompleteCatalogRequest.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_tenantid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.file.FileCompleteCatalogRequest)
+  return target;
+}
+
+size_t FileCompleteCatalogRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.file.FileCompleteCatalogRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string tenantId = 1;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData FileCompleteCatalogRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    FileCompleteCatalogRequest::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*FileCompleteCatalogRequest::GetClassData() const { return &_class_data_; }
 
+void FileCompleteCatalogRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<FileCompleteCatalogRequest *>(to)->MergeFrom(
+      static_cast<const FileCompleteCatalogRequest &>(from));
+}
 
 
+void FileCompleteCatalogRequest::MergeFrom(const FileCompleteCatalogRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.file.FileCompleteCatalogRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void FileCompleteCatalogRequest::CopyFrom(const FileCompleteCatalogRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.file.FileCompleteCatalogRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool FileCompleteCatalogRequest::IsInitialized() const {
+  return true;
+}
+
+void FileCompleteCatalogRequest::InternalSwap(FileCompleteCatalogRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FileCompleteCatalogRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
@@ -1586,6 +1749,11 @@ FileInfo::FileInfo(const FileInfo& from)
     hash_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_hash(), 
       GetArenaForAllocation());
   }
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
   size_ = from.size_;
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.file.FileInfo)
 }
@@ -1595,6 +1763,7 @@ file_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 absolutepath_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 contenttype_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 hash_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 size_ = int64_t{0};
 }
 
@@ -1611,6 +1780,7 @@ inline void FileInfo::SharedDtor() {
   absolutepath_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   contenttype_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   hash_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void FileInfo::ArenaDtor(void* object) {
@@ -1633,6 +1803,7 @@ void FileInfo::Clear() {
   absolutepath_.ClearToEmpty();
   contenttype_.ClearToEmpty();
   hash_.ClearToEmpty();
+  tenantid_.ClearToEmpty();
   size_ = int64_t{0};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1687,6 +1858,16 @@ const char* FileInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
           auto str = _internal_mutable_hash();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.file.FileInfo.hash"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string tenantId = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.file.FileInfo.tenantId"));
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1766,6 +1947,16 @@ failure:
         5, this->_internal_hash(), target);
   }
 
+  // string tenantId = 6;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.file.FileInfo.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_tenantid(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1810,6 +2001,13 @@ size_t FileInfo::ByteSizeLong() const {
         this->_internal_hash());
   }
 
+  // string tenantId = 6;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
   // int64 size = 3;
   if (this->_internal_size() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_size());
@@ -1848,6 +2046,9 @@ void FileInfo::MergeFrom(const FileInfo& from) {
   }
   if (!from._internal_hash().empty()) {
     _internal_set_hash(from._internal_hash());
+  }
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
   }
   if (from._internal_size() != 0) {
     _internal_set_size(from._internal_size());
@@ -1890,6 +2091,11 @@ void FileInfo::InternalSwap(FileInfo* other) {
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &hash_, lhs_arena,
       &other->hash_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
   );
   swap(size_, other->size_);
 }

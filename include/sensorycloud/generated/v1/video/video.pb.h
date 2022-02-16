@@ -1555,11 +1555,41 @@ class AuthenticateResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kUserIdFieldNumber = 5,
+    kEnrollmentIdFieldNumber = 6,
     kTokenFieldNumber = 4,
     kScoreFieldNumber = 2,
     kSuccessFieldNumber = 1,
     kIsAliveFieldNumber = 3,
   };
+  // string userId = 5;
+  void clear_userid();
+  const std::string& userid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_userid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_userid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_userid();
+  void set_allocated_userid(std::string* userid);
+  private:
+  const std::string& _internal_userid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(const std::string& value);
+  std::string* _internal_mutable_userid();
+  public:
+
+  // string enrollmentId = 6;
+  void clear_enrollmentid();
+  const std::string& enrollmentid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_enrollmentid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_enrollmentid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_enrollmentid();
+  void set_allocated_enrollmentid(std::string* enrollmentid);
+  private:
+  const std::string& _internal_enrollmentid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_enrollmentid(const std::string& value);
+  std::string* _internal_mutable_enrollmentid();
+  public:
+
   // .sensory.api.common.TokenResponse token = 4;
   bool has_token() const;
   private:
@@ -1612,6 +1642,8 @@ class AuthenticateResponse final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr userid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmentid_;
   ::sensory::api::common::TokenResponse* token_;
   float score_;
   bool success_;
@@ -1902,6 +1934,7 @@ class CreateEnrollmentConfig final :
     kCompressionFieldNumber = 7,
     kIsLivenessEnabledFieldNumber = 5,
     kLivenessThresholdFieldNumber = 6,
+    kNumLivenessFramesRequiredFieldNumber = 9,
   };
   // string userId = 1 [(.validate.rules) = {
   void clear_userid();
@@ -2009,6 +2042,15 @@ class CreateEnrollmentConfig final :
   void _internal_set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
   public:
 
+  // int32 numLivenessFramesRequired = 9;
+  void clear_numlivenessframesrequired();
+  ::PROTOBUF_NAMESPACE_ID::int32 numlivenessframesrequired() const;
+  void set_numlivenessframesrequired(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_numlivenessframesrequired() const;
+  void _internal_set_numlivenessframesrequired(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.video.CreateEnrollmentConfig)
  private:
   class _Internal;
@@ -2024,6 +2066,7 @@ class CreateEnrollmentConfig final :
   ::sensory::api::common::CompressionConfiguration* compression_;
   bool islivenessenabled_;
   int livenessthreshold_;
+  ::PROTOBUF_NAMESPACE_ID::int32 numlivenessframesrequired_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
 };
@@ -3611,6 +3654,98 @@ inline void AuthenticateResponse::set_allocated_token(::sensory::api::common::To
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateResponse.token)
 }
 
+// string userId = 5;
+inline void AuthenticateResponse::clear_userid() {
+  userid_.ClearToEmpty();
+}
+inline const std::string& AuthenticateResponse::userid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateResponse.userId)
+  return _internal_userid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void AuthenticateResponse::set_userid(ArgT0&& arg0, ArgT... args) {
+ 
+ userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateResponse.userId)
+}
+inline std::string* AuthenticateResponse::mutable_userid() {
+  std::string* _s = _internal_mutable_userid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.video.AuthenticateResponse.userId)
+  return _s;
+}
+inline const std::string& AuthenticateResponse::_internal_userid() const {
+  return userid_.Get();
+}
+inline void AuthenticateResponse::_internal_set_userid(const std::string& value) {
+  
+  userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* AuthenticateResponse::_internal_mutable_userid() {
+  
+  return userid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* AuthenticateResponse::release_userid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.video.AuthenticateResponse.userId)
+  return userid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void AuthenticateResponse::set_allocated_userid(std::string* userid) {
+  if (userid != nullptr) {
+    
+  } else {
+    
+  }
+  userid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), userid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateResponse.userId)
+}
+
+// string enrollmentId = 6;
+inline void AuthenticateResponse::clear_enrollmentid() {
+  enrollmentid_.ClearToEmpty();
+}
+inline const std::string& AuthenticateResponse::enrollmentid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateResponse.enrollmentId)
+  return _internal_enrollmentid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void AuthenticateResponse::set_enrollmentid(ArgT0&& arg0, ArgT... args) {
+ 
+ enrollmentid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateResponse.enrollmentId)
+}
+inline std::string* AuthenticateResponse::mutable_enrollmentid() {
+  std::string* _s = _internal_mutable_enrollmentid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.video.AuthenticateResponse.enrollmentId)
+  return _s;
+}
+inline const std::string& AuthenticateResponse::_internal_enrollmentid() const {
+  return enrollmentid_.Get();
+}
+inline void AuthenticateResponse::_internal_set_enrollmentid(const std::string& value) {
+  
+  enrollmentid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* AuthenticateResponse::_internal_mutable_enrollmentid() {
+  
+  return enrollmentid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* AuthenticateResponse::release_enrollmentid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.video.AuthenticateResponse.enrollmentId)
+  return enrollmentid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void AuthenticateResponse::set_allocated_enrollmentid(std::string* enrollmentid) {
+  if (enrollmentid != nullptr) {
+    
+  } else {
+    
+  }
+  enrollmentid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), enrollmentid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateResponse.enrollmentId)
+}
+
 // -------------------------------------------------------------------
 
 // LivenessRecognitionResponse
@@ -4013,6 +4148,26 @@ inline void CreateEnrollmentConfig::set_allocated_referenceid(std::string* refer
   referenceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), referenceid,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.CreateEnrollmentConfig.referenceId)
+}
+
+// int32 numLivenessFramesRequired = 9;
+inline void CreateEnrollmentConfig::clear_numlivenessframesrequired() {
+  numlivenessframesrequired_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CreateEnrollmentConfig::_internal_numlivenessframesrequired() const {
+  return numlivenessframesrequired_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 CreateEnrollmentConfig::numlivenessframesrequired() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentConfig.numLivenessFramesRequired)
+  return _internal_numlivenessframesrequired();
+}
+inline void CreateEnrollmentConfig::_internal_set_numlivenessframesrequired(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  numlivenessframesrequired_ = value;
+}
+inline void CreateEnrollmentConfig::set_numlivenessframesrequired(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_numlivenessframesrequired(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentConfig.numLivenessFramesRequired)
 }
 
 // -------------------------------------------------------------------

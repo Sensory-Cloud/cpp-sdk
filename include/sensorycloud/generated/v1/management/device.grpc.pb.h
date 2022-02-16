@@ -49,6 +49,15 @@ class DeviceService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncEnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncEnrollDeviceRaw(context, request, cq));
     }
+    // Renew a device's credential, which links the device to a key in the database.
+    // This endpoint can be used to assign a new credential to a device if the old credential has expired.
+    virtual ::grpc::Status RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::sensory::api::v1::management::DeviceResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> AsyncRenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(AsyncRenewDeviceCredentialRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncRenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncRenewDeviceCredentialRaw(context, request, cq));
+    }
     // Allows a device to fetch information about itself
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::sensory::api::v1::management::DeviceResponse* response) = 0;
@@ -64,6 +73,10 @@ class DeviceService final {
       // Create a new device in the database
       virtual void EnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void EnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Renew a device's credential, which links the device to a key in the database.
+      // This endpoint can be used to assign a new credential to a device if the old credential has expired.
+      virtual void RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // Allows a device to fetch information about itself
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
@@ -75,6 +88,8 @@ class DeviceService final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncEnrollDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncEnrollDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
@@ -88,6 +103,13 @@ class DeviceService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncEnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncEnrollDeviceRaw(context, request, cq));
     }
+    ::grpc::Status RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::sensory::api::v1::management::DeviceResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> AsyncRenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(AsyncRenewDeviceCredentialRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncRenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncRenewDeviceCredentialRaw(context, request, cq));
+    }
     ::grpc::Status GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::sensory::api::v1::management::DeviceResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> AsyncGetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(AsyncGetWhoAmIRaw(context, request, cq));
@@ -100,6 +122,8 @@ class DeviceService final {
      public:
       void EnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
       void EnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
+      void RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
       void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
@@ -115,9 +139,12 @@ class DeviceService final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncEnrollDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncEnrollDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_EnrollDevice_;
+    const ::grpc::internal::RpcMethod rpcmethod_RenewDeviceCredential_;
     const ::grpc::internal::RpcMethod rpcmethod_GetWhoAmI_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -128,6 +155,9 @@ class DeviceService final {
     virtual ~Service();
     // Create a new device in the database
     virtual ::grpc::Status EnrollDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
+    // Renew a device's credential, which links the device to a key in the database.
+    // This endpoint can be used to assign a new credential to a device if the old credential has expired.
+    virtual ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
     // Allows a device to fetch information about itself
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status GetWhoAmI(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
@@ -153,12 +183,32 @@ class DeviceService final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_RenewDeviceCredential : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_RenewDeviceCredential() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_RenewDeviceCredential() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRenewDeviceCredential(::grpc::ServerContext* context, ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::DeviceResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_GetWhoAmI : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetWhoAmI() {
-      ::grpc::Service::MarkMethodAsync(1);
+      ::grpc::Service::MarkMethodAsync(2);
     }
     ~WithAsyncMethod_GetWhoAmI() override {
       BaseClassMustBeDerivedFromService(this);
@@ -169,10 +219,10 @@ class DeviceService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetWhoAmI(::grpc::ServerContext* context, ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::DeviceResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_EnrollDevice<WithAsyncMethod_GetWhoAmI<Service > > AsyncService;
+  typedef WithAsyncMethod_EnrollDevice<WithAsyncMethod_RenewDeviceCredential<WithAsyncMethod_GetWhoAmI<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_EnrollDevice : public BaseClass {
    private:
@@ -201,18 +251,45 @@ class DeviceService final {
       ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::EnrollDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_RenewDeviceCredential : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_RenewDeviceCredential() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response) { return this->RenewDeviceCredential(context, request, response); }));}
+    void SetMessageAllocatorFor_RenewDeviceCredential(
+        ::grpc::MessageAllocator< ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_RenewDeviceCredential() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RenewDeviceCredential(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_GetWhoAmI : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetWhoAmI() {
-      ::grpc::Service::MarkMethodCallback(1,
+      ::grpc::Service::MarkMethodCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeviceGetWhoAmIRequest, ::sensory::api::v1::management::DeviceResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response) { return this->GetWhoAmI(context, request, response); }));}
     void SetMessageAllocatorFor_GetWhoAmI(
         ::grpc::MessageAllocator< ::sensory::api::v1::management::DeviceGetWhoAmIRequest, ::sensory::api::v1::management::DeviceResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeviceGetWhoAmIRequest, ::sensory::api::v1::management::DeviceResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -227,7 +304,7 @@ class DeviceService final {
     virtual ::grpc::ServerUnaryReactor* GetWhoAmI(
       ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_EnrollDevice<WithCallbackMethod_GetWhoAmI<Service > > CallbackService;
+  typedef WithCallbackMethod_EnrollDevice<WithCallbackMethod_RenewDeviceCredential<WithCallbackMethod_GetWhoAmI<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_EnrollDevice : public BaseClass {
@@ -247,12 +324,29 @@ class DeviceService final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_RenewDeviceCredential : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_RenewDeviceCredential() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_RenewDeviceCredential() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_GetWhoAmI : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetWhoAmI() {
-      ::grpc::Service::MarkMethodGeneric(1);
+      ::grpc::Service::MarkMethodGeneric(2);
     }
     ~WithGenericMethod_GetWhoAmI() override {
       BaseClassMustBeDerivedFromService(this);
@@ -284,12 +378,32 @@ class DeviceService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_RenewDeviceCredential : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_RenewDeviceCredential() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_RenewDeviceCredential() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRenewDeviceCredential(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_GetWhoAmI : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetWhoAmI() {
-      ::grpc::Service::MarkMethodRaw(1);
+      ::grpc::Service::MarkMethodRaw(2);
     }
     ~WithRawMethod_GetWhoAmI() override {
       BaseClassMustBeDerivedFromService(this);
@@ -300,7 +414,7 @@ class DeviceService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetWhoAmI(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -326,12 +440,34 @@ class DeviceService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_RenewDeviceCredential : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_RenewDeviceCredential() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->RenewDeviceCredential(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_RenewDeviceCredential() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RenewDeviceCredential(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_GetWhoAmI : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetWhoAmI() {
-      ::grpc::Service::MarkMethodRawCallback(1,
+      ::grpc::Service::MarkMethodRawCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetWhoAmI(context, request, response); }));
@@ -375,12 +511,39 @@ class DeviceService final {
     virtual ::grpc::Status StreamedEnrollDevice(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::EnrollDeviceRequest,::sensory::api::v1::management::DeviceResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_RenewDeviceCredential : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_RenewDeviceCredential() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::management::RenewDeviceCredentialRequest, ::sensory::api::v1::management::DeviceResponse>* streamer) {
+                       return this->StreamedRenewDeviceCredential(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_RenewDeviceCredential() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status RenewDeviceCredential(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedRenewDeviceCredential(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::RenewDeviceCredentialRequest,::sensory::api::v1::management::DeviceResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_GetWhoAmI : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetWhoAmI() {
-      ::grpc::Service::MarkMethodStreamed(1,
+      ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::StreamedUnaryHandler<
           ::sensory::api::v1::management::DeviceGetWhoAmIRequest, ::sensory::api::v1::management::DeviceResponse>(
             [this](::grpc::ServerContext* context,
@@ -401,9 +564,9 @@ class DeviceService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetWhoAmI(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::DeviceGetWhoAmIRequest,::sensory::api::v1::management::DeviceResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_GetWhoAmI<Service > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_RenewDeviceCredential<WithStreamedUnaryMethod_GetWhoAmI<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_GetWhoAmI<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_RenewDeviceCredential<WithStreamedUnaryMethod_GetWhoAmI<Service > > > StreamedService;
 };
 
 }  // namespace management
