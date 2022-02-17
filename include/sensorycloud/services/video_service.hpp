@@ -60,6 +60,10 @@ namespace video {
 /// check.
 /// @param livenessThreshold The liveness threshold for the optional
 /// liveness check.
+/// @param numLivenessFramesRequired If isLivenessEnabled is true, this
+/// determines how many frames need to pass the liveness check before the
+/// enrollment can be successful. A value of 0 means that all enrollment frames
+/// must pass the liveness check.
 /// @returns A pointer to a new
 /// `sensory::api::v1::video::CreateEnrollmentConfig`.
 ///
@@ -68,7 +72,8 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentCon
     const std::string& userID,
     const std::string& description,
     const bool& isLivenessEnabled,
-    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold
+    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold,
+    const int32_t& numLivenessFramesRequired = 0
 ) {
     auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
     config->set_modelname(modelName);
@@ -76,6 +81,7 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentCon
     config->set_description(description);
     config->set_islivenessenabled(isLivenessEnabled);
     config->set_livenessthreshold(livenessThreshold);
+    config->set_numlivenessframesrequired(numLivenessFramesRequired);
     return config;
 }
 
