@@ -53,7 +53,7 @@ class ManagementService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// The gRPC stub for the enrollment service
-    std::unique_ptr<::sensory::api::v1::management::EnrollmentService::Stub> stub;
+    std::unique_ptr<::sensory::api::v1::management::EnrollmentService::StubInterface> stub;
 
     /// @brief Create a copy of this object.
     ///
@@ -84,6 +84,18 @@ class ManagementService {
     ) : config(config_),
         tokenManager(tokenManager_),
         stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
+
+    /// @brief Initialize a new management service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param stub_ The enrollment stub to initialize the service with.
+    ///
+    ManagementService(
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::api::v1::management::EnrollmentService::StubInterface* stub_
+    ) : config(config_), tokenManager(tokenManager_), stub(stub_) { }
 
     // ----- Get Enrollments ---------------------------------------------------
 
