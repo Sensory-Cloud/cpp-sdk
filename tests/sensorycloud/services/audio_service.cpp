@@ -29,12 +29,32 @@
 #include "sensorycloud/services/oauth_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/token_manager/in_memory_credential_store.hpp"
+#include "sensorycloud/generated/v1/audio/audio_mock.grpc.pb.h"
+
+using ::grpc::ClientContext;
+using ::grpc::Status;
 
 using ::sensory::Config;
 using ::sensory::token_manager::InMemoryCredentialStore;
 using ::sensory::token_manager::TokenManager;
 using ::sensory::service::OAuthService;
 using ::sensory::service::AudioService;
+
+using ::sensory::api::v1::audio::AuthenticateRequest;
+using ::sensory::api::v1::audio::AuthenticateResponse;
+using ::sensory::api::v1::audio::CreateEnrolledEventRequest;
+using ::sensory::api::v1::audio::CreateEnrollmentRequest;
+using ::sensory::api::v1::audio::CreateEnrollmentResponse;
+using ::sensory::api::v1::audio::GetModelsRequest;
+using ::sensory::api::v1::audio::GetModelsResponse;
+using ::sensory::api::v1::audio::TranscribeRequest;
+using ::sensory::api::v1::audio::TranscribeResponse;
+using ::sensory::api::v1::audio::ValidateEnrolledEventRequest;
+using ::sensory::api::v1::audio::ValidateEnrolledEventResponse;
+using ::sensory::api::v1::audio::ValidateEventRequest;
+using ::sensory::api::v1::audio::ValidateEventResponse;
+
+using testing::_;
 
 // ---------------------------------------------------------------------------
 // MARK: newAudioConfig

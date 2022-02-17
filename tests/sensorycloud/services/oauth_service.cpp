@@ -26,9 +26,23 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include "sensorycloud/services/oauth_service.hpp"
+#include "sensorycloud/generated/oauth/oauth_mock.grpc.pb.h"
 
-using sensory::Config;
-using sensory::service::OAuthService;
+using ::grpc::ClientContext;
+using ::grpc::Status;
+
+using ::sensory::Config;
+using ::sensory::service::OAuthService;
+
+using ::sensory::api::common::TokenResponse;
+using ::sensory::api::oauth::PublicKeyRequest;
+using ::sensory::api::oauth::PublicKeyResponse;
+using ::sensory::api::oauth::SignTokenRequest;
+using ::sensory::api::oauth::TokenRequest;
+using ::sensory::api::oauth::WhoAmIRequest;
+using ::sensory::api::oauth::WhoAmIResponse;
+
+using testing::_;
 
 TEST_CASE("Should create OAuthService from Config") {
     // Create the configuration that provides information about the remote host.

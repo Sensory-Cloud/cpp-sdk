@@ -29,12 +29,27 @@
 #include "sensorycloud/services/oauth_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/token_manager/in_memory_credential_store.hpp"
+#include "sensorycloud/generated/v1/video/video_mock.grpc.pb.h"
+
+using ::grpc::ClientContext;
+using ::grpc::Status;
 
 using ::sensory::Config;
 using ::sensory::token_manager::InMemoryCredentialStore;
 using ::sensory::token_manager::TokenManager;
 using ::sensory::service::OAuthService;
 using ::sensory::service::VideoService;
+
+using ::sensory::api::v1::video::AuthenticateRequest;
+using ::sensory::api::v1::video::AuthenticateResponse;
+using ::sensory::api::v1::video::CreateEnrollmentRequest;
+using ::sensory::api::v1::video::CreateEnrollmentResponse;
+using ::sensory::api::v1::video::GetModelsRequest;
+using ::sensory::api::v1::video::GetModelsResponse;
+using ::sensory::api::v1::video::LivenessRecognitionResponse;
+using ::sensory::api::v1::video::ValidateRecognitionRequest;
+
+using testing::_;
 
 // ---------------------------------------------------------------------------
 // MARK: newCreateEnrollmentConfig
