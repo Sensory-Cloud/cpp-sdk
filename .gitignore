@@ -1,4 +1,5 @@
 # MARK: Project Files
+*_mock.grpc.pb.h
 com.sensory.cloud.examples*
 cmake_install.cmake
 *CMakeFiles
