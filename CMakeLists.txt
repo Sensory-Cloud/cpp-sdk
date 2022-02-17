@@ -30,8 +30,15 @@ include(FetchContent)
 option(SENSORY_CLOUD_BUILD_TESTS "Build test cases" OFF)
 option(SENSORY_CLOUD_GENERATE_PROTO "Generate proto header and source files" OFF)
 option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore" OFF)
+option(SENSORY_CLOUD_GENERATE_MOCK "Generate mock header for testing" OFF)
 
 # --- Proto Files ------------------------------------------------------------
+
+if (SENSORY_CLOUD_GENERATE_MOCK)
+    set(GRPC_OUT "generate_mock_code=true:")
+else()
+    set(GRPC_OUT "")
+endif()
 
 # Iterate over the proto files to compile them with protoc. The proto files are
 # expected to be in the ./proto directory. Generated code (headers and source)
@@ -59,7 +66,7 @@ if(SENSORY_CLOUD_GENERATE_PROTO)
         add_custom_command(
             OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
             COMMAND ${_PROTOBUF_PROTOC}
-            ARGS --grpc_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
+            ARGS --grpc_out "${GRPC_OUT}${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
                 --cpp_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
                 --proto_path="${PROJECT_SOURCE_DIR}/proto"
                 --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
