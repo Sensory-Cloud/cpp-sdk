@@ -34,6 +34,7 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/call_data.hpp"
+#include "sensorycloud/services/errors.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -311,7 +312,7 @@ class VideoService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::video::CreateEnrollmentRequest,
             ::sensory::api::v1::video::CreateEnrollmentResponse
         >
@@ -345,7 +346,11 @@ class VideoService {
         request.set_allocated_config(enrollmentConfig);
         // Create the stream and write the initial configuration request.
         auto stream = biometricsStub->CreateEnrollment(context);
-        stream->Write(request);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start CreateEnrollment stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write video config.
+            throw WriteStreamError("Failed to write video configuration to CreateEnrollment stream.");
+        // Successfully created stream, implicitly cast it to a unique pointer.
         return stream;
     }
 
@@ -454,7 +459,7 @@ class VideoService {
 
     /// A type for biometric authentication streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::video::AuthenticateRequest,
             ::sensory::api::v1::video::AuthenticateResponse
         >
@@ -487,7 +492,10 @@ class VideoService {
         request.set_allocated_config(authenticateConfig);
         // Create the stream and write the initial configuration request.
         auto stream = biometricsStub->Authenticate(context);
-        stream->Write(request);
+        if (stream == nullptr)
+            throw NullStreamError("Authenticate stream returned null pointer!");
+        if (!stream->Write(request))  // Failed to write video config.
+            throw WriteStreamError("Failed to write video configuration to Authenticate stream.");
         return stream;
     }
 
@@ -594,7 +602,7 @@ class VideoService {
 
     /// A type for face liveness validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::video::ValidateRecognitionRequest,
             ::sensory::api::v1::video::LivenessRecognitionResponse
         >
@@ -629,7 +637,10 @@ class VideoService {
         request.set_allocated_config(recognitionConfig);
         // Create the stream and write the initial configuration request.
         auto stream = recognitionStub->ValidateLiveness(context);
-        stream->Write(request);
+        if (stream == nullptr)
+            throw NullStreamError("Authenticate stream returned null pointer!");
+        if (!stream->Write(request))  // Failed to write video config.
+            throw WriteStreamError("Failed to write video configuration to ValidateLiveness stream.");
         return stream;
     }
 
