@@ -280,13 +280,13 @@ class AudioService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the audio models service
-    std::unique_ptr<::sensory::api::v1::audio::AudioModels::Stub> modelsStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioModels::StubInterface> modelsStub;
     /// the gRPC stub for the audio biometrics service
-    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::Stub> biometricStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::StubInterface> biometricStub;
     /// the gRPC stub for the audio events service
-    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::Stub> eventsStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::StubInterface> eventsStub;
     /// the gRPC stub for the audio transcriptions service
-    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::Stub> transcriptionsStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::StubInterface> transcriptionsStub;
 
     /// @brief Create a copy of this object.
     ///

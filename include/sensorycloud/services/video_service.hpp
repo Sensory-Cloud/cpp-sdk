@@ -147,11 +147,11 @@ class VideoService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the video models service
-    std::unique_ptr<::sensory::api::v1::video::VideoModels::Stub> modelsStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoModels::StubInterface> modelsStub;
     /// the gRPC stub for the video biometrics service
-    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::Stub> biometricsStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::StubInterface> biometricsStub;
     /// the gRPC stub for the video recognition service
-    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::Stub> recognitionStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::StubInterface> recognitionStub;
 
     /// @brief Create a copy of this object.
     ///

@@ -28,6 +28,8 @@
 
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
+#include <grpcpp/impl/codegen/async_unary_call.h>
+#include <grpcpp/impl/codegen/async_stream.h>
 #include <grpcpp/impl/codegen/client_callback.h>
 #include <atomic>
 #include <mutex>
@@ -67,7 +69,7 @@ struct AsyncResponseReaderCall {
     /// The response to process after the RPC completes.
     Response response;
     /// The reader RPC executing the call.
-    std::unique_ptr<::grpc::ClientAsyncResponseReader<Response>> rpc;
+    std::unique_ptr<::grpc::ClientAsyncResponseReaderInterface<Response>> rpc;
 
     /// @brief Initialize a new call.
     AsyncResponseReaderCall() { }
@@ -145,7 +147,7 @@ struct AsyncReaderWriterCall {
     /// The response to process after the RPC completes.
     Response response;
     /// The reader RPC executing the call.
-    std::unique_ptr<::grpc::ClientAsyncReaderWriter<Request, Response>> rpc;
+    std::unique_ptr<::grpc::ClientAsyncReaderWriterInterface<Request, Response>> rpc;
 
     /// @brief Initialize a new call.
     AsyncReaderWriterCall() { }

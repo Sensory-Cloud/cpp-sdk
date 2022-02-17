@@ -48,9 +48,9 @@ class OAuthService {
     /// the global configuration for the remote connection
     const ::sensory::Config& config;
     /// The gRPC stub for the device service
-    std::unique_ptr<::sensory::api::v1::management::DeviceService::Stub> deviceStub;
+    std::unique_ptr<::sensory::api::v1::management::DeviceService::StubInterface> deviceStub;
     /// The gRPC stub for the OAuth service
-    std::unique_ptr<::sensory::api::oauth::OauthService::Stub> oauthStub;
+    std::unique_ptr<::sensory::api::oauth::OauthService::StubInterface> oauthStub;
 
     /// @brief Create a copy of this object.
     ///
