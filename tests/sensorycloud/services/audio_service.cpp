@@ -25,6 +25,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <grpcpp/test/mock_stream.h>
 #include "sensorycloud/services/audio_service.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
