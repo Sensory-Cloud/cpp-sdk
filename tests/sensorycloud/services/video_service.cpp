@@ -28,13 +28,13 @@
 #include "sensorycloud/services/video_service.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
-#include "sensorycloud/token_manager/insecure_credential_store.hpp"
+#include "sensorycloud/token_manager/in_memory_credential_store.hpp"
 
-using sensory::Config;
-using sensory::token_manager::InsecureCredentialStore;
-using sensory::token_manager::TokenManager;
-using sensory::service::OAuthService;
-using sensory::service::VideoService;
+using ::sensory::Config;
+using ::sensory::token_manager::InMemoryCredentialStore;
+using ::sensory::token_manager::TokenManager;
+using ::sensory::service::OAuthService;
+using ::sensory::service::VideoService;
 
 // ---------------------------------------------------------------------------
 // MARK: newCreateEnrollmentConfig
@@ -152,8 +152,8 @@ TEST_CASE("Should create VideoService from Config and TokenManager") {
     OAuthService oauthService(config);
     // Create a credential store for keeping the clientID, clientSecret,
     // token, and expiration time.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
-    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
+    InMemoryCredentialStore keychain;
+    TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
     // Create the actual video service from the config and token manager.
-    VideoService<InsecureCredentialStore> service(config, tokenManager);
+    VideoService<InMemoryCredentialStore> service(config, tokenManager);
 }
