@@ -34,6 +34,7 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/call_data.hpp"
+#include "sensorycloud/services/errors.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -450,7 +451,7 @@ class AudioService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::CreateEnrollmentRequest,
             ::sensory::api::v1::audio::CreateEnrollmentResponse
         >
@@ -606,7 +607,7 @@ class AudioService {
 
     /// A type for biometric authentication streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::AuthenticateRequest,
             ::sensory::api::v1::audio::AuthenticateResponse
         >
@@ -758,7 +759,7 @@ class AudioService {
 
     /// A type for trigger validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::ValidateEventRequest,
             ::sensory::api::v1::audio::ValidateEventResponse
         >
@@ -910,7 +911,7 @@ class AudioService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::CreateEnrolledEventRequest,
             ::sensory::api::v1::audio::CreateEnrollmentResponse
         >
@@ -1063,7 +1064,7 @@ class AudioService {
 
     /// A type for event validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
             ::sensory::api::v1::audio::ValidateEnrolledEventResponse
         >
@@ -1215,7 +1216,7 @@ class AudioService {
 
     /// a type for biometric transcription streams
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::TranscribeRequest,
             ::sensory::api::v1::audio::TranscribeResponse
         >
