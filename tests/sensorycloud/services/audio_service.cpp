@@ -40,6 +40,7 @@ using ::sensory::token_manager::TokenManager;
 using ::sensory::service::OAuthService;
 using ::sensory::service::AudioService;
 
+using ::sensory::api::v1::audio::AudioModel;
 using ::sensory::api::v1::audio::AuthenticateRequest;
 using ::sensory::api::v1::audio::AuthenticateResponse;
 using ::sensory::api::v1::audio::CreateEnrolledEventRequest;
@@ -397,4 +398,48 @@ TEST_CASE("Should create AudioService from Config and TokenManager") {
     TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
     // Create the actual audio service from the config and token manager.
     AudioService<InMemoryCredentialStore> service(config, tokenManager);
+}
+
+SCENARIO("A client requires a synchronous interface to the audio service") {
+    GIVEN("An initialized audio service.") {
+        // Create the configuration that provides information about the remote host.
+        Config config("hostname.com", 443, "tenant ID", "device ID", false);
+        config.connect();
+        // Create the OAuth service for requesting and managing OAuth tokens through
+        // a token manager instance.
+        OAuthService oauthService(config);
+        // Create a credential store for keeping the clientID, clientSecret,
+        // token, and expiration time.
+        InMemoryCredentialStore keychain;
+        TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+        // Create the actual audio service from the config and token manager.
+        auto modelsStub = new ::sensory::api::v1::audio::MockAudioModelsStub;
+        auto biometricsStub = new ::sensory::api::v1::audio::MockAudioBiometricsStub;
+        auto eventsStub = new ::sensory::api::v1::audio::MockAudioEventsStub;
+        auto transcriptionStub = new ::sensory::api::v1::audio::MockAudioTranscriptionsStub;
+        AudioService<InMemoryCredentialStore>
+            service(config, tokenManager, modelsStub, biometricsStub, eventsStub, transcriptionStub);
+
+        // ----- GetModels -----------------------------------------------------
+
+        WHEN("GetModels is called") {
+            EXPECT_CALL(*modelsStub, GetModels(_, _, _))
+                .Times(1)
+                .WillOnce([] (ClientContext*, const GetModelsRequest& request, GetModelsResponse *response) {
+                    auto model = response->add_models();
+                    model->set_name("response model");
+                    return Status::OK;
+                }
+            );
+            GetModelsResponse response;
+            auto status = service.getModels(&response);
+            THEN("The status is OK") {
+                REQUIRE(status.ok());
+            }
+            THEN("the response contains the updated data") {
+                REQUIRE(1 == response.models_size());
+                REQUIRE("response model" == response.models(0).name());
+            }
+        }
+    }
 }

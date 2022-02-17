@@ -46,8 +46,8 @@ TEST_CASE("Should create HealthService from Config") {
     HealthService service(config);
 }
 
-SCENARIO("A client requires a synchronous interface to the management service") {
-    GIVEN("An initialized management service.") {
+SCENARIO("A client requires a synchronous interface to the health service") {
+    GIVEN("An initialized health service.") {
         // Create the configuration that provides information about the remote host.
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
         config.connect();

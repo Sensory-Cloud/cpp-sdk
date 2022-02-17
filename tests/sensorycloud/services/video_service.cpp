@@ -172,3 +172,46 @@ TEST_CASE("Should create VideoService from Config and TokenManager") {
     // Create the actual video service from the config and token manager.
     VideoService<InMemoryCredentialStore> service(config, tokenManager);
 }
+
+SCENARIO("A client requires a synchronous interface to the video service") {
+    GIVEN("An initialized video service.") {
+        // Create the configuration that provides information about the remote host.
+        Config config("hostname.com", 443, "tenant ID", "device ID", false);
+        config.connect();
+        // Create the OAuth service for requesting and managing OAuth tokens through
+        // a token manager instance.
+        OAuthService oauthService(config);
+        // Create a credential store for keeping the clientID, clientSecret,
+        // token, and expiration time.
+        InMemoryCredentialStore keychain;
+        TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+        // Create the actual video service from the config and token manager.
+        auto modelsStub = new ::sensory::api::v1::video::MockVideoModelsStub;
+        auto biometricsStub = new ::sensory::api::v1::video::MockVideoBiometricsStub;
+        auto recognitionStub = new ::sensory::api::v1::video::MockVideoRecognitionStub;
+        VideoService<InMemoryCredentialStore>
+            service(config, tokenManager, modelsStub, biometricsStub, recognitionStub);
+
+        // ----- GetModels -----------------------------------------------------
+
+        WHEN("GetModels is called") {
+            EXPECT_CALL(*modelsStub, GetModels(_, _, _))
+                .Times(1)
+                .WillOnce([] (ClientContext*, const GetModelsRequest& request, GetModelsResponse *response) {
+                    auto model = response->add_models();
+                    model->set_name("response model");
+                    return Status::OK;
+                }
+            );
+            GetModelsResponse response;
+            auto status = service.getModels(&response);
+            THEN("The status is OK") {
+                REQUIRE(status.ok());
+            }
+            THEN("the response contains the updated data") {
+                REQUIRE(1 == response.models_size());
+                REQUIRE("response model" == response.models(0).name());
+            }
+        }
+    }
+}
