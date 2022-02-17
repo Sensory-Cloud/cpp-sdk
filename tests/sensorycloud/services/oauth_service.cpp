@@ -74,6 +74,8 @@ SCENARIO("A client requires a synchronous interface to the video service") {
             EXPECT_CALL(*deviceStub, EnrollDevice(_, _, _))
                 .Times(1)
                 .WillOnce([] (ClientContext*, const EnrollDeviceRequest& request, DeviceResponse *response) {
+                    REQUIRE("device ID" == request.deviceid());
+                    REQUIRE("tenant ID" == request.tenantid());
                     REQUIRE("foo name" == request.name());
                     REQUIRE("foo credential" == request.credential());
                     REQUIRE("foo client ID" == request.client().clientid());
@@ -100,6 +102,8 @@ SCENARIO("A client requires a synchronous interface to the video service") {
             EXPECT_CALL(*deviceStub, RenewDeviceCredential(_, _, _))
                 .Times(1)
                 .WillOnce([] (ClientContext*, const RenewDeviceCredentialRequest& request, DeviceResponse *response) {
+                    REQUIRE("device ID" == request.deviceid());
+                    REQUIRE("tenant ID" == request.tenantid());
                     REQUIRE("foo credential" == request.credential());
                     REQUIRE("foo client ID" == request.clientid());
                     response->set_name("response name");
