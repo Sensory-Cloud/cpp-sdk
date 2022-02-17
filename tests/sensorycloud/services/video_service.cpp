@@ -25,6 +25,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <grpcpp/test/mock_stream.h>
 #include "sensorycloud/services/video_service.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
@@ -33,6 +34,7 @@
 
 using ::grpc::ClientContext;
 using ::grpc::Status;
+using ::grpc::testing::MockClientReaderWriter;
 
 using ::sensory::Config;
 using ::sensory::token_manager::InMemoryCredentialStore;
@@ -47,7 +49,12 @@ using ::sensory::api::v1::video::CreateEnrollmentResponse;
 using ::sensory::api::v1::video::GetModelsRequest;
 using ::sensory::api::v1::video::GetModelsResponse;
 using ::sensory::api::v1::video::LivenessRecognitionResponse;
+using ::sensory::api::v1::video::RecognitionThreshold;
 using ::sensory::api::v1::video::ValidateRecognitionRequest;
+
+using ::sensory::service::video::newCreateEnrollmentConfig;
+using ::sensory::service::video::newAuthenticateConfig;
+using ::sensory::service::video::newValidateRecognitionConfig;
 
 using testing::_;
 
@@ -61,8 +68,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const std::string userID = "userID";
         const std::string description = "description";
         const bool isLivenessEnabled = true;
-        const ::sensory::api::v1::video::RecognitionThreshold livenessThreshold =
-            ::sensory::api::v1::video::RecognitionThreshold::LOW;
+        const auto livenessThreshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::video::newCreateEnrollmentConfig(
                 modelName,
@@ -91,8 +97,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
     GIVEN("parameters for an authentication stream") {
         const std::string enrollmentID = "enrollmentID";
         const bool isLivenessEnabled = true;
-        const ::sensory::api::v1::video::RecognitionThreshold livenessThreshold =
-            ::sensory::api::v1::video::RecognitionThreshold::LOW;
+        const auto livenessThreshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::video::newAuthenticateConfig(
                 enrollmentID,
@@ -135,8 +140,7 @@ SCENARIO("A user needs to create a ValidateRecognitionConfig") {
     GIVEN("parameters for a recognition validation stream") {
         const std::string modelName = "modelName";
         const std::string userID = "userID";
-        const ::sensory::api::v1::video::RecognitionThreshold threshold =
-            ::sensory::api::v1::video::RecognitionThreshold::LOW;
+        const auto threshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
             auto config = sensory::service::video::newValidateRecognitionConfig(
                 modelName,
@@ -213,5 +217,79 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 REQUIRE("response model" == response.models(0).name());
             }
         }
+
+        // ----- CreateEnrollment ----------------------------------------------
+
+        WHEN("CreateEnrollment is called without a valid connection") {
+            // Expect the call and return a null pointer for the stream.
+            EXPECT_CALL(*biometricsStub, CreateEnrollmentRaw(_))
+                .Times(1).WillOnce(testing::Return(nullptr));
+            ClientContext context;
+            THEN("the function catches the null stream and throws an error") {
+                REQUIRE_THROWS_AS(service.createEnrollment(&context, newCreateEnrollmentConfig(
+                    "modelName",
+                    "userID",
+                    "description",
+                    true,
+                    RecognitionThreshold::LOW
+                )), sensory::service::NullStreamError);
+            }
+        }
+
+        WHEN("CreateEnrollment is called and the first Write fails") {
+            // Expect the call and return a mock stream.
+            auto mock_stream = new MockClientReaderWriter<CreateEnrollmentRequest, CreateEnrollmentResponse>();
+            EXPECT_CALL(*biometricsStub, CreateEnrollmentRaw(_))
+                .Times(1).WillOnce(testing::Return(mock_stream));
+            // Expect the SDK to call the first write to send the video config.
+            EXPECT_CALL(*mock_stream, Write(_, _))
+                .Times(1).WillOnce(testing::Return(false));
+
+            ClientContext context;
+            THEN("the function catches the write failure and throws an error") {
+                REQUIRE_THROWS_AS(service.createEnrollment(&context, newCreateEnrollmentConfig(
+                    "modelName",
+                    "userID",
+                    "description",
+                    true,
+                    RecognitionThreshold::LOW
+                )), sensory::service::WriteStreamError);
+            }
+        }
+
+        WHEN("CreateEnrollment is called with a valid connection") {
+            // Expect the call and return a mock stream.
+            auto mock_stream = new MockClientReaderWriter<CreateEnrollmentRequest, CreateEnrollmentResponse>();
+            EXPECT_CALL(*biometricsStub, CreateEnrollmentRaw(_))
+                .Times(1).WillOnce(testing::Return(mock_stream));
+            // Expect the SDK to call the first write to send the video config.
+            // Check that the config is properly set with the parameters.
+            EXPECT_CALL(*mock_stream, Write(_, _)).Times(1).WillOnce(
+                [] (const CreateEnrollmentRequest& request, ::grpc::WriteOptions) {
+                    REQUIRE("modelName" == request.config().modelname());
+                    REQUIRE("userID" == request.config().userid());
+                    REQUIRE("description" == request.config().description());
+                    REQUIRE(true == request.config().islivenessenabled());
+                    REQUIRE(RecognitionThreshold::LOW == request.config().livenessthreshold());
+                    return true;
+                }
+            );
+            // Create the stream with the expected parameters.
+            ClientContext context;
+            auto stream = service.createEnrollment(&context, newCreateEnrollmentConfig(
+                "modelName",
+                "userID",
+                "description",
+                true,
+                RecognitionThreshold::LOW
+            ));
+            // The stream should be a unique pointer to the mock stream.
+            REQUIRE(stream.get() == mock_stream);
+        }
+
+        // ----- Authenticate --------------------------------------------------
+
+        // ----- ValidateRecognition -------------------------------------------
+
     }
 }
