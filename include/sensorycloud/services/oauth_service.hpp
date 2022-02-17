@@ -79,6 +79,18 @@ class OAuthService {
         deviceStub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),
         oauthStub(::sensory::api::oauth::OauthService::NewStub(config.getChannel())) { }
 
+    /// @brief Initialize a new OAuth service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param deviceStub_ The device service stub to initialize the service with.
+    /// @param oauthStub_ The OAuth service stub to initialize the service with.
+    ///
+    explicit OAuthService(
+        const ::sensory::Config& config_,
+        ::sensory::api::v1::management::DeviceService::StubInterface* deviceStub_,
+        ::sensory::api::oauth::OauthService::StubInterface* oauthStub_
+    ) : config(config_), deviceStub(deviceStub_), oauthStub(oauthStub_) { }
+
     // ----- Register Device ---------------------------------------------------
 
     /// @brief Register a new device with the Sensory Cloud service.

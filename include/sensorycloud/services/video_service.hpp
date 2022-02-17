@@ -185,6 +185,29 @@ class VideoService {
         biometricsStub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
         recognitionStub(::sensory::api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
 
+    /// @brief Initialize a new video service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param modelsStub_ The models service stub to initialize the service
+    /// with.
+    /// @param biometricsStub_ The biometrics service stub to initialize the
+    /// service with.
+    /// @param recognitionStub The recognition service stub to initialize the
+    /// service with.
+    ///
+    VideoService(
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::api::v1::video::VideoModels::StubInterface* modelsStub_,
+        ::sensory::api::v1::video::VideoBiometrics::StubInterface* biometricsStub_,
+        ::sensory::api::v1::video::VideoRecognition::StubInterface* recognitionStub_
+    ) : config(config_),
+        tokenManager(tokenManager_),
+        modelsStub(modelsStub_),
+        biometricsStub(biometricsStub_),
+        recognitionStub(recognitionStub_) { }
+
     // ----- Get Models --------------------------------------------------------
 
     /// @brief Fetch a list of the vision models supported by the cloud host.

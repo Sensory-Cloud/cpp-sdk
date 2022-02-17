@@ -321,6 +321,33 @@ class AudioService {
         eventsStub(::sensory::api::v1::audio::AudioEvents::NewStub(config.getChannel())),
         transcriptionsStub(::sensory::api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
 
+    /// @brief Initialize a new audio service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param modelsStub_ The models service stub to initialize the service
+    /// with.
+    /// @param biometricStub_ The biometrics service stub to initialize the
+    /// service with.
+    /// @param eventsStub_ The events service stub to initialize the service
+    /// with.
+    /// @param transcriptionsStub_ The transcription service stub to initialize
+    /// the service with.
+    ///
+    AudioService(
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::api::v1::audio::AudioModels::StubInterface* modelsStub_,
+        ::sensory::api::v1::audio::AudioBiometrics::StubInterface* biometricStub_,
+        ::sensory::api::v1::audio::AudioEvents::StubInterface* eventsStub_,
+        ::sensory::api::v1::audio::AudioTranscriptions::StubInterface* transcriptionsStub_
+    ) : config(config_),
+        tokenManager(tokenManager_),
+        modelsStub(modelsStub_),
+        biometricStub(biometricStub_),
+        eventsStub(eventsStub_),
+        transcriptionsStub(transcriptionsStub_) { }
+
     // ----- Get Models --------------------------------------------------------
 
     /// @brief Fetch a list of the audio models supported by the cloud host.
