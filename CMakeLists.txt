@@ -33,6 +33,8 @@ option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore"
 
 # --- Proto Files ------------------------------------------------------------
 
+# If testing is enabled, specify to the --grpc_out flag of protoc that the mock
+# code should be generated.
 if (SENSORY_CLOUD_BUILD_TESTS)
     set(GRPC_OUT "generate_mock_code=true:")
 else()
