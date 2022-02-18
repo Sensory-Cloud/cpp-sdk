@@ -168,7 +168,7 @@ environment variables are used to provide information about the OpenSSL library
 and public certificates on disk used for Transport Layer Security (TLS).
 -->
 
-### SecureCredentialStore
+### SecureCredentialStore _(Beta feature)_
 
 To optionally compile an operating system specific `SecureCredentialStore`
 using system libraries, execute:
