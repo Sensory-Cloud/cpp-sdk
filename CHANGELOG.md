@@ -20,6 +20,8 @@
     -   Implemented `RenewDeviceCredential` end-points in the `OAuthService`
     -   Updated `Authenticate` end-point in the `VideoService` to support
         enrollment groups
+    -   Updated `CreateEnrollment` end-point in the `VideoService` to support
+        number of required liveness frames
 -   Updated `CreateEnrollmentGroup` end-points in the `ManagementService` to
     accept a vector of enrollment IDs to create the group with
 -   Implemented a constructor in each service for building from pointers to
