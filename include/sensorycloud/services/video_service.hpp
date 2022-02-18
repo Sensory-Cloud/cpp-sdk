@@ -34,6 +34,7 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/call_data.hpp"
+#include "sensorycloud/services/errors.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -59,6 +60,10 @@ namespace video {
 /// check.
 /// @param livenessThreshold The liveness threshold for the optional
 /// liveness check.
+/// @param numLivenessFramesRequired If isLivenessEnabled is true, this
+/// determines how many frames need to pass the liveness check before the
+/// enrollment can be successful. A value of 0 means that all enrollment frames
+/// must pass the liveness check.
 /// @returns A pointer to a new
 /// `sensory::api::v1::video::CreateEnrollmentConfig`.
 ///
@@ -67,7 +72,8 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentCon
     const std::string& userID,
     const std::string& description,
     const bool& isLivenessEnabled,
-    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold
+    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold,
+    const int32_t& numLivenessFramesRequired = 0
 ) {
     auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
     config->set_modelname(modelName);
@@ -75,6 +81,7 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* newCreateEnrollmentCon
     config->set_description(description);
     config->set_islivenessenabled(isLivenessEnabled);
     config->set_livenessthreshold(livenessThreshold);
+    config->set_numlivenessframesrequired(numLivenessFramesRequired);
     return config;
 }
 
@@ -147,11 +154,11 @@ class VideoService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the video models service
-    std::unique_ptr<::sensory::api::v1::video::VideoModels::Stub> modelsStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoModels::StubInterface> modelsStub;
     /// the gRPC stub for the video biometrics service
-    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::Stub> biometricsStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::StubInterface> biometricsStub;
     /// the gRPC stub for the video recognition service
-    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::Stub> recognitionStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::StubInterface> recognitionStub;
 
     /// @brief Create a copy of this object.
     ///
@@ -184,6 +191,29 @@ class VideoService {
         modelsStub(::sensory::api::v1::video::VideoModels::NewStub(config.getChannel())),
         biometricsStub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.getChannel())),
         recognitionStub(::sensory::api::v1::video::VideoRecognition::NewStub(config.getChannel())) { }
+
+    /// @brief Initialize a new video service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param modelsStub_ The models service stub to initialize the service
+    /// with.
+    /// @param biometricsStub_ The biometrics service stub to initialize the
+    /// service with.
+    /// @param recognitionStub The recognition service stub to initialize the
+    /// service with.
+    ///
+    VideoService(
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::api::v1::video::VideoModels::StubInterface* modelsStub_,
+        ::sensory::api::v1::video::VideoBiometrics::StubInterface* biometricsStub_,
+        ::sensory::api::v1::video::VideoRecognition::StubInterface* recognitionStub_
+    ) : config(config_),
+        tokenManager(tokenManager_),
+        modelsStub(modelsStub_),
+        biometricsStub(biometricsStub_),
+        recognitionStub(recognitionStub_) { }
 
     // ----- Get Models --------------------------------------------------------
 
@@ -288,7 +318,7 @@ class VideoService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::video::CreateEnrollmentRequest,
             ::sensory::api::v1::video::CreateEnrollmentResponse
         >
@@ -322,7 +352,11 @@ class VideoService {
         request.set_allocated_config(enrollmentConfig);
         // Create the stream and write the initial configuration request.
         auto stream = biometricsStub->CreateEnrollment(context);
-        stream->Write(request);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start CreateEnrollment stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write video config.
+            throw WriteStreamError("Failed to write video configuration to CreateEnrollment stream.");
+        // Successfully created stream, implicitly cast it to a unique pointer.
         return stream;
     }
 
@@ -431,7 +465,7 @@ class VideoService {
 
     /// A type for biometric authentication streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::video::AuthenticateRequest,
             ::sensory::api::v1::video::AuthenticateResponse
         >
@@ -464,7 +498,10 @@ class VideoService {
         request.set_allocated_config(authenticateConfig);
         // Create the stream and write the initial configuration request.
         auto stream = biometricsStub->Authenticate(context);
-        stream->Write(request);
+        if (stream == nullptr)
+            throw NullStreamError("Authenticate stream returned null pointer!");
+        if (!stream->Write(request))  // Failed to write video config.
+            throw WriteStreamError("Failed to write video configuration to Authenticate stream.");
         return stream;
     }
 
@@ -571,7 +608,7 @@ class VideoService {
 
     /// A type for face liveness validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::video::ValidateRecognitionRequest,
             ::sensory::api::v1::video::LivenessRecognitionResponse
         >
@@ -602,11 +639,13 @@ class VideoService {
         config.setupBidiClientContext(*context, tokenManager);
         // Create the request with the pointer to the allocated config.
         ::sensory::api::v1::video::ValidateRecognitionRequest request;
-        // Update the request with the pointer to the allocated config.
         request.set_allocated_config(recognitionConfig);
         // Create the stream and write the initial configuration request.
         auto stream = recognitionStub->ValidateLiveness(context);
-        stream->Write(request);
+        if (stream == nullptr)
+            throw NullStreamError("Authenticate stream returned null pointer!");
+        if (!stream->Write(request))  // Failed to write video config.
+            throw WriteStreamError("Failed to write video configuration to ValidateLiveness stream.");
         return stream;
     }
 

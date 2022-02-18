@@ -53,7 +53,7 @@ class ManagementService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// The gRPC stub for the enrollment service
-    std::unique_ptr<::sensory::api::v1::management::EnrollmentService::Stub> stub;
+    std::unique_ptr<::sensory::api::v1::management::EnrollmentService::StubInterface> stub;
 
     /// @brief Create a copy of this object.
     ///
@@ -84,6 +84,18 @@ class ManagementService {
     ) : config(config_),
         tokenManager(tokenManager_),
         stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
+
+    /// @brief Initialize a new management service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param stub_ The enrollment stub to initialize the service with.
+    ///
+    ManagementService(
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::api::v1::management::EnrollmentService::StubInterface* stub_
+    ) : config(config_), tokenManager(tokenManager_), stub(stub_) { }
 
     // ----- Get Enrollments ---------------------------------------------------
 
@@ -441,6 +453,7 @@ class ManagementService {
     /// @param description A description of the enrollment group.
     /// @param modelName The name of the model that all enrollments in this
     /// group will use.
+    /// @param enrollments The vector of enrollments to create the group with.
     /// @returns A gRPC status object indicating whether the call succeeded.
     ///
     /// @details
@@ -454,7 +467,8 @@ class ManagementService {
         const std::string& groupID,
         const std::string& groupName,
         const std::string& description,
-        const std::string& modelName
+        const std::string& modelName,
+        const std::vector<std::string>& enrollments
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
@@ -468,6 +482,8 @@ class ManagementService {
         request.set_name(groupName);
         request.set_description(description);
         request.set_modelname(modelName);
+        for (auto& enrollment: enrollments)
+            request.add_enrollmentids(enrollment);
         // Execute the remote procedure call synchronously and return the result
         return stub->CreateEnrollmentGroup(&context, request, response);
     }
@@ -492,6 +508,7 @@ class ManagementService {
     /// @param description A description of the enrollment group.
     /// @param modelName The name of the model that all enrollments in this
     /// group will use.
+    /// @param enrollments The vector of enrollments to create the group with.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
     /// as the `tag` of the event. Ownership of the pointer passes to the
@@ -504,7 +521,8 @@ class ManagementService {
         const std::string& groupID,
         const std::string& groupName,
         const std::string& description,
-        const std::string& modelName
+        const std::string& modelName,
+        const std::vector<std::string>& enrollments
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -519,6 +537,8 @@ class ManagementService {
         call->request.set_name(groupName);
         call->request.set_description(description);
         call->request.set_modelname(modelName);
+        for (auto& enrollment: enrollments)
+            call->request.add_enrollmentids(enrollment);
         call->rpc = stub->AsyncCreateEnrollmentGroup(&call->context, call->request, queue);
         // Finish the RPC to tell it where the response and status buffers are
         // located within the call object. Use the address of the call as the
@@ -552,6 +572,7 @@ class ManagementService {
     /// @param description A description of the enrollment group.
     /// @param modelName The name of the model that all enrollments in this
     /// group will use.
+    /// @param enrollments The vector of enrollments to create the group with.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
@@ -562,6 +583,7 @@ class ManagementService {
         const std::string& groupName,
         const std::string& description,
         const std::string& modelName,
+        const std::vector<std::string>& enrollments,
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -579,6 +601,8 @@ class ManagementService {
         call->request.set_name(groupName);
         call->request.set_description(description);
         call->request.set_modelname(modelName);
+        for (auto& enrollment: enrollments)
+            call->request.add_enrollmentids(enrollment);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
         stub->async()->CreateEnrollmentGroup(

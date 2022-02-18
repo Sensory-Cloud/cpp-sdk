@@ -26,15 +26,56 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include "sensorycloud/services/health_service.hpp"
+#include "sensorycloud/generated/health/health_mock.grpc.pb.h"
 
-using sensory::Config;
-using sensory::service::HealthService;
+using ::grpc::ClientContext;
+using ::grpc::Status;
+
+using ::sensory::Config;
+using ::sensory::service::HealthService;
+using ::sensory::api::health::HealthRequest;
+using ::sensory::api::common::ServerHealthResponse;
+
+using testing::_;
 
 TEST_CASE("Should create HealthService from Config") {
     // Create the configuration that provides information about the remote host.
     Config config("hostname.com", 443, "tenant ID", "device ID");
     config.connect();
-    // Create the OAuth service for requesting and managing OAuth tokens through
-    // a token manager instance.
+    // Create the health service.
     HealthService service(config);
+}
+
+SCENARIO("A client requires a synchronous interface to the health service") {
+    GIVEN("An initialized health service.") {
+        // Create the configuration that provides information about the remote host.
+        Config config("hostname.com", 443, "tenant ID", "device ID", false);
+        config.connect();
+        auto stub = new ::sensory::api::health::MockHealthServiceStub;
+        HealthService service(config, stub);
+
+        // ----- GetHealth -----------------------------------------------------
+
+        WHEN("GetHealth is called") {
+            EXPECT_CALL(*stub, GetHealth(_, _, _))
+                .Times(1)
+                .WillOnce([] (ClientContext*, const HealthRequest& request, ServerHealthResponse *response) {
+                    response->set_ishealthy(true);
+                    response->set_serverversion("0.0.0");
+                    response->set_id("response ID");
+                    return Status::OK;
+                }
+            );
+            ServerHealthResponse response;
+            auto status = service.getHealth(&response);
+            THEN("The status is OK") {
+                REQUIRE(status.ok());
+            }
+            THEN("the response contains the updated data") {
+                REQUIRE(response.ishealthy());
+                REQUIRE("0.0.0" == response.serverversion());
+                REQUIRE("response ID" == response.id());
+            }
+        }
+    }
 }

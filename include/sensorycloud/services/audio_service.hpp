@@ -34,6 +34,7 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/call_data.hpp"
+#include "sensorycloud/services/errors.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -280,13 +281,13 @@ class AudioService {
     /// the token manager for securing gRPC requests to the server
     ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
     /// the gRPC stub for the audio models service
-    std::unique_ptr<::sensory::api::v1::audio::AudioModels::Stub> modelsStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioModels::StubInterface> modelsStub;
     /// the gRPC stub for the audio biometrics service
-    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::Stub> biometricStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioBiometrics::StubInterface> biometricStub;
     /// the gRPC stub for the audio events service
-    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::Stub> eventsStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioEvents::StubInterface> eventsStub;
     /// the gRPC stub for the audio transcriptions service
-    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::Stub> transcriptionsStub;
+    std::unique_ptr<::sensory::api::v1::audio::AudioTranscriptions::StubInterface> transcriptionsStub;
 
     /// @brief Create a copy of this object.
     ///
@@ -320,6 +321,33 @@ class AudioService {
         biometricStub(::sensory::api::v1::audio::AudioBiometrics::NewStub(config.getChannel())),
         eventsStub(::sensory::api::v1::audio::AudioEvents::NewStub(config.getChannel())),
         transcriptionsStub(::sensory::api::v1::audio::AudioTranscriptions::NewStub(config.getChannel())) { }
+
+    /// @brief Initialize a new audio service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param modelsStub_ The models service stub to initialize the service
+    /// with.
+    /// @param biometricStub_ The biometrics service stub to initialize the
+    /// service with.
+    /// @param eventsStub_ The events service stub to initialize the service
+    /// with.
+    /// @param transcriptionsStub_ The transcription service stub to initialize
+    /// the service with.
+    ///
+    AudioService(
+        const ::sensory::Config& config_,
+        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::api::v1::audio::AudioModels::StubInterface* modelsStub_,
+        ::sensory::api::v1::audio::AudioBiometrics::StubInterface* biometricStub_,
+        ::sensory::api::v1::audio::AudioEvents::StubInterface* eventsStub_,
+        ::sensory::api::v1::audio::AudioTranscriptions::StubInterface* transcriptionsStub_
+    ) : config(config_),
+        tokenManager(tokenManager_),
+        modelsStub(modelsStub_),
+        biometricStub(biometricStub_),
+        eventsStub(eventsStub_),
+        transcriptionsStub(transcriptionsStub_) { }
 
     // ----- Get Models --------------------------------------------------------
 
@@ -423,7 +451,7 @@ class AudioService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::CreateEnrollmentRequest,
             ::sensory::api::v1::audio::CreateEnrollmentResponse
         >
@@ -460,8 +488,11 @@ class AudioService {
         ::sensory::api::v1::audio::CreateEnrollmentRequest request;
         request.set_allocated_config(enrollmentConfig);
         // Create the stream and write the initial configuration request.
-        CreateEnrollmentStream stream = biometricStub->CreateEnrollment(context);
-        stream->Write(request);
+        auto stream = biometricStub->CreateEnrollment(context);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start CreateEnrollment stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write audio config.
+            throw WriteStreamError("Failed to write audio configuration to CreateEnrollment stream.");
         return stream;
     }
 
@@ -579,7 +610,7 @@ class AudioService {
 
     /// A type for biometric authentication streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::AuthenticateRequest,
             ::sensory::api::v1::audio::AuthenticateResponse
         >
@@ -615,8 +646,11 @@ class AudioService {
         ::sensory::api::v1::audio::AuthenticateRequest request;
         request.set_allocated_config(authenticateConfig);
         // Create the stream and write the initial configuration request.
-        AuthenticateStream stream = biometricStub->Authenticate(context);
-        stream->Write(request);
+        auto stream = biometricStub->Authenticate(context);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start Authenticate stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write audio config.
+            throw WriteStreamError("Failed to write audio configuration to Authenticate stream.");
         return stream;
     }
 
@@ -727,11 +761,11 @@ class AudioService {
         reactor->StartRead(&reactor->response);
     }
 
-    // ----- Validate Trigger --------------------------------------------------
+    // ----- Validate Event ----------------------------------------------------
 
     /// A type for trigger validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::ValidateEventRequest,
             ::sensory::api::v1::audio::ValidateEventResponse
         >
@@ -767,8 +801,11 @@ class AudioService {
         ::sensory::api::v1::audio::ValidateEventRequest request;
         request.set_allocated_config(validateEventConfig);
         // Create the stream and write the initial configuration request.
-        ValidateEventStream stream = eventsStub->ValidateEvent(context);
-        stream->Write(request);
+        auto stream = eventsStub->ValidateEvent(context);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start ValidateEvent stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write audio config.
+            throw WriteStreamError("Failed to write audio config to ValidateEvent stream.");
         return stream;
     }
 
@@ -883,7 +920,7 @@ class AudioService {
 
     /// A type for biometric enrollment streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::CreateEnrolledEventRequest,
             ::sensory::api::v1::audio::CreateEnrollmentResponse
         >
@@ -919,8 +956,11 @@ class AudioService {
         ::sensory::api::v1::audio::CreateEnrolledEventRequest request;
         request.set_allocated_config(enrollmentConfig);
         // Create the stream and write the initial configuration request.
-        CreateEnrolledEventStream stream = eventsStub->CreateEnrolledEvent(context);
-        stream->Write(request);
+        auto stream = eventsStub->CreateEnrolledEvent(context);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start CreateEnrolledEvent stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write audio config.
+            throw WriteStreamError("Failed to write audio config to CreateEnrolledEvent stream.");
         return stream;
     }
 
@@ -1036,7 +1076,7 @@ class AudioService {
 
     /// A type for event validation streams.
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::ValidateEnrolledEventRequest,
             ::sensory::api::v1::audio::ValidateEnrolledEventResponse
         >
@@ -1072,8 +1112,11 @@ class AudioService {
         ::sensory::api::v1::audio::ValidateEnrolledEventRequest request;
         request.set_allocated_config(validateConfig);
         // Create the stream and write the initial configuration request.
-        ValidateEnrolledEventStream stream = eventsStub->ValidateEnrolledEvent(context);
-        stream->Write(request);
+        auto stream = eventsStub->ValidateEnrolledEvent(context);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start ValidateEnrolledEvent stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write audio config.
+            throw WriteStreamError("Failed to write audio config to ValidateEnrolledEvent stream.");
         return stream;
     }
 
@@ -1188,7 +1231,7 @@ class AudioService {
 
     /// a type for biometric transcription streams
     typedef std::unique_ptr<
-        ::grpc::ClientReaderWriter<
+        ::grpc::ClientReaderWriterInterface<
             ::sensory::api::v1::audio::TranscribeRequest,
             ::sensory::api::v1::audio::TranscribeResponse
         >
@@ -1224,8 +1267,11 @@ class AudioService {
         ::sensory::api::v1::audio::TranscribeRequest request;
         request.set_allocated_config(transcribeConfig);
         // Create the stream and write the initial configuration request.
-        TranscribeStream stream = transcriptionsStub->Transcribe(context);
-        stream->Write(request);
+        auto stream = transcriptionsStub->Transcribe(context);
+        if (stream == nullptr)  // Failed to create stream.
+            throw NullStreamError("Failed to start Transcribe stream (null pointer).");
+        if (!stream->Write(request))  // Failed to write audio config.
+            throw WriteStreamError("Failed to write audio config to Transcribe stream.");
         return stream;
     }
 

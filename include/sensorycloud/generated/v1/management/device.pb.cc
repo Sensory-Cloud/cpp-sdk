@@ -36,6 +36,21 @@ struct EnrollDeviceRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT EnrollDeviceRequestDefaultTypeInternal _EnrollDeviceRequest_default_instance_;
+constexpr RenewDeviceCredentialRequest::RenewDeviceCredentialRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : deviceid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , clientid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , credential_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct RenewDeviceCredentialRequestDefaultTypeInternal {
+  constexpr RenewDeviceCredentialRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~RenewDeviceCredentialRequestDefaultTypeInternal() {}
+  union {
+    RenewDeviceCredentialRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT RenewDeviceCredentialRequestDefaultTypeInternal _RenewDeviceCredentialRequest_default_instance_;
 constexpr DeviceResponse::DeviceResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
@@ -64,7 +79,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeviceGetWhoAmIRequestDefaultTy
 }  // namespace v1
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2fmanagement_2fdevice_2eproto[3];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2fmanagement_2fdevice_2eproto[4];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_v1_2fmanagement_2fdevice_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_v1_2fmanagement_2fdevice_2eproto = nullptr;
 
@@ -80,6 +95,16 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fmanagement_2fdevice_2epro
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollDeviceRequest, tenantid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollDeviceRequest, client_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::EnrollDeviceRequest, credential_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, deviceid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, clientid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, tenantid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, credential_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -97,12 +122,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fmanagement_2fdevice_2epro
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::v1::management::EnrollDeviceRequest)},
-  { 11, -1, -1, sizeof(::sensory::api::v1::management::DeviceResponse)},
-  { 19, -1, -1, sizeof(::sensory::api::v1::management::DeviceGetWhoAmIRequest)},
+  { 11, -1, -1, sizeof(::sensory::api::v1::management::RenewDeviceCredentialRequest)},
+  { 21, -1, -1, sizeof(::sensory::api::v1::management::DeviceResponse)},
+  { 29, -1, -1, sizeof(::sensory::api::v1::management::DeviceGetWhoAmIRequest)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_EnrollDeviceRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_RenewDeviceCredentialRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeviceResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeviceGetWhoAmIRequest_default_instance_),
 };
@@ -115,18 +142,25 @@ const char descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto[] PROTOBUF
   "Id\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022\032\n\010tenantId\030\003 \001(\tB\010\372"
   "B\005r\003\260\001\001\022;\n\006client\030\004 \001(\0132!.sensory.api.co"
   "mmon.GenericClientB\010\372B\005\212\001\002\020\001\022\022\n\ncredenti"
-  "al\030\005 \001(\t\"0\n\016DeviceResponse\022\014\n\004name\030\001 \001(\t"
-  "\022\020\n\010deviceId\030\002 \001(\t\"\030\n\026DeviceGetWhoAmIReq"
-  "uest2\351\001\n\rDeviceService\022k\n\014EnrollDevice\022."
-  ".sensory.api.v1.management.EnrollDeviceR"
-  "equest\032).sensory.api.v1.management.Devic"
-  "eResponse\"\000\022k\n\tGetWhoAmI\0221.sensory.api.v"
-  "1.management.DeviceGetWhoAmIRequest\032).se"
-  "nsory.api.v1.management.DeviceResponse\"\000"
-  "B\204\001\n\034io.sensory.api.v1.managementB!Senso"
-  "ryApiV1ManagementDeviceProtoP\001Z\?gitlab.c"
-  "om/sensory-cloud/server/titan.git/pkg/ap"
-  "i/v1/managementb\006proto3"
+  "al\030\005 \001(\t\"\223\001\n\034RenewDeviceCredentialReques"
+  "t\022\033\n\010deviceId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\032\n\010client"
+  "Id\030\002 \001(\tB\010\372B\005r\003\260\001\001\022\032\n\010tenantId\030\003 \001(\tB\010\372B"
+  "\005r\003\260\001\001\022\036\n\ncredential\030\004 \001(\tB\n\372B\007r\005\020\001\030\377\001\"0"
+  "\n\016DeviceResponse\022\014\n\004name\030\001 \001(\t\022\020\n\010device"
+  "Id\030\002 \001(\t\"\030\n\026DeviceGetWhoAmIRequest2\350\002\n\rD"
+  "eviceService\022k\n\014EnrollDevice\022..sensory.a"
+  "pi.v1.management.EnrollDeviceRequest\032).s"
+  "ensory.api.v1.management.DeviceResponse\""
+  "\000\022}\n\025RenewDeviceCredential\0227.sensory.api"
+  ".v1.management.RenewDeviceCredentialRequ"
+  "est\032).sensory.api.v1.management.DeviceRe"
+  "sponse\"\000\022k\n\tGetWhoAmI\0221.sensory.api.v1.m"
+  "anagement.DeviceGetWhoAmIRequest\032).senso"
+  "ry.api.v1.management.DeviceResponse\"\000B\204\001"
+  "\n\034io.sensory.api.v1.managementB!SensoryA"
+  "piV1ManagementDeviceProtoP\001Z\?gitlab.com/"
+  "sensory-cloud/server/titan.git/pkg/api/v"
+  "1/managementb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -134,8 +168,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fmanagement_2fdevice_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fmanagement_2fdevice_2eproto = {
-  false, false, 743, descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto, "v1/management/device.proto", 
-  &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once, descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps, 2, 3,
+  false, false, 1020, descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto, "v1/management/device.proto", 
+  &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once, descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps, 2, 4,
   schemas, file_default_instances, TableStruct_v1_2fmanagement_2fdevice_2eproto::offsets,
   file_level_metadata_v1_2fmanagement_2fdevice_2eproto, file_level_enum_descriptors_v1_2fmanagement_2fdevice_2eproto, file_level_service_descriptors_v1_2fmanagement_2fdevice_2eproto,
 };
@@ -527,6 +561,332 @@ void EnrollDeviceRequest::InternalSwap(EnrollDeviceRequest* other) {
 
 // ===================================================================
 
+class RenewDeviceCredentialRequest::_Internal {
+ public:
+};
+
+RenewDeviceCredentialRequest::RenewDeviceCredentialRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.RenewDeviceCredentialRequest)
+}
+RenewDeviceCredentialRequest::RenewDeviceCredentialRequest(const RenewDeviceCredentialRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_deviceid().empty()) {
+    deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_deviceid(), 
+      GetArenaForAllocation());
+  }
+  clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_clientid().empty()) {
+    clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_clientid(), 
+      GetArenaForAllocation());
+  }
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
+  credential_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_credential().empty()) {
+    credential_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_credential(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.RenewDeviceCredentialRequest)
+}
+
+void RenewDeviceCredentialRequest::SharedCtor() {
+deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+credential_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+RenewDeviceCredentialRequest::~RenewDeviceCredentialRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void RenewDeviceCredentialRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  deviceid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  clientid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  credential_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void RenewDeviceCredentialRequest::ArenaDtor(void* object) {
+  RenewDeviceCredentialRequest* _this = reinterpret_cast< RenewDeviceCredentialRequest* >(object);
+  (void)_this;
+}
+void RenewDeviceCredentialRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void RenewDeviceCredentialRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void RenewDeviceCredentialRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  deviceid_.ClearToEmpty();
+  clientid_.ClearToEmpty();
+  tenantid_.ClearToEmpty();
+  credential_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* RenewDeviceCredentialRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string deviceId = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_deviceid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string clientId = 2 [(.validate.rules) = {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_clientid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.RenewDeviceCredentialRequest.clientId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string tenantId = 3 [(.validate.rules) = {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string credential = 4 [(.validate.rules) = {
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_credential();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.RenewDeviceCredentialRequest.credential"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* RenewDeviceCredentialRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string deviceId = 1 [(.validate.rules) = {
+  if (!this->_internal_deviceid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_deviceid().data(), static_cast<int>(this->_internal_deviceid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_deviceid(), target);
+  }
+
+  // string clientId = 2 [(.validate.rules) = {
+  if (!this->_internal_clientid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_clientid().data(), static_cast<int>(this->_internal_clientid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.RenewDeviceCredentialRequest.clientId");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_clientid(), target);
+  }
+
+  // string tenantId = 3 [(.validate.rules) = {
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_tenantid(), target);
+  }
+
+  // string credential = 4 [(.validate.rules) = {
+  if (!this->_internal_credential().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_credential().data(), static_cast<int>(this->_internal_credential().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.RenewDeviceCredentialRequest.credential");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_credential(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  return target;
+}
+
+size_t RenewDeviceCredentialRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string deviceId = 1 [(.validate.rules) = {
+  if (!this->_internal_deviceid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_deviceid());
+  }
+
+  // string clientId = 2 [(.validate.rules) = {
+  if (!this->_internal_clientid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_clientid());
+  }
+
+  // string tenantId = 3 [(.validate.rules) = {
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
+  // string credential = 4 [(.validate.rules) = {
+  if (!this->_internal_credential().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_credential());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RenewDeviceCredentialRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    RenewDeviceCredentialRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RenewDeviceCredentialRequest::GetClassData() const { return &_class_data_; }
+
+void RenewDeviceCredentialRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<RenewDeviceCredentialRequest *>(to)->MergeFrom(
+      static_cast<const RenewDeviceCredentialRequest &>(from));
+}
+
+
+void RenewDeviceCredentialRequest::MergeFrom(const RenewDeviceCredentialRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_deviceid().empty()) {
+    _internal_set_deviceid(from._internal_deviceid());
+  }
+  if (!from._internal_clientid().empty()) {
+    _internal_set_clientid(from._internal_clientid());
+  }
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
+  if (!from._internal_credential().empty()) {
+    _internal_set_credential(from._internal_credential());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void RenewDeviceCredentialRequest::CopyFrom(const RenewDeviceCredentialRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.management.RenewDeviceCredentialRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RenewDeviceCredentialRequest::IsInitialized() const {
+  return true;
+}
+
+void RenewDeviceCredentialRequest::InternalSwap(RenewDeviceCredentialRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &deviceid_, lhs_arena,
+      &other->deviceid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &clientid_, lhs_arena,
+      &other->clientid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &credential_, lhs_arena,
+      &other->credential_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata RenewDeviceCredentialRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[1]);
+}
+
+// ===================================================================
+
 class DeviceResponse::_Internal {
  public:
 };
@@ -762,7 +1122,7 @@ void DeviceResponse::InternalSwap(DeviceResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata DeviceResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
-      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[1]);
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[2]);
 }
 
 // ===================================================================
@@ -801,7 +1161,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeviceGetWhoAmIRequest::GetCla
 ::PROTOBUF_NAMESPACE_ID::Metadata DeviceGetWhoAmIRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
-      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[2]);
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[3]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -812,6 +1172,9 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeviceGetWhoAmIRequest::GetCla
 PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::EnrollDeviceRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::EnrollDeviceRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::management::EnrollDeviceRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::RenewDeviceCredentialRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::RenewDeviceCredentialRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::management::RenewDeviceCredentialRequest >(arena);
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::DeviceResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::management::DeviceResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::management::DeviceResponse >(arena);
