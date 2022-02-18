@@ -639,7 +639,6 @@ class VideoService {
         config.setupBidiClientContext(*context, tokenManager);
         // Create the request with the pointer to the allocated config.
         ::sensory::api::v1::video::ValidateRecognitionRequest request;
-        // Update the request with the pointer to the allocated config.
         request.set_allocated_config(recognitionConfig);
         // Create the stream and write the initial configuration request.
         auto stream = recognitionStub->ValidateLiveness(context);
