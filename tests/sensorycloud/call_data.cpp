@@ -33,29 +33,55 @@
 // MARK: AsyncResponseReaderCall
 // -----------------------------------------------------------------------------
 
-// (No functional components to test as of 2021/01/09)
+/// @brief A dummy type acting as the encapsulating type of the async stream.
+struct MockAsyncResponseReaderCallFriend { };
+
+/// @brief The mock call data to test based on arbitrary SDK messages.
+typedef sensory::AsyncResponseReaderCall<
+    MockAsyncResponseReaderCallFriend,            // Set the friend (parent) type to a dummy value
+    ::sensory::api::health::HealthRequest,        // Use an arbitrary request from the SDK
+    ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
+> MockAsyncResponseReaderCall;
+
+TEST_CASE("When the call is in its initial state, the call pointer is null") {
+    MockAsyncResponseReaderCall stream;
+    REQUIRE(nullptr == stream.getCall());
+}
 
 // -----------------------------------------------------------------------------
 // MARK: AsyncReaderWriterCall
 // -----------------------------------------------------------------------------
 
-// (No functional components to test as of 2021/01/09)
+/// @brief A dummy type acting as the encapsulating type of the async stream.
+struct MockAsyncReaderWriterCallFriend { };
+
+/// @brief The mock call data to test based on arbitrary SDK messages.
+typedef sensory::AsyncReaderWriterCall<
+    MockAsyncReaderWriterCallFriend,              // Set the friend (parent) type to a dummy value
+    ::sensory::api::health::HealthRequest,        // Use an arbitrary request from the SDK
+    ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
+> MockAsyncReaderWriterCall;
+
+TEST_CASE("When the call is in its initial state, the call pointer is null") {
+    MockAsyncReaderWriterCall stream;
+    REQUIRE(nullptr == stream.getCall());
+}
 
 // -----------------------------------------------------------------------------
 // MARK: CallData
 // -----------------------------------------------------------------------------
 
 /// @brief A dummy type acting as the encapsulating type of the reactor.
-struct DummyCallDataFriend {
+struct MockCallDataFriend {
     /// @brief Set the is done flag of the call data instance.
     ///
     /// @tparam T The MockCallData type (templated instead of forward declared).
     /// @param t The MockCallData instance.
     ///
     /// @details
-    /// This function is intended to be used with DummyCallDataFriend as the
+    /// This function is intended to be used with MockCallDataFriend as the
     /// friend parent of the MockCallData. This allows the scope of the
-    /// DummyCallDataFriend to extend into the private scope of CallData in
+    /// MockCallDataFriend to extend into the private scope of CallData in
     /// order to call private functions and mutate types.
     ///
     template <typename T>
@@ -63,7 +89,7 @@ struct DummyCallDataFriend {
 };
 /// @brief The mock call data to test based on arbitrary SDK messages.
 typedef sensory::CallData<
-    DummyCallDataFriend,                          // Set the friend (parent) type to a dummy value
+    MockCallDataFriend,                           // Set the friend (parent) type to a dummy value
     ::sensory::api::health::HealthRequest,        // Use an arbitrary request from the SDK
     ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
 > MockCallData;
@@ -84,7 +110,7 @@ SCENARIO("A user wants to wait for the callback to fire from a CallData") {
     GIVEN("an arbitrary call data structure") {
         MockCallData callData;
         WHEN("The onDone callback is triggered synchronously") {
-            DummyCallDataFriend::setIsDone(callData);
+            MockCallDataFriend::setIsDone(callData);
             THEN("getIsDone evaluates to true") {
                 REQUIRE(callData.getIsDone());
             }
@@ -92,7 +118,7 @@ SCENARIO("A user wants to wait for the callback to fire from a CallData") {
         WHEN("The onDone callback is triggered asynchronously") {
             // Trigger the callback in the background thread.
             std::thread thread([&callData](){
-                DummyCallDataFriend::setIsDone(callData);
+                MockCallDataFriend::setIsDone(callData);
             });
             // Wait for the OnDone callback to trigger
             callData.await();
@@ -111,10 +137,10 @@ SCENARIO("A user wants to wait for the callback to fire from a CallData") {
 // -----------------------------------------------------------------------------
 
 /// @brief A dummy type acting as the encapsulating type of the reactor.
-struct DummyBidiReactorFriend { };
+struct MockBidiReactorFriend { };
 /// @brief The mock Bidi reactor to test based on arbitrary SDK messages.
 typedef sensory::AwaitableBidiReactor<
-    DummyBidiReactorFriend,                       // Set the friend (parent) type to a dummy value
+    MockBidiReactorFriend,                        // Set the friend (parent) type to a dummy value
     ::sensory::api::health::HealthRequest,        // Use an arbitrary request from the SDK
     ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
 > MockAwaitableBidiReactor;
