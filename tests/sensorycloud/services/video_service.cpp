@@ -69,13 +69,15 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const std::string description = "description";
         const bool isLivenessEnabled = true;
         const auto livenessThreshold = RecognitionThreshold::LOW;
+        const int32_t numLivenessFramesRequired = 7;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = sensory::service::video::newCreateEnrollmentConfig(
+            auto config = newCreateEnrollmentConfig(
                 modelName,
                 userID,
                 description,
                 isLivenessEnabled,
-                livenessThreshold
+                livenessThreshold,
+                numLivenessFramesRequired
             );
             THEN("a pointer is returned with the variables set") {
                 REQUIRE(config != nullptr);
@@ -83,6 +85,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
                 REQUIRE(config->userid() == userID);
                 REQUIRE(config->description() == description);
                 REQUIRE(config->livenessthreshold() == livenessThreshold);
+                REQUIRE(config->numlivenessframesrequired() == numLivenessFramesRequired);
             }
             delete config;
         }
@@ -99,7 +102,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
         const bool isLivenessEnabled = true;
         const auto livenessThreshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = sensory::service::video::newAuthenticateConfig(
+            auto config = newAuthenticateConfig(
                 enrollmentID,
                 isLivenessEnabled,
                 livenessThreshold
@@ -114,7 +117,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
             delete config;
         }
         WHEN("the config is dynamically allocated as an enrollment group") {
-            auto config = sensory::service::video::newAuthenticateConfig(
+            auto config = newAuthenticateConfig(
                 enrollmentID,
                 isLivenessEnabled,
                 livenessThreshold,
@@ -142,7 +145,7 @@ SCENARIO("A user needs to create a ValidateRecognitionConfig") {
         const std::string userID = "userID";
         const auto threshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = sensory::service::video::newValidateRecognitionConfig(
+            auto config = newValidateRecognitionConfig(
                 modelName,
                 userID,
                 threshold
@@ -244,7 +247,6 @@ SCENARIO("A client requires a synchronous interface to the video service") {
             // Expect the SDK to call the first write to send the video config.
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
-
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
                 REQUIRE_THROWS_AS(service.createEnrollment(&context, newCreateEnrollmentConfig(
@@ -274,7 +276,6 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                     return true;
                 }
             );
-            // Create the stream with the expected parameters.
             ClientContext context;
             auto stream = service.createEnrollment(&context, newCreateEnrollmentConfig(
                 "modelName",
@@ -283,13 +284,130 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 true,
                 RecognitionThreshold::LOW
             ));
-            // The stream should be a unique pointer to the mock stream.
-            REQUIRE(stream.get() == mock_stream);
+            THEN("a unique pointer to the mock stream is returned") {
+                REQUIRE(stream.get() == mock_stream);
+            }
         }
 
         // ----- Authenticate --------------------------------------------------
 
+        WHEN("Authenticate is called without a valid connection") {
+            // Expect the call and return a null pointer for the stream.
+            EXPECT_CALL(*biometricsStub, AuthenticateRaw(_))
+                .Times(1).WillOnce(testing::Return(nullptr));
+            ClientContext context;
+            THEN("the function catches the null stream and throws an error") {
+                REQUIRE_THROWS_AS(service.authenticate(&context, newAuthenticateConfig(
+                    "enrollmentID",
+                    true,
+                    RecognitionThreshold::LOW
+                )), sensory::service::NullStreamError);
+            }
+        }
+
+        WHEN("Authenticate is called and the first Write fails") {
+            // Expect the call and return a mock stream.
+            auto mock_stream = new MockClientReaderWriter<AuthenticateRequest, AuthenticateResponse>();
+            EXPECT_CALL(*biometricsStub, AuthenticateRaw(_))
+                .Times(1).WillOnce(testing::Return(mock_stream));
+            // Expect the SDK to call the first write to send the video config.
+            EXPECT_CALL(*mock_stream, Write(_, _))
+                .Times(1).WillOnce(testing::Return(false));
+            ClientContext context;
+            THEN("the function catches the write failure and throws an error") {
+                REQUIRE_THROWS_AS(service.authenticate(&context, newAuthenticateConfig(
+                    "enrollmentID",
+                    true,
+                    RecognitionThreshold::LOW
+                )), sensory::service::WriteStreamError);
+            }
+        }
+
+        WHEN("Authenticate is called with a valid connection") {
+            // Expect the call and return a mock stream.
+            auto mock_stream = new MockClientReaderWriter<AuthenticateRequest, AuthenticateResponse>();
+            EXPECT_CALL(*biometricsStub, AuthenticateRaw(_))
+                .Times(1).WillOnce(testing::Return(mock_stream));
+            // Expect the SDK to call the first write to send the video config.
+            // Check that the config is properly set with the parameters.
+            EXPECT_CALL(*mock_stream, Write(_, _)).Times(1).WillOnce(
+                [] (const AuthenticateRequest& request, ::grpc::WriteOptions) {
+                    REQUIRE("enrollmentID" == request.config().enrollmentid());
+                    REQUIRE(true == request.config().islivenessenabled());
+                    REQUIRE(RecognitionThreshold::LOW == request.config().livenessthreshold());
+                    return true;
+                }
+            );
+            ClientContext context;
+            auto stream = service.authenticate(&context, newAuthenticateConfig(
+                "enrollmentID",
+                true,
+                RecognitionThreshold::LOW
+            ));
+            THEN("a unique pointer to the mock stream is returned") {
+                REQUIRE(stream.get() == mock_stream);
+            }
+        }
+
         // ----- ValidateRecognition -------------------------------------------
+
+        WHEN("ValidateRecognition is called without a valid connection") {
+            // Expect the call and return a null pointer for the stream.
+            EXPECT_CALL(*recognitionStub, ValidateLivenessRaw(_))
+                .Times(1).WillOnce(testing::Return(nullptr));
+            ClientContext context;
+            THEN("the function catches the null stream and throws an error") {
+                REQUIRE_THROWS_AS(service.validateLiveness(&context, newValidateRecognitionConfig(
+                    "modelName",
+                    "userID",
+                    RecognitionThreshold::LOW
+                )), sensory::service::NullStreamError);
+            }
+        }
+
+        WHEN("ValidateRecognition is called and the first Write fails") {
+            // Expect the call and return a mock stream.
+            auto mock_stream = new MockClientReaderWriter<ValidateRecognitionRequest, LivenessRecognitionResponse>();
+            EXPECT_CALL(*recognitionStub, ValidateLivenessRaw(_))
+                .Times(1).WillOnce(testing::Return(mock_stream));
+            // Expect the SDK to call the first write to send the video config.
+            EXPECT_CALL(*mock_stream, Write(_, _))
+                .Times(1).WillOnce(testing::Return(false));
+            ClientContext context;
+            THEN("the function catches the write failure and throws an error") {
+                REQUIRE_THROWS_AS(service.validateLiveness(&context, newValidateRecognitionConfig(
+                    "modelName",
+                    "userID",
+                    RecognitionThreshold::LOW
+                )), sensory::service::WriteStreamError);
+            }
+        }
+
+        WHEN("ValidateRecognition is called with a valid connection") {
+            // Expect the call and return a mock stream.
+            auto mock_stream = new MockClientReaderWriter<ValidateRecognitionRequest, LivenessRecognitionResponse>();
+            EXPECT_CALL(*recognitionStub, ValidateLivenessRaw(_))
+                .Times(1).WillOnce(testing::Return(mock_stream));
+            // Expect the SDK to call the first write to send the video config.
+            // Check that the config is properly set with the parameters.
+            EXPECT_CALL(*mock_stream, Write(_, _)).Times(1).WillOnce(
+                [] (const ValidateRecognitionRequest& request, ::grpc::WriteOptions) {
+                    REQUIRE("modelName" == request.config().modelname());
+                    REQUIRE("userID" == request.config().userid());
+                    REQUIRE(RecognitionThreshold::LOW == request.config().threshold());
+                    return true;
+                }
+            );
+            ClientContext context;
+            auto stream = service.validateLiveness(&context, newValidateRecognitionConfig(
+                "modelName",
+                "userID",
+                RecognitionThreshold::LOW
+            ));
+            THEN("a unique pointer to the mock stream is returned") {
+                REQUIRE(stream.get() == mock_stream);
+            }
+        }
 
     }
 }
