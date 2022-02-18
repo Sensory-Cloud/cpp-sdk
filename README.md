@@ -47,6 +47,15 @@ std::string makeSDKDirectory() {
 }
 -->
 
+## General Information
+
+Before getting started, you must spin up a Sensory Cloud inference server or
+have Sensory spin one up for you. You must also have the following pieces of
+information:
+
+-   Your inference server URL
+-   Your Sensory Tenant ID (UUID)
+
 ## Requirements
 
 This project uses CMake as the primary build system and gcc as the primary
@@ -58,26 +67,6 @@ of the SDK are:
 |:-----------|:----------|
 | `gcc`      | >= 4.9    |
 | `cmake`    | >= 3.11   |
-
-For older versions of Linux that do not ship with the latest CMake, it may be
-necessary to install a more recent version. Refer to the Dockerfile for your
-deployment target for version-specific scripting to install the latest CMake.
-If you intend to deploy to a container, these images may serve as a starting
-point for integrating the Sensory Cloud SDK into your project.
-
-| Dockerfile                                         | Distro    | Version    |
-|:---------------------------------------------------|:----------|:-----------|
-| [Dockerfile.Ubuntu.21.10](Dockerfile.Ubuntu.21.10) | Ubuntu    | 21.10      |
-| [Dockerfile.Ubuntu.20.04](Dockerfile.Ubuntu.20.04) | Ubuntu    | 20.04      |
-| [Dockerfile.Ubuntu.18.04](Dockerfile.Ubuntu.18.04) | Ubuntu    | 18.04      |
-| [Dockerfile.Ubuntu.16.04](Dockerfile.Ubuntu.16.04) | Ubuntu    | 16.04      |
-| [Dockerfile.Debian.11](Dockerfile.Debian.11)       | Debian    | 11         |
-| [Dockerfile.Debian.10](Dockerfile.Debian.10)       | Debian    | 10         |
-| [Dockerfile.Debian.9](Dockerfile.Debian.9)         | Debian    | 9          |
-| [Dockerfile.RHEL.8](Dockerfile.RHEL.8)             | RHEL      | 8          |
-| [Dockerfile.RHEL.7](Dockerfile.RHEL.7)             | RHEL      | 7          |
-| [Dockerfile.CentOS.8](Dockerfile.CentOS.8)         | CentOS    | 8          |
-| [Dockerfile.CentOS.7](Dockerfile.CentOS.7)         | CentOS    | 7          |
 
 ### Debian / Ubuntu
 
@@ -112,7 +101,7 @@ To install the build tools for Windows:
 TODO
 ```
 
-## Setup
+## Integration
 
 To include the Sensory Cloud C++ SDK in your project, add the following snippet
 to your `CMakeLists.txt`.
@@ -133,6 +122,7 @@ applications or other libraries using, i.e.,
 target_link_libraries(your_program PRIVATE sensorycloud)
 ```
 
+<!--
 ## Linked Libraries
 
 The Sensory Cloud SDK is built on top of protobuf and gRPC and must be linked
@@ -176,23 +166,7 @@ export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
 Note that because MacOS does not follow the POSIX standard, some additional
 environment variables are used to provide information about the OpenSSL library
 and public certificates on disk used for Transport Layer Security (TLS).
-
-## Compilation
-
-```shell
-mkdir build
-cd build
-cmake ..
-make
-```
-
-### Test Cases
-
-To generate the makefiles for building test cases, execute:
-
-```shell
-cmake -DSENSORY_CLOUD_BUILD_TESTS=ON <source directory>
-```
+-->
 
 ### SecureCredentialStore
 
@@ -217,6 +191,33 @@ The table below provides information about the implementations of
 [Keychain-Services]: https://developer.apple.com/documentation/security/keychain_services
 [Credential-Locker]: https://docs.microsoft.com/en-us/windows/uwp/security/credential-locker
 [Libsecret]: https://wiki.gnome.org/Projects/Libsecret
+
+## Compilation
+
+To compile the library from the top-level of this repository:
+
+```shell
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### Generate protobuf and gRPC code
+
+To generate proto and gRPC code, execute:
+
+```shell
+cmake -DSENSORY_CLOUD_GENERATE_PROTO=ON ..
+```
+
+### Test Cases
+
+To generate the makefiles for building test cases, execute:
+
+```shell
+cmake -DSENSORY_CLOUD_BUILD_TESTS=ON ..
+```
 
 ### Tutorials and Examples
 
