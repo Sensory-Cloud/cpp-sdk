@@ -409,6 +409,5 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 REQUIRE(stream.get() == mock_stream);
             }
         }
-
     }
 }
