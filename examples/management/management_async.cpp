@@ -218,11 +218,12 @@ int createEnrollmentGroup(
     const std::string& groupID,
     const std::string& name,
     const std::string& description,
-    const std::string& model
+    const std::string& model,
+    const std::vector<std::string>& enrollmentIDs
 ) {
     ::grpc::CompletionQueue queue;
     auto call = mgmtService.createEnrollmentGroup(
-        &queue, userID, groupID, name, description, model);
+        &queue, userID, groupID, name, description, model, enrollmentIDs);
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
@@ -393,7 +394,7 @@ int main(int argc, const char** argv) {
     if      (ENDPOINT == "getEnrollments")        return getEnrollments(mgmtService, USER_ID);
     else if (ENDPOINT == "deleteEnrollment")      return deleteEnrollment(mgmtService, ENROLLMENT_ID);
     else if (ENDPOINT == "getEnrollmentGroups")   return getEnrollmentGroups(mgmtService, USER_ID);
-    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL);
+    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
     else if (ENDPOINT == "appendEnrollmentGroup") return appendEnrollmentGroup(mgmtService, ENROLLMENT_ID, ENROLLMENT_IDS);
     else if (ENDPOINT == "deleteEnrollmentGroup") return deleteEnrollmentGroup(mgmtService, ENROLLMENT_ID);
 }

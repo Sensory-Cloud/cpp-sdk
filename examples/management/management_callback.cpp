@@ -202,10 +202,11 @@ int createEnrollmentGroup(
     const std::string& groupID,
     const std::string& name,
     const std::string& description,
-    const std::string& model
+    const std::string& model,
+    const std::vector<std::string>& enrollmentIDs
 ) {
     int errCode = 0;
-    mgmtService.createEnrollmentGroup(userID, groupID,name, description, model,
+    mgmtService.createEnrollmentGroup(userID, groupID,name, description, model, enrollmentIDs,
         [&errCode](ManagementService<InsecureCredentialStore>::CreateEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to create enrollment group with\n\t" <<
@@ -364,7 +365,7 @@ int main(int argc, const char** argv) {
     if      (ENDPOINT == "getEnrollments")        return getEnrollments(mgmtService, USER_ID);
     else if (ENDPOINT == "deleteEnrollment")      return deleteEnrollment(mgmtService, ENROLLMENT_ID);
     else if (ENDPOINT == "getEnrollmentGroups")   return getEnrollmentGroups(mgmtService, USER_ID);
-    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL);
+    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
     else if (ENDPOINT == "appendEnrollmentGroup") return appendEnrollmentGroup(mgmtService, ENROLLMENT_ID, ENROLLMENT_IDS);
     else if (ENDPOINT == "deleteEnrollmentGroup") return deleteEnrollmentGroup(mgmtService, ENROLLMENT_ID);
 }
