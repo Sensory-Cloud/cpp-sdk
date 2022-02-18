@@ -43,7 +43,7 @@ typedef sensory::AsyncResponseReaderCall<
     ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
 > MockAsyncResponseReaderCall;
 
-TEST_CASE("When the call is in its initial state, the call pointer is null") {
+TEST_CASE("When MockAsyncResponseReaderCall is in its initial state, the call pointer is null") {
     MockAsyncResponseReaderCall stream;
     REQUIRE(nullptr == stream.getCall());
 }
@@ -62,7 +62,7 @@ typedef sensory::AsyncReaderWriterCall<
     ::sensory::api::common::ServerHealthResponse  // Use an arbitrary response from the SDK
 > MockAsyncReaderWriterCall;
 
-TEST_CASE("When the call is in its initial state, the call pointer is null") {
+TEST_CASE("When MockAsyncReaderWriterCall is in its initial state, the call pointer is null") {
     MockAsyncReaderWriterCall stream;
     REQUIRE(nullptr == stream.getCall());
 }
