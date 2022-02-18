@@ -268,6 +268,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
             // Check that the config is properly set with the parameters.
             EXPECT_CALL(*mock_stream, Write(_, _)).Times(1).WillOnce(
                 [] (const CreateEnrollmentRequest& request, ::grpc::WriteOptions) {
+                    REQUIRE("device ID" == request.config().deviceid());
                     REQUIRE("modelName" == request.config().modelname());
                     REQUIRE("userID" == request.config().userid());
                     REQUIRE("description" == request.config().description());
