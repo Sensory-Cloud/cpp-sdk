@@ -180,6 +180,9 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-C", "--chunksize" })
         .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
         .default_value(0);
+    parser.add_argument({ "-p", "--padding" })
+        .help("PADDING The number of milliseconds of padding to append to the audio buffer.")
+        .default_value(300);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("VERBOSE Produce verbose output during transcription.");
     // Parse the arguments from the command line.
@@ -195,6 +198,7 @@ int main(int argc, const char** argv) {
     const auto LANGUAGE = args.get<std::string>("language");
     const auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
+    const auto PADDING = args.get<float>("padding");
 
     // Create an insecure credential store for keeping OAuth credentials in.
     sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
@@ -276,8 +280,8 @@ int main(int argc, const char** argv) {
             << std::endl;
         return 1;
     }
-    // Pad the file with 300ms of silence.
-    buffer.padBack(300);
+    // Pad the file with silence.
+    buffer.padBack(PADDING);
 
     // Create the gRPC reactor to respond to streaming events.
     AudioFileReactor reactor(buffer.getSamples(),
