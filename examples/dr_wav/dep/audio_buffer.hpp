@@ -235,7 +235,7 @@ struct AudioBuffer {
         samples.clear();
         samples.resize(1);
         sample_rate = 44100;
-        bit_depth = 32;
+        bit_depth = 16;
         channels = 1;
         path = "";
     }
@@ -245,7 +245,7 @@ struct AudioBuffer {
     /// @param duration the duration in milliseconds to pad the buffer to
     ///
     inline void padBack(const float& duration) {
-        std::vector<uint16_t> zeros(static_cast<int>(channels * sample_rate * duration / 1000), 0);
+        std::vector<int16_t> zeros(static_cast<int>(channels * sample_rate * duration / 1000), 0);
         samples.reserve(samples.size() + zeros.size());
         std::move(std::begin(zeros), std::end(zeros), std::back_inserter(samples));
         zeros.clear();
