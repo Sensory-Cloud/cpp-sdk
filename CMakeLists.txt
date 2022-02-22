@@ -33,6 +33,14 @@ option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore"
 
 # --- Proto Files ------------------------------------------------------------
 
+# If testing is enabled, specify to the --grpc_out flag of protoc that the mock
+# code should be generated.
+if (SENSORY_CLOUD_BUILD_TESTS)
+    set(GRPC_OUT "generate_mock_code=true:")
+else()
+    set(GRPC_OUT "")
+endif()
+
 # Iterate over the proto files to compile them with protoc. The proto files are
 # expected to be in the ./proto directory. Generated code (headers and source)
 # will go to the ./include/sensorycloud/generated directory.
@@ -59,7 +67,7 @@ if(SENSORY_CLOUD_GENERATE_PROTO)
         add_custom_command(
             OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
             COMMAND ${_PROTOBUF_PROTOC}
-            ARGS --grpc_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
+            ARGS --grpc_out "${GRPC_OUT}${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
                 --cpp_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
                 --proto_path="${PROJECT_SOURCE_DIR}/proto"
                 --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
@@ -145,6 +153,13 @@ if (SENSORY_CLOUD_BUILD_TESTS)
     )
     FetchContent_MakeAvailable(Catch2)
 
+    FetchContent_Declare(googletest
+        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
     # Find the source files for the test code to compile iteratively
     file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
     foreach(TEST_SOURCE IN ITEMS ${TEST_SOURCES})
@@ -154,8 +169,7 @@ if (SENSORY_CLOUD_BUILD_TESTS)
         string(REPLACE ".cpp" "" BINARY_NAME ${BINARY_NAME})
         # Create the binary and link it with the required libraries
         add_executable(${BINARY_NAME} ${TEST_SOURCE})
-        target_link_libraries(${BINARY_NAME} PRIVATE sensorycloud)
-        target_link_libraries(${BINARY_NAME} PRIVATE Catch2::Catch2)
+        target_link_libraries(${BINARY_NAME} PRIVATE sensorycloud Catch2::Catch2 gmock)
         list(APPEND TEST_BINARIES ${BINARY_NAME})
     endforeach()
     # Create a combined target to compile all of the test codes

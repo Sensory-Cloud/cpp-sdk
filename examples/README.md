@@ -8,5 +8,3 @@ Sensory, Cloud:
 -   [audio](audio) implements audio services using portaudio,
 -   [dr_wav](dr_wav) implements audio services using dr_wav, dr_flac, and dr_mp3
     for file I/O, and
--   [applications](applications) implements more complex applications based on
-    combinations of Sensory, Cloud services.

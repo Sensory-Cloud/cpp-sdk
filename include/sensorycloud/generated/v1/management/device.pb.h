@@ -49,7 +49,7 @@ struct TableStruct_v1_2fmanagement_2fdevice_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -69,6 +69,9 @@ extern DeviceResponseDefaultTypeInternal _DeviceResponse_default_instance_;
 class EnrollDeviceRequest;
 struct EnrollDeviceRequestDefaultTypeInternal;
 extern EnrollDeviceRequestDefaultTypeInternal _EnrollDeviceRequest_default_instance_;
+class RenewDeviceCredentialRequest;
+struct RenewDeviceCredentialRequestDefaultTypeInternal;
+extern RenewDeviceCredentialRequestDefaultTypeInternal _RenewDeviceCredentialRequest_default_instance_;
 }  // namespace management
 }  // namespace v1
 }  // namespace api
@@ -77,6 +80,7 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::sensory::api::v1::management::DeviceGetWhoAmIRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeviceGetWhoAmIRequest>(Arena*);
 template<> ::sensory::api::v1::management::DeviceResponse* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeviceResponse>(Arena*);
 template<> ::sensory::api::v1::management::EnrollDeviceRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::EnrollDeviceRequest>(Arena*);
+template<> ::sensory::api::v1::management::RenewDeviceCredentialRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::RenewDeviceCredentialRequest>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sensory {
 namespace api {
@@ -301,6 +305,202 @@ class EnrollDeviceRequest final :
 };
 // -------------------------------------------------------------------
 
+class RenewDeviceCredentialRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.RenewDeviceCredentialRequest) */ {
+ public:
+  inline RenewDeviceCredentialRequest() : RenewDeviceCredentialRequest(nullptr) {}
+  ~RenewDeviceCredentialRequest() override;
+  explicit constexpr RenewDeviceCredentialRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RenewDeviceCredentialRequest(const RenewDeviceCredentialRequest& from);
+  RenewDeviceCredentialRequest(RenewDeviceCredentialRequest&& from) noexcept
+    : RenewDeviceCredentialRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline RenewDeviceCredentialRequest& operator=(const RenewDeviceCredentialRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RenewDeviceCredentialRequest& operator=(RenewDeviceCredentialRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RenewDeviceCredentialRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RenewDeviceCredentialRequest* internal_default_instance() {
+    return reinterpret_cast<const RenewDeviceCredentialRequest*>(
+               &_RenewDeviceCredentialRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(RenewDeviceCredentialRequest& a, RenewDeviceCredentialRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RenewDeviceCredentialRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RenewDeviceCredentialRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RenewDeviceCredentialRequest* New() const final {
+    return new RenewDeviceCredentialRequest();
+  }
+
+  RenewDeviceCredentialRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<RenewDeviceCredentialRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const RenewDeviceCredentialRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const RenewDeviceCredentialRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RenewDeviceCredentialRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.management.RenewDeviceCredentialRequest";
+  }
+  protected:
+  explicit RenewDeviceCredentialRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDeviceIdFieldNumber = 1,
+    kClientIdFieldNumber = 2,
+    kTenantIdFieldNumber = 3,
+    kCredentialFieldNumber = 4,
+  };
+  // string deviceId = 1 [(.validate.rules) = {
+  void clear_deviceid();
+  const std::string& deviceid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_deviceid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_deviceid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_deviceid();
+  void set_allocated_deviceid(std::string* deviceid);
+  private:
+  const std::string& _internal_deviceid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_deviceid(const std::string& value);
+  std::string* _internal_mutable_deviceid();
+  public:
+
+  // string clientId = 2 [(.validate.rules) = {
+  void clear_clientid();
+  const std::string& clientid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_clientid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_clientid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_clientid();
+  void set_allocated_clientid(std::string* clientid);
+  private:
+  const std::string& _internal_clientid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_clientid(const std::string& value);
+  std::string* _internal_mutable_clientid();
+  public:
+
+  // string tenantId = 3 [(.validate.rules) = {
+  void clear_tenantid();
+  const std::string& tenantid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_tenantid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_tenantid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_tenantid();
+  void set_allocated_tenantid(std::string* tenantid);
+  private:
+  const std::string& _internal_tenantid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_tenantid(const std::string& value);
+  std::string* _internal_mutable_tenantid();
+  public:
+
+  // string credential = 4 [(.validate.rules) = {
+  void clear_credential();
+  const std::string& credential() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_credential(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_credential();
+  PROTOBUF_MUST_USE_RESULT std::string* release_credential();
+  void set_allocated_credential(std::string* credential);
+  private:
+  const std::string& _internal_credential() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_credential(const std::string& value);
+  std::string* _internal_mutable_credential();
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.management.RenewDeviceCredentialRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tenantid_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr credential_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2fmanagement_2fdevice_2eproto;
+};
+// -------------------------------------------------------------------
+
 class DeviceResponse final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.DeviceResponse) */ {
  public:
@@ -349,7 +549,7 @@ class DeviceResponse final :
                &_DeviceResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(DeviceResponse& a, DeviceResponse& b) {
     a.Swap(&b);
@@ -512,7 +712,7 @@ class DeviceGetWhoAmIRequest final :
                &_DeviceGetWhoAmIRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(DeviceGetWhoAmIRequest& a, DeviceGetWhoAmIRequest& b) {
     a.Swap(&b);
@@ -861,6 +1061,194 @@ inline void EnrollDeviceRequest::set_allocated_credential(std::string* credentia
 
 // -------------------------------------------------------------------
 
+// RenewDeviceCredentialRequest
+
+// string deviceId = 1 [(.validate.rules) = {
+inline void RenewDeviceCredentialRequest::clear_deviceid() {
+  deviceid_.ClearToEmpty();
+}
+inline const std::string& RenewDeviceCredentialRequest::deviceid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId)
+  return _internal_deviceid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenewDeviceCredentialRequest::set_deviceid(ArgT0&& arg0, ArgT... args) {
+ 
+ deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId)
+}
+inline std::string* RenewDeviceCredentialRequest::mutable_deviceid() {
+  std::string* _s = _internal_mutable_deviceid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId)
+  return _s;
+}
+inline const std::string& RenewDeviceCredentialRequest::_internal_deviceid() const {
+  return deviceid_.Get();
+}
+inline void RenewDeviceCredentialRequest::_internal_set_deviceid(const std::string& value) {
+  
+  deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::_internal_mutable_deviceid() {
+  
+  return deviceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::release_deviceid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId)
+  return deviceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenewDeviceCredentialRequest::set_allocated_deviceid(std::string* deviceid) {
+  if (deviceid != nullptr) {
+    
+  } else {
+    
+  }
+  deviceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.RenewDeviceCredentialRequest.deviceId)
+}
+
+// string clientId = 2 [(.validate.rules) = {
+inline void RenewDeviceCredentialRequest::clear_clientid() {
+  clientid_.ClearToEmpty();
+}
+inline const std::string& RenewDeviceCredentialRequest::clientid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.RenewDeviceCredentialRequest.clientId)
+  return _internal_clientid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenewDeviceCredentialRequest::set_clientid(ArgT0&& arg0, ArgT... args) {
+ 
+ clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.RenewDeviceCredentialRequest.clientId)
+}
+inline std::string* RenewDeviceCredentialRequest::mutable_clientid() {
+  std::string* _s = _internal_mutable_clientid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.RenewDeviceCredentialRequest.clientId)
+  return _s;
+}
+inline const std::string& RenewDeviceCredentialRequest::_internal_clientid() const {
+  return clientid_.Get();
+}
+inline void RenewDeviceCredentialRequest::_internal_set_clientid(const std::string& value) {
+  
+  clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::_internal_mutable_clientid() {
+  
+  return clientid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::release_clientid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.RenewDeviceCredentialRequest.clientId)
+  return clientid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenewDeviceCredentialRequest::set_allocated_clientid(std::string* clientid) {
+  if (clientid != nullptr) {
+    
+  } else {
+    
+  }
+  clientid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), clientid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.RenewDeviceCredentialRequest.clientId)
+}
+
+// string tenantId = 3 [(.validate.rules) = {
+inline void RenewDeviceCredentialRequest::clear_tenantid() {
+  tenantid_.ClearToEmpty();
+}
+inline const std::string& RenewDeviceCredentialRequest::tenantid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId)
+  return _internal_tenantid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenewDeviceCredentialRequest::set_tenantid(ArgT0&& arg0, ArgT... args) {
+ 
+ tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId)
+}
+inline std::string* RenewDeviceCredentialRequest::mutable_tenantid() {
+  std::string* _s = _internal_mutable_tenantid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId)
+  return _s;
+}
+inline const std::string& RenewDeviceCredentialRequest::_internal_tenantid() const {
+  return tenantid_.Get();
+}
+inline void RenewDeviceCredentialRequest::_internal_set_tenantid(const std::string& value) {
+  
+  tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::_internal_mutable_tenantid() {
+  
+  return tenantid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::release_tenantid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId)
+  return tenantid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenewDeviceCredentialRequest::set_allocated_tenantid(std::string* tenantid) {
+  if (tenantid != nullptr) {
+    
+  } else {
+    
+  }
+  tenantid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tenantid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.RenewDeviceCredentialRequest.tenantId)
+}
+
+// string credential = 4 [(.validate.rules) = {
+inline void RenewDeviceCredentialRequest::clear_credential() {
+  credential_.ClearToEmpty();
+}
+inline const std::string& RenewDeviceCredentialRequest::credential() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.RenewDeviceCredentialRequest.credential)
+  return _internal_credential();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RenewDeviceCredentialRequest::set_credential(ArgT0&& arg0, ArgT... args) {
+ 
+ credential_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.RenewDeviceCredentialRequest.credential)
+}
+inline std::string* RenewDeviceCredentialRequest::mutable_credential() {
+  std::string* _s = _internal_mutable_credential();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.RenewDeviceCredentialRequest.credential)
+  return _s;
+}
+inline const std::string& RenewDeviceCredentialRequest::_internal_credential() const {
+  return credential_.Get();
+}
+inline void RenewDeviceCredentialRequest::_internal_set_credential(const std::string& value) {
+  
+  credential_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::_internal_mutable_credential() {
+  
+  return credential_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* RenewDeviceCredentialRequest::release_credential() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.RenewDeviceCredentialRequest.credential)
+  return credential_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void RenewDeviceCredentialRequest::set_allocated_credential(std::string* credential) {
+  if (credential != nullptr) {
+    
+  } else {
+    
+  }
+  credential_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), credential,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.RenewDeviceCredentialRequest.credential)
+}
+
+// -------------------------------------------------------------------
+
 // DeviceResponse
 
 // string name = 1;
@@ -962,6 +1350,8 @@ inline void DeviceResponse::set_allocated_deviceid(std::string* deviceid) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

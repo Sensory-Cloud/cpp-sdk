@@ -49,7 +49,8 @@ using sensory::service::ManagementService;
 int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialStore>& tokenManager) {
     if (!tokenManager.hasToken()) {  // the device is not registered
         // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.generateCredentials();
+        const auto credentials = tokenManager.hasSavedCredentials() ?
+            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
 
         std::cout << "Registering device with server..." << std::endl;
 
@@ -191,11 +192,12 @@ int createEnrollmentGroup(
     const std::string& groupID,
     const std::string& name,
     const std::string& description,
-    const std::string& model
+    const std::string& model,
+    const std::vector<std::string>& enrollmentIDs
 ) {
     sensory::api::v1::management::EnrollmentGroupResponse rsp;
     auto status = mgmtService.createEnrollmentGroup(
-        &rsp, userID, groupID, name, description, model);
+        &rsp, userID, groupID, name, description, model, enrollmentIDs);
     if (!status.ok()) {  // The call failed, print a descriptive message.
         std::cout << "Failed to create enrollment group with\n\t" <<
             status.error_code() << ": " << status.error_message() << std::endl;
@@ -342,7 +344,7 @@ int main(int argc, const char** argv) {
     if      (ENDPOINT == "getEnrollments")        return getEnrollments(mgmtService, USER_ID);
     else if (ENDPOINT == "deleteEnrollment")      return deleteEnrollment(mgmtService, ENROLLMENT_ID);
     else if (ENDPOINT == "getEnrollmentGroups")   return getEnrollmentGroups(mgmtService, USER_ID);
-    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL);
+    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
     else if (ENDPOINT == "appendEnrollmentGroup") return appendEnrollmentGroup(mgmtService, ENROLLMENT_ID, ENROLLMENT_IDS);
     else if (ENDPOINT == "deleteEnrollmentGroup") return deleteEnrollmentGroup(mgmtService, ENROLLMENT_ID);
 }

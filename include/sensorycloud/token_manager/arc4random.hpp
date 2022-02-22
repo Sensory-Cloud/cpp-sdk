@@ -206,11 +206,18 @@ void arc4random_addrandom(unsigned char *dat, int datlen) {
     arc4_addrandom(&rs, dat, datlen);
 }
 
-uint32_t arc4random() {
+uint32_t arc4_getword() {
     std::lock_guard<std::mutex> lock(arc4random_mtx);
     arc4_check_init();
     arc4_check_stir();
     return arc4_getword(&rs);
+}
+
+uint8_t arc4_getbyte() {
+    std::lock_guard<std::mutex> lock(arc4random_mtx);
+    arc4_check_init();
+    arc4_check_stir();
+    return arc4_getbyte(&rs);
 }
 
 void arc4random_buf(unsigned char* buffer, size_t n) {

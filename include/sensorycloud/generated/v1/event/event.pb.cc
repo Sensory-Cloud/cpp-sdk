@@ -34,11 +34,16 @@ struct PublishUsageEventsRequestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PublishUsageEventsRequestDefaultTypeInternal _PublishUsageEventsRequest_default_instance_;
 constexpr UsageEvent::UsageEvent(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  : technologies_()
+  , _technologies_cached_byte_size_(0)
+  , models_()
+  , id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , clientid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , route_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , timestamp_(nullptr)
   , duration_(int64_t{0})
+  , audiodurationms_(int64_t{0})
+  , videoframecount_(int64_t{0})
   , type_(0)
 {}
 struct UsageEventDefaultTypeInternal {
@@ -89,6 +94,10 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fevent_2fevent_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, clientid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, type_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, route_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, technologies_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, models_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, audiodurationms_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, videoframecount_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::PublishUsageEventsResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -99,7 +108,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fevent_2fevent_2eproto::of
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsRequest)},
   { 7, -1, -1, sizeof(::sensory::api::v1::event::UsageEvent)},
-  { 19, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsResponse)},
+  { 23, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -114,20 +123,23 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "alidate/validate.proto\032\023common/common.pr"
   "oto\"M\n\031PublishUsageEventsRequest\0220\n\006even"
   "ts\030\001 \003(\0132 .sensory.api.v1.event.UsageEve"
-  "nt\"\352\001\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
+  "nt\"\346\002\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
   "oogle.protobuf.TimestampB\010\372B\005\262\001\002\010\001\022\031\n\010du"
   "ration\030\002 \001(\003B\007\372B\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372B\005r\003"
   "\260\001\001\022\033\n\010clientId\030\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004type"
   "\030\005 \001(\0162\".sensory.api.common.UsageEventTy"
-  "peB\010\372B\005\202\001\002\020\001\022\031\n\005route\030\006 \001(\tB\n\372B\007r\005\020\001\030\377\003\""
-  "\034\n\032PublishUsageEventsResponse2\211\001\n\014EventS"
-  "ervice\022y\n\022PublishUsageEvents\022/.sensory.a"
-  "pi.v1.event.PublishUsageEventsRequest\0320."
-  "sensory.api.v1.event.PublishUsageEventsR"
-  "esponse\"\000Bo\n\027io.sensory.api.v1.eventB\026Se"
-  "nsoryApiV1EventProtoP\001Z:gitlab.com/senso"
-  "ry-cloud/server/titan.git/pkg/api/v1/eve"
-  "ntb\006proto3"
+  "peB\010\372B\005\202\001\002\020\001\022\031\n\005route\030\006 \001(\tB\n\372B\007r\005\020\001\030\377\003\022"
+  "8\n\014technologies\030\007 \003(\0162\".sensory.api.comm"
+  "on.TechnologyType\022\016\n\006models\030\010 \003(\t\022\027\n\017aud"
+  "ioDurationMs\030\t \001(\003\022\027\n\017videoFrameCount\030\n "
+  "\001(\003\"\034\n\032PublishUsageEventsResponse2\211\001\n\014Ev"
+  "entService\022y\n\022PublishUsageEvents\022/.senso"
+  "ry.api.v1.event.PublishUsageEventsReques"
+  "t\0320.sensory.api.v1.event.PublishUsageEve"
+  "ntsResponse\"\000Bo\n\027io.sensory.api.v1.event"
+  "B\026SensoryApiV1EventProtoP\001Z:gitlab.com/s"
+  "ensory-cloud/server/titan.git/pkg/api/v1"
+  "/eventb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fevent_2fevent_2eproto_deps[3] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -136,7 +148,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fevent_2fevent_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fevent_2fevent_2eproto = {
-  false, false, 730, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
+  false, false, 854, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
   &descriptor_table_v1_2fevent_2fevent_2eproto_once, descriptor_table_v1_2fevent_2fevent_2eproto_deps, 3, 3,
   schemas, file_default_instances, TableStruct_v1_2fevent_2fevent_2eproto::offsets,
   file_level_metadata_v1_2fevent_2fevent_2eproto, file_level_enum_descriptors_v1_2fevent_2fevent_2eproto, file_level_service_descriptors_v1_2fevent_2fevent_2eproto,
@@ -356,7 +368,9 @@ void UsageEvent::clear_timestamp() {
 }
 UsageEvent::UsageEvent(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  technologies_(arena),
+  models_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -364,7 +378,9 @@ UsageEvent::UsageEvent(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   // @@protoc_insertion_point(arena_constructor:sensory.api.v1.event.UsageEvent)
 }
 UsageEvent::UsageEvent(const UsageEvent& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      technologies_(from.technologies_),
+      models_(from.models_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (!from._internal_id().empty()) {
@@ -433,6 +449,8 @@ void UsageEvent::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  technologies_.Clear();
+  models_.Clear();
   id_.ClearToEmpty();
   clientid_.ClearToEmpty();
   route_.ClearToEmpty();
@@ -503,6 +521,49 @@ const char* UsageEvent::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           auto str = _internal_mutable_route();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEvent.route"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .sensory.api.common.TechnologyType technologies = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser(_internal_mutable_technologies(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_add_technologies(static_cast<::sensory::api::common::TechnologyType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated string models = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 66)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_models();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEvent.models"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 audioDurationMs = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
+          audiodurationms_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 videoFrameCount = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
+          videoframecount_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -587,6 +648,37 @@ failure:
         6, this->_internal_route(), target);
   }
 
+  // repeated .sensory.api.common.TechnologyType technologies = 7;
+  {
+    int byte_size = _technologies_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteEnumPacked(
+          7, technologies_, byte_size, target);
+    }
+  }
+
+  // repeated string models = 8;
+  for (int i = 0, n = this->_internal_models_size(); i < n; i++) {
+    const auto& s = this->_internal_models(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEvent.models");
+    target = stream->WriteString(8, s, target);
+  }
+
+  // int64 audioDurationMs = 9;
+  if (this->_internal_audiodurationms() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(9, this->_internal_audiodurationms(), target);
+  }
+
+  // int64 videoFrameCount = 10;
+  if (this->_internal_videoframecount() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(10, this->_internal_videoframecount(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -602,6 +694,32 @@ size_t UsageEvent::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated .sensory.api.common.TechnologyType technologies = 7;
+  {
+    size_t data_size = 0;
+    unsigned int count = static_cast<unsigned int>(this->_internal_technologies_size());for (unsigned int i = 0; i < count; i++) {
+      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
+        this->_internal_technologies(static_cast<int>(i)));
+    }
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _technologies_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // repeated string models = 8;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(models_.size());
+  for (int i = 0, n = models_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      models_.Get(i));
+  }
 
   // string id = 3 [(.validate.rules) = {
   if (!this->_internal_id().empty()) {
@@ -636,6 +754,16 @@ size_t UsageEvent::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_duration());
   }
 
+  // int64 audioDurationMs = 9;
+  if (this->_internal_audiodurationms() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_audiodurationms());
+  }
+
+  // int64 videoFrameCount = 10;
+  if (this->_internal_videoframecount() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_videoframecount());
+  }
+
   // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
   if (this->_internal_type() != 0) {
     total_size += 1 +
@@ -664,6 +792,8 @@ void UsageEvent::MergeFrom(const UsageEvent& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  technologies_.MergeFrom(from.technologies_);
+  models_.MergeFrom(from.models_);
   if (!from._internal_id().empty()) {
     _internal_set_id(from._internal_id());
   }
@@ -678,6 +808,12 @@ void UsageEvent::MergeFrom(const UsageEvent& from) {
   }
   if (from._internal_duration() != 0) {
     _internal_set_duration(from._internal_duration());
+  }
+  if (from._internal_audiodurationms() != 0) {
+    _internal_set_audiodurationms(from._internal_audiodurationms());
+  }
+  if (from._internal_videoframecount() != 0) {
+    _internal_set_videoframecount(from._internal_videoframecount());
   }
   if (from._internal_type() != 0) {
     _internal_set_type(from._internal_type());
@@ -701,6 +837,8 @@ void UsageEvent::InternalSwap(UsageEvent* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  technologies_.InternalSwap(&other->technologies_);
+  models_.InternalSwap(&other->models_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &id_, lhs_arena,

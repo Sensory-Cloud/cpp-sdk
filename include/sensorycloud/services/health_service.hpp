@@ -46,7 +46,7 @@ class HealthService {
     /// the global configuration for the remote connection
     const ::sensory::Config& config;
     /// The gRPC stub for the health service
-    std::unique_ptr<::sensory::api::health::HealthService::Stub> stub;
+    std::unique_ptr<::sensory::api::health::HealthService::StubInterface> stub;
 
     /// @brief Create a copy of this object.
     ///
@@ -73,6 +73,16 @@ class HealthService {
     ///
     explicit HealthService(const ::sensory::Config& config_) : config(config_),
         stub(::sensory::api::health::HealthService::NewStub(config.getChannel())) { }
+
+    /// @brief Initialize a new health service.
+    ///
+    /// @param config_ The global configuration for the remote connection.
+    /// @param stub_ The health service stub to initialize the service with.
+    ///
+    explicit HealthService(
+        const ::sensory::Config& config_,
+        ::sensory::api::health::HealthService::StubInterface* stub_
+    ) : config(config_), stub(stub_) { }
 
     /// @brief Get the health status of the remote server.
     ///

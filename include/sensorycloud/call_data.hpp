@@ -28,6 +28,8 @@
 
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
+#include <grpcpp/impl/codegen/async_unary_call.h>
+#include <grpcpp/impl/codegen/async_stream.h>
 #include <grpcpp/impl/codegen/client_callback.h>
 #include <atomic>
 #include <mutex>
@@ -57,6 +59,10 @@ namespace sensory {
 ///
 template<typename Factory, typename Request, typename Response>
 struct AsyncResponseReaderCall {
+ public:
+    /// A type for encapsulating the RPC stream.
+    typedef ::grpc::ClientAsyncResponseReaderInterface<Response> RPC;
+
  private:
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
@@ -67,10 +73,7 @@ struct AsyncResponseReaderCall {
     /// The response to process after the RPC completes.
     Response response;
     /// The reader RPC executing the call.
-    std::unique_ptr<::grpc::ClientAsyncResponseReader<Response>> rpc;
-
-    /// @brief Initialize a new call.
-    AsyncResponseReaderCall() { }
+    std::unique_ptr<RPC> rpc;
 
     /// @brief Create a copy of this object.
     ///
@@ -95,6 +98,9 @@ struct AsyncResponseReaderCall {
     friend Factory;
 
  public:
+    /// @brief Initialize a new call.
+    AsyncResponseReaderCall() { }
+
     /// @brief Return the context that the call was created with.
     ///
     /// @returns The gRPC context associated with the call.
@@ -118,6 +124,12 @@ struct AsyncResponseReaderCall {
     /// @returns The response message buffer for the call.
     ///
     inline const Response& getResponse() const { return response; }
+
+    /// @brief Return the gRPC client interface associated with this call.
+    ///
+    /// @returns the gRPC stream that is represented by this call object.
+    ///
+    inline RPC* getCall() const { return rpc.get(); }
 };
 
 /// @brief A type for encapsulating data for asynchronous calls.
@@ -135,6 +147,10 @@ struct AsyncResponseReaderCall {
 ///
 template<typename Factory, typename Request, typename Response>
 struct AsyncReaderWriterCall {
+ public:
+    /// A type for encapsulating the RPC stream.
+    typedef ::grpc::ClientAsyncReaderWriterInterface<Request, Response> RPC;
+
  private:
     /// The gPRC context that the call is initiated with.
     ::grpc::ClientContext context;
@@ -145,10 +161,7 @@ struct AsyncReaderWriterCall {
     /// The response to process after the RPC completes.
     Response response;
     /// The reader RPC executing the call.
-    std::unique_ptr<::grpc::ClientAsyncReaderWriter<Request, Response>> rpc;
-
-    /// @brief Initialize a new call.
-    AsyncReaderWriterCall() { }
+    std::unique_ptr<RPC> rpc;
 
     /// @brief Create a copy of this object.
     ///
@@ -173,6 +186,9 @@ struct AsyncReaderWriterCall {
     friend Factory;
 
  public:
+    /// @brief Initialize a new call.
+    AsyncReaderWriterCall() { }
+
     /// @brief Return the context that the call was created with.
     ///
     /// @returns The gRPC context associated with the call.
@@ -201,9 +217,7 @@ struct AsyncReaderWriterCall {
     ///
     /// @returns the gRPC stream that is represented by this call object.
     ///
-    inline ::grpc::ClientAsyncReaderWriter<Request, Response>* getCall() const {
-        return rpc.get();
-    }
+    inline RPC* getCall() const { return rpc.get(); }
 };
 
 // -----------------------------------------------------------------------------

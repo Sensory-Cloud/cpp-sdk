@@ -23,7 +23,6 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
-#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_table_driven.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
@@ -670,9 +669,10 @@ class FileCatalogRequest final :
 // -------------------------------------------------------------------
 
 class FileCompleteCatalogRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:sensory.api.v1.file.FileCompleteCatalogRequest) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.file.FileCompleteCatalogRequest) */ {
  public:
   inline FileCompleteCatalogRequest() : FileCompleteCatalogRequest(nullptr) {}
+  ~FileCompleteCatalogRequest() override;
   explicit constexpr FileCompleteCatalogRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   FileCompleteCatalogRequest(const FileCompleteCatalogRequest& from);
@@ -744,15 +744,27 @@ class FileCompleteCatalogRequest final :
   FileCompleteCatalogRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
     return CreateMaybeMessage<FileCompleteCatalogRequest>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const FileCompleteCatalogRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(this, from);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const FileCompleteCatalogRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(this, from);
-  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const FileCompleteCatalogRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const FileCompleteCatalogRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(FileCompleteCatalogRequest* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
     return "sensory.api.v1.file.FileCompleteCatalogRequest";
@@ -761,6 +773,8 @@ class FileCompleteCatalogRequest final :
   explicit FileCompleteCatalogRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -772,6 +786,23 @@ class FileCompleteCatalogRequest final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kTenantIdFieldNumber = 1,
+  };
+  // string tenantId = 1;
+  void clear_tenantid();
+  const std::string& tenantid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_tenantid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_tenantid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_tenantid();
+  void set_allocated_tenantid(std::string* tenantid);
+  private:
+  const std::string& _internal_tenantid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_tenantid(const std::string& value);
+  std::string* _internal_mutable_tenantid();
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.file.FileCompleteCatalogRequest)
  private:
   class _Internal;
@@ -779,6 +810,7 @@ class FileCompleteCatalogRequest final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tenantid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2ffile_2ffile_2eproto;
 };
@@ -1218,6 +1250,7 @@ class FileInfo final :
     kAbsolutePathFieldNumber = 2,
     kContentTypeFieldNumber = 4,
     kHashFieldNumber = 5,
+    kTenantIdFieldNumber = 6,
     kSizeFieldNumber = 3,
   };
   // string file = 1;
@@ -1276,6 +1309,20 @@ class FileInfo final :
   std::string* _internal_mutable_hash();
   public:
 
+  // string tenantId = 6;
+  void clear_tenantid();
+  const std::string& tenantid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_tenantid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_tenantid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_tenantid();
+  void set_allocated_tenantid(std::string* tenantid);
+  private:
+  const std::string& _internal_tenantid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_tenantid(const std::string& value);
+  std::string* _internal_mutable_tenantid();
+  public:
+
   // int64 size = 3;
   void clear_size();
   ::PROTOBUF_NAMESPACE_ID::int64 size() const;
@@ -1296,6 +1343,7 @@ class FileInfo final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr absolutepath_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr contenttype_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr hash_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tenantid_;
   ::PROTOBUF_NAMESPACE_ID::int64 size_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2ffile_2ffile_2eproto;
@@ -2027,6 +2075,52 @@ FileCatalogRequest::categories() const {
 
 // FileCompleteCatalogRequest
 
+// string tenantId = 1;
+inline void FileCompleteCatalogRequest::clear_tenantid() {
+  tenantid_.ClearToEmpty();
+}
+inline const std::string& FileCompleteCatalogRequest::tenantid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.file.FileCompleteCatalogRequest.tenantId)
+  return _internal_tenantid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FileCompleteCatalogRequest::set_tenantid(ArgT0&& arg0, ArgT... args) {
+ 
+ tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.file.FileCompleteCatalogRequest.tenantId)
+}
+inline std::string* FileCompleteCatalogRequest::mutable_tenantid() {
+  std::string* _s = _internal_mutable_tenantid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.file.FileCompleteCatalogRequest.tenantId)
+  return _s;
+}
+inline const std::string& FileCompleteCatalogRequest::_internal_tenantid() const {
+  return tenantid_.Get();
+}
+inline void FileCompleteCatalogRequest::_internal_set_tenantid(const std::string& value) {
+  
+  tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* FileCompleteCatalogRequest::_internal_mutable_tenantid() {
+  
+  return tenantid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* FileCompleteCatalogRequest::release_tenantid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.file.FileCompleteCatalogRequest.tenantId)
+  return tenantid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void FileCompleteCatalogRequest::set_allocated_tenantid(std::string* tenantid) {
+  if (tenantid != nullptr) {
+    
+  } else {
+    
+  }
+  tenantid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tenantid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.file.FileCompleteCatalogRequest.tenantId)
+}
+
 // -------------------------------------------------------------------
 
 // FileCatalogResponse
@@ -2347,6 +2441,52 @@ inline void FileInfo::set_allocated_hash(std::string* hash) {
   hash_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), hash,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.file.FileInfo.hash)
+}
+
+// string tenantId = 6;
+inline void FileInfo::clear_tenantid() {
+  tenantid_.ClearToEmpty();
+}
+inline const std::string& FileInfo::tenantid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.file.FileInfo.tenantId)
+  return _internal_tenantid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FileInfo::set_tenantid(ArgT0&& arg0, ArgT... args) {
+ 
+ tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.file.FileInfo.tenantId)
+}
+inline std::string* FileInfo::mutable_tenantid() {
+  std::string* _s = _internal_mutable_tenantid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.file.FileInfo.tenantId)
+  return _s;
+}
+inline const std::string& FileInfo::_internal_tenantid() const {
+  return tenantid_.Get();
+}
+inline void FileInfo::_internal_set_tenantid(const std::string& value) {
+  
+  tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* FileInfo::_internal_mutable_tenantid() {
+  
+  return tenantid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* FileInfo::release_tenantid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.file.FileInfo.tenantId)
+  return tenantid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void FileInfo::set_allocated_tenantid(std::string* tenantid) {
+  if (tenantid != nullptr) {
+    
+  } else {
+    
+  }
+  tenantid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tenantid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.file.FileInfo.tenantId)
 }
 
 // -------------------------------------------------------------------

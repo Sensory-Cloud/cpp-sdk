@@ -357,13 +357,58 @@ class UsageEvent final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kTechnologiesFieldNumber = 7,
+    kModelsFieldNumber = 8,
     kIdFieldNumber = 3,
     kClientIdFieldNumber = 4,
     kRouteFieldNumber = 6,
     kTimestampFieldNumber = 1,
     kDurationFieldNumber = 2,
+    kAudioDurationMsFieldNumber = 9,
+    kVideoFrameCountFieldNumber = 10,
     kTypeFieldNumber = 5,
   };
+  // repeated .sensory.api.common.TechnologyType technologies = 7;
+  int technologies_size() const;
+  private:
+  int _internal_technologies_size() const;
+  public:
+  void clear_technologies();
+  private:
+  ::sensory::api::common::TechnologyType _internal_technologies(int index) const;
+  void _internal_add_technologies(::sensory::api::common::TechnologyType value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_technologies();
+  public:
+  ::sensory::api::common::TechnologyType technologies(int index) const;
+  void set_technologies(int index, ::sensory::api::common::TechnologyType value);
+  void add_technologies(::sensory::api::common::TechnologyType value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& technologies() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_technologies();
+
+  // repeated string models = 8;
+  int models_size() const;
+  private:
+  int _internal_models_size() const;
+  public:
+  void clear_models();
+  const std::string& models(int index) const;
+  std::string* mutable_models(int index);
+  void set_models(int index, const std::string& value);
+  void set_models(int index, std::string&& value);
+  void set_models(int index, const char* value);
+  void set_models(int index, const char* value, size_t size);
+  std::string* add_models();
+  void add_models(const std::string& value);
+  void add_models(std::string&& value);
+  void add_models(const char* value);
+  void add_models(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& models() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_models();
+  private:
+  const std::string& _internal_models(int index) const;
+  std::string* _internal_add_models();
+  public:
+
   // string id = 3 [(.validate.rules) = {
   void clear_id();
   const std::string& id() const;
@@ -433,6 +478,24 @@ class UsageEvent final :
   void _internal_set_duration(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
+  // int64 audioDurationMs = 9;
+  void clear_audiodurationms();
+  ::PROTOBUF_NAMESPACE_ID::int64 audiodurationms() const;
+  void set_audiodurationms(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_audiodurationms() const;
+  void _internal_set_audiodurationms(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int64 videoFrameCount = 10;
+  void clear_videoframecount();
+  ::PROTOBUF_NAMESPACE_ID::int64 videoframecount() const;
+  void set_videoframecount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_videoframecount() const;
+  void _internal_set_videoframecount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
   // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
   void clear_type();
   ::sensory::api::common::UsageEventType type() const;
@@ -449,11 +512,16 @@ class UsageEvent final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> technologies_;
+  mutable std::atomic<int> _technologies_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> models_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr clientid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr route_;
   ::PROTOBUF_NAMESPACE_ID::Timestamp* timestamp_;
   ::PROTOBUF_NAMESPACE_ID::int64 duration_;
+  ::PROTOBUF_NAMESPACE_ID::int64 audiodurationms_;
+  ::PROTOBUF_NAMESPACE_ID::int64 videoframecount_;
   int type_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fevent_2fevent_2eproto;
@@ -890,6 +958,164 @@ inline void UsageEvent::set_allocated_route(std::string* route) {
   route_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), route,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.event.UsageEvent.route)
+}
+
+// repeated .sensory.api.common.TechnologyType technologies = 7;
+inline int UsageEvent::_internal_technologies_size() const {
+  return technologies_.size();
+}
+inline int UsageEvent::technologies_size() const {
+  return _internal_technologies_size();
+}
+inline void UsageEvent::clear_technologies() {
+  technologies_.Clear();
+}
+inline ::sensory::api::common::TechnologyType UsageEvent::_internal_technologies(int index) const {
+  return static_cast< ::sensory::api::common::TechnologyType >(technologies_.Get(index));
+}
+inline ::sensory::api::common::TechnologyType UsageEvent::technologies(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEvent.technologies)
+  return _internal_technologies(index);
+}
+inline void UsageEvent::set_technologies(int index, ::sensory::api::common::TechnologyType value) {
+  technologies_.Set(index, value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.technologies)
+}
+inline void UsageEvent::_internal_add_technologies(::sensory::api::common::TechnologyType value) {
+  technologies_.Add(value);
+}
+inline void UsageEvent::add_technologies(::sensory::api::common::TechnologyType value) {
+  _internal_add_technologies(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.event.UsageEvent.technologies)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+UsageEvent::technologies() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.event.UsageEvent.technologies)
+  return technologies_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+UsageEvent::_internal_mutable_technologies() {
+  return &technologies_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+UsageEvent::mutable_technologies() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.event.UsageEvent.technologies)
+  return _internal_mutable_technologies();
+}
+
+// repeated string models = 8;
+inline int UsageEvent::_internal_models_size() const {
+  return models_.size();
+}
+inline int UsageEvent::models_size() const {
+  return _internal_models_size();
+}
+inline void UsageEvent::clear_models() {
+  models_.Clear();
+}
+inline std::string* UsageEvent::add_models() {
+  std::string* _s = _internal_add_models();
+  // @@protoc_insertion_point(field_add_mutable:sensory.api.v1.event.UsageEvent.models)
+  return _s;
+}
+inline const std::string& UsageEvent::_internal_models(int index) const {
+  return models_.Get(index);
+}
+inline const std::string& UsageEvent::models(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEvent.models)
+  return _internal_models(index);
+}
+inline std::string* UsageEvent::mutable_models(int index) {
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.event.UsageEvent.models)
+  return models_.Mutable(index);
+}
+inline void UsageEvent::set_models(int index, const std::string& value) {
+  models_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.models)
+}
+inline void UsageEvent::set_models(int index, std::string&& value) {
+  models_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.models)
+}
+inline void UsageEvent::set_models(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  models_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:sensory.api.v1.event.UsageEvent.models)
+}
+inline void UsageEvent::set_models(int index, const char* value, size_t size) {
+  models_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:sensory.api.v1.event.UsageEvent.models)
+}
+inline std::string* UsageEvent::_internal_add_models() {
+  return models_.Add();
+}
+inline void UsageEvent::add_models(const std::string& value) {
+  models_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.event.UsageEvent.models)
+}
+inline void UsageEvent::add_models(std::string&& value) {
+  models_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:sensory.api.v1.event.UsageEvent.models)
+}
+inline void UsageEvent::add_models(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  models_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:sensory.api.v1.event.UsageEvent.models)
+}
+inline void UsageEvent::add_models(const char* value, size_t size) {
+  models_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:sensory.api.v1.event.UsageEvent.models)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+UsageEvent::models() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.event.UsageEvent.models)
+  return models_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+UsageEvent::mutable_models() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.event.UsageEvent.models)
+  return &models_;
+}
+
+// int64 audioDurationMs = 9;
+inline void UsageEvent::clear_audiodurationms() {
+  audiodurationms_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UsageEvent::_internal_audiodurationms() const {
+  return audiodurationms_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UsageEvent::audiodurationms() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEvent.audioDurationMs)
+  return _internal_audiodurationms();
+}
+inline void UsageEvent::_internal_set_audiodurationms(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  audiodurationms_ = value;
+}
+inline void UsageEvent::set_audiodurationms(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_audiodurationms(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.audioDurationMs)
+}
+
+// int64 videoFrameCount = 10;
+inline void UsageEvent::clear_videoframecount() {
+  videoframecount_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UsageEvent::_internal_videoframecount() const {
+  return videoframecount_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UsageEvent::videoframecount() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEvent.videoFrameCount)
+  return _internal_videoframecount();
+}
+inline void UsageEvent::_internal_set_videoframecount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  videoframecount_ = value;
+}
+inline void UsageEvent::set_videoframecount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_videoframecount(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.videoFrameCount)
 }
 
 // -------------------------------------------------------------------

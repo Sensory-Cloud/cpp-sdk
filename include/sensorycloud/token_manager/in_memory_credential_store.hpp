@@ -1,4 +1,4 @@
-// Functions for cryptographically secure RNG for the Sensory Cloud C++ SDK.
+// An insecure credential store for the Sensory Cloud C++ SDK.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -23,13 +23,11 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
+#ifndef SENSORY_CLOUD_TOKEN_MANAGER_IN_MEMORY_CREDENTIAL_STORE_HPP_
+#define SENSORY_CLOUD_TOKEN_MANAGER_IN_MEMORY_CREDENTIAL_STORE_HPP_
 
-#include <iomanip>
-#include <sstream>
+#include <unordered_map>
 #include <string>
-#include "arc4random.hpp"
 
 /// @brief The Sensory Cloud SDK.
 namespace sensory {
@@ -37,24 +35,31 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
-/// @brief Generate a cryptographic-ally secure random number.
-///
-/// @tparam length The length of the alpha-numeric string to generate.
-/// @returns A cryptographic-ally secure random alpha-numeric string.
-///
-template<std::size_t length>
-std::string secure_random() {
-    // Initialize an empty string of the specified length.
-    std::string uuid(length, ' ');
-    // Iterate over the characters in the string to generate random characters.
-    for (std::size_t i = 0; i < length; i++)
-        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[arc4_getbyte() % (10 + 26 + 26)];
-    // Move the output string to the caller's container.
-    return std::move(uuid);
-}
+/// @brief A mock secure credential store for testing the TokenManager.
+struct InMemoryCredentialStore : public std::unordered_map<std::string, std::string> {
+#if (__cplusplus <= 202002L)  // C++ 2020 and later defines contains for STL maps
+    /// @brief Return true if the key exists in the key-value store.
+    ///
+    /// @returns `true` if the key exists, `false` otherwise.
+    ///
+    inline bool contains(const std::string& key) const {
+        return find(key) != end();
+    }
+#endif
+
+    /// @brief Emplace or replace a key/value pair in the key-chain.
+    ///
+    /// @param key the plain-text key of the value to store
+    /// @param value the secure value to store
+    ///
+    inline void emplace(const std::string& key, const std::string& value) {
+        if (contains(key)) erase(key);
+        std::unordered_map<std::string, std::string>::emplace(key, value);
+    }
+};
 
 }  // namespace token_manager
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
+#endif  // SENSORY_CLOUD_TOKEN_MANAGER_IN_MEMORY_CREDENTIAL_STORE_HPP_
