@@ -3,16 +3,72 @@
 This document outlines the steps involved with releasing a new version of the
 SDK.
 
-1.  Pull latest proto files from `proto` submodule
-1.  Recompile proto headers and source files
-1.  Run unit tests against all target platforms and confirm passage
-1.  Compile example projects against all target platforms using development
-    branch
-1.  Update `GIT_REPOSITORY` and `GIT_TAG` in README snippets and
-    `CMakeLists.txt` of example projects.
-1.  Update documentation with doxygen (`doxy`).
-1.  Update `CHANGELOG.md` with the new features / bug fixes / changes
-1.  Request a code review from another team member
-1.  Merge changes into the main branch (they will be mirrored to GitHub)
-1.  Tag the commit and document the changes in the release notes
-1.  Compile example projects against all target platforms using new tag
+1.  Pull the latest proto files from the `proto` sub-module.
+
+    ```shell
+    cd proto
+    git pull
+    git checkout <branch or tag>
+    cd ..
+    git add proto
+    git commit -m 'update proto to <branch or tag>'
+    ```
+
+1.  Recompile the protobuf and gRPC header and source files.
+
+    ```shell
+    mkdir -p build && cd build
+    cmake -DSENSORY_CLOUD_GENERATE_PROTO=ON ..
+    make
+    cd ..
+    git add include/sensorycloud/generated/
+    git commit -m 'regenerate proto files for <branch or tag>'
+    ```
+
+1.  Run unit tests against all target platforms and confirm a green light.
+
+    ```shell
+    mkdir -p build && cd build
+    cmake -DSENSORY_CLOUD_BUILD_TESTS=ON ..
+    make
+    find . -name "test_sensorycloud*" -maxdepth 1 -type f -exec echo {} \; -exec {} \;
+    ```
+
+1.  Compile example projects against target platforms using the development
+    branch.
+    -   Make a **temporary** change to the `CMakeLists.txt` file for each
+        example
+
+        ```cmake
+        GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
+        GIT_TAG        <development branch>
+        ```
+
+    -   Compile the example applications
+
+        ```shell
+        mkdir -p build && cd build
+        cmake -DSENSORY_CLOUD_GENERATE_PROTO=OFF -DSENSORY_CLOUD_BUILD_TESTS=OFF ..
+        make
+        ```
+
+    -   Execute the applications to test as needed.
+
+1.  Update the `URL` in the README snippets and `CMakeLists.txt` of example
+    projects (replace `<tag to target>` with the tag for the next release).
+
+    ```cmake
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
+    ```
+
+1.  Update documentation with doxygen.
+
+    ```shell
+    doxygen Doxyfile
+    ```
+
+1.  Update `CHANGELOG.md` with the new features / bug fixes / changes.
+1.  Request a code review from another team member.
+1.  Merge changes into the main branch (they will be mirrored to GitHub).
+1.  Tag the commit and document the changes in the release notes.
+1.  Compile example projects against all target platforms using new tag.
