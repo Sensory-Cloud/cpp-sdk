@@ -167,7 +167,7 @@ environment variables are used to provide information about the OpenSSL library
 and public certificates on disk used for Transport Layer Security (TLS).
 -->
 
-### SecureCredentialStore _(Beta feature)_
+### SecureCredentialStore _(Experimental feature)_
 
 To optionally compile an operating system specific `SecureCredentialStore`
 using system libraries, execute:
@@ -191,34 +191,7 @@ The table below provides information about the implementations of
 [Credential-Locker]: https://docs.microsoft.com/en-us/windows/uwp/security/credential-locker
 [Libsecret]: https://wiki.gnome.org/Projects/Libsecret
 
-## Compilation
-
-To compile the library from the top-level of this repository:
-
-```shell
-mkdir build
-cd build
-cmake ..
-make
-```
-
-### Generate protobuf and gRPC code
-
-To generate proto and gRPC code, execute:
-
-```shell
-cmake -DSENSORY_CLOUD_GENERATE_PROTO=ON ..
-```
-
-### Test Cases
-
-To generate the makefiles for building test cases, execute:
-
-```shell
-cmake -DSENSORY_CLOUD_BUILD_TESTS=ON ..
-```
-
-### Tutorials and Examples
+## Tutorials and Examples
 
 Please refer to the [md/tutorial.md](md/tutorial.md) for a tutorial of the
 blocking synchronous interface of the SDK. Tutorials for the asynchronous
@@ -227,3 +200,9 @@ interface can be found in the
 [md/async_callback.md](md/async_callback.md) for event-loop and reactor
 patterns, respectively. Examples code can be found in the [examples](examples/)
 directory.
+
+## Development
+
+The [md/development.md](md/development.md) document describes how to setup the
+development environment for the SDK, compile the code outside of the context of
+an application, run unit tests, and deploy new versions of the SDK.

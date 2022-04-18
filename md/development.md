@@ -1,6 +1,39 @@
-# Release Check List
+# Development
 
-This document outlines the steps involved with releasing a new version of the
+The following passages articulate the setup of the development environment and
+describe how to generate new protobuf & gRPC code, run unit tests, etc.
+
+## Compilation
+
+To compile the library from the top-level of this repository:
+
+```shell
+mkdir -p build && cd build
+cmake ..
+make
+```
+
+## Protobuf and gRPC code generation
+
+To generate proto and gRPC code, execute:
+
+```shell
+cmake -DSENSORY_CLOUD_GENERATE_PROTO=ON ..
+make
+```
+
+## Unit testing
+
+To build unit tests, execute:
+
+```shell
+cmake -DSENSORY_CLOUD_BUILD_TESTS=ON ..
+make
+```
+
+## Code release procedure
+
+This passage outlines the steps involved with releasing a new version of the
 SDK.
 
 1.  Pull the latest proto files from the `proto` sub-module.
