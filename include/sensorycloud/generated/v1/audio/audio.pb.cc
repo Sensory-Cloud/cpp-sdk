@@ -807,10 +807,10 @@ const char descriptor_table_protodef_v1_2faudio_2faudio_2eproto[] PROTOBUF_SECTI
   "olledEventResponse\"\000(\0010\0012|\n\023AudioTranscr"
   "iptions\022e\n\nTranscribe\022\'.sensory.api.v1.a"
   "udio.TranscribeRequest\032(.sensory.api.v1."
-  "audio.TranscribeResponse\"\000(\0010\001Bo\n\027io.sen"
-  "sory.api.v1.audioB\026SensoryApiV1AudioProt"
-  "oP\001Z:gitlab.com/sensory-cloud/server/tit"
-  "an.git/pkg/api/v1/audiob\006proto3"
+  "audio.TranscribeResponse\"\000(\0010\001Bt\n\034ai.sen"
+  "sorycloud.api.v1.audioB\026SensoryApiV1Audi"
+  "oProtoP\001Z:gitlab.com/sensory-cloud/serve"
+  "r/titan.git/pkg/api/v1/audiob\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2faudio_2faudio_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -818,7 +818,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2faudio_2faudio_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2faudio_2faudio_2eproto = {
-  false, false, 5671, descriptor_table_protodef_v1_2faudio_2faudio_2eproto, "v1/audio/audio.proto", 
+  false, false, 5676, descriptor_table_protodef_v1_2faudio_2faudio_2eproto, "v1/audio/audio.proto", 
   &descriptor_table_v1_2faudio_2faudio_2eproto_once, descriptor_table_v1_2faudio_2faudio_2eproto_deps, 2, 23,
   schemas, file_default_instances, TableStruct_v1_2faudio_2faudio_2eproto::offsets,
   file_level_metadata_v1_2faudio_2faudio_2eproto, file_level_enum_descriptors_v1_2faudio_2faudio_2eproto, file_level_service_descriptors_v1_2faudio_2faudio_2eproto,

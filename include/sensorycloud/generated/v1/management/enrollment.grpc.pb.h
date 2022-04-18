@@ -97,6 +97,33 @@ class EnrollmentService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>> PrepareAsyncDeleteEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>>(PrepareAsyncDeleteEnrollmentGroupRaw(context, request, cq));
     }
+    // Updates the name of an enrollment
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::sensory::api::v1::management::EnrollmentResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>> AsyncUpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>>(AsyncUpdateEnrollmentRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>> PrepareAsyncUpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>>(PrepareAsyncUpdateEnrollmentRaw(context, request, cq));
+    }
+    // Updates the name of an enrollment group
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>> AsyncUpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>>(AsyncUpdateEnrollmentGroupRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>> PrepareAsyncUpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>>(PrepareAsyncUpdateEnrollmentGroupRaw(context, request, cq));
+    }
+    // Removes a list of enrollments from an enrollment group
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>> AsyncRemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>>(AsyncRemoveEnrollmentsFromGroupRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>> PrepareAsyncRemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>>(PrepareAsyncRemoveEnrollmentsFromGroupRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -126,6 +153,18 @@ class EnrollmentService final {
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void DeleteEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void DeleteEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Updates the name of an enrollment
+      // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+      virtual void UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Updates the name of an enrollment group
+      // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+      virtual void UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Removes a list of enrollments from an enrollment group
+      // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+      virtual void RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -143,6 +182,12 @@ class EnrollmentService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>* PrepareAsyncDeleteEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>* AsyncDeleteEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>* PrepareAsyncDeleteEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>* AsyncUpdateEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentResponse>* PrepareAsyncUpdateEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>* AsyncUpdateEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>* PrepareAsyncUpdateEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>* AsyncRemoveEnrollmentsFromGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::EnrollmentGroupResponse>* PrepareAsyncRemoveEnrollmentsFromGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -189,6 +234,27 @@ class EnrollmentService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>> PrepareAsyncDeleteEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>>(PrepareAsyncDeleteEnrollmentGroupRaw(context, request, cq));
     }
+    ::grpc::Status UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::sensory::api::v1::management::EnrollmentResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>> AsyncUpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>>(AsyncUpdateEnrollmentRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>> PrepareAsyncUpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>>(PrepareAsyncUpdateEnrollmentRaw(context, request, cq));
+    }
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>> AsyncUpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>>(AsyncUpdateEnrollmentGroupRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>> PrepareAsyncUpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>>(PrepareAsyncUpdateEnrollmentGroupRaw(context, request, cq));
+    }
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>> AsyncRemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>>(AsyncRemoveEnrollmentsFromGroupRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>> PrepareAsyncRemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>>(PrepareAsyncRemoveEnrollmentsFromGroupRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
@@ -204,6 +270,12 @@ class EnrollmentService final {
       void DeleteEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void DeleteEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)>) override;
       void DeleteEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, std::function<void(::grpc::Status)>) override;
+      void UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)>) override;
+      void UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)>) override;
+      void RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -227,12 +299,21 @@ class EnrollmentService final {
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>* PrepareAsyncDeleteEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* AsyncDeleteEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* PrepareAsyncDeleteEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>* AsyncUpdateEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>* PrepareAsyncUpdateEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* AsyncUpdateEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* PrepareAsyncUpdateEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* AsyncRemoveEnrollmentsFromGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* PrepareAsyncRemoveEnrollmentsFromGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GetEnrollments_;
     const ::grpc::internal::RpcMethod rpcmethod_GetEnrollmentGroups_;
     const ::grpc::internal::RpcMethod rpcmethod_CreateEnrollmentGroup_;
     const ::grpc::internal::RpcMethod rpcmethod_AppendEnrollmentGroup_;
     const ::grpc::internal::RpcMethod rpcmethod_DeleteEnrollment_;
     const ::grpc::internal::RpcMethod rpcmethod_DeleteEnrollmentGroup_;
+    const ::grpc::internal::RpcMethod rpcmethod_UpdateEnrollment_;
+    const ::grpc::internal::RpcMethod rpcmethod_UpdateEnrollmentGroup_;
+    const ::grpc::internal::RpcMethod rpcmethod_RemoveEnrollmentsFromGroup_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -260,6 +341,15 @@ class EnrollmentService final {
     // Deletes an enrollment group from the database
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status DeleteEnrollmentGroup(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response);
+    // Updates the name of an enrollment
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status UpdateEnrollment(::grpc::ServerContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response);
+    // Updates the name of an enrollment group
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response);
+    // Removes a list of enrollments from an enrollment group
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_GetEnrollments : public BaseClass {
@@ -381,7 +471,67 @@ class EnrollmentService final {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetEnrollments<WithAsyncMethod_GetEnrollmentGroups<WithAsyncMethod_CreateEnrollmentGroup<WithAsyncMethod_AppendEnrollmentGroup<WithAsyncMethod_DeleteEnrollment<WithAsyncMethod_DeleteEnrollmentGroup<Service > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_UpdateEnrollment : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_UpdateEnrollment() {
+      ::grpc::Service::MarkMethodAsync(6);
+    }
+    ~WithAsyncMethod_UpdateEnrollment() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollment(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestUpdateEnrollment(::grpc::ServerContext* context, ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::EnrollmentResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_UpdateEnrollmentGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_UpdateEnrollmentGroup() {
+      ::grpc::Service::MarkMethodAsync(7);
+    }
+    ~WithAsyncMethod_UpdateEnrollmentGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestUpdateEnrollmentGroup(::grpc::ServerContext* context, ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::EnrollmentGroupResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_RemoveEnrollmentsFromGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_RemoveEnrollmentsFromGroup() {
+      ::grpc::Service::MarkMethodAsync(8);
+    }
+    ~WithAsyncMethod_RemoveEnrollmentsFromGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRemoveEnrollmentsFromGroup(::grpc::ServerContext* context, ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::EnrollmentGroupResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_GetEnrollments<WithAsyncMethod_GetEnrollmentGroups<WithAsyncMethod_CreateEnrollmentGroup<WithAsyncMethod_AppendEnrollmentGroup<WithAsyncMethod_DeleteEnrollment<WithAsyncMethod_DeleteEnrollmentGroup<WithAsyncMethod_UpdateEnrollment<WithAsyncMethod_UpdateEnrollmentGroup<WithAsyncMethod_RemoveEnrollmentsFromGroup<Service > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_GetEnrollments : public BaseClass {
    private:
@@ -544,7 +694,88 @@ class EnrollmentService final {
     virtual ::grpc::ServerUnaryReactor* DeleteEnrollmentGroup(
       ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GetEnrollments<WithCallbackMethod_GetEnrollmentGroups<WithCallbackMethod_CreateEnrollmentGroup<WithCallbackMethod_AppendEnrollmentGroup<WithCallbackMethod_DeleteEnrollment<WithCallbackMethod_DeleteEnrollmentGroup<Service > > > > > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_UpdateEnrollment : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_UpdateEnrollment() {
+      ::grpc::Service::MarkMethodCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response) { return this->UpdateEnrollment(context, request, response); }));}
+    void SetMessageAllocatorFor_UpdateEnrollment(
+        ::grpc::MessageAllocator< ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_UpdateEnrollment() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollment(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* UpdateEnrollment(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_UpdateEnrollmentGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_UpdateEnrollmentGroup() {
+      ::grpc::Service::MarkMethodCallback(7,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) { return this->UpdateEnrollmentGroup(context, request, response); }));}
+    void SetMessageAllocatorFor_UpdateEnrollmentGroup(
+        ::grpc::MessageAllocator< ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_UpdateEnrollmentGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* UpdateEnrollmentGroup(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_RemoveEnrollmentsFromGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_RemoveEnrollmentsFromGroup() {
+      ::grpc::Service::MarkMethodCallback(8,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) { return this->RemoveEnrollmentsFromGroup(context, request, response); }));}
+    void SetMessageAllocatorFor_RemoveEnrollmentsFromGroup(
+        ::grpc::MessageAllocator< ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_RemoveEnrollmentsFromGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RemoveEnrollmentsFromGroup(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_GetEnrollments<WithCallbackMethod_GetEnrollmentGroups<WithCallbackMethod_CreateEnrollmentGroup<WithCallbackMethod_AppendEnrollmentGroup<WithCallbackMethod_DeleteEnrollment<WithCallbackMethod_DeleteEnrollmentGroup<WithCallbackMethod_UpdateEnrollment<WithCallbackMethod_UpdateEnrollmentGroup<WithCallbackMethod_RemoveEnrollmentsFromGroup<Service > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GetEnrollments : public BaseClass {
@@ -644,6 +875,57 @@ class EnrollmentService final {
     }
     // disable synchronous version of this method
     ::grpc::Status DeleteEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_UpdateEnrollment : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_UpdateEnrollment() {
+      ::grpc::Service::MarkMethodGeneric(6);
+    }
+    ~WithGenericMethod_UpdateEnrollment() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollment(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_UpdateEnrollmentGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_UpdateEnrollmentGroup() {
+      ::grpc::Service::MarkMethodGeneric(7);
+    }
+    ~WithGenericMethod_UpdateEnrollmentGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_RemoveEnrollmentsFromGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_RemoveEnrollmentsFromGroup() {
+      ::grpc::Service::MarkMethodGeneric(8);
+    }
+    ~WithGenericMethod_RemoveEnrollmentsFromGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -766,6 +1048,66 @@ class EnrollmentService final {
     }
     void RequestDeleteEnrollmentGroup(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_UpdateEnrollment : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_UpdateEnrollment() {
+      ::grpc::Service::MarkMethodRaw(6);
+    }
+    ~WithRawMethod_UpdateEnrollment() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollment(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestUpdateEnrollment(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_UpdateEnrollmentGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_UpdateEnrollmentGroup() {
+      ::grpc::Service::MarkMethodRaw(7);
+    }
+    ~WithRawMethod_UpdateEnrollmentGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestUpdateEnrollmentGroup(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_RemoveEnrollmentsFromGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_RemoveEnrollmentsFromGroup() {
+      ::grpc::Service::MarkMethodRaw(8);
+    }
+    ~WithRawMethod_RemoveEnrollmentsFromGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRemoveEnrollmentsFromGroup(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -898,6 +1240,72 @@ class EnrollmentService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* DeleteEnrollmentGroup(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_UpdateEnrollment : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_UpdateEnrollment() {
+      ::grpc::Service::MarkMethodRawCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UpdateEnrollment(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_UpdateEnrollment() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollment(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* UpdateEnrollment(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_UpdateEnrollmentGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_UpdateEnrollmentGroup() {
+      ::grpc::Service::MarkMethodRawCallback(7,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UpdateEnrollmentGroup(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_UpdateEnrollmentGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* UpdateEnrollmentGroup(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_RemoveEnrollmentsFromGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_RemoveEnrollmentsFromGroup() {
+      ::grpc::Service::MarkMethodRawCallback(8,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->RemoveEnrollmentsFromGroup(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_RemoveEnrollmentsFromGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RemoveEnrollmentsFromGroup(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -1062,9 +1470,90 @@ class EnrollmentService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedDeleteEnrollmentGroup(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,::sensory::api::v1::management::EnrollmentGroupResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetEnrollments<WithStreamedUnaryMethod_GetEnrollmentGroups<WithStreamedUnaryMethod_CreateEnrollmentGroup<WithStreamedUnaryMethod_AppendEnrollmentGroup<WithStreamedUnaryMethod_DeleteEnrollment<WithStreamedUnaryMethod_DeleteEnrollmentGroup<Service > > > > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_UpdateEnrollment : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_UpdateEnrollment() {
+      ::grpc::Service::MarkMethodStreamed(6,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse>* streamer) {
+                       return this->StreamedUpdateEnrollment(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_UpdateEnrollment() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status UpdateEnrollment(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentRequest* /*request*/, ::sensory::api::v1::management::EnrollmentResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedUpdateEnrollment(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::UpdateEnrollmentRequest,::sensory::api::v1::management::EnrollmentResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_UpdateEnrollmentGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_UpdateEnrollmentGroup() {
+      ::grpc::Service::MarkMethodStreamed(7,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>* streamer) {
+                       return this->StreamedUpdateEnrollmentGroup(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_UpdateEnrollmentGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status UpdateEnrollmentGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedUpdateEnrollmentGroup(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::UpdateEnrollmentGroupRequest,::sensory::api::v1::management::EnrollmentGroupResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_RemoveEnrollmentsFromGroup : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_RemoveEnrollmentsFromGroup() {
+      ::grpc::Service::MarkMethodStreamed(8,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse>* streamer) {
+                       return this->StreamedRemoveEnrollmentsFromGroup(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_RemoveEnrollmentsFromGroup() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status RemoveEnrollmentsFromGroup(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* /*request*/, ::sensory::api::v1::management::EnrollmentGroupResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedRemoveEnrollmentsFromGroup(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::RemoveEnrollmentsRequest,::sensory::api::v1::management::EnrollmentGroupResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_GetEnrollments<WithStreamedUnaryMethod_GetEnrollmentGroups<WithStreamedUnaryMethod_CreateEnrollmentGroup<WithStreamedUnaryMethod_AppendEnrollmentGroup<WithStreamedUnaryMethod_DeleteEnrollment<WithStreamedUnaryMethod_DeleteEnrollmentGroup<WithStreamedUnaryMethod_UpdateEnrollment<WithStreamedUnaryMethod_UpdateEnrollmentGroup<WithStreamedUnaryMethod_RemoveEnrollmentsFromGroup<Service > > > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetEnrollments<WithStreamedUnaryMethod_GetEnrollmentGroups<WithStreamedUnaryMethod_CreateEnrollmentGroup<WithStreamedUnaryMethod_AppendEnrollmentGroup<WithStreamedUnaryMethod_DeleteEnrollment<WithStreamedUnaryMethod_DeleteEnrollmentGroup<Service > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_GetEnrollments<WithStreamedUnaryMethod_GetEnrollmentGroups<WithStreamedUnaryMethod_CreateEnrollmentGroup<WithStreamedUnaryMethod_AppendEnrollmentGroup<WithStreamedUnaryMethod_DeleteEnrollment<WithStreamedUnaryMethod_DeleteEnrollmentGroup<WithStreamedUnaryMethod_UpdateEnrollment<WithStreamedUnaryMethod_UpdateEnrollmentGroup<WithStreamedUnaryMethod_RemoveEnrollmentsFromGroup<Service > > > > > > > > > StreamedService;
 };
 
 }  // namespace management

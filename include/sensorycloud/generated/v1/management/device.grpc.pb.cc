@@ -28,6 +28,9 @@ static const char* DeviceService_method_names[] = {
   "/sensory.api.v1.management.DeviceService/EnrollDevice",
   "/sensory.api.v1.management.DeviceService/RenewDeviceCredential",
   "/sensory.api.v1.management.DeviceService/GetWhoAmI",
+  "/sensory.api.v1.management.DeviceService/GetDevices",
+  "/sensory.api.v1.management.DeviceService/UpdateDevice",
+  "/sensory.api.v1.management.DeviceService/DeleteDevice",
 };
 
 std::unique_ptr< DeviceService::Stub> DeviceService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -40,6 +43,9 @@ DeviceService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chan
   : channel_(channel), rpcmethod_EnrollDevice_(DeviceService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_RenewDeviceCredential_(DeviceService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetWhoAmI_(DeviceService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetDevices_(DeviceService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateDevice_(DeviceService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DeleteDevice_(DeviceService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status DeviceService::Stub::EnrollDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::EnrollDeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) {
@@ -111,6 +117,75 @@ void DeviceService::Stub::async::GetWhoAmI(::grpc::ClientContext* context, const
   return result;
 }
 
+::grpc::Status DeviceService::Stub::GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::sensory::api::v1::management::DeviceListResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetDevices_, context, request, response);
+}
+
+void DeviceService::Stub::async::GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetDevices_, context, request, response, std::move(f));
+}
+
+void DeviceService::Stub::async::GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetDevices_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceListResponse>* DeviceService::Stub::PrepareAsyncGetDevicesRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::DeviceListResponse, ::sensory::api::v1::management::GetDevicesRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetDevices_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceListResponse>* DeviceService::Stub::AsyncGetDevicesRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetDevicesRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status DeviceService::Stub::UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UpdateDevice_, context, request, response);
+}
+
+void DeviceService::Stub::async::UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateDevice_, context, request, response, std::move(f));
+}
+
+void DeviceService::Stub::async::UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateDevice_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::PrepareAsyncUpdateDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::DeviceResponse, ::sensory::api::v1::management::UpdateDeviceRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UpdateDevice_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::AsyncUpdateDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncUpdateDeviceRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status DeviceService::Stub::DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_DeleteDevice_, context, request, response);
+}
+
+void DeviceService::Stub::async::DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_DeleteDevice_, context, request, response, std::move(f));
+}
+
+void DeviceService::Stub::async::DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_DeleteDevice_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::PrepareAsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::DeviceResponse, ::sensory::api::v1::management::DeleteDeviceRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_DeleteDevice_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* DeviceService::Stub::AsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncDeleteDeviceRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 DeviceService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       DeviceService_method_names[0],
@@ -142,6 +217,36 @@ DeviceService::Service::Service() {
              ::sensory::api::v1::management::DeviceResponse* resp) {
                return service->GetWhoAmI(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DeviceService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DeviceService::Service, ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DeviceService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::GetDevicesRequest* req,
+             ::sensory::api::v1::management::DeviceListResponse* resp) {
+               return service->GetDevices(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DeviceService_method_names[4],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DeviceService::Service, ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DeviceService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::UpdateDeviceRequest* req,
+             ::sensory::api::v1::management::DeviceResponse* resp) {
+               return service->UpdateDevice(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      DeviceService_method_names[5],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< DeviceService::Service, ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](DeviceService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::DeleteDeviceRequest* req,
+             ::sensory::api::v1::management::DeviceResponse* resp) {
+               return service->DeleteDevice(ctx, req, resp);
+             }, this)));
 }
 
 DeviceService::Service::~Service() {
@@ -162,6 +267,27 @@ DeviceService::Service::~Service() {
 }
 
 ::grpc::Status DeviceService::Service::GetWhoAmI(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DeviceService::Service::GetDevices(::grpc::ServerContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DeviceService::Service::UpdateDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status DeviceService::Service::DeleteDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response) {
   (void) context;
   (void) request;
   (void) response;

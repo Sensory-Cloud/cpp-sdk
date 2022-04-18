@@ -136,10 +136,10 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "entService\022y\n\022PublishUsageEvents\022/.senso"
   "ry.api.v1.event.PublishUsageEventsReques"
   "t\0320.sensory.api.v1.event.PublishUsageEve"
-  "ntsResponse\"\000Bo\n\027io.sensory.api.v1.event"
-  "B\026SensoryApiV1EventProtoP\001Z:gitlab.com/s"
-  "ensory-cloud/server/titan.git/pkg/api/v1"
-  "/eventb\006proto3"
+  "ntsResponse\"\000Bt\n\034ai.sensorycloud.api.v1."
+  "eventB\026SensoryApiV1EventProtoP\001Z:gitlab."
+  "com/sensory-cloud/server/titan.git/pkg/a"
+  "pi/v1/eventb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fevent_2fevent_2eproto_deps[3] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -148,7 +148,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fevent_2fevent_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fevent_2fevent_2eproto = {
-  false, false, 854, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
+  false, false, 859, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
   &descriptor_table_v1_2fevent_2fevent_2eproto_once, descriptor_table_v1_2fevent_2fevent_2eproto_deps, 3, 3,
   schemas, file_default_instances, TableStruct_v1_2fevent_2fevent_2eproto::offsets,
   file_level_metadata_v1_2fevent_2fevent_2eproto, file_level_enum_descriptors_v1_2fevent_2fevent_2eproto, file_level_service_descriptors_v1_2fevent_2fevent_2eproto,
