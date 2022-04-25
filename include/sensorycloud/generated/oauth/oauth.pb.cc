@@ -191,10 +191,10 @@ const char descriptor_table_protodef_oauth_2foauth_2eproto[] PROTOBUF_SECTION_VA
   "pi.oauth.WhoAmIRequest\032!.sensory.api.oau"
   "th.WhoAmIResponse\"\000\022[\n\014GetPublicKey\022#.se"
   "nsory.api.oauth.PublicKeyRequest\032$.senso"
-  "ry.api.oauth.PublicKeyResponse\"\000Bg\n\024io.s"
-  "ensory.api.oauthB\024SensoryApiOauthProtoP\001"
-  "Z7gitlab.com/sensory-cloud/server/titan."
-  "git/pkg/api/oauthb\006proto3"
+  "ry.api.oauth.PublicKeyResponse\"\000Bl\n\031ai.s"
+  "ensorycloud.api.oauthB\024SensoryApiOauthPr"
+  "otoP\001Z7gitlab.com/sensory-cloud/server/t"
+  "itan.git/pkg/api/oauthb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_oauth_2foauth_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -202,7 +202,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_oauth_2foauth_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_oauth_2foauth_2eproto = {
-  false, false, 1025, descriptor_table_protodef_oauth_2foauth_2eproto, "oauth/oauth.proto", 
+  false, false, 1030, descriptor_table_protodef_oauth_2foauth_2eproto, "oauth/oauth.proto", 
   &descriptor_table_oauth_2foauth_2eproto_once, descriptor_table_oauth_2foauth_2eproto_deps, 2, 6,
   schemas, file_default_instances, TableStruct_oauth_2foauth_2eproto::offsets,
   file_level_metadata_oauth_2foauth_2eproto, file_level_enum_descriptors_oauth_2foauth_2eproto, file_level_service_descriptors_oauth_2foauth_2eproto,

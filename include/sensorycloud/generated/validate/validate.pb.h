@@ -951,7 +951,6 @@ class FloatRules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated float in = 6;
   int in_size() const;
@@ -1062,19 +1061,6 @@ class FloatRules final :
   void _internal_set_gte(float value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.FloatRules)
  private:
   class _Internal;
@@ -1091,7 +1077,6 @@ class FloatRules final :
   float lte_;
   float gt_;
   float gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1229,7 +1214,6 @@ class DoubleRules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated double in = 6;
   int in_size() const;
@@ -1340,19 +1324,6 @@ class DoubleRules final :
   void _internal_set_gte(double value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.DoubleRules)
  private:
   class _Internal;
@@ -1369,7 +1340,6 @@ class DoubleRules final :
   double lte_;
   double gt_;
   double gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1507,7 +1477,6 @@ class Int32Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated int32 in = 6;
   int in_size() const;
@@ -1618,19 +1587,6 @@ class Int32Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.Int32Rules)
  private:
   class _Internal;
@@ -1647,7 +1603,6 @@ class Int32Rules final :
   ::PROTOBUF_NAMESPACE_ID::int32 lte_;
   ::PROTOBUF_NAMESPACE_ID::int32 gt_;
   ::PROTOBUF_NAMESPACE_ID::int32 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1785,7 +1740,6 @@ class Int64Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated int64 in = 6;
   int in_size() const;
@@ -1896,19 +1850,6 @@ class Int64Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.Int64Rules)
  private:
   class _Internal;
@@ -1925,7 +1866,6 @@ class Int64Rules final :
   ::PROTOBUF_NAMESPACE_ID::int64 lte_;
   ::PROTOBUF_NAMESPACE_ID::int64 gt_;
   ::PROTOBUF_NAMESPACE_ID::int64 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2063,7 +2003,6 @@ class UInt32Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated uint32 in = 6;
   int in_size() const;
@@ -2174,19 +2113,6 @@ class UInt32Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.UInt32Rules)
  private:
   class _Internal;
@@ -2203,7 +2129,6 @@ class UInt32Rules final :
   ::PROTOBUF_NAMESPACE_ID::uint32 lte_;
   ::PROTOBUF_NAMESPACE_ID::uint32 gt_;
   ::PROTOBUF_NAMESPACE_ID::uint32 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2341,7 +2266,6 @@ class UInt64Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated uint64 in = 6;
   int in_size() const;
@@ -2452,19 +2376,6 @@ class UInt64Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.UInt64Rules)
  private:
   class _Internal;
@@ -2481,7 +2392,6 @@ class UInt64Rules final :
   ::PROTOBUF_NAMESPACE_ID::uint64 lte_;
   ::PROTOBUF_NAMESPACE_ID::uint64 gt_;
   ::PROTOBUF_NAMESPACE_ID::uint64 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2619,7 +2529,6 @@ class SInt32Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated sint32 in = 6;
   int in_size() const;
@@ -2730,19 +2639,6 @@ class SInt32Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.SInt32Rules)
  private:
   class _Internal;
@@ -2759,7 +2655,6 @@ class SInt32Rules final :
   ::PROTOBUF_NAMESPACE_ID::int32 lte_;
   ::PROTOBUF_NAMESPACE_ID::int32 gt_;
   ::PROTOBUF_NAMESPACE_ID::int32 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -2897,7 +2792,6 @@ class SInt64Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated sint64 in = 6;
   int in_size() const;
@@ -3008,19 +2902,6 @@ class SInt64Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.SInt64Rules)
  private:
   class _Internal;
@@ -3037,7 +2918,6 @@ class SInt64Rules final :
   ::PROTOBUF_NAMESPACE_ID::int64 lte_;
   ::PROTOBUF_NAMESPACE_ID::int64 gt_;
   ::PROTOBUF_NAMESPACE_ID::int64 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3175,7 +3055,6 @@ class Fixed32Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated fixed32 in = 6;
   int in_size() const;
@@ -3286,19 +3165,6 @@ class Fixed32Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.Fixed32Rules)
  private:
   class _Internal;
@@ -3315,7 +3181,6 @@ class Fixed32Rules final :
   ::PROTOBUF_NAMESPACE_ID::uint32 lte_;
   ::PROTOBUF_NAMESPACE_ID::uint32 gt_;
   ::PROTOBUF_NAMESPACE_ID::uint32 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3453,7 +3318,6 @@ class Fixed64Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated fixed64 in = 6;
   int in_size() const;
@@ -3564,19 +3428,6 @@ class Fixed64Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.Fixed64Rules)
  private:
   class _Internal;
@@ -3593,7 +3444,6 @@ class Fixed64Rules final :
   ::PROTOBUF_NAMESPACE_ID::uint64 lte_;
   ::PROTOBUF_NAMESPACE_ID::uint64 gt_;
   ::PROTOBUF_NAMESPACE_ID::uint64 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -3731,7 +3581,6 @@ class SFixed32Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated sfixed32 in = 6;
   int in_size() const;
@@ -3842,19 +3691,6 @@ class SFixed32Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.SFixed32Rules)
  private:
   class _Internal;
@@ -3871,7 +3707,6 @@ class SFixed32Rules final :
   ::PROTOBUF_NAMESPACE_ID::int32 lte_;
   ::PROTOBUF_NAMESPACE_ID::int32 gt_;
   ::PROTOBUF_NAMESPACE_ID::int32 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -4009,7 +3844,6 @@ class SFixed64Rules final :
     kLteFieldNumber = 3,
     kGtFieldNumber = 4,
     kGteFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 8,
   };
   // repeated sfixed64 in = 6;
   int in_size() const;
@@ -4120,19 +3954,6 @@ class SFixed64Rules final :
   void _internal_set_gte(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
-  // optional bool ignore_empty = 8;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.SFixed64Rules)
  private:
   class _Internal;
@@ -4149,7 +3970,6 @@ class SFixed64Rules final :
   ::PROTOBUF_NAMESPACE_ID::int64 lte_;
   ::PROTOBUF_NAMESPACE_ID::int64 gt_;
   ::PROTOBUF_NAMESPACE_ID::int64 gte_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -4461,7 +4281,6 @@ class StringRules final :
     kMaxLenFieldNumber = 3,
     kMinBytesFieldNumber = 4,
     kMaxBytesFieldNumber = 5,
-    kIgnoreEmptyFieldNumber = 26,
     kLenFieldNumber = 19,
     kLenBytesFieldNumber = 20,
     kStrictFieldNumber = 25,
@@ -4684,19 +4503,6 @@ class StringRules final :
   void _internal_set_max_bytes(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // optional bool ignore_empty = 26;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // optional uint64 len = 19;
   bool has_len() const;
   private:
@@ -4902,7 +4708,6 @@ class StringRules final :
   ::PROTOBUF_NAMESPACE_ID::uint64 max_len_;
   ::PROTOBUF_NAMESPACE_ID::uint64 min_bytes_;
   ::PROTOBUF_NAMESPACE_ID::uint64 max_bytes_;
-  bool ignore_empty_;
   ::PROTOBUF_NAMESPACE_ID::uint64 len_;
   ::PROTOBUF_NAMESPACE_ID::uint64 len_bytes_;
   bool strict_;
@@ -5068,7 +4873,6 @@ class BytesRules final :
     kContainsFieldNumber = 7,
     kMinLenFieldNumber = 2,
     kMaxLenFieldNumber = 3,
-    kIgnoreEmptyFieldNumber = 14,
     kLenFieldNumber = 13,
     kIpFieldNumber = 10,
     kIpv4FieldNumber = 11,
@@ -5238,19 +5042,6 @@ class BytesRules final :
   void _internal_set_max_len(::PROTOBUF_NAMESPACE_ID::uint64 value);
   public:
 
-  // optional bool ignore_empty = 14;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // optional uint64 len = 13;
   bool has_len() const;
   private:
@@ -5329,7 +5120,6 @@ class BytesRules final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr contains_;
   ::PROTOBUF_NAMESPACE_ID::uint64 min_len_;
   ::PROTOBUF_NAMESPACE_ID::uint64 max_len_;
-  bool ignore_empty_;
   ::PROTOBUF_NAMESPACE_ID::uint64 len_;
   union WellKnownUnion {
     constexpr WellKnownUnion() : _constinit_{} {}
@@ -5862,7 +5652,6 @@ class RepeatedRules final :
     kMinItemsFieldNumber = 1,
     kMaxItemsFieldNumber = 2,
     kUniqueFieldNumber = 3,
-    kIgnoreEmptyFieldNumber = 5,
   };
   // optional .validate.FieldRules items = 4;
   bool has_items() const;
@@ -5921,19 +5710,6 @@ class RepeatedRules final :
   void _internal_set_unique(bool value);
   public:
 
-  // optional bool ignore_empty = 5;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.RepeatedRules)
  private:
   class _Internal;
@@ -5947,7 +5723,6 @@ class RepeatedRules final :
   ::PROTOBUF_NAMESPACE_ID::uint64 min_items_;
   ::PROTOBUF_NAMESPACE_ID::uint64 max_items_;
   bool unique_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -6083,7 +5858,6 @@ class MapRules final :
     kMinPairsFieldNumber = 1,
     kMaxPairsFieldNumber = 2,
     kNoSparseFieldNumber = 3,
-    kIgnoreEmptyFieldNumber = 6,
   };
   // optional .validate.FieldRules keys = 4;
   bool has_keys() const;
@@ -6160,19 +5934,6 @@ class MapRules final :
   void _internal_set_no_sparse(bool value);
   public:
 
-  // optional bool ignore_empty = 6;
-  bool has_ignore_empty() const;
-  private:
-  bool _internal_has_ignore_empty() const;
-  public:
-  void clear_ignore_empty();
-  bool ignore_empty() const;
-  void set_ignore_empty(bool value);
-  private:
-  bool _internal_ignore_empty() const;
-  void _internal_set_ignore_empty(bool value);
-  public:
-
   // @@protoc_insertion_point(class_scope:validate.MapRules)
  private:
   class _Internal;
@@ -6187,7 +5948,6 @@ class MapRules final :
   ::PROTOBUF_NAMESPACE_ID::uint64 min_pairs_;
   ::PROTOBUF_NAMESPACE_ID::uint64 max_pairs_;
   bool no_sparse_;
-  bool ignore_empty_;
   friend struct ::TableStruct_validate_2fvalidate_2eproto;
 };
 // -------------------------------------------------------------------
@@ -7003,10 +6763,6 @@ static const int kDisabledFieldNumber = 1071;
 extern ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
   disabled;
-static const int kIgnoredFieldNumber = 1072;
-extern ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::google::protobuf::MessageOptions,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
-  ignored;
 static const int kRequiredFieldNumber = 1071;
 extern ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::google::protobuf::OneofOptions,
     ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< bool >, 8, false >
@@ -8915,34 +8671,6 @@ FloatRules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool FloatRules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool FloatRules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void FloatRules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool FloatRules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool FloatRules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.FloatRules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void FloatRules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void FloatRules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.FloatRules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // DoubleRules
@@ -9179,34 +8907,6 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
 DoubleRules::mutable_not_in() {
   // @@protoc_insertion_point(field_mutable_list:validate.DoubleRules.not_in)
   return _internal_mutable_not_in();
-}
-
-// optional bool ignore_empty = 8;
-inline bool DoubleRules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool DoubleRules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void DoubleRules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool DoubleRules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool DoubleRules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.DoubleRules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void DoubleRules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void DoubleRules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.DoubleRules.ignore_empty)
 }
 
 // -------------------------------------------------------------------
@@ -9447,34 +9147,6 @@ Int32Rules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool Int32Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool Int32Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void Int32Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool Int32Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool Int32Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.Int32Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void Int32Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void Int32Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.Int32Rules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // Int64Rules
@@ -9711,34 +9383,6 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
 Int64Rules::mutable_not_in() {
   // @@protoc_insertion_point(field_mutable_list:validate.Int64Rules.not_in)
   return _internal_mutable_not_in();
-}
-
-// optional bool ignore_empty = 8;
-inline bool Int64Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool Int64Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void Int64Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool Int64Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool Int64Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.Int64Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void Int64Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void Int64Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.Int64Rules.ignore_empty)
 }
 
 // -------------------------------------------------------------------
@@ -9979,34 +9623,6 @@ UInt32Rules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool UInt32Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool UInt32Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void UInt32Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool UInt32Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool UInt32Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.UInt32Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void UInt32Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void UInt32Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.UInt32Rules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // UInt64Rules
@@ -10243,34 +9859,6 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint64 >
 UInt64Rules::mutable_not_in() {
   // @@protoc_insertion_point(field_mutable_list:validate.UInt64Rules.not_in)
   return _internal_mutable_not_in();
-}
-
-// optional bool ignore_empty = 8;
-inline bool UInt64Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool UInt64Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void UInt64Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool UInt64Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool UInt64Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.UInt64Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void UInt64Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void UInt64Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.UInt64Rules.ignore_empty)
 }
 
 // -------------------------------------------------------------------
@@ -10511,34 +10099,6 @@ SInt32Rules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool SInt32Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool SInt32Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void SInt32Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool SInt32Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool SInt32Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.SInt32Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void SInt32Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void SInt32Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.SInt32Rules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // SInt64Rules
@@ -10775,34 +10335,6 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
 SInt64Rules::mutable_not_in() {
   // @@protoc_insertion_point(field_mutable_list:validate.SInt64Rules.not_in)
   return _internal_mutable_not_in();
-}
-
-// optional bool ignore_empty = 8;
-inline bool SInt64Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool SInt64Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void SInt64Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool SInt64Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool SInt64Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.SInt64Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void SInt64Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void SInt64Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.SInt64Rules.ignore_empty)
 }
 
 // -------------------------------------------------------------------
@@ -11043,34 +10575,6 @@ Fixed32Rules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool Fixed32Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool Fixed32Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void Fixed32Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool Fixed32Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool Fixed32Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.Fixed32Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void Fixed32Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void Fixed32Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.Fixed32Rules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // Fixed64Rules
@@ -11307,34 +10811,6 @@ inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::uint64 >
 Fixed64Rules::mutable_not_in() {
   // @@protoc_insertion_point(field_mutable_list:validate.Fixed64Rules.not_in)
   return _internal_mutable_not_in();
-}
-
-// optional bool ignore_empty = 8;
-inline bool Fixed64Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool Fixed64Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void Fixed64Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool Fixed64Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool Fixed64Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.Fixed64Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void Fixed64Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void Fixed64Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.Fixed64Rules.ignore_empty)
 }
 
 // -------------------------------------------------------------------
@@ -11575,34 +11051,6 @@ SFixed32Rules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool SFixed32Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool SFixed32Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void SFixed32Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool SFixed32Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool SFixed32Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.SFixed32Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void SFixed32Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void SFixed32Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.SFixed32Rules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // SFixed64Rules
@@ -11841,34 +11289,6 @@ SFixed64Rules::mutable_not_in() {
   return _internal_mutable_not_in();
 }
 
-// optional bool ignore_empty = 8;
-inline bool SFixed64Rules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool SFixed64Rules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void SFixed64Rules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool SFixed64Rules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool SFixed64Rules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.SFixed64Rules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void SFixed64Rules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void SFixed64Rules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.SFixed64Rules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // BoolRules
@@ -11965,7 +11385,7 @@ inline void StringRules::set_allocated_const_(std::string* const_) {
 
 // optional uint64 len = 19;
 inline bool StringRules::_internal_has_len() const {
-  bool value = (_has_bits_[0] & 0x00000800u) != 0;
+  bool value = (_has_bits_[0] & 0x00000400u) != 0;
   return value;
 }
 inline bool StringRules::has_len() const {
@@ -11973,7 +11393,7 @@ inline bool StringRules::has_len() const {
 }
 inline void StringRules::clear_len() {
   len_ = uint64_t{0u};
-  _has_bits_[0] &= ~0x00000800u;
+  _has_bits_[0] &= ~0x00000400u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 StringRules::_internal_len() const {
   return len_;
@@ -11983,7 +11403,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 StringRules::len() const {
   return _internal_len();
 }
 inline void StringRules::_internal_set_len(::PROTOBUF_NAMESPACE_ID::uint64 value) {
-  _has_bits_[0] |= 0x00000800u;
+  _has_bits_[0] |= 0x00000400u;
   len_ = value;
 }
 inline void StringRules::set_len(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -12049,7 +11469,7 @@ inline void StringRules::set_max_len(::PROTOBUF_NAMESPACE_ID::uint64 value) {
 
 // optional uint64 len_bytes = 20;
 inline bool StringRules::_internal_has_len_bytes() const {
-  bool value = (_has_bits_[0] & 0x00001000u) != 0;
+  bool value = (_has_bits_[0] & 0x00000800u) != 0;
   return value;
 }
 inline bool StringRules::has_len_bytes() const {
@@ -12057,7 +11477,7 @@ inline bool StringRules::has_len_bytes() const {
 }
 inline void StringRules::clear_len_bytes() {
   len_bytes_ = uint64_t{0u};
-  _has_bits_[0] &= ~0x00001000u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 StringRules::_internal_len_bytes() const {
   return len_bytes_;
@@ -12067,7 +11487,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 StringRules::len_bytes() const {
   return _internal_len_bytes();
 }
 inline void StringRules::_internal_set_len_bytes(::PROTOBUF_NAMESPACE_ID::uint64 value) {
-  _has_bits_[0] |= 0x00001000u;
+  _has_bits_[0] |= 0x00000800u;
   len_bytes_ = value;
 }
 inline void StringRules::set_len_bytes(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -12954,7 +12374,7 @@ inline void StringRules::set_well_known_regex(::validate::KnownRegex value) {
 
 // optional bool strict = 25 [default = true];
 inline bool StringRules::_internal_has_strict() const {
-  bool value = (_has_bits_[0] & 0x00002000u) != 0;
+  bool value = (_has_bits_[0] & 0x00001000u) != 0;
   return value;
 }
 inline bool StringRules::has_strict() const {
@@ -12962,7 +12382,7 @@ inline bool StringRules::has_strict() const {
 }
 inline void StringRules::clear_strict() {
   strict_ = true;
-  _has_bits_[0] &= ~0x00002000u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline bool StringRules::_internal_strict() const {
   return strict_;
@@ -12972,40 +12392,12 @@ inline bool StringRules::strict() const {
   return _internal_strict();
 }
 inline void StringRules::_internal_set_strict(bool value) {
-  _has_bits_[0] |= 0x00002000u;
+  _has_bits_[0] |= 0x00001000u;
   strict_ = value;
 }
 inline void StringRules::set_strict(bool value) {
   _internal_set_strict(value);
   // @@protoc_insertion_point(field_set:validate.StringRules.strict)
-}
-
-// optional bool ignore_empty = 26;
-inline bool StringRules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000400u) != 0;
-  return value;
-}
-inline bool StringRules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void StringRules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000400u;
-}
-inline bool StringRules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool StringRules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.StringRules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void StringRules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000400u;
-  ignore_empty_ = value;
-}
-inline void StringRules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.StringRules.ignore_empty)
 }
 
 inline bool StringRules::has_well_known() const {
@@ -13081,7 +12473,7 @@ inline void BytesRules::set_allocated_const_(std::string* const_) {
 
 // optional uint64 len = 13;
 inline bool BytesRules::_internal_has_len() const {
-  bool value = (_has_bits_[0] & 0x00000100u) != 0;
+  bool value = (_has_bits_[0] & 0x00000080u) != 0;
   return value;
 }
 inline bool BytesRules::has_len() const {
@@ -13089,7 +12481,7 @@ inline bool BytesRules::has_len() const {
 }
 inline void BytesRules::clear_len() {
   len_ = uint64_t{0u};
-  _has_bits_[0] &= ~0x00000100u;
+  _has_bits_[0] &= ~0x00000080u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint64 BytesRules::_internal_len() const {
   return len_;
@@ -13099,7 +12491,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint64 BytesRules::len() const {
   return _internal_len();
 }
 inline void BytesRules::_internal_set_len(::PROTOBUF_NAMESPACE_ID::uint64 value) {
-  _has_bits_[0] |= 0x00000100u;
+  _has_bits_[0] |= 0x00000080u;
   len_ = value;
 }
 inline void BytesRules::set_len(::PROTOBUF_NAMESPACE_ID::uint64 value) {
@@ -13659,34 +13051,6 @@ inline void BytesRules::set_ipv6(bool value) {
   // @@protoc_insertion_point(field_set:validate.BytesRules.ipv6)
 }
 
-// optional bool ignore_empty = 14;
-inline bool BytesRules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000080u) != 0;
-  return value;
-}
-inline bool BytesRules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void BytesRules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000080u;
-}
-inline bool BytesRules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool BytesRules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.BytesRules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void BytesRules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000080u;
-  ignore_empty_ = value;
-}
-inline void BytesRules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.BytesRules.ignore_empty)
-}
-
 inline bool BytesRules::has_well_known() const {
   return well_known_case() != WELL_KNOWN_NOT_SET;
 }
@@ -14088,34 +13452,6 @@ inline void RepeatedRules::set_allocated_items(::validate::FieldRules* items) {
   // @@protoc_insertion_point(field_set_allocated:validate.RepeatedRules.items)
 }
 
-// optional bool ignore_empty = 5;
-inline bool RepeatedRules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000010u) != 0;
-  return value;
-}
-inline bool RepeatedRules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void RepeatedRules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline bool RepeatedRules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool RepeatedRules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.RepeatedRules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void RepeatedRules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000010u;
-  ignore_empty_ = value;
-}
-inline void RepeatedRules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.RepeatedRules.ignore_empty)
-}
-
 // -------------------------------------------------------------------
 
 // MapRules
@@ -14382,34 +13718,6 @@ inline void MapRules::set_allocated_values(::validate::FieldRules* values) {
   }
   values_ = values;
   // @@protoc_insertion_point(field_set_allocated:validate.MapRules.values)
-}
-
-// optional bool ignore_empty = 6;
-inline bool MapRules::_internal_has_ignore_empty() const {
-  bool value = (_has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
-inline bool MapRules::has_ignore_empty() const {
-  return _internal_has_ignore_empty();
-}
-inline void MapRules::clear_ignore_empty() {
-  ignore_empty_ = false;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline bool MapRules::_internal_ignore_empty() const {
-  return ignore_empty_;
-}
-inline bool MapRules::ignore_empty() const {
-  // @@protoc_insertion_point(field_get:validate.MapRules.ignore_empty)
-  return _internal_ignore_empty();
-}
-inline void MapRules::_internal_set_ignore_empty(bool value) {
-  _has_bits_[0] |= 0x00000020u;
-  ignore_empty_ = value;
-}
-inline void MapRules::set_ignore_empty(bool value) {
-  _internal_set_ignore_empty(value);
-  // @@protoc_insertion_point(field_set:validate.MapRules.ignore_empty)
 }
 
 // -------------------------------------------------------------------

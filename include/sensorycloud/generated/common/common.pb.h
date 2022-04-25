@@ -33,6 +33,7 @@
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 #include "validate/validate.pb.h"
+#include <google/protobuf/timestamp.pb.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_common_2fcommon_2eproto
@@ -48,7 +49,7 @@ struct TableStruct_common_2fcommon_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -70,6 +71,12 @@ extern GenericClientDefaultTypeInternal _GenericClient_default_instance_;
 class MemorySummary;
 struct MemorySummaryDefaultTypeInternal;
 extern MemorySummaryDefaultTypeInternal _MemorySummary_default_instance_;
+class PaginationOptions;
+struct PaginationOptionsDefaultTypeInternal;
+extern PaginationOptionsDefaultTypeInternal _PaginationOptions_default_instance_;
+class PaginationResponse;
+struct PaginationResponseDefaultTypeInternal;
+extern PaginationResponseDefaultTypeInternal _PaginationResponse_default_instance_;
 class ServerHealthResponse;
 struct ServerHealthResponseDefaultTypeInternal;
 extern ServerHealthResponseDefaultTypeInternal _ServerHealthResponse_default_instance_;
@@ -79,6 +86,9 @@ extern ServiceHealthDefaultTypeInternal _ServiceHealth_default_instance_;
 class SystemSummary;
 struct SystemSummaryDefaultTypeInternal;
 extern SystemSummaryDefaultTypeInternal _SystemSummary_default_instance_;
+class TenantResponse;
+struct TenantResponseDefaultTypeInternal;
+extern TenantResponseDefaultTypeInternal _TenantResponse_default_instance_;
 class TokenResponse;
 struct TokenResponseDefaultTypeInternal;
 extern TokenResponseDefaultTypeInternal _TokenResponse_default_instance_;
@@ -90,25 +100,53 @@ template<> ::sensory::api::common::CompressionConfiguration* Arena::CreateMaybeM
 template<> ::sensory::api::common::CpuSummary* Arena::CreateMaybeMessage<::sensory::api::common::CpuSummary>(Arena*);
 template<> ::sensory::api::common::GenericClient* Arena::CreateMaybeMessage<::sensory::api::common::GenericClient>(Arena*);
 template<> ::sensory::api::common::MemorySummary* Arena::CreateMaybeMessage<::sensory::api::common::MemorySummary>(Arena*);
+template<> ::sensory::api::common::PaginationOptions* Arena::CreateMaybeMessage<::sensory::api::common::PaginationOptions>(Arena*);
+template<> ::sensory::api::common::PaginationResponse* Arena::CreateMaybeMessage<::sensory::api::common::PaginationResponse>(Arena*);
 template<> ::sensory::api::common::ServerHealthResponse* Arena::CreateMaybeMessage<::sensory::api::common::ServerHealthResponse>(Arena*);
 template<> ::sensory::api::common::ServiceHealth* Arena::CreateMaybeMessage<::sensory::api::common::ServiceHealth>(Arena*);
 template<> ::sensory::api::common::SystemSummary* Arena::CreateMaybeMessage<::sensory::api::common::SystemSummary>(Arena*);
+template<> ::sensory::api::common::TenantResponse* Arena::CreateMaybeMessage<::sensory::api::common::TenantResponse>(Arena*);
 template<> ::sensory::api::common::TokenResponse* Arena::CreateMaybeMessage<::sensory::api::common::TokenResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sensory {
 namespace api {
 namespace common {
 
+enum Void : int {
+  VOID_VALUE = 0,
+  Void_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  Void_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool Void_IsValid(int value);
+constexpr Void Void_MIN = VOID_VALUE;
+constexpr Void Void_MAX = VOID_VALUE;
+constexpr int Void_ARRAYSIZE = Void_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Void_descriptor();
+template<typename T>
+inline const std::string& Void_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, Void>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function Void_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    Void_descriptor(), enum_t_value);
+}
+inline bool Void_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Void* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Void>(
+    Void_descriptor(), name, value);
+}
 enum KeyType : int {
   PUBLIC_KEY = 0,
   PUBLIC_KEY_ED25519 = 1,
   SHARED_SECRET = 3,
+  AES_256 = 4,
   KeyType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   KeyType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool KeyType_IsValid(int value);
 constexpr KeyType KeyType_MIN = PUBLIC_KEY;
-constexpr KeyType KeyType_MAX = SHARED_SECRET;
+constexpr KeyType KeyType_MAX = AES_256;
 constexpr int KeyType_ARRAYSIZE = KeyType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* KeyType_descriptor();
@@ -124,6 +162,32 @@ inline bool KeyType_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, KeyType* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<KeyType>(
     KeyType_descriptor(), name, value);
+}
+enum FeatureFlag : int {
+  TSSV_ALL = 0,
+  TS_ALL = 1,
+  TNL_ALL = 2,
+  FeatureFlag_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  FeatureFlag_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool FeatureFlag_IsValid(int value);
+constexpr FeatureFlag FeatureFlag_MIN = TSSV_ALL;
+constexpr FeatureFlag FeatureFlag_MAX = TNL_ALL;
+constexpr int FeatureFlag_ARRAYSIZE = FeatureFlag_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* FeatureFlag_descriptor();
+template<typename T>
+inline const std::string& FeatureFlag_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, FeatureFlag>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function FeatureFlag_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    FeatureFlag_descriptor(), enum_t_value);
+}
+inline bool FeatureFlag_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, FeatureFlag* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<FeatureFlag>(
+    FeatureFlag_descriptor(), name, value);
 }
 enum ModelType : int {
   VOICE_BIOMETRIC_TEXT_DEPENDENT = 0,
@@ -270,6 +334,31 @@ inline bool UsageEventType_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, UsageEventType* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<UsageEventType>(
     UsageEventType_descriptor(), name, value);
+}
+enum ServerType : int {
+  TITAN = 0,
+  IO = 1,
+  ServerType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  ServerType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool ServerType_IsValid(int value);
+constexpr ServerType ServerType_MIN = TITAN;
+constexpr ServerType ServerType_MAX = IO;
+constexpr int ServerType_ARRAYSIZE = ServerType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ServerType_descriptor();
+template<typename T>
+inline const std::string& ServerType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ServerType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ServerType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ServerType_descriptor(), enum_t_value);
+}
+inline bool ServerType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ServerType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ServerType>(
+    ServerType_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -914,6 +1003,7 @@ class ServerHealthResponse final :
     kServerVersionFieldNumber = 2,
     kIdFieldNumber = 3,
     kIsHealthyFieldNumber = 1,
+    kServerTypeFieldNumber = 5,
   };
   // repeated .sensory.api.common.ServiceHealth services = 4;
   int services_size() const;
@@ -970,6 +1060,15 @@ class ServerHealthResponse final :
   void _internal_set_ishealthy(bool value);
   public:
 
+  // .sensory.api.common.ServerType serverType = 5;
+  void clear_servertype();
+  ::sensory::api::common::ServerType servertype() const;
+  void set_servertype(::sensory::api::common::ServerType value);
+  private:
+  ::sensory::api::common::ServerType _internal_servertype() const;
+  void _internal_set_servertype(::sensory::api::common::ServerType value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.common.ServerHealthResponse)
  private:
   class _Internal;
@@ -981,6 +1080,7 @@ class ServerHealthResponse final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr serverversion_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   bool ishealthy_;
+  int servertype_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_common_2fcommon_2eproto;
 };
@@ -1727,6 +1827,631 @@ class GenericClient final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_common_2fcommon_2eproto;
 };
+// -------------------------------------------------------------------
+
+class TenantResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.TenantResponse) */ {
+ public:
+  inline TenantResponse() : TenantResponse(nullptr) {}
+  ~TenantResponse() override;
+  explicit constexpr TenantResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TenantResponse(const TenantResponse& from);
+  TenantResponse(TenantResponse&& from) noexcept
+    : TenantResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline TenantResponse& operator=(const TenantResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TenantResponse& operator=(TenantResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TenantResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TenantResponse* internal_default_instance() {
+    return reinterpret_cast<const TenantResponse*>(
+               &_TenantResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  friend void swap(TenantResponse& a, TenantResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TenantResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TenantResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TenantResponse* New() const final {
+    return new TenantResponse();
+  }
+
+  TenantResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TenantResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TenantResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const TenantResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TenantResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.TenantResponse";
+  }
+  protected:
+  explicit TenantResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdFieldNumber = 1,
+    kNameFieldNumber = 2,
+    kCreatedAtFieldNumber = 3,
+    kUpdatedAtFieldNumber = 4,
+  };
+  // string id = 1;
+  void clear_id();
+  const std::string& id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_id();
+  PROTOBUF_MUST_USE_RESULT std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // string name = 2;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_MUST_USE_RESULT std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // .google.protobuf.Timestamp createdAt = 3;
+  bool has_createdat() const;
+  private:
+  bool _internal_has_createdat() const;
+  public:
+  void clear_createdat();
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& createdat() const;
+  PROTOBUF_MUST_USE_RESULT ::PROTOBUF_NAMESPACE_ID::Timestamp* release_createdat();
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_createdat();
+  void set_allocated_createdat(::PROTOBUF_NAMESPACE_ID::Timestamp* createdat);
+  private:
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_createdat() const;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_createdat();
+  public:
+  void unsafe_arena_set_allocated_createdat(
+      ::PROTOBUF_NAMESPACE_ID::Timestamp* createdat);
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_createdat();
+
+  // .google.protobuf.Timestamp updatedAt = 4;
+  bool has_updatedat() const;
+  private:
+  bool _internal_has_updatedat() const;
+  public:
+  void clear_updatedat();
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& updatedat() const;
+  PROTOBUF_MUST_USE_RESULT ::PROTOBUF_NAMESPACE_ID::Timestamp* release_updatedat();
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_updatedat();
+  void set_allocated_updatedat(::PROTOBUF_NAMESPACE_ID::Timestamp* updatedat);
+  private:
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_updatedat() const;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_updatedat();
+  public:
+  void unsafe_arena_set_allocated_updatedat(
+      ::PROTOBUF_NAMESPACE_ID::Timestamp* updatedat);
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_updatedat();
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.TenantResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* createdat_;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* updatedat_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
+// -------------------------------------------------------------------
+
+class PaginationOptions final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.PaginationOptions) */ {
+ public:
+  inline PaginationOptions() : PaginationOptions(nullptr) {}
+  ~PaginationOptions() override;
+  explicit constexpr PaginationOptions(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PaginationOptions(const PaginationOptions& from);
+  PaginationOptions(PaginationOptions&& from) noexcept
+    : PaginationOptions() {
+    *this = ::std::move(from);
+  }
+
+  inline PaginationOptions& operator=(const PaginationOptions& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PaginationOptions& operator=(PaginationOptions&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PaginationOptions& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PaginationOptions* internal_default_instance() {
+    return reinterpret_cast<const PaginationOptions*>(
+               &_PaginationOptions_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(PaginationOptions& a, PaginationOptions& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PaginationOptions* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PaginationOptions* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline PaginationOptions* New() const final {
+    return new PaginationOptions();
+  }
+
+  PaginationOptions* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<PaginationOptions>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const PaginationOptions& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const PaginationOptions& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(PaginationOptions* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.PaginationOptions";
+  }
+  protected:
+  explicit PaginationOptions(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOrderingFieldNumber = 1,
+    kDecendingFieldNumber = 2,
+    kPageIndexFieldNumber = 3,
+    kPageSizeFieldNumber = 4,
+  };
+  // string ordering = 1;
+  void clear_ordering();
+  const std::string& ordering() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_ordering(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_ordering();
+  PROTOBUF_MUST_USE_RESULT std::string* release_ordering();
+  void set_allocated_ordering(std::string* ordering);
+  private:
+  const std::string& _internal_ordering() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ordering(const std::string& value);
+  std::string* _internal_mutable_ordering();
+  public:
+
+  // bool decending = 2;
+  void clear_decending();
+  bool decending() const;
+  void set_decending(bool value);
+  private:
+  bool _internal_decending() const;
+  void _internal_set_decending(bool value);
+  public:
+
+  // int32 pageIndex = 3;
+  void clear_pageindex();
+  ::PROTOBUF_NAMESPACE_ID::int32 pageindex() const;
+  void set_pageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_pageindex() const;
+  void _internal_set_pageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 pageSize = 4;
+  void clear_pagesize();
+  ::PROTOBUF_NAMESPACE_ID::int32 pagesize() const;
+  void set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_pagesize() const;
+  void _internal_set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.PaginationOptions)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ordering_;
+  bool decending_;
+  ::PROTOBUF_NAMESPACE_ID::int32 pageindex_;
+  ::PROTOBUF_NAMESPACE_ID::int32 pagesize_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
+// -------------------------------------------------------------------
+
+class PaginationResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.PaginationResponse) */ {
+ public:
+  inline PaginationResponse() : PaginationResponse(nullptr) {}
+  ~PaginationResponse() override;
+  explicit constexpr PaginationResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  PaginationResponse(const PaginationResponse& from);
+  PaginationResponse(PaginationResponse&& from) noexcept
+    : PaginationResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline PaginationResponse& operator=(const PaginationResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline PaginationResponse& operator=(PaginationResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const PaginationResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const PaginationResponse* internal_default_instance() {
+    return reinterpret_cast<const PaginationResponse*>(
+               &_PaginationResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(PaginationResponse& a, PaginationResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(PaginationResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(PaginationResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline PaginationResponse* New() const final {
+    return new PaginationResponse();
+  }
+
+  PaginationResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<PaginationResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const PaginationResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const PaginationResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(PaginationResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.PaginationResponse";
+  }
+  protected:
+  explicit PaginationResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPossibleOrderingsFieldNumber = 3,
+    kOrderingFieldNumber = 1,
+    kDecendingFieldNumber = 2,
+    kPageSizeFieldNumber = 5,
+    kTotalCountFieldNumber = 4,
+    kPrevPageIndexFieldNumber = 6,
+    kCurrentPageIndexFieldNumber = 7,
+    kNextPageIndexFieldNumber = 8,
+  };
+  // repeated string possibleOrderings = 3;
+  int possibleorderings_size() const;
+  private:
+  int _internal_possibleorderings_size() const;
+  public:
+  void clear_possibleorderings();
+  const std::string& possibleorderings(int index) const;
+  std::string* mutable_possibleorderings(int index);
+  void set_possibleorderings(int index, const std::string& value);
+  void set_possibleorderings(int index, std::string&& value);
+  void set_possibleorderings(int index, const char* value);
+  void set_possibleorderings(int index, const char* value, size_t size);
+  std::string* add_possibleorderings();
+  void add_possibleorderings(const std::string& value);
+  void add_possibleorderings(std::string&& value);
+  void add_possibleorderings(const char* value);
+  void add_possibleorderings(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& possibleorderings() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_possibleorderings();
+  private:
+  const std::string& _internal_possibleorderings(int index) const;
+  std::string* _internal_add_possibleorderings();
+  public:
+
+  // string ordering = 1;
+  void clear_ordering();
+  const std::string& ordering() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_ordering(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_ordering();
+  PROTOBUF_MUST_USE_RESULT std::string* release_ordering();
+  void set_allocated_ordering(std::string* ordering);
+  private:
+  const std::string& _internal_ordering() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ordering(const std::string& value);
+  std::string* _internal_mutable_ordering();
+  public:
+
+  // bool decending = 2;
+  void clear_decending();
+  bool decending() const;
+  void set_decending(bool value);
+  private:
+  bool _internal_decending() const;
+  void _internal_set_decending(bool value);
+  public:
+
+  // int32 pageSize = 5;
+  void clear_pagesize();
+  ::PROTOBUF_NAMESPACE_ID::int32 pagesize() const;
+  void set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_pagesize() const;
+  void _internal_set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int64 totalCount = 4;
+  void clear_totalcount();
+  ::PROTOBUF_NAMESPACE_ID::int64 totalcount() const;
+  void set_totalcount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_totalcount() const;
+  void _internal_set_totalcount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // int32 prevPageIndex = 6;
+  void clear_prevpageindex();
+  ::PROTOBUF_NAMESPACE_ID::int32 prevpageindex() const;
+  void set_prevpageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_prevpageindex() const;
+  void _internal_set_prevpageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 currentPageIndex = 7;
+  void clear_currentpageindex();
+  ::PROTOBUF_NAMESPACE_ID::int32 currentpageindex() const;
+  void set_currentpageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_currentpageindex() const;
+  void _internal_set_currentpageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // int32 nextPageIndex = 8;
+  void clear_nextpageindex();
+  ::PROTOBUF_NAMESPACE_ID::int32 nextpageindex() const;
+  void set_nextpageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_nextpageindex() const;
+  void _internal_set_nextpageindex(::PROTOBUF_NAMESPACE_ID::int32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.PaginationResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> possibleorderings_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ordering_;
+  bool decending_;
+  ::PROTOBUF_NAMESPACE_ID::int32 pagesize_;
+  ::PROTOBUF_NAMESPACE_ID::int64 totalcount_;
+  ::PROTOBUF_NAMESPACE_ID::int32 prevpageindex_;
+  ::PROTOBUF_NAMESPACE_ID::int32 currentpageindex_;
+  ::PROTOBUF_NAMESPACE_ID::int32 nextpageindex_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
 // ===================================================================
 
 
@@ -2213,6 +2938,26 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::common::
 ServerHealthResponse::services() const {
   // @@protoc_insertion_point(field_list:sensory.api.common.ServerHealthResponse.services)
   return services_;
+}
+
+// .sensory.api.common.ServerType serverType = 5;
+inline void ServerHealthResponse::clear_servertype() {
+  servertype_ = 0;
+}
+inline ::sensory::api::common::ServerType ServerHealthResponse::_internal_servertype() const {
+  return static_cast< ::sensory::api::common::ServerType >(servertype_);
+}
+inline ::sensory::api::common::ServerType ServerHealthResponse::servertype() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.ServerHealthResponse.serverType)
+  return _internal_servertype();
+}
+inline void ServerHealthResponse::_internal_set_servertype(::sensory::api::common::ServerType value) {
+  
+  servertype_ = value;
+}
+inline void ServerHealthResponse::set_servertype(::sensory::api::common::ServerType value) {
+  _internal_set_servertype(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.ServerHealthResponse.serverType)
 }
 
 // -------------------------------------------------------------------
@@ -2763,9 +3508,638 @@ inline void GenericClient::set_allocated_secret(std::string* secret) {
   // @@protoc_insertion_point(field_set_allocated:sensory.api.common.GenericClient.secret)
 }
 
+// -------------------------------------------------------------------
+
+// TenantResponse
+
+// string id = 1;
+inline void TenantResponse::clear_id() {
+  id_.ClearToEmpty();
+}
+inline const std::string& TenantResponse::id() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.TenantResponse.id)
+  return _internal_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void TenantResponse::set_id(ArgT0&& arg0, ArgT... args) {
+ 
+ id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.TenantResponse.id)
+}
+inline std::string* TenantResponse::mutable_id() {
+  std::string* _s = _internal_mutable_id();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.TenantResponse.id)
+  return _s;
+}
+inline const std::string& TenantResponse::_internal_id() const {
+  return id_.Get();
+}
+inline void TenantResponse::_internal_set_id(const std::string& value) {
+  
+  id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* TenantResponse::_internal_mutable_id() {
+  
+  return id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* TenantResponse::release_id() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.TenantResponse.id)
+  return id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void TenantResponse::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.TenantResponse.id)
+}
+
+// string name = 2;
+inline void TenantResponse::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& TenantResponse::name() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.TenantResponse.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void TenantResponse::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.TenantResponse.name)
+}
+inline std::string* TenantResponse::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.TenantResponse.name)
+  return _s;
+}
+inline const std::string& TenantResponse::_internal_name() const {
+  return name_.Get();
+}
+inline void TenantResponse::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* TenantResponse::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* TenantResponse::release_name() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.TenantResponse.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void TenantResponse::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.TenantResponse.name)
+}
+
+// .google.protobuf.Timestamp createdAt = 3;
+inline bool TenantResponse::_internal_has_createdat() const {
+  return this != internal_default_instance() && createdat_ != nullptr;
+}
+inline bool TenantResponse::has_createdat() const {
+  return _internal_has_createdat();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& TenantResponse::_internal_createdat() const {
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = createdat_;
+  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
+      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& TenantResponse::createdat() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.TenantResponse.createdAt)
+  return _internal_createdat();
+}
+inline void TenantResponse::unsafe_arena_set_allocated_createdat(
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* createdat) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(createdat_);
+  }
+  createdat_ = createdat;
+  if (createdat) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.common.TenantResponse.createdAt)
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::release_createdat() {
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = createdat_;
+  createdat_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::unsafe_arena_release_createdat() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.TenantResponse.createdAt)
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = createdat_;
+  createdat_ = nullptr;
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::_internal_mutable_createdat() {
+  
+  if (createdat_ == nullptr) {
+    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
+    createdat_ = p;
+  }
+  return createdat_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::mutable_createdat() {
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_createdat();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.TenantResponse.createdAt)
+  return _msg;
+}
+inline void TenantResponse::set_allocated_createdat(::PROTOBUF_NAMESPACE_ID::Timestamp* createdat) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(createdat_);
+  }
+  if (createdat) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(createdat));
+    if (message_arena != submessage_arena) {
+      createdat = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, createdat, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  createdat_ = createdat;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.TenantResponse.createdAt)
+}
+
+// .google.protobuf.Timestamp updatedAt = 4;
+inline bool TenantResponse::_internal_has_updatedat() const {
+  return this != internal_default_instance() && updatedat_ != nullptr;
+}
+inline bool TenantResponse::has_updatedat() const {
+  return _internal_has_updatedat();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& TenantResponse::_internal_updatedat() const {
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = updatedat_;
+  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
+      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& TenantResponse::updatedat() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.TenantResponse.updatedAt)
+  return _internal_updatedat();
+}
+inline void TenantResponse::unsafe_arena_set_allocated_updatedat(
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* updatedat) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(updatedat_);
+  }
+  updatedat_ = updatedat;
+  if (updatedat) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.common.TenantResponse.updatedAt)
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::release_updatedat() {
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = updatedat_;
+  updatedat_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::unsafe_arena_release_updatedat() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.TenantResponse.updatedAt)
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = updatedat_;
+  updatedat_ = nullptr;
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::_internal_mutable_updatedat() {
+  
+  if (updatedat_ == nullptr) {
+    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
+    updatedat_ = p;
+  }
+  return updatedat_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* TenantResponse::mutable_updatedat() {
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_updatedat();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.TenantResponse.updatedAt)
+  return _msg;
+}
+inline void TenantResponse::set_allocated_updatedat(::PROTOBUF_NAMESPACE_ID::Timestamp* updatedat) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(updatedat_);
+  }
+  if (updatedat) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(updatedat));
+    if (message_arena != submessage_arena) {
+      updatedat = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, updatedat, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  updatedat_ = updatedat;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.TenantResponse.updatedAt)
+}
+
+// -------------------------------------------------------------------
+
+// PaginationOptions
+
+// string ordering = 1;
+inline void PaginationOptions::clear_ordering() {
+  ordering_.ClearToEmpty();
+}
+inline const std::string& PaginationOptions::ordering() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationOptions.ordering)
+  return _internal_ordering();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void PaginationOptions::set_ordering(ArgT0&& arg0, ArgT... args) {
+ 
+ ordering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationOptions.ordering)
+}
+inline std::string* PaginationOptions::mutable_ordering() {
+  std::string* _s = _internal_mutable_ordering();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.PaginationOptions.ordering)
+  return _s;
+}
+inline const std::string& PaginationOptions::_internal_ordering() const {
+  return ordering_.Get();
+}
+inline void PaginationOptions::_internal_set_ordering(const std::string& value) {
+  
+  ordering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* PaginationOptions::_internal_mutable_ordering() {
+  
+  return ordering_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* PaginationOptions::release_ordering() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.PaginationOptions.ordering)
+  return ordering_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void PaginationOptions::set_allocated_ordering(std::string* ordering) {
+  if (ordering != nullptr) {
+    
+  } else {
+    
+  }
+  ordering_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ordering,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.PaginationOptions.ordering)
+}
+
+// bool decending = 2;
+inline void PaginationOptions::clear_decending() {
+  decending_ = false;
+}
+inline bool PaginationOptions::_internal_decending() const {
+  return decending_;
+}
+inline bool PaginationOptions::decending() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationOptions.decending)
+  return _internal_decending();
+}
+inline void PaginationOptions::_internal_set_decending(bool value) {
+  
+  decending_ = value;
+}
+inline void PaginationOptions::set_decending(bool value) {
+  _internal_set_decending(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationOptions.decending)
+}
+
+// int32 pageIndex = 3;
+inline void PaginationOptions::clear_pageindex() {
+  pageindex_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationOptions::_internal_pageindex() const {
+  return pageindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationOptions::pageindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationOptions.pageIndex)
+  return _internal_pageindex();
+}
+inline void PaginationOptions::_internal_set_pageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  pageindex_ = value;
+}
+inline void PaginationOptions::set_pageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_pageindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationOptions.pageIndex)
+}
+
+// int32 pageSize = 4;
+inline void PaginationOptions::clear_pagesize() {
+  pagesize_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationOptions::_internal_pagesize() const {
+  return pagesize_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationOptions::pagesize() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationOptions.pageSize)
+  return _internal_pagesize();
+}
+inline void PaginationOptions::_internal_set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  pagesize_ = value;
+}
+inline void PaginationOptions::set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_pagesize(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationOptions.pageSize)
+}
+
+// -------------------------------------------------------------------
+
+// PaginationResponse
+
+// string ordering = 1;
+inline void PaginationResponse::clear_ordering() {
+  ordering_.ClearToEmpty();
+}
+inline const std::string& PaginationResponse::ordering() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.ordering)
+  return _internal_ordering();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void PaginationResponse::set_ordering(ArgT0&& arg0, ArgT... args) {
+ 
+ ordering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.ordering)
+}
+inline std::string* PaginationResponse::mutable_ordering() {
+  std::string* _s = _internal_mutable_ordering();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.PaginationResponse.ordering)
+  return _s;
+}
+inline const std::string& PaginationResponse::_internal_ordering() const {
+  return ordering_.Get();
+}
+inline void PaginationResponse::_internal_set_ordering(const std::string& value) {
+  
+  ordering_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* PaginationResponse::_internal_mutable_ordering() {
+  
+  return ordering_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* PaginationResponse::release_ordering() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.PaginationResponse.ordering)
+  return ordering_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void PaginationResponse::set_allocated_ordering(std::string* ordering) {
+  if (ordering != nullptr) {
+    
+  } else {
+    
+  }
+  ordering_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ordering,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.PaginationResponse.ordering)
+}
+
+// bool decending = 2;
+inline void PaginationResponse::clear_decending() {
+  decending_ = false;
+}
+inline bool PaginationResponse::_internal_decending() const {
+  return decending_;
+}
+inline bool PaginationResponse::decending() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.decending)
+  return _internal_decending();
+}
+inline void PaginationResponse::_internal_set_decending(bool value) {
+  
+  decending_ = value;
+}
+inline void PaginationResponse::set_decending(bool value) {
+  _internal_set_decending(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.decending)
+}
+
+// repeated string possibleOrderings = 3;
+inline int PaginationResponse::_internal_possibleorderings_size() const {
+  return possibleorderings_.size();
+}
+inline int PaginationResponse::possibleorderings_size() const {
+  return _internal_possibleorderings_size();
+}
+inline void PaginationResponse::clear_possibleorderings() {
+  possibleorderings_.Clear();
+}
+inline std::string* PaginationResponse::add_possibleorderings() {
+  std::string* _s = _internal_add_possibleorderings();
+  // @@protoc_insertion_point(field_add_mutable:sensory.api.common.PaginationResponse.possibleOrderings)
+  return _s;
+}
+inline const std::string& PaginationResponse::_internal_possibleorderings(int index) const {
+  return possibleorderings_.Get(index);
+}
+inline const std::string& PaginationResponse::possibleorderings(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.possibleOrderings)
+  return _internal_possibleorderings(index);
+}
+inline std::string* PaginationResponse::mutable_possibleorderings(int index) {
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.PaginationResponse.possibleOrderings)
+  return possibleorderings_.Mutable(index);
+}
+inline void PaginationResponse::set_possibleorderings(int index, const std::string& value) {
+  possibleorderings_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline void PaginationResponse::set_possibleorderings(int index, std::string&& value) {
+  possibleorderings_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline void PaginationResponse::set_possibleorderings(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  possibleorderings_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline void PaginationResponse::set_possibleorderings(int index, const char* value, size_t size) {
+  possibleorderings_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline std::string* PaginationResponse::_internal_add_possibleorderings() {
+  return possibleorderings_.Add();
+}
+inline void PaginationResponse::add_possibleorderings(const std::string& value) {
+  possibleorderings_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline void PaginationResponse::add_possibleorderings(std::string&& value) {
+  possibleorderings_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline void PaginationResponse::add_possibleorderings(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  possibleorderings_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline void PaginationResponse::add_possibleorderings(const char* value, size_t size) {
+  possibleorderings_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:sensory.api.common.PaginationResponse.possibleOrderings)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+PaginationResponse::possibleorderings() const {
+  // @@protoc_insertion_point(field_list:sensory.api.common.PaginationResponse.possibleOrderings)
+  return possibleorderings_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+PaginationResponse::mutable_possibleorderings() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.common.PaginationResponse.possibleOrderings)
+  return &possibleorderings_;
+}
+
+// int64 totalCount = 4;
+inline void PaginationResponse::clear_totalcount() {
+  totalcount_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 PaginationResponse::_internal_totalcount() const {
+  return totalcount_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 PaginationResponse::totalcount() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.totalCount)
+  return _internal_totalcount();
+}
+inline void PaginationResponse::_internal_set_totalcount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  totalcount_ = value;
+}
+inline void PaginationResponse::set_totalcount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_totalcount(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.totalCount)
+}
+
+// int32 pageSize = 5;
+inline void PaginationResponse::clear_pagesize() {
+  pagesize_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::_internal_pagesize() const {
+  return pagesize_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::pagesize() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.pageSize)
+  return _internal_pagesize();
+}
+inline void PaginationResponse::_internal_set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  pagesize_ = value;
+}
+inline void PaginationResponse::set_pagesize(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_pagesize(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.pageSize)
+}
+
+// int32 prevPageIndex = 6;
+inline void PaginationResponse::clear_prevpageindex() {
+  prevpageindex_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::_internal_prevpageindex() const {
+  return prevpageindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::prevpageindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.prevPageIndex)
+  return _internal_prevpageindex();
+}
+inline void PaginationResponse::_internal_set_prevpageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  prevpageindex_ = value;
+}
+inline void PaginationResponse::set_prevpageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_prevpageindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.prevPageIndex)
+}
+
+// int32 currentPageIndex = 7;
+inline void PaginationResponse::clear_currentpageindex() {
+  currentpageindex_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::_internal_currentpageindex() const {
+  return currentpageindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::currentpageindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.currentPageIndex)
+  return _internal_currentpageindex();
+}
+inline void PaginationResponse::_internal_set_currentpageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  currentpageindex_ = value;
+}
+inline void PaginationResponse::set_currentpageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_currentpageindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.currentPageIndex)
+}
+
+// int32 nextPageIndex = 8;
+inline void PaginationResponse::clear_nextpageindex() {
+  nextpageindex_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::_internal_nextpageindex() const {
+  return nextpageindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 PaginationResponse::nextpageindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.PaginationResponse.nextPageIndex)
+  return _internal_nextpageindex();
+}
+inline void PaginationResponse::_internal_set_nextpageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  nextpageindex_ = value;
+}
+inline void PaginationResponse::set_nextpageindex(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_nextpageindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.nextPageIndex)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -2789,10 +4163,20 @@ inline void GenericClient::set_allocated_secret(std::string* secret) {
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <> struct is_proto_enum< ::sensory::api::common::Void> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::common::Void>() {
+  return ::sensory::api::common::Void_descriptor();
+}
 template <> struct is_proto_enum< ::sensory::api::common::KeyType> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::common::KeyType>() {
   return ::sensory::api::common::KeyType_descriptor();
+}
+template <> struct is_proto_enum< ::sensory::api::common::FeatureFlag> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::common::FeatureFlag>() {
+  return ::sensory::api::common::FeatureFlag_descriptor();
 }
 template <> struct is_proto_enum< ::sensory::api::common::ModelType> : ::std::true_type {};
 template <>
@@ -2818,6 +4202,11 @@ template <> struct is_proto_enum< ::sensory::api::common::UsageEventType> : ::st
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::common::UsageEventType>() {
   return ::sensory::api::common::UsageEventType_descriptor();
+}
+template <> struct is_proto_enum< ::sensory::api::common::ServerType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::common::ServerType>() {
+  return ::sensory::api::common::ServerType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

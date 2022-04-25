@@ -31,6 +31,9 @@ static const char* EnrollmentService_method_names[] = {
   "/sensory.api.v1.management.EnrollmentService/AppendEnrollmentGroup",
   "/sensory.api.v1.management.EnrollmentService/DeleteEnrollment",
   "/sensory.api.v1.management.EnrollmentService/DeleteEnrollmentGroup",
+  "/sensory.api.v1.management.EnrollmentService/UpdateEnrollment",
+  "/sensory.api.v1.management.EnrollmentService/UpdateEnrollmentGroup",
+  "/sensory.api.v1.management.EnrollmentService/RemoveEnrollmentsFromGroup",
 };
 
 std::unique_ptr< EnrollmentService::Stub> EnrollmentService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -46,6 +49,9 @@ EnrollmentService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& 
   , rpcmethod_AppendEnrollmentGroup_(EnrollmentService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_DeleteEnrollment_(EnrollmentService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_DeleteEnrollmentGroup_(EnrollmentService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateEnrollment_(EnrollmentService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateEnrollmentGroup_(EnrollmentService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RemoveEnrollmentsFromGroup_(EnrollmentService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status EnrollmentService::Stub::GetEnrollments(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetEnrollmentsRequest& request, ::sensory::api::v1::management::GetEnrollmentsResponse* response) {
@@ -186,6 +192,75 @@ void EnrollmentService::Stub::async::DeleteEnrollmentGroup(::grpc::ClientContext
   return result;
 }
 
+::grpc::Status EnrollmentService::Stub::UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::sensory::api::v1::management::EnrollmentResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UpdateEnrollment_, context, request, response);
+}
+
+void EnrollmentService::Stub::async::UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateEnrollment_, context, request, response, std::move(f));
+}
+
+void EnrollmentService::Stub::async::UpdateEnrollment(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateEnrollment_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>* EnrollmentService::Stub::PrepareAsyncUpdateEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::EnrollmentResponse, ::sensory::api::v1::management::UpdateEnrollmentRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UpdateEnrollment_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentResponse>* EnrollmentService::Stub::AsyncUpdateEnrollmentRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncUpdateEnrollmentRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status EnrollmentService::Stub::UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UpdateEnrollmentGroup_, context, request, response);
+}
+
+void EnrollmentService::Stub::async::UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateEnrollmentGroup_, context, request, response, std::move(f));
+}
+
+void EnrollmentService::Stub::async::UpdateEnrollmentGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateEnrollmentGroup_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* EnrollmentService::Stub::PrepareAsyncUpdateEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::EnrollmentGroupResponse, ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UpdateEnrollmentGroup_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* EnrollmentService::Stub::AsyncUpdateEnrollmentGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncUpdateEnrollmentGroupRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status EnrollmentService::Stub::RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_RemoveEnrollmentsFromGroup_, context, request, response);
+}
+
+void EnrollmentService::Stub::async::RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RemoveEnrollmentsFromGroup_, context, request, response, std::move(f));
+}
+
+void EnrollmentService::Stub::async::RemoveEnrollmentsFromGroup(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RemoveEnrollmentsFromGroup_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* EnrollmentService::Stub::PrepareAsyncRemoveEnrollmentsFromGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::management::EnrollmentGroupResponse, ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_RemoveEnrollmentsFromGroup_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::EnrollmentGroupResponse>* EnrollmentService::Stub::AsyncRemoveEnrollmentsFromGroupRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncRemoveEnrollmentsFromGroupRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 EnrollmentService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       EnrollmentService_method_names[0],
@@ -247,6 +322,36 @@ EnrollmentService::Service::Service() {
              ::sensory::api::v1::management::EnrollmentGroupResponse* resp) {
                return service->DeleteEnrollmentGroup(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      EnrollmentService_method_names[6],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< EnrollmentService::Service, ::sensory::api::v1::management::UpdateEnrollmentRequest, ::sensory::api::v1::management::EnrollmentResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](EnrollmentService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::UpdateEnrollmentRequest* req,
+             ::sensory::api::v1::management::EnrollmentResponse* resp) {
+               return service->UpdateEnrollment(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      EnrollmentService_method_names[7],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< EnrollmentService::Service, ::sensory::api::v1::management::UpdateEnrollmentGroupRequest, ::sensory::api::v1::management::EnrollmentGroupResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](EnrollmentService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* req,
+             ::sensory::api::v1::management::EnrollmentGroupResponse* resp) {
+               return service->UpdateEnrollmentGroup(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      EnrollmentService_method_names[8],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< EnrollmentService::Service, ::sensory::api::v1::management::RemoveEnrollmentsRequest, ::sensory::api::v1::management::EnrollmentGroupResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](EnrollmentService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::management::RemoveEnrollmentsRequest* req,
+             ::sensory::api::v1::management::EnrollmentGroupResponse* resp) {
+               return service->RemoveEnrollmentsFromGroup(ctx, req, resp);
+             }, this)));
 }
 
 EnrollmentService::Service::~Service() {
@@ -288,6 +393,27 @@ EnrollmentService::Service::~Service() {
 }
 
 ::grpc::Status EnrollmentService::Service::DeleteEnrollmentGroup(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeleteEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status EnrollmentService::Service::UpdateEnrollment(::grpc::ServerContext* context, const ::sensory::api::v1::management::UpdateEnrollmentRequest* request, ::sensory::api::v1::management::EnrollmentResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status EnrollmentService::Service::UpdateEnrollmentGroup(::grpc::ServerContext* context, const ::sensory::api::v1::management::UpdateEnrollmentGroupRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status EnrollmentService::Service::RemoveEnrollmentsFromGroup(::grpc::ServerContext* context, const ::sensory::api::v1::management::RemoveEnrollmentsRequest* request, ::sensory::api::v1::management::EnrollmentGroupResponse* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -427,10 +427,10 @@ const char descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto[] PROTOBUF_SECTI
   "\020VideoRecognition\022}\n\020ValidateLiveness\0220."
   "sensory.api.v1.video.ValidateRecognition"
   "Request\0321.sensory.api.v1.video.LivenessR"
-  "ecognitionResponse\"\000(\0010\001Bo\n\027io.sensory.a"
-  "pi.v1.videoB\026SensoryApiV1VideoProtoP\001Z:g"
-  "itlab.com/sensory-cloud/server/titan.git"
-  "/pkg/api/v1/videob\006proto3"
+  "ecognitionResponse\"\000(\0010\001Bt\n\034ai.sensorycl"
+  "oud.api.v1.videoB\026SensoryApiV1VideoProto"
+  "P\001Z:gitlab.com/sensory-cloud/server/tita"
+  "n.git/pkg/api/v1/videob\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fvideo_2fvideo_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -438,7 +438,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fvideo_2fvideo_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fvideo_2fvideo_2eproto = {
-  false, false, 2745, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
+  false, false, 2750, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
   &descriptor_table_v1_2fvideo_2fvideo_2eproto_once, descriptor_table_v1_2fvideo_2fvideo_2eproto_deps, 2, 12,
   schemas, file_default_instances, TableStruct_v1_2fvideo_2fvideo_2eproto::offsets,
   file_level_metadata_v1_2fvideo_2fvideo_2eproto, file_level_enum_descriptors_v1_2fvideo_2fvideo_2eproto, file_level_service_descriptors_v1_2fvideo_2fvideo_2eproto,

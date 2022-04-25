@@ -286,17 +286,17 @@ const char descriptor_table_protodef_v1_2ffile_2ffile_2eproto[] PROTOBUF_SECTION
   "sensory.api.v1.file.FileCatalogResponse\""
   "\000\022S\n\010Download\022 .sensory.api.v1.file.File"
   "Request\032!.sensory.api.v1.file.FileRespon"
-  "se\"\0000\001Bl\n\026io.sensory.api.v1.fileB\025Sensor"
-  "yApiV1FileProtoP\001Z9gitlab.com/sensory-cl"
-  "oud/server/titan.git/pkg/api/v1/fileb\006pr"
-  "oto3"
+  "se\"\0000\001Bq\n\033ai.sensorycloud.api.v1.fileB\025S"
+  "ensoryApiV1FileProtoP\001Z9gitlab.com/senso"
+  "ry-cloud/server/titan.git/pkg/api/v1/fil"
+  "eb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2ffile_2ffile_2eproto_deps[1] = {
   &::descriptor_table_validate_2fvalidate_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2ffile_2ffile_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2ffile_2ffile_2eproto = {
-  false, false, 1524, descriptor_table_protodef_v1_2ffile_2ffile_2eproto, "v1/file/file.proto", 
+  false, false, 1529, descriptor_table_protodef_v1_2ffile_2ffile_2eproto, "v1/file/file.proto", 
   &descriptor_table_v1_2ffile_2ffile_2eproto_once, descriptor_table_v1_2ffile_2ffile_2eproto_deps, 1, 9,
   schemas, file_default_instances, TableStruct_v1_2ffile_2ffile_2eproto::offsets,
   file_level_metadata_v1_2ffile_2ffile_2eproto, file_level_enum_descriptors_v1_2ffile_2ffile_2eproto, file_level_service_descriptors_v1_2ffile_2ffile_2eproto,

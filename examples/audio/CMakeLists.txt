@@ -23,8 +23,7 @@ project(sensory-cloud-portaudio-applications)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    GIT_REPOSITORY https://github.com/Sensory-Cloud/cpp-sdk.git
-    GIT_TAG        main
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.11.4
 )
 FetchContent_MakeAvailable(sensorycloud)
 

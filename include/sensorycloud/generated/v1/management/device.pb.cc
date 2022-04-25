@@ -51,6 +51,56 @@ struct RenewDeviceCredentialRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT RenewDeviceCredentialRequestDefaultTypeInternal _RenewDeviceCredentialRequest_default_instance_;
+constexpr DeviceGetWhoAmIRequest::DeviceGetWhoAmIRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct DeviceGetWhoAmIRequestDefaultTypeInternal {
+  constexpr DeviceGetWhoAmIRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DeviceGetWhoAmIRequestDefaultTypeInternal() {}
+  union {
+    DeviceGetWhoAmIRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeviceGetWhoAmIRequestDefaultTypeInternal _DeviceGetWhoAmIRequest_default_instance_;
+constexpr GetDevicesRequest::GetDevicesRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , userid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , pagination_(nullptr){}
+struct GetDevicesRequestDefaultTypeInternal {
+  constexpr GetDevicesRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~GetDevicesRequestDefaultTypeInternal() {}
+  union {
+    GetDevicesRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT GetDevicesRequestDefaultTypeInternal _GetDevicesRequest_default_instance_;
+constexpr UpdateDeviceRequest::UpdateDeviceRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : deviceid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct UpdateDeviceRequestDefaultTypeInternal {
+  constexpr UpdateDeviceRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~UpdateDeviceRequestDefaultTypeInternal() {}
+  union {
+    UpdateDeviceRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UpdateDeviceRequestDefaultTypeInternal _UpdateDeviceRequest_default_instance_;
+constexpr DeleteDeviceRequest::DeleteDeviceRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : deviceid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct DeleteDeviceRequestDefaultTypeInternal {
+  constexpr DeleteDeviceRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DeleteDeviceRequestDefaultTypeInternal() {}
+  union {
+    DeleteDeviceRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeleteDeviceRequestDefaultTypeInternal _DeleteDeviceRequest_default_instance_;
 constexpr DeviceResponse::DeviceResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
@@ -64,22 +114,24 @@ struct DeviceResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeviceResponseDefaultTypeInternal _DeviceResponse_default_instance_;
-constexpr DeviceGetWhoAmIRequest::DeviceGetWhoAmIRequest(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
-struct DeviceGetWhoAmIRequestDefaultTypeInternal {
-  constexpr DeviceGetWhoAmIRequestDefaultTypeInternal()
+constexpr DeviceListResponse::DeviceListResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : devices_()
+  , pagination_(nullptr){}
+struct DeviceListResponseDefaultTypeInternal {
+  constexpr DeviceListResponseDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
-  ~DeviceGetWhoAmIRequestDefaultTypeInternal() {}
+  ~DeviceListResponseDefaultTypeInternal() {}
   union {
-    DeviceGetWhoAmIRequest _instance;
+    DeviceListResponse _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeviceGetWhoAmIRequestDefaultTypeInternal _DeviceGetWhoAmIRequest_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DeviceListResponseDefaultTypeInternal _DeviceListResponse_default_instance_;
 }  // namespace management
 }  // namespace v1
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2fmanagement_2fdevice_2eproto[4];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2fmanagement_2fdevice_2eproto[8];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_v1_2fmanagement_2fdevice_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_v1_2fmanagement_2fdevice_2eproto = nullptr;
 
@@ -106,6 +158,36 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fmanagement_2fdevice_2epro
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, tenantid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::RenewDeviceCredentialRequest, credential_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceGetWhoAmIRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::GetDevicesRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::GetDevicesRequest, tenantid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::GetDevicesRequest, pagination_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::GetDevicesRequest, userid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::UpdateDeviceRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::UpdateDeviceRequest, deviceid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::UpdateDeviceRequest, name_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeleteDeviceRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeleteDeviceRequest, deviceid_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -114,24 +196,34 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fmanagement_2fdevice_2epro
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceResponse, name_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceResponse, deviceid_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceGetWhoAmIRequest, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceListResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceListResponse, devices_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::management::DeviceListResponse, pagination_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::v1::management::EnrollDeviceRequest)},
   { 11, -1, -1, sizeof(::sensory::api::v1::management::RenewDeviceCredentialRequest)},
-  { 21, -1, -1, sizeof(::sensory::api::v1::management::DeviceResponse)},
-  { 29, -1, -1, sizeof(::sensory::api::v1::management::DeviceGetWhoAmIRequest)},
+  { 21, -1, -1, sizeof(::sensory::api::v1::management::DeviceGetWhoAmIRequest)},
+  { 27, -1, -1, sizeof(::sensory::api::v1::management::GetDevicesRequest)},
+  { 36, -1, -1, sizeof(::sensory::api::v1::management::UpdateDeviceRequest)},
+  { 44, -1, -1, sizeof(::sensory::api::v1::management::DeleteDeviceRequest)},
+  { 51, -1, -1, sizeof(::sensory::api::v1::management::DeviceResponse)},
+  { 59, -1, -1, sizeof(::sensory::api::v1::management::DeviceListResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_EnrollDeviceRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_RenewDeviceCredentialRequest_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeviceResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeviceGetWhoAmIRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_GetDevicesRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_UpdateDeviceRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeleteDeviceRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeviceResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::management::_DeviceListResponse_default_instance_),
 };
 
 const char descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -145,22 +237,40 @@ const char descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto[] PROTOBUF
   "al\030\005 \001(\t\"\223\001\n\034RenewDeviceCredentialReques"
   "t\022\033\n\010deviceId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\032\n\010client"
   "Id\030\002 \001(\tB\010\372B\005r\003\260\001\001\022\032\n\010tenantId\030\003 \001(\tB\010\372B"
-  "\005r\003\260\001\001\022\036\n\ncredential\030\004 \001(\tB\n\372B\007r\005\020\001\030\377\001\"0"
+  "\005r\003\260\001\001\022\036\n\ncredential\030\004 \001(\tB\n\372B\007r\005\020\001\030\377\001\"\030"
+  "\n\026DeviceGetWhoAmIRequest\"{\n\021GetDevicesRe"
+  "quest\022\020\n\010tenantId\030\001 \001(\t\0229\n\npagination\030\002 "
+  "\001(\0132%.sensory.api.common.PaginationOptio"
+  "ns\022\031\n\006userId\030\003 \001(\tB\t\372B\006r\004\020\001\030\177\"K\n\023UpdateD"
+  "eviceRequest\022\033\n\010deviceId\030\001 \001(\tB\t\372B\006r\004\020\001\030"
+  "\177\022\027\n\004name\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\"2\n\023DeleteDevi"
+  "ceRequest\022\033\n\010deviceId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\"0"
   "\n\016DeviceResponse\022\014\n\004name\030\001 \001(\t\022\020\n\010device"
-  "Id\030\002 \001(\t\"\030\n\026DeviceGetWhoAmIRequest2\350\002\n\rD"
-  "eviceService\022k\n\014EnrollDevice\022..sensory.a"
-  "pi.v1.management.EnrollDeviceRequest\032).s"
+  "Id\030\002 \001(\t\"\214\001\n\022DeviceListResponse\022:\n\007devic"
+  "es\030\001 \003(\0132).sensory.api.v1.management.Dev"
+  "iceResponse\022:\n\npagination\030\002 \001(\0132&.sensor"
+  "y.api.common.PaginationResponse2\257\005\n\rDevi"
+  "ceService\022k\n\014EnrollDevice\022..sensory.api."
+  "v1.management.EnrollDeviceRequest\032).sens"
+  "ory.api.v1.management.DeviceResponse\"\000\022}"
+  "\n\025RenewDeviceCredential\0227.sensory.api.v1"
+  ".management.RenewDeviceCredentialRequest"
+  "\032).sensory.api.v1.management.DeviceRespo"
+  "nse\"\000\022k\n\tGetWhoAmI\0221.sensory.api.v1.mana"
+  "gement.DeviceGetWhoAmIRequest\032).sensory."
+  "api.v1.management.DeviceResponse\"\000\022k\n\nGe"
+  "tDevices\022,.sensory.api.v1.management.Get"
+  "DevicesRequest\032-.sensory.api.v1.manageme"
+  "nt.DeviceListResponse\"\000\022k\n\014UpdateDevice\022"
+  "..sensory.api.v1.management.UpdateDevice"
+  "Request\032).sensory.api.v1.management.Devi"
+  "ceResponse\"\000\022k\n\014DeleteDevice\022..sensory.a"
+  "pi.v1.management.DeleteDeviceRequest\032).s"
   "ensory.api.v1.management.DeviceResponse\""
-  "\000\022}\n\025RenewDeviceCredential\0227.sensory.api"
-  ".v1.management.RenewDeviceCredentialRequ"
-  "est\032).sensory.api.v1.management.DeviceRe"
-  "sponse\"\000\022k\n\tGetWhoAmI\0221.sensory.api.v1.m"
-  "anagement.DeviceGetWhoAmIRequest\032).senso"
-  "ry.api.v1.management.DeviceResponse\"\000B\204\001"
-  "\n\034io.sensory.api.v1.managementB!SensoryA"
-  "piV1ManagementDeviceProtoP\001Z\?gitlab.com/"
-  "sensory-cloud/server/titan.git/pkg/api/v"
-  "1/managementb\006proto3"
+  "\000B\211\001\n!ai.sensorycloud.api.v1.managementB"
+  "!SensoryApiV1ManagementDeviceProtoP\001Z\?gi"
+  "tlab.com/sensory-cloud/server/titan.git/"
+  "pkg/api/v1/managementb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -168,8 +278,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fmanagement_2fdevice_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fmanagement_2fdevice_2eproto = {
-  false, false, 1020, descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto, "v1/management/device.proto", 
-  &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once, descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps, 2, 4,
+  false, false, 1749, descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto, "v1/management/device.proto", 
+  &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once, descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps, 2, 8,
   schemas, file_default_instances, TableStruct_v1_2fmanagement_2fdevice_2eproto::offsets,
   file_level_metadata_v1_2fmanagement_2fdevice_2eproto, file_level_enum_descriptors_v1_2fmanagement_2fdevice_2eproto, file_level_service_descriptors_v1_2fmanagement_2fdevice_2eproto,
 };
@@ -887,6 +997,771 @@ void RenewDeviceCredentialRequest::InternalSwap(RenewDeviceCredentialRequest* ot
 
 // ===================================================================
 
+class DeviceGetWhoAmIRequest::_Internal {
+ public:
+};
+
+DeviceGetWhoAmIRequest::DeviceGetWhoAmIRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.DeviceGetWhoAmIRequest)
+}
+DeviceGetWhoAmIRequest::DeviceGetWhoAmIRequest(const DeviceGetWhoAmIRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.DeviceGetWhoAmIRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeviceGetWhoAmIRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeviceGetWhoAmIRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata DeviceGetWhoAmIRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[2]);
+}
+
+// ===================================================================
+
+class GetDevicesRequest::_Internal {
+ public:
+  static const ::sensory::api::common::PaginationOptions& pagination(const GetDevicesRequest* msg);
+};
+
+const ::sensory::api::common::PaginationOptions&
+GetDevicesRequest::_Internal::pagination(const GetDevicesRequest* msg) {
+  return *msg->pagination_;
+}
+void GetDevicesRequest::clear_pagination() {
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+}
+GetDevicesRequest::GetDevicesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.GetDevicesRequest)
+}
+GetDevicesRequest::GetDevicesRequest(const GetDevicesRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
+  userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_userid().empty()) {
+    userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_userid(), 
+      GetArenaForAllocation());
+  }
+  if (from._internal_has_pagination()) {
+    pagination_ = new ::sensory::api::common::PaginationOptions(*from.pagination_);
+  } else {
+    pagination_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.GetDevicesRequest)
+}
+
+void GetDevicesRequest::SharedCtor() {
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+pagination_ = nullptr;
+}
+
+GetDevicesRequest::~GetDevicesRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.management.GetDevicesRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void GetDevicesRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  userid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete pagination_;
+}
+
+void GetDevicesRequest::ArenaDtor(void* object) {
+  GetDevicesRequest* _this = reinterpret_cast< GetDevicesRequest* >(object);
+  (void)_this;
+}
+void GetDevicesRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void GetDevicesRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void GetDevicesRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.management.GetDevicesRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  tenantid_.ClearToEmpty();
+  userid_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* GetDevicesRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string tenantId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.GetDevicesRequest.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.PaginationOptions pagination = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pagination(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string userId = 3 [(.validate.rules) = {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_userid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.GetDevicesRequest.userId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* GetDevicesRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.management.GetDevicesRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string tenantId = 1;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.GetDevicesRequest.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_tenantid(), target);
+  }
+
+  // .sensory.api.common.PaginationOptions pagination = 2;
+  if (this->_internal_has_pagination()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::pagination(this), target, stream);
+  }
+
+  // string userId = 3 [(.validate.rules) = {
+  if (!this->_internal_userid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_userid().data(), static_cast<int>(this->_internal_userid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.GetDevicesRequest.userId");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_userid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.management.GetDevicesRequest)
+  return target;
+}
+
+size_t GetDevicesRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.management.GetDevicesRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string tenantId = 1;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
+  // string userId = 3 [(.validate.rules) = {
+  if (!this->_internal_userid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_userid());
+  }
+
+  // .sensory.api.common.PaginationOptions pagination = 2;
+  if (this->_internal_has_pagination()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *pagination_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData GetDevicesRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    GetDevicesRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetDevicesRequest::GetClassData() const { return &_class_data_; }
+
+void GetDevicesRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<GetDevicesRequest *>(to)->MergeFrom(
+      static_cast<const GetDevicesRequest &>(from));
+}
+
+
+void GetDevicesRequest::MergeFrom(const GetDevicesRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.management.GetDevicesRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
+  if (!from._internal_userid().empty()) {
+    _internal_set_userid(from._internal_userid());
+  }
+  if (from._internal_has_pagination()) {
+    _internal_mutable_pagination()->::sensory::api::common::PaginationOptions::MergeFrom(from._internal_pagination());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GetDevicesRequest::CopyFrom(const GetDevicesRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.management.GetDevicesRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GetDevicesRequest::IsInitialized() const {
+  return true;
+}
+
+void GetDevicesRequest::InternalSwap(GetDevicesRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &userid_, lhs_arena,
+      &other->userid_, rhs_arena
+  );
+  swap(pagination_, other->pagination_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata GetDevicesRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[3]);
+}
+
+// ===================================================================
+
+class UpdateDeviceRequest::_Internal {
+ public:
+};
+
+UpdateDeviceRequest::UpdateDeviceRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.UpdateDeviceRequest)
+}
+UpdateDeviceRequest::UpdateDeviceRequest(const UpdateDeviceRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_deviceid().empty()) {
+    deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_deviceid(), 
+      GetArenaForAllocation());
+  }
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.UpdateDeviceRequest)
+}
+
+void UpdateDeviceRequest::SharedCtor() {
+deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+UpdateDeviceRequest::~UpdateDeviceRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.management.UpdateDeviceRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void UpdateDeviceRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  deviceid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void UpdateDeviceRequest::ArenaDtor(void* object) {
+  UpdateDeviceRequest* _this = reinterpret_cast< UpdateDeviceRequest* >(object);
+  (void)_this;
+}
+void UpdateDeviceRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void UpdateDeviceRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void UpdateDeviceRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.management.UpdateDeviceRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  deviceid_.ClearToEmpty();
+  name_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UpdateDeviceRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string deviceId = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_deviceid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.UpdateDeviceRequest.deviceId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string name = 2 [(.validate.rules) = {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.UpdateDeviceRequest.name"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* UpdateDeviceRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.management.UpdateDeviceRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string deviceId = 1 [(.validate.rules) = {
+  if (!this->_internal_deviceid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_deviceid().data(), static_cast<int>(this->_internal_deviceid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.UpdateDeviceRequest.deviceId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_deviceid(), target);
+  }
+
+  // string name = 2 [(.validate.rules) = {
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.UpdateDeviceRequest.name");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.management.UpdateDeviceRequest)
+  return target;
+}
+
+size_t UpdateDeviceRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.management.UpdateDeviceRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string deviceId = 1 [(.validate.rules) = {
+  if (!this->_internal_deviceid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_deviceid());
+  }
+
+  // string name = 2 [(.validate.rules) = {
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UpdateDeviceRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    UpdateDeviceRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UpdateDeviceRequest::GetClassData() const { return &_class_data_; }
+
+void UpdateDeviceRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<UpdateDeviceRequest *>(to)->MergeFrom(
+      static_cast<const UpdateDeviceRequest &>(from));
+}
+
+
+void UpdateDeviceRequest::MergeFrom(const UpdateDeviceRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.management.UpdateDeviceRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_deviceid().empty()) {
+    _internal_set_deviceid(from._internal_deviceid());
+  }
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UpdateDeviceRequest::CopyFrom(const UpdateDeviceRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.management.UpdateDeviceRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UpdateDeviceRequest::IsInitialized() const {
+  return true;
+}
+
+void UpdateDeviceRequest::InternalSwap(UpdateDeviceRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &deviceid_, lhs_arena,
+      &other->deviceid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, lhs_arena,
+      &other->name_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UpdateDeviceRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[4]);
+}
+
+// ===================================================================
+
+class DeleteDeviceRequest::_Internal {
+ public:
+};
+
+DeleteDeviceRequest::DeleteDeviceRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.DeleteDeviceRequest)
+}
+DeleteDeviceRequest::DeleteDeviceRequest(const DeleteDeviceRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_deviceid().empty()) {
+    deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_deviceid(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.DeleteDeviceRequest)
+}
+
+void DeleteDeviceRequest::SharedCtor() {
+deviceid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+DeleteDeviceRequest::~DeleteDeviceRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.management.DeleteDeviceRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void DeleteDeviceRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  deviceid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void DeleteDeviceRequest::ArenaDtor(void* object) {
+  DeleteDeviceRequest* _this = reinterpret_cast< DeleteDeviceRequest* >(object);
+  (void)_this;
+}
+void DeleteDeviceRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void DeleteDeviceRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void DeleteDeviceRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.management.DeleteDeviceRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  deviceid_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DeleteDeviceRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string deviceId = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_deviceid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.management.DeleteDeviceRequest.deviceId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* DeleteDeviceRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.management.DeleteDeviceRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string deviceId = 1 [(.validate.rules) = {
+  if (!this->_internal_deviceid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_deviceid().data(), static_cast<int>(this->_internal_deviceid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.management.DeleteDeviceRequest.deviceId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_deviceid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.management.DeleteDeviceRequest)
+  return target;
+}
+
+size_t DeleteDeviceRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.management.DeleteDeviceRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string deviceId = 1 [(.validate.rules) = {
+  if (!this->_internal_deviceid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_deviceid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeleteDeviceRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    DeleteDeviceRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeleteDeviceRequest::GetClassData() const { return &_class_data_; }
+
+void DeleteDeviceRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<DeleteDeviceRequest *>(to)->MergeFrom(
+      static_cast<const DeleteDeviceRequest &>(from));
+}
+
+
+void DeleteDeviceRequest::MergeFrom(const DeleteDeviceRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.management.DeleteDeviceRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_deviceid().empty()) {
+    _internal_set_deviceid(from._internal_deviceid());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DeleteDeviceRequest::CopyFrom(const DeleteDeviceRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.management.DeleteDeviceRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DeleteDeviceRequest::IsInitialized() const {
+  return true;
+}
+
+void DeleteDeviceRequest::InternalSwap(DeleteDeviceRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &deviceid_, lhs_arena,
+      &other->deviceid_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DeleteDeviceRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[5]);
+}
+
+// ===================================================================
+
 class DeviceResponse::_Internal {
  public:
 };
@@ -1122,46 +1997,241 @@ void DeviceResponse::InternalSwap(DeviceResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata DeviceResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
-      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[2]);
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[6]);
 }
 
 // ===================================================================
 
-class DeviceGetWhoAmIRequest::_Internal {
+class DeviceListResponse::_Internal {
  public:
+  static const ::sensory::api::common::PaginationResponse& pagination(const DeviceListResponse* msg);
 };
 
-DeviceGetWhoAmIRequest::DeviceGetWhoAmIRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+const ::sensory::api::common::PaginationResponse&
+DeviceListResponse::_Internal::pagination(const DeviceListResponse* msg) {
+  return *msg->pagination_;
+}
+void DeviceListResponse::clear_pagination() {
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+}
+DeviceListResponse::DeviceListResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
-  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.DeviceGetWhoAmIRequest)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  devices_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.management.DeviceListResponse)
 }
-DeviceGetWhoAmIRequest::DeviceGetWhoAmIRequest(const DeviceGetWhoAmIRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+DeviceListResponse::DeviceListResponse(const DeviceListResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      devices_(from.devices_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.DeviceGetWhoAmIRequest)
+  if (from._internal_has_pagination()) {
+    pagination_ = new ::sensory::api::common::PaginationResponse(*from.pagination_);
+  } else {
+    pagination_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.management.DeviceListResponse)
+}
+
+void DeviceListResponse::SharedCtor() {
+pagination_ = nullptr;
+}
+
+DeviceListResponse::~DeviceListResponse() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.management.DeviceListResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void DeviceListResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete pagination_;
+}
+
+void DeviceListResponse::ArenaDtor(void* object) {
+  DeviceListResponse* _this = reinterpret_cast< DeviceListResponse* >(object);
+  (void)_this;
+}
+void DeviceListResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void DeviceListResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void DeviceListResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.management.DeviceListResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  devices_.Clear();
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DeviceListResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // repeated .sensory.api.v1.management.DeviceResponse devices = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_devices(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.PaginationResponse pagination = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pagination(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* DeviceListResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.management.DeviceListResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.management.DeviceResponse devices = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_devices_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, this->_internal_devices(i), target, stream);
+  }
+
+  // .sensory.api.common.PaginationResponse pagination = 2;
+  if (this->_internal_has_pagination()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::pagination(this), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.management.DeviceListResponse)
+  return target;
+}
+
+size_t DeviceListResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.management.DeviceListResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.management.DeviceResponse devices = 1;
+  total_size += 1UL * this->_internal_devices_size();
+  for (const auto& msg : this->devices_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // .sensory.api.common.PaginationResponse pagination = 2;
+  if (this->_internal_has_pagination()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *pagination_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeviceListResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    DeviceListResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeviceListResponse::GetClassData() const { return &_class_data_; }
+
+void DeviceListResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<DeviceListResponse *>(to)->MergeFrom(
+      static_cast<const DeviceListResponse &>(from));
 }
 
 
+void DeviceListResponse::MergeFrom(const DeviceListResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.management.DeviceListResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  devices_.MergeFrom(from.devices_);
+  if (from._internal_has_pagination()) {
+    _internal_mutable_pagination()->::sensory::api::common::PaginationResponse::MergeFrom(from._internal_pagination());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void DeviceListResponse::CopyFrom(const DeviceListResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.management.DeviceListResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeviceGetWhoAmIRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeviceGetWhoAmIRequest::GetClassData() const { return &_class_data_; }
+bool DeviceListResponse::IsInitialized() const {
+  return true;
+}
 
+void DeviceListResponse::InternalSwap(DeviceListResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  devices_.InternalSwap(&other->devices_);
+  swap(pagination_, other->pagination_);
+}
 
-
-
-
-
-
-::PROTOBUF_NAMESPACE_ID::Metadata DeviceGetWhoAmIRequest::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata DeviceListResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2fmanagement_2fdevice_2eproto_getter, &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once,
-      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[3]);
+      file_level_metadata_v1_2fmanagement_2fdevice_2eproto[7]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -1176,11 +2246,23 @@ template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::EnrollDeviceRequest
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::RenewDeviceCredentialRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::RenewDeviceCredentialRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::management::RenewDeviceCredentialRequest >(arena);
 }
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::DeviceGetWhoAmIRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::DeviceGetWhoAmIRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::management::DeviceGetWhoAmIRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::GetDevicesRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::GetDevicesRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::management::GetDevicesRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::UpdateDeviceRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::UpdateDeviceRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::management::UpdateDeviceRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::DeleteDeviceRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::DeleteDeviceRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::management::DeleteDeviceRequest >(arena);
+}
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::DeviceResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::management::DeviceResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::management::DeviceResponse >(arena);
 }
-template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::DeviceGetWhoAmIRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::management::DeviceGetWhoAmIRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::sensory::api::v1::management::DeviceGetWhoAmIRequest >(arena);
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::management::DeviceListResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::management::DeviceListResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::management::DeviceListResponse >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 
