@@ -102,7 +102,7 @@ class AudioFileReactor :
         // to write from the audio buffer.
         if (index >= buffer.size()) {
             // Signal to the stream that no more data will be written.
-            StartWritesDone();
+            // StartWritesDone();
             return;
         }
 
@@ -117,6 +117,16 @@ class AudioFileReactor :
         index += numSamples;
         if (framesPerBlock < buffer.size())  // Update progress bar if chunking
             bar.update();
+
+        // If the index has exceeded the buffer size, there are no more samples
+        // to write from the audio buffer.
+        if (index >= buffer.size()) {
+            auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
+            action->set_actionid("foo");
+            action->set_action(::sensory::api::v1::audio::FLUSH);
+            request.set_allocated_postprocessingaction(action);
+        }
+
         // If the number of blocks written surpasses the maximal length, close
         // the stream.
         StartWrite(&request);
@@ -133,11 +143,27 @@ class AudioFileReactor :
             std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
             std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
             std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+            if (response.has_postprocessingaction()) {
+                const auto& action = response.postprocessingaction();
+                std::cout << "\tPost Processing" << std::endl;
+                std::cout << "\t\t Action ID: " << action.actionid() << std::endl;
+                std::cout << "\t\t Action: " << action.action() << std::endl;
+            }
+            std::cout << std::endl;
         }
         {  // Lock access to the critical section for the transcript string.
             std::lock_guard<std::mutex> lock(mutex);
             // Update the transcript with the final output transcript.
             transcript = response.transcript();
+        }
+        // Look for a post-processing action to determine the end of the stream.
+        if (response.has_postprocessingaction()) {
+            const auto& action = response.postprocessingaction();
+            if (action.action() == ::sensory::api::v1::audio::FLUSH) {
+                // Signal to the stream that no more data will be written.
+                StartWritesDone();
+                return;
+            }
         }
         // Start the next read request.
         StartRead(&response);
