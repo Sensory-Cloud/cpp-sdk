@@ -122,7 +122,6 @@ class AudioFileReactor :
         // to write from the audio buffer.
         if (index >= buffer.size()) {
             auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
-            action->set_actionid("foo");
             action->set_action(::sensory::api::v1::audio::FINAL);
             request.set_allocated_postprocessingaction(action);
         }
