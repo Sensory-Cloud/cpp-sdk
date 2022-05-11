@@ -123,7 +123,7 @@ class AudioFileReactor :
         if (index >= buffer.size()) {
             auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
             action->set_actionid("foo");
-            action->set_action(::sensory::api::v1::audio::FLUSH);
+            action->set_action(::sensory::api::v1::audio::FINAL);
             request.set_allocated_postprocessingaction(action);
         }
 
@@ -159,7 +159,7 @@ class AudioFileReactor :
         // Look for a post-processing action to determine the end of the stream.
         if (response.has_postprocessingaction()) {
             const auto& action = response.postprocessingaction();
-            if (action.action() == ::sensory::api::v1::audio::FLUSH) {
+            if (action.action() == ::sensory::api::v1::audio::FINAL) {
                 // Signal to the stream that no more data will be written.
                 StartWritesDone();
                 return;
