@@ -67,6 +67,30 @@ class AudioFileReactor :
     /// The current transcription from the server
     std::string transcript = "";
 
+    // A contained scope for the data associated with receiving the FINAL
+    // signal from the server.
+    struct {
+        /// A flag determining whether the FINAL signal has been received.
+        bool didReceive = false;
+        /// A mutual exclusion for locking access to the critical section.
+        std::mutex mutex;
+        /// A condition variable for signalling to awaiting processes.
+        std::condition_variable condition;
+
+        /// Wait for a signal from the condition variable.
+        void wait() {
+            std::unique_lock<std::mutex> lock(mutex);
+            condition.wait(lock, [this] { return didReceive; });
+        }
+
+        /// Notify awaiting processes that the condition variable has changed.
+        void notify_one() {
+            std::lock_guard<std::mutex> lock(mutex);
+            didReceive = true;
+            condition.notify_one();
+        }
+    } final;
+
  public:
     /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
     ///
@@ -101,8 +125,10 @@ class AudioFileReactor :
         // If the index has exceeded the buffer size, there are no more samples
         // to write from the audio buffer.
         if (index >= buffer.size()) {
-            // Signal to the stream that no more data will be written.
-            // StartWritesDone();
+            // Wait for the FINAL signal from the server before sending the
+            // StartWritesDone instruction to gRPC.
+            final.wait();
+            StartWritesDone();
             return;
         }
 
@@ -119,7 +145,8 @@ class AudioFileReactor :
             bar.update();
 
         // If the index has exceeded the buffer size, there are no more samples
-        // to write from the audio buffer.
+        // to write from the audio buffer. Send the FINAL post-processing action
+        // to the server to indicate that no more data will be sent up.
         if (index >= buffer.size()) {
             auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
             action->set_action(::sensory::api::v1::audio::FINAL);
@@ -158,9 +185,12 @@ class AudioFileReactor :
         // Look for a post-processing action to determine the end of the stream.
         if (response.has_postprocessingaction()) {
             const auto& action = response.postprocessingaction();
+            // If the action is the FINAL action, the server has finished
+            // processing the audio and has no more messages to send.
             if (action.action() == ::sensory::api::v1::audio::FINAL) {
-                // Signal to the stream that no more data will be written.
-                StartWritesDone();
+                // Notify the waiting write loop that the FINAL signal has been
+                // received from the server.
+                final.notify_one();
                 return;
             }
         }
@@ -207,7 +237,7 @@ int main(int argc, const char** argv) {
         .default_value(0);
     parser.add_argument({ "-p", "--padding" })
         .help("PADDING The number of milliseconds of padding to append to the audio buffer.")
-        .default_value(300);
+        .default_value(0);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("VERBOSE Produce verbose output during transcription.");
     // Parse the arguments from the command line.
