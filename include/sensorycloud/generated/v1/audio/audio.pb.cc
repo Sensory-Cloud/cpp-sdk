@@ -782,35 +782,36 @@ const char descriptor_table_protodef_v1_2faudio_2faudio_2eproto[] PROTOBUF_SECTI
   "z\030\002 \001(\005B\010\372B\005\032\003 \300>\022\"\n\021audioChannelCount\030\003"
   " \001(\005B\007\372B\004\032\002 \000\022\024\n\014languageCode\030\004 \001(\t\"2\n\rA"
   "udioEncoding\022\014\n\010LINEAR16\020\000\022\010\n\004FLAC\020\001\022\t\n\005"
-  "MULAW\020\002*>\n\031AudioPostProcessingAction\022\013\n\007"
-  "NOT_SET\020\000\022\t\n\005FLUSH\020\001\022\t\n\005RESET\020\002*N\n\024Thres"
-  "holdSensitivity\022\n\n\006LOWEST\020\000\022\007\n\003LOW\020\001\022\n\n\006"
-  "MEDIUM\020\002\022\010\n\004HIGH\020\003\022\013\n\007HIGHEST\020\0042m\n\013Audio"
-  "Models\022^\n\tGetModels\022&.sensory.api.v1.aud"
-  "io.GetModelsRequest\032\'.sensory.api.v1.aud"
-  "io.GetModelsResponse\"\0002\367\001\n\017AudioBiometri"
-  "cs\022w\n\020CreateEnrollment\022-.sensory.api.v1."
-  "audio.CreateEnrollmentRequest\032..sensory."
-  "api.v1.audio.CreateEnrollmentResponse\"\000("
-  "\0010\001\022k\n\014Authenticate\022).sensory.api.v1.aud"
-  "io.AuthenticateRequest\032*.sensory.api.v1."
-  "audio.AuthenticateResponse\"\000(\0010\0012\205\003\n\013Aud"
-  "ioEvents\022n\n\rValidateEvent\022*.sensory.api."
-  "v1.audio.ValidateEventRequest\032+.sensory."
-  "api.v1.audio.ValidateEventResponse\"\000(\0010\001"
-  "\022}\n\023CreateEnrolledEvent\0220.sensory.api.v1"
-  ".audio.CreateEnrolledEventRequest\032..sens"
-  "ory.api.v1.audio.CreateEnrollmentRespons"
-  "e\"\000(\0010\001\022\206\001\n\025ValidateEnrolledEvent\0222.sens"
-  "ory.api.v1.audio.ValidateEnrolledEventRe"
-  "quest\0323.sensory.api.v1.audio.ValidateEnr"
-  "olledEventResponse\"\000(\0010\0012|\n\023AudioTranscr"
-  "iptions\022e\n\nTranscribe\022\'.sensory.api.v1.a"
-  "udio.TranscribeRequest\032(.sensory.api.v1."
-  "audio.TranscribeResponse\"\000(\0010\001Bt\n\034ai.sen"
-  "sorycloud.api.v1.audioB\026SensoryApiV1Audi"
-  "oProtoP\001Z:gitlab.com/sensory-cloud/serve"
-  "r/titan.git/pkg/api/v1/audiob\006proto3"
+  "MULAW\020\002*I\n\031AudioPostProcessingAction\022\013\n\007"
+  "NOT_SET\020\000\022\t\n\005FLUSH\020\001\022\t\n\005RESET\020\002\022\t\n\005FINAL"
+  "\020\003*N\n\024ThresholdSensitivity\022\n\n\006LOWEST\020\000\022\007"
+  "\n\003LOW\020\001\022\n\n\006MEDIUM\020\002\022\010\n\004HIGH\020\003\022\013\n\007HIGHEST"
+  "\020\0042m\n\013AudioModels\022^\n\tGetModels\022&.sensory"
+  ".api.v1.audio.GetModelsRequest\032\'.sensory"
+  ".api.v1.audio.GetModelsResponse\"\0002\367\001\n\017Au"
+  "dioBiometrics\022w\n\020CreateEnrollment\022-.sens"
+  "ory.api.v1.audio.CreateEnrollmentRequest"
+  "\032..sensory.api.v1.audio.CreateEnrollment"
+  "Response\"\000(\0010\001\022k\n\014Authenticate\022).sensory"
+  ".api.v1.audio.AuthenticateRequest\032*.sens"
+  "ory.api.v1.audio.AuthenticateResponse\"\000("
+  "\0010\0012\205\003\n\013AudioEvents\022n\n\rValidateEvent\022*.s"
+  "ensory.api.v1.audio.ValidateEventRequest"
+  "\032+.sensory.api.v1.audio.ValidateEventRes"
+  "ponse\"\000(\0010\001\022}\n\023CreateEnrolledEvent\0220.sen"
+  "sory.api.v1.audio.CreateEnrolledEventReq"
+  "uest\032..sensory.api.v1.audio.CreateEnroll"
+  "mentResponse\"\000(\0010\001\022\206\001\n\025ValidateEnrolledE"
+  "vent\0222.sensory.api.v1.audio.ValidateEnro"
+  "lledEventRequest\0323.sensory.api.v1.audio."
+  "ValidateEnrolledEventResponse\"\000(\0010\0012|\n\023A"
+  "udioTranscriptions\022e\n\nTranscribe\022\'.senso"
+  "ry.api.v1.audio.TranscribeRequest\032(.sens"
+  "ory.api.v1.audio.TranscribeResponse\"\000(\0010"
+  "\001Bt\n\034ai.sensorycloud.api.v1.audioB\026Senso"
+  "ryApiV1AudioProtoP\001Z:gitlab.com/sensory-"
+  "cloud/server/titan.git/pkg/api/v1/audiob"
+  "\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2faudio_2faudio_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -818,7 +819,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2faudio_2faudio_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2faudio_2faudio_2eproto = {
-  false, false, 5676, descriptor_table_protodef_v1_2faudio_2faudio_2eproto, "v1/audio/audio.proto", 
+  false, false, 5687, descriptor_table_protodef_v1_2faudio_2faudio_2eproto, "v1/audio/audio.proto", 
   &descriptor_table_v1_2faudio_2faudio_2eproto_once, descriptor_table_v1_2faudio_2faudio_2eproto_deps, 2, 23,
   schemas, file_default_instances, TableStruct_v1_2faudio_2faudio_2eproto::offsets,
   file_level_metadata_v1_2faudio_2faudio_2eproto, file_level_enum_descriptors_v1_2faudio_2faudio_2eproto, file_level_service_descriptors_v1_2faudio_2faudio_2eproto,
@@ -886,6 +887,7 @@ bool AudioPostProcessingAction_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
