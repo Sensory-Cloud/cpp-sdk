@@ -175,3 +175,173 @@ if (SENSORY_CLOUD_BUILD_TESTS)
     # Create a combined target to compile all of the test codes
     add_custom_target(tests ALL DEPENDS ${TEST_BINARIES})
 endif()  # SENSORY_CLOUD_BUILD_TESTS
+
+# --- Examples -----------------------------------------------------------------
+
+if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
+    # Fetch the portaudio library and compile it as part of this project.
+    FetchContent_Declare(portaudio
+        GIT_REPOSITORY https://github.com/PortAudio/portaudio.git
+        GIT_TAG        v19.7.0
+    )
+    FetchContent_MakeAvailable(portaudio)
+    # Setup the includes for the portaudio library
+    include_directories(${portaudio_BINARY_DIR} ${portaudio_SOURCE_DIR})
+
+    include_directories(examples/audio/dep)
+
+    # --- Events ---------------------------------------------------------------
+
+    add_executable(examples_audio_validate_event examples/audio/validate_event.cpp)
+    target_link_libraries(examples_audio_validate_event PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_event PRIVATE portaudio)
+
+    add_executable(examples_audio_validate_event_async examples/audio/validate_event_async.cpp)
+    target_link_libraries(examples_audio_validate_event_async PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_event_async PRIVATE portaudio)
+
+    add_executable(examples_audio_validate_event_callback examples/audio/validate_event_callback.cpp)
+    target_link_libraries(examples_audio_validate_event_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_event_callback PRIVATE portaudio)
+
+    # --- Transcribe -----------------------------------------------------------
+
+    add_executable(examples_audio_transcribe examples/audio/transcribe.cpp)
+    target_link_libraries(examples_audio_transcribe PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_transcribe PRIVATE portaudio)
+
+    add_executable(examples_audio_transcribe_async examples/audio/transcribe_async.cpp)
+    target_link_libraries(examples_audio_transcribe_async PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_transcribe_async PRIVATE portaudio)
+
+    add_executable(examples_audio_transcribe_callback examples/audio/transcribe_callback.cpp)
+    target_link_libraries(examples_audio_transcribe_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_transcribe_callback PRIVATE portaudio)
+
+    # --- Create Enrollment ----------------------------------------------------
+
+    add_executable(examples_audio_enroll examples/audio/enroll.cpp)
+    target_link_libraries(examples_audio_enroll PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll PRIVATE portaudio)
+
+    add_executable(examples_audio_enroll_async examples/audio/enroll_async.cpp)
+    target_link_libraries(examples_audio_enroll_async PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_async PRIVATE portaudio)
+
+    add_executable(examples_audio_enroll_callback examples/audio/enroll_callback.cpp)
+    target_link_libraries(examples_audio_enroll_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_callback PRIVATE portaudio)
+
+    # --- Authenticate ---------------------------------------------------------
+
+    add_executable(examples_audio_authenticate examples/audio/authenticate.cpp)
+    target_link_libraries(examples_audio_authenticate PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_authenticate PRIVATE portaudio)
+
+    add_executable(examples_audio_authenticate_async examples/audio/authenticate_async.cpp)
+    target_link_libraries(examples_audio_authenticate_async PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_authenticate_async PRIVATE portaudio)
+
+    add_executable(examples_audio_authenticate_callback examples/audio/authenticate_callback.cpp)
+    target_link_libraries(examples_audio_authenticate_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_authenticate_callback PRIVATE portaudio)
+
+    # --- Create Enrolled Event ------------------------------------------------
+
+    add_executable(examples_audio_enroll_event examples/audio/enroll_event.cpp)
+    target_link_libraries(examples_audio_enroll_event PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_event PRIVATE portaudio)
+
+    add_executable(examples_audio_enroll_event_async examples/audio/enroll_event_async.cpp)
+    target_link_libraries(examples_audio_enroll_event_async PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_event_async PRIVATE portaudio)
+
+    add_executable(examples_audio_enroll_event_callback examples/audio/enroll_event_callback.cpp)
+    target_link_libraries(examples_audio_enroll_event_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_event_callback PRIVATE portaudio)
+
+    # --- Validate Enrolled Event ----------------------------------------------
+
+    add_executable(examples_audio_validate_enrolled_event examples/audio/validate_enrolled_event.cpp)
+    target_link_libraries(examples_audio_validate_enrolled_event PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_enrolled_event PRIVATE portaudio)
+
+    add_executable(examples_audio_validate_enrolled_event_async examples/audio/validate_enrolled_event_async.cpp)
+    target_link_libraries(examples_audio_validate_enrolled_event_async PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_enrolled_event_async PRIVATE portaudio)
+
+    add_executable(examples_audio_validate_enrolled_event_callback examples/audio/validate_enrolled_event_callback.cpp)
+    target_link_libraries(examples_audio_validate_enrolled_event_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_enrolled_event_callback PRIVATE portaudio)
+endif()
+
+if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO)
+    # Find the OpenCV library and compile it as part of the project. OpenCV
+    # does not support the FetchContent route of installation and must be
+    # installed system-wide.
+    find_package(OpenCV REQUIRED)
+    include_directories(${OpenCV_INCLUDE_DIRS})
+
+    include_directories(examples/video/dep)
+
+    # --- Authenticate ---------------------------------------------------------
+
+    add_executable(examples_video_authenticate examples/video/authenticate.cpp)
+    target_link_libraries(examples_video_authenticate PRIVATE sensorycloud)
+    target_link_libraries(examples_video_authenticate PRIVATE ${OpenCV_LIBS})
+
+    add_executable(examples_video_authenticate_async examples/video/authenticate_async.cpp)
+    target_link_libraries(examples_video_authenticate_async PRIVATE sensorycloud)
+    target_link_libraries(examples_video_authenticate_async PRIVATE ${OpenCV_LIBS})
+
+    add_executable(examples_video_authenticate_callback examples/video/authenticate_callback.cpp)
+    target_link_libraries(examples_video_authenticate_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_video_authenticate_callback PRIVATE ${OpenCV_LIBS})
+
+    # --- Create Enrollment ----------------------------------------------------
+
+    add_executable(examples_video_enroll examples/video/enroll.cpp)
+    target_link_libraries(examples_video_enroll PRIVATE sensorycloud)
+    target_link_libraries(examples_video_enroll PRIVATE ${OpenCV_LIBS})
+
+    add_executable(examples_video_enroll_async examples/video/enroll_async.cpp)
+    target_link_libraries(examples_video_enroll_async PRIVATE sensorycloud)
+    target_link_libraries(examples_video_enroll_async PRIVATE ${OpenCV_LIBS})
+
+    add_executable(examples_video_enroll_callback examples/video/enroll_callback.cpp)
+    target_link_libraries(examples_video_enroll_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_video_enroll_callback PRIVATE ${OpenCV_LIBS})
+
+    # --- Validate Liveness ----------------------------------------------------
+
+    add_executable(examples_video_liveness examples/video/liveness.cpp)
+    target_link_libraries(examples_video_liveness PRIVATE sensorycloud)
+    target_link_libraries(examples_video_liveness PRIVATE ${OpenCV_LIBS})
+
+    add_executable(examples_video_liveness_async examples/video/liveness_async.cpp)
+    target_link_libraries(examples_video_liveness_async PRIVATE sensorycloud)
+    target_link_libraries(examples_video_liveness_async PRIVATE ${OpenCV_LIBS})
+
+    add_executable(examples_video_liveness_callback examples/video/liveness_callback.cpp)
+    target_link_libraries(examples_video_liveness_callback PRIVATE sensorycloud)
+    target_link_libraries(examples_video_liveness_callback PRIVATE ${OpenCV_LIBS})
+endif()
+
+if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT)
+    include_directories(examples/management/dep)
+
+    add_executable(examples_management examples/management/management.cpp)
+    target_link_libraries(examples_management PRIVATE sensorycloud)
+
+    add_executable(examples_management_callback examples/management/management_callback.cpp)
+    target_link_libraries(examples_management_callback PRIVATE sensorycloud)
+
+    add_executable(examples_management_async examples/management/management_async.cpp)
+    target_link_libraries(examples_management_async PRIVATE sensorycloud)
+endif()
+
+if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_DR_WAV)
+    include_directories(examples/dr_wav/dep)
+    add_executable(examples_dr_wav_transcribe examples/dr_wav/transcribe.cpp)
+    target_link_libraries(examples_dr_wav_transcribe PRIVATE sensorycloud)
+endif()
