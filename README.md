@@ -97,6 +97,7 @@ interface can be found in the
 [md/async_callback.md](md/async_callback.md) for event-loop and reactor
 patterns, respectively.
 
+<!--
 ### SecureCredentialStore _(Experimental feature)_
 
 To optionally compile an operating system specific `SecureCredentialStore`
@@ -115,11 +116,12 @@ The table below provides information about the implementations of
 |:------------------|:---------------------------------------|
 | Linux             | [Libsecret][Libsecret]                 |
 | Mac OS            | [Keychain Services][Keychain-Services] |
-<!-- | Windows           | [Credential Locker][Credential-Locker] | -->
+| Windows           | [Credential Locker][Credential-Locker] |
 
 [Keychain-Services]: https://developer.apple.com/documentation/security/keychain_services
 [Credential-Locker]: https://docs.microsoft.com/en-us/windows/uwp/security/credential-locker
 [Libsecret]: https://wiki.gnome.org/Projects/Libsecret
+-->
 
 ## Development
 
