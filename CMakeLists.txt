@@ -30,6 +30,11 @@ include(FetchContent)
 option(SENSORY_CLOUD_BUILD_TESTS "Build test cases" OFF)
 option(SENSORY_CLOUD_GENERATE_PROTO "Generate proto header and source files" OFF)
 option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES "Build all example applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO "Build real-time audio example applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO "Build real-time video example applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT "Build management and admin applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_DR_WAV "Build audio file example applications" OFF)
 
 # --- Proto Files ------------------------------------------------------------
 
