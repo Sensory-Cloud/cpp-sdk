@@ -78,7 +78,7 @@ FetchContent_MakeAvailable(sensorycloud)
 ```
 
 This will clone and compile `libsensorycloud` locally to be used in
-applications or other libraries using, i.e., with
+applications or other libraries using:
 
 ```shell
 target_link_libraries(your_program PRIVATE sensorycloud)
