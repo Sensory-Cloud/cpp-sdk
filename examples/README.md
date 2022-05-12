@@ -1,7 +1,7 @@
 # Examples
 
 This directory contains example projects for the various services offered by
-Sensory, Cloud:
+Sensory Cloud:
 
 -   [management](management) implements management services,
 -   [video](video) implements interactive video services using OpenCV,

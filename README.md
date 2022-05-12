@@ -88,7 +88,7 @@ target_link_libraries(your_program PRIVATE sensorycloud)
 
 Example code for each available service and programming model are available in
 the [examples](examples) directory. These act both as a point of reference and
-as a starting point for the integration of SensoryCloud with your application.
+as a starting point for the integration of Sensory Cloud with your application.
 
 Please refer to [md/tutorial.md](md/tutorial.md) for a tutorial of the
 blocking synchronous interface of the SDK. Tutorials for the asynchronous
