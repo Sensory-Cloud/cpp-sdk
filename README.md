@@ -54,6 +54,15 @@ xcode-select --install
 brew install autoconf automake libtool shtool cmake git
 ```
 
+Because MacOS is not strictly POSIX compliant, you will need to provide gRPC
+with a hint of where your SSL certificates are stored to properly connect to a
+secure server. This can typically be accomplished by exporting the following
+environment variable
+
+```shell
+export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
+```
+
 <!--
 ### Windows
 
