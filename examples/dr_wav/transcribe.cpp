@@ -1,6 +1,6 @@
 // An example of audio transcription based on audio file inputs.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <regex>
+#include <mutex>
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
@@ -42,34 +43,55 @@ using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
 
-/// @brief A bidirection stream reactor for biometric enrollments from audio
-/// stream data.
+/// @brief A bi-directional reactor for transcribing an audio buffer to text.
 ///
 class AudioFileReactor :
     public AudioService<InsecureCredentialStore>::TranscribeBidiReactor {
  private:
-    /// The audio samples to transcribe to text.
+    /// The audio samples.
     const std::vector<int16_t>& buffer;
-    /// The number of channels in the input audio.
+    /// The number of channels in the audio buffer.
     uint32_t numChannels;
-    /// The sample rate of the audio input stream.
+    /// The sample rate of the audio buffer.
     uint32_t sampleRate;
-    /// The number of frames per block of audio.
+    /// The number of samples per block of audio sent to the server.
     uint32_t framesPerBlock;
-    /// Whether to produce verbose output from the server.
-    bool verbose = false;
-    /// A mutex for guarding access to the `isDone` and `status` variables.
-    std::mutex mutex;
     /// The current index of the audio stream.
     std::size_t index = 0;
+    /// Whether to produce verbose output.
+    bool verbose = false;
     /// The progress bar for providing a response per frame written.
     tqdm bar;
-    /// The current transcription from the server
-    std::string transcript = "";
+
+    /// A contained scope for the transcript data from the server.
+    struct {
+     private:
+        /// A mutex for guarding access to the transcript.
+        std::mutex mutex;
+        /// The current transcription from the server
+        std::string text = "";
+
+     public:
+        /// Set the transcript to a new value.
+        ///
+        /// @param text_ The text to set the transcript to.
+        ///
+        inline void set(const std::string& text_ = "") {
+            std::lock_guard<std::mutex> lock(mutex);
+            text = text_;
+        }
+
+        /// @brief Return the current transcript.
+        inline std::string get() {
+            std::lock_guard<std::mutex> lock(mutex);
+            return text;
+        }
+    } transcript;
 
     // A contained scope for the data associated with receiving the FINAL
     // signal from the server.
     struct {
+     private:
         /// A flag determining whether the FINAL signal has been received.
         bool didReceive = false;
         /// A mutual exclusion for locking access to the critical section.
@@ -77,14 +99,15 @@ class AudioFileReactor :
         /// A condition variable for signalling to awaiting processes.
         std::condition_variable condition;
 
+     public:
         /// Wait for a signal from the condition variable.
-        void wait() {
+        inline void wait() {
             std::unique_lock<std::mutex> lock(mutex);
             condition.wait(lock, [this] { return didReceive; });
         }
 
         /// Notify awaiting processes that the condition variable has changed.
-        void notify_one() {
+        inline void notify_one() {
             std::lock_guard<std::mutex> lock(mutex);
             didReceive = true;
             condition.notify_one();
@@ -92,12 +115,12 @@ class AudioFileReactor :
     } final;
 
  public:
-    /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
+    /// @brief Initialize the reactor.
     ///
-    /// @param buffer_ The audio samples to transcribe to text
-    /// @param numChannels_ The number of channels in the input stream.
-    /// @param sampleRate_ The sampling rate of the audio stream.
-    /// @param framesPerBlock_ The number of frames in a block of audio.
+    /// @param buffer_ The audio buffer to transcribe to text
+    /// @param numChannels_ The number of channels in the audio buffer.
+    /// @param sampleRate_ The sample rate of the audio buffer.
+    /// @param framesPerBlock_ The number of frames per block of audio.
     /// @param verbose_ Whether to produce verbose output from the reactor.
     ///
     AudioFileReactor(const std::vector<int16_t>& buffer_,
@@ -114,20 +137,21 @@ class AudioFileReactor :
         verbose(verbose_),
         bar(buffer_.size() / static_cast<float>(framesPerBlock_), "frame") { }
 
-    /// @brief React to a _write done_ event.
+    /// @brief React to a "write done" event.
     ///
     /// @param ok whether the write succeeded.
     ///
     void OnWriteDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
+        // If the status is not OK, an error occurred, exit gracefully.
         if (!ok) return;
 
         // If the index has exceeded the buffer size, there are no more samples
         // to write from the audio buffer.
         if (index >= buffer.size()) {
-            // Wait for the FINAL signal from the server before sending the
-            // StartWritesDone instruction to gRPC.
+            // Wait for the FINAL signal from the server.
             final.wait();
+            // Now that the FINAL signal has been received, we can shut down
+            // the stream.
             StartWritesDone();
             return;
         }
@@ -136,17 +160,16 @@ class AudioFileReactor :
         // index of the current sample and the number of remaining samples.
         const auto numSamples = index + framesPerBlock > buffer.size() ?
             buffer.size() - index : framesPerBlock;
-        // Set the audio content for the request and start the write request.
+        // Set the audio content for the request.
         request.set_audiocontent(&buffer[index], numSamples * sizeof(int16_t));
         // Update the index of the current sample based on the number of samples
-        // that were just pushed.
+        // that are being sent up in this request.
         index += numSamples;
-        if (framesPerBlock < buffer.size())  // Update progress bar if chunking
-            bar.update();
+        if (framesPerBlock < buffer.size()) bar.update();
 
         // If the index has exceeded the buffer size, there are no more samples
-        // to write from the audio buffer. Send the FINAL post-processing action
-        // to the server to indicate that no more data will be sent up.
+        // to write from the audio buffer. Add the FINAL post-processing action
+        // to this last message to indicate that no more data will be sent up.
         if (index >= buffer.size()) {
             auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
             action->set_action(::sensory::api::v1::audio::FINAL);
@@ -158,12 +181,12 @@ class AudioFileReactor :
         StartWrite(&request);
     }
 
-    /// @brief React to a _read done_ event.
+    /// @brief React to a "read done" event.
     ///
     /// @param ok whether the read succeeded.
     ///
     void OnReadDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
+        // If the status is not OK, an error occurred, exit gracefully.
         if (!ok) return;
         if (verbose) {
             std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
@@ -177,11 +200,8 @@ class AudioFileReactor :
             }
             std::cout << std::endl;
         }
-        {  // Lock access to the critical section for the transcript string.
-            std::lock_guard<std::mutex> lock(mutex);
-            // Update the transcript with the final output transcript.
-            transcript = response.transcript();
-        }
+        // Set the content of the local transcript buffer.
+        transcript.set(response.transcript());
         // Look for a post-processing action to determine the end of the stream.
         if (response.has_postprocessingaction()) {
             const auto& action = response.postprocessingaction();
@@ -191,6 +211,8 @@ class AudioFileReactor :
                 // Notify the waiting write loop that the FINAL signal has been
                 // received from the server.
                 final.notify_one();
+                // Grace-fully shut down the read loop by not starting another
+                // read request.
                 return;
             }
         }
@@ -199,14 +221,7 @@ class AudioFileReactor :
     }
 
     /// @brief Return the current transcript.
-    ///
-    /// @returns the transcript upon completion of the stream.
-    ///
-    std::string getTranscript() {
-        // Lock access to the critical section for the transcript string
-        std::lock_guard<std::mutex> lock(mutex);
-        return transcript;
-    }
+    inline std::string getTranscript() { return transcript.get(); }
 };
 
 int main(int argc, const char** argv) {
@@ -224,7 +239,7 @@ int main(int argc, const char** argv) {
         .help("INSECURE Disable TLS.");
     parser.add_argument({ "-i", "--input" }).required(true)
         .help("INPUT The input audio file to stream to Sensory Cloud.");
-    parser.add_argument({ "-o", "--output" }).required(true)
+    parser.add_argument({ "-o", "--output" })
         .help("OUTPUT The output file to write the transcription to.");
     parser.add_argument({ "-m", "--model" }).required(true)
         .help("MODEL The name of the transcription model to use.");
@@ -233,8 +248,8 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-l", "--language" }).required(true)
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
-        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
-        .default_value(0);
+        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default 4096).")
+        .default_value(4096);
     parser.add_argument({ "-p", "--padding" })
         .help("PADDING The number of milliseconds of padding to append to the audio buffer.")
         .default_value(0);
@@ -261,11 +276,11 @@ int main(int argc, const char** argv) {
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
 
-    // Initialize the configuration for the service.
+    // Initialize the configuration for the Sensory Cloud service.
     sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
     config.connect();
 
-    // Query the health of the remote service.
+    // Query the health of the remote service to ensure the server is live.
     sensory::service::HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealthResponse;
     auto status = healthService.getHealth(&serverHealthResponse);
@@ -280,7 +295,7 @@ int main(int argc, const char** argv) {
         std::cout << "\tID:             " << serverHealthResponse.id()            << std::endl;
     }
 
-    // Create an OAuth service
+    // Create an OAuth service and a token manager for device registration.
     OAuthService oauthService(config);
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
@@ -345,9 +360,7 @@ int main(int argc, const char** argv) {
         CHUNK_SIZE > 0 ? CHUNK_SIZE : buffer.getNumSamples(),
         VERBOSE
     );
-    // Initialize the stream with the reactor for callbacks, given audio model,
-    // the sample rate of the audio and the expected language. A user ID is also
-    // necessary to transcribe audio.
+    // Initialize the stream and start the RPC.
     audioService.transcribe(&reactor,
         sensory::service::audio::newAudioConfig(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
@@ -363,13 +376,14 @@ int main(int argc, const char** argv) {
             status.error_code() << ": " << status.error_message() << std::endl;
         return 1;
     }
-    // Log the transcript to the terminal if in verbose mode.
-    if (VERBOSE) std::cout << reactor.getTranscript() << std::endl;
 
-    // Write the transcript to an output file.
-    std::ofstream output_file(OUTPUT_FILE, std::ofstream::out);
-    output_file << reactor.getTranscript() << std::endl;
-    output_file.close();
+    if (OUTPUT_FILE.empty()) {  // No output file, write to standard output.
+        std::cout << reactor.getTranscript() << std::endl;
+    } else {  // Write the results to the given filename.
+        std::ofstream output_file(OUTPUT_FILE, std::ofstream::out);
+        output_file << reactor.getTranscript() << std::endl;
+        output_file.close();
+    }
 
     return 0;
 }
