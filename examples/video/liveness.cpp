@@ -1,8 +1,8 @@
 // An example of face services based on OpenCV camera streams.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,7 +71,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -213,10 +213,8 @@ int main(int argc, const char** argv) {
     // (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
 
-    // Create a thread to poll read requests in the background. Audio
-    // transcription has a bursty response pattern, so a locked read-write loop
-    // will not work with this service.
-    std::thread networkThread([&stream, &isLive, &alignmentCode, &frame, &frameMutex](){
+    // Create a thread to perform network IO in the background.
+    std::thread networkThread([&stream, &isLive, &alignmentCode, &frame, &frameMutex, &VERBOSE](){
         while (true) {
             std::vector<unsigned char> buffer;
             {  // Lock the mutex and encode the frame with JPEG into a buffer.
@@ -231,9 +229,11 @@ int main(int argc, const char** argv) {
             sensory::api::v1::video::LivenessRecognitionResponse response;
             if (!stream->Read(&response)) break;
             // Log information about the response to the terminal.
-            // std::cout << "Frame Response:" << std::endl;
-            // std::cout << "\tScore: "    << response.score() << std::endl;
-            // std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+            if (VERBOSE) {
+                std::cout << "Frame Response:" << std::endl;
+                std::cout << "\tScore: "    << response.score() << std::endl;
+                std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+            }
             // Set the authentication flag to the success of the response.
             isLive = response.isalive();
             alignmentCode = response.score() < 100 ?

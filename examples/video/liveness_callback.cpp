@@ -1,8 +1,8 @@
 // An example of face services based on OpenCV camera streams.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -72,23 +72,22 @@ class OpenCVReactor :
     /// A mutual exclusion for locking access to the frame between foreground
     /// (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
+    /// Whether to produce verbose output in the reactor
+    bool verbose = false;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
-    OpenCVReactor() :
+    OpenCVReactor(const bool& verbose_ = false) :
         VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor(),
         isLive(false),
-        alignmentCode(FaceAlignment::Valid) { }
+        alignmentCode(FaceAlignment::Valid),
+        verbose(verbose_) { }
 
     /// @brief React to a _write done_ event.
     ///
     /// @param ok whether the write succeeded.
     ///
     void OnWriteDone(bool ok) override {
-        // if (?) {
-        //     StartWritesDone();
-        //     return;
-        // }
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         std::vector<unsigned char> buffer;
@@ -107,13 +106,14 @@ class OpenCVReactor :
     /// @param ok whether the read succeeded.
     ///
     void OnReadDone(bool ok) override {
-        // if (?) return;
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         // Log information about the response to the terminal.
-        // std::cout << "Frame Response:" << std::endl;
-        // std::cout << "\tScore: "    << response.score() << std::endl;
-        // std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+        if (verbose) {
+            std::cout << "Frame Response:" << std::endl;
+            std::cout << "\tScore: "    << response.score() << std::endl;
+            std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+        }
         // Set the liveness status of the last frame.
         isLive = response.isalive();
         alignmentCode = response.score() < 100 ?
@@ -217,7 +217,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -340,7 +340,7 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream.
-    OpenCVReactor reactor;
+    OpenCVReactor reactor(VERBOSE);
     videoService.validateLiveness(&reactor,
         sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
     );

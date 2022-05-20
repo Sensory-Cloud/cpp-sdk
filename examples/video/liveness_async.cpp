@@ -1,8 +1,8 @@
 // An example of face services based on OpenCV camera streams.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -245,7 +245,7 @@ int main(int argc, const char** argv) {
     );
 
     // start the stream event thread in the background to handle events.
-    std::thread eventThread([&stream, &queue, &isLive, &alignmentCode, &frame, &frameMutex](){
+    std::thread eventThread([&stream, &queue, &isLive, &alignmentCode, &frame, &frameMutex, &VERBOSE](){
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
@@ -279,6 +279,11 @@ int main(int argc, const char** argv) {
                 isLive = stream->getResponse().isalive();
                 alignmentCode = stream->getResponse().score() < 100 ?
                     FaceAlignment::Valid : static_cast<FaceAlignment>(stream->getResponse().score());
+                if (VERBOSE) {
+                    std::cout << "Frame Response:" << std::endl;
+                    std::cout << "\tScore: "    << stream->getResponse().score() << std::endl;
+                    std::cout << "\tIs Alive: " << stream->getResponse().isalive() << std::endl;
+                }
                 // Issue a new read request.
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Finish) break;

@@ -1,8 +1,8 @@
-// An example of face services based on OpenCV camera streams.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// An example of face biometric authentication services using on OpenCV.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::VideoService;
 using sensory::service::OAuthService;
+using sensory::service::ManagementService;
 
 /// @brief A bidirection stream reactor for biometric enrollments from video
 /// stream data.
@@ -213,7 +214,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -237,7 +238,7 @@ int main(int argc, const char** argv) {
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
@@ -249,7 +250,7 @@ int main(int argc, const char** argv) {
     // ------ Check server health ----------------------------------------------
 
     // Query the health of the remote service.
-    sensory::service::HealthService healthService(config);
+    HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealth;
     auto status = healthService.getHealth(&serverHealth);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -303,7 +304,7 @@ int main(int argc, const char** argv) {
     // ------ Get an enrollment ID ---------------------------------------------
 
     if (USER_ID != "") {
-        sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore> mgmtService(config, tokenManager);
+        ManagementService<InsecureCredentialStore> mgmtService(config, tokenManager);
         sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
         auto status = mgmtService.getEnrollments(&enrollmentResponse, USER_ID);
         if (!status.ok()) {  // the call failed, print a descriptive message
