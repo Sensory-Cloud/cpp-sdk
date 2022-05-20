@@ -5,14 +5,14 @@ services:
     image: sensory-cloud-cpp-sdk:CentOS7
     build:
       context: .
-      dockerfile: Dockerfile.CentOS.7
+      dockerfile: dockerfiles/Dockerfile.CentOS.7
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   centos_8:
     image: sensory-cloud-cpp-sdk:CentOS8
     build:
       context: .
-      dockerfile: Dockerfile.CentOS.8
+      dockerfile: dockerfiles/Dockerfile.CentOS.8
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
 
@@ -20,14 +20,14 @@ services:
     image: sensory-cloud-cpp-sdk:RHEL7
     build:
       context: .
-      dockerfile: Dockerfile.RHEL.7
+      dockerfile: dockerfiles/Dockerfile.RHEL.7
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   rhel_8:
     image: sensory-cloud-cpp-sdk:RHEL8
     build:
       context: .
-      dockerfile: Dockerfile.RHEL.8
+      dockerfile: dockerfiles/Dockerfile.RHEL.8
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
 
@@ -35,21 +35,21 @@ services:
     image: sensory-cloud-cpp-sdk:Debian9
     build:
       context: .
-      dockerfile: Dockerfile.Debian.9
+      dockerfile: dockerfiles/Dockerfile.Debian.9
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   debian_10:
     image: sensory-cloud-cpp-sdk:Debian10
     build:
       context: .
-      dockerfile: Dockerfile.Debian.10
+      dockerfile: dockerfiles/Dockerfile.Debian.10
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   debian_11:
     image: sensory-cloud-cpp-sdk:Debian11
     build:
       context: .
-      dockerfile: Dockerfile.Debian.11
+      dockerfile: dockerfiles/Dockerfile.Debian.11
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
 
@@ -57,27 +57,27 @@ services:
     image: sensory-cloud-cpp-sdk:Ubuntu16.04
     build:
       context: .
-      dockerfile: Dockerfile.Ubuntu.16.04
+      dockerfile: dockerfiles/Dockerfile.Ubuntu.16.04
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   ubuntu_18_04:
     image: sensory-cloud-cpp-sdk:Ubuntu18.04
     build:
       context: .
-      dockerfile: Dockerfile.Ubuntu.18.04
+      dockerfile: dockerfiles/Dockerfile.Ubuntu.18.04
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   ubuntu_20_04:
     image: sensory-cloud-cpp-sdk:Ubuntu20.04
     build:
       context: .
-      dockerfile: Dockerfile.Ubuntu.20.04
+      dockerfile: dockerfiles/Dockerfile.Ubuntu.20.04
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
   ubuntu_21_10:
     image: sensory-cloud-cpp-sdk:Ubuntu21.10
     build:
       context: .
-      dockerfile: Dockerfile.Ubuntu.21.10
+      dockerfile: dockerfiles/Dockerfile.Ubuntu.21.10
     working_dir: /cpp-sdk/build
     command: bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
