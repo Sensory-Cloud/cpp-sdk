@@ -1,9 +1,9 @@
 // A structure for working with audio sample file IO.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 // Copyright (c) 2020 Christian Kauten
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

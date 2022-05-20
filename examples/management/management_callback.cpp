@@ -1,8 +1,8 @@
 // The Sensory Cloud C++ SDK Management service demo (callback interface).
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
