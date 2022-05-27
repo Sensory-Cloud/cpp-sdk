@@ -222,6 +222,31 @@ class TokenManager {
         // Return the newly created OAuth token
         return response.accesstoken();
     }
+
+    /// @brief Register the device using the token manager's OAuth service.
+    ///
+    /// @param getUserCredentials A callback function that should return the
+    /// device name and credential in the event that the device needs to be
+    /// registered with the server.
+    /// @returns The success code if the device is already registered, otherwise
+    /// the gRPC status from the synchronous registration request.
+    ///
+    template<typename T>
+    ::grpc::Status registerDevice(const T& getUserCredentials) const {
+        if (hasToken()) return {};  // the device is already registered.
+        // Generate a new clientID and clientSecret for this device.
+        const auto deviceCredentials = hasSavedCredentials() ?
+            getSavedCredentials() : generateCredentials();
+        // Register this device with the remote host.
+        const auto userCredentials = getUserCredentials();
+        sensory::api::v1::management::DeviceResponse response;
+        return service.registerDevice(&response,
+            std::get<0>(userCredentials),
+            std::get<1>(userCredentials),
+            deviceCredentials.id,
+            deviceCredentials.secret
+        );
+    }
 };
 
 }  // namespace token_manager

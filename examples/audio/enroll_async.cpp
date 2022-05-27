@@ -148,33 +148,25 @@ int main(int argc, const char** argv) {
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
         tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasToken()) {  // the device is not registered
-        // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.hasSavedCredentials() ?
-            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
-
+    // Attempt to login and register the device if needed.
+    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
         std::cout << "Registering device with server..." << std::endl;
-
-        // Query the friendly device name
+        // Query the device name from the standard input.
         std::string name = "";
-        std::cout << "Device Name: ";
+        std::cout << "Device name: ";
         std::cin >> name;
-
-        // Query the shared pass-phrase
-        std::string password = "";
-        std::cout << "password: ";
-        std::cin >> password;
-
-        // Register this device with the remote host
-        oauthService.registerDevice(
-            name, password, credentials.id, credentials.secret,
-            [](OAuthService::RegisterDeviceCallData* call) {
-            if (!call->getStatus().ok()) {  // The call failed.
-                std::cout << "Failed to register device with\n\t" <<
-                    call->getStatus().error_code() << ": " <<
-                    call->getStatus().error_message() << std::endl;
-            }
-        })->await();
+        // Query the credential for the user from the standard input.
+        std::string credential = "";
+        std::cout << "Credential: ";
+        std::cin >> credential;
+        // Return the device name and credential as a tuple.
+        return {name, credential};
+    });
+    // Check the status code from the attempted registration.
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to register device with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Create the audio service -----------------------------------------

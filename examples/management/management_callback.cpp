@@ -47,35 +47,27 @@ using sensory::service::ManagementService;
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialStore>& tokenManager) {
-    if (!tokenManager.hasToken()) {  // the device is not registered
-        // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.hasSavedCredentials() ?
-            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
-
+    // Attempt to login and register the device if needed.
+    auto status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
         std::cout << "Registering device with server..." << std::endl;
-
-        // Query the friendly device name
+        // Query the device name from the standard input.
         std::string name = "";
-        std::cout << "Device Name: ";
+        std::cout << "Device name: ";
         std::cin >> name;
-
-        // Query the shared pass-phrase
-        std::string password = "";
-        std::cout << "Password: ";
-        std::cin >> password;
-
+        // Query the credential for the user from the standard input.
+        std::string credential = "";
+        std::cout << "Credential: ";
+        std::cin >> credential;
         // Flush anything that may still be in the input buffer.
         std::cin.ignore();
-
-        // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse rsp;
-        auto status = oauthService.registerDevice(&rsp,
-            name, password, credentials.id, credentials.secret);
-        if (!status.ok()) {  // The call failed, print a descriptive message.
-            std::cout << "Failed to register device with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return status.error_code();
-        }
+        // Return the device name and credential as a tuple.
+        return {name, credential};
+    });
+    // Check the status code from the attempted registration.
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to register device with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return status.error_code();
     }
     return 0;
 }
