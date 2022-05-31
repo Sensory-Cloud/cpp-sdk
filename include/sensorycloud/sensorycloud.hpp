@@ -26,4 +26,51 @@
 #ifndef SENSORY_CLOUD_HPP_
 #define SENSORY_CLOUD_HPP_
 
+#include "./config.hpp"
+#include "./services/health_service.hpp"
+#include "./services/oauth_service.hpp"
+#include "./services/management_service.hpp"
+#include "./services/audio_service.hpp"
+#include "./services/video_service.hpp"
+#include "./token_manager/token_manager.hpp"
+
+/// @brief The Sensory Cloud SDK.
+namespace sensory {
+
+/// @brief The Sensory Cloud service.
+/// @tparam CredentialStore The type for the secure credential store.
+template<typename CredentialStore>
+struct SensoryCloud {
+    /// The configuration for the remote service.
+    const ::sensory::Config& config;
+    /// The OAuth service.
+    ::sensory::service::OAuthService oauthService;
+    /// The token manager.
+    ::sensory::token_manager::TokenManager<CredentialStore> tokenManager;
+    /// The health service.
+    ::sensory::service::HealthService healthService;
+    /// The management service.
+    ::sensory::service::ManagementService<CredentialStore> mgmtService;
+    /// The video service.
+    ::sensory::service::VideoService<CredentialStore> videoService;
+    /// The audio service.
+    ::sensory::service::AudioService<CredentialStore> audioService;
+
+    /// @brief Initialize the Sensory Cloud service.
+    ///
+    /// @param config_ The config for the remote service.
+    /// @param keychain The secure credential store.
+    ///
+    SensoryCloud(const ::sensory::Config& config_, const CredentialStore& keychain) :
+        config(config_),
+        oauthService(config),
+        healthService(config),
+        tokenManager(oauthService, keychain),
+        mgmtService(config, tokenManager),
+        videoService(config, tokenManager),
+        audioService(config, tokenManager) { }
+};
+
+}  // namespace sensory
+
 #endif  // SENSORY_CLOUD_HPP_

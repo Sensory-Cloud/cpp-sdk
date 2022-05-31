@@ -1,8 +1,8 @@
 // An example of face services based on OpenCV camera streams.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -72,23 +72,22 @@ class OpenCVReactor :
     /// A mutual exclusion for locking access to the frame between foreground
     /// (frame capture) and background (network stream processing) threads.
     std::mutex frameMutex;
+    /// Whether to produce verbose output in the reactor
+    bool verbose = false;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
-    OpenCVReactor() :
+    OpenCVReactor(const bool& verbose_ = false) :
         VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor(),
         isLive(false),
-        alignmentCode(FaceAlignment::Valid) { }
+        alignmentCode(FaceAlignment::Valid),
+        verbose(verbose_) { }
 
     /// @brief React to a _write done_ event.
     ///
     /// @param ok whether the write succeeded.
     ///
     void OnWriteDone(bool ok) override {
-        // if (?) {
-        //     StartWritesDone();
-        //     return;
-        // }
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         std::vector<unsigned char> buffer;
@@ -107,13 +106,14 @@ class OpenCVReactor :
     /// @param ok whether the read succeeded.
     ///
     void OnReadDone(bool ok) override {
-        // if (?) return;
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         // Log information about the response to the terminal.
-        // std::cout << "Frame Response:" << std::endl;
-        // std::cout << "\tScore: "    << response.score() << std::endl;
-        // std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+        if (verbose) {
+            std::cout << "Frame Response:" << std::endl;
+            std::cout << "\tScore: "    << response.score() << std::endl;
+            std::cout << "\tIs Alive: " << response.isalive() << std::endl;
+        }
         // Set the liveness status of the last frame.
         isLive = response.isalive();
         alignmentCode = response.score() < 100 ?
@@ -217,7 +217,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -271,36 +271,25 @@ int main(int argc, const char** argv) {
     OAuthService oauthService(config);
     TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasToken()) {  // the device is not registered
-        // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.hasSavedCredentials() ?
-            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
-
+    // Attempt to login and register the device if needed.
+    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
         std::cout << "Registering device with server..." << std::endl;
-
-        // Query the friendly device name
+        // Query the device name from the standard input.
         std::string name = "";
-        std::cout << "Device Name: ";
+        std::cout << "Device name: ";
         std::cin >> name;
-
-        // Query the shared pass-phrase
-        std::string password = "";
-        std::cout << "password: ";
-        std::cin >> password;
-
-        // Register this device with the remote host
-        oauthService.registerDevice(
-            name,
-            password,
-            credentials.id,
-            credentials.secret,
-            [](OAuthService::RegisterDeviceCallData* call) {
-            if (!call->getStatus().ok()) {  // The call failed.
-                std::cout << "Failed to register device with\n\t" <<
-                    call->getStatus().error_code() << ": " <<
-                    call->getStatus().error_message() << std::endl;
-            }
-        })->await();
+        // Query the credential for the user from the standard input.
+        std::string credential = "";
+        std::cout << "Credential: ";
+        std::cin >> credential;
+        // Return the device name and credential as a tuple.
+        return {name, credential};
+    });
+    // Check the status code from the attempted registration.
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to register device with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Create the video service -----------------------------------------
@@ -340,7 +329,7 @@ int main(int argc, const char** argv) {
     }
 
     // Create the stream.
-    OpenCVReactor reactor;
+    OpenCVReactor reactor(VERBOSE);
     videoService.validateLiveness(&reactor,
         sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
     );

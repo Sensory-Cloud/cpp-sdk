@@ -54,6 +54,16 @@ xcode-select --install
 brew install autoconf automake libtool shtool cmake git
 ```
 
+Because MacOS is not strictly POSIX compliant, you will need to provide gRPC
+with a hint of where your SSL certificates are stored to properly connect to a
+secure server. This can typically be accomplished by exporting the following
+environment variable
+
+```shell
+export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
+```
+
+<!--
 ### Windows
 
 To install the build tools for Windows:
@@ -61,6 +71,7 @@ To install the build tools for Windows:
 ```shell
 TODO
 ```
+-->
 
 ## Integration
 
@@ -76,12 +87,26 @@ FetchContent_MakeAvailable(sensorycloud)
 ```
 
 This will clone and compile `libsensorycloud` locally to be used in
-applications or other libraries using, i.e.,
+applications or other libraries using:
 
 ```shell
 target_link_libraries(your_program PRIVATE sensorycloud)
 ```
 
+### Examples
+
+Example code for each available service and programming model are available in
+the [examples](examples) directory. These act both as a point of reference and
+as a starting point for the integration of Sensory Cloud with your application.
+
+Please refer to [md/tutorial.md](md/tutorial.md) for a tutorial of the
+blocking synchronous interface of the SDK. Tutorials for the asynchronous
+interface can be found in the
+[md/async_event_loop.md](md/async_event_loop.md) and
+[md/async_callback.md](md/async_callback.md) for event-loop and reactor
+patterns, respectively.
+
+<!--
 ### SecureCredentialStore _(Experimental feature)_
 
 To optionally compile an operating system specific `SecureCredentialStore`
@@ -105,19 +130,10 @@ The table below provides information about the implementations of
 [Keychain-Services]: https://developer.apple.com/documentation/security/keychain_services
 [Credential-Locker]: https://docs.microsoft.com/en-us/windows/uwp/security/credential-locker
 [Libsecret]: https://wiki.gnome.org/Projects/Libsecret
-
-## Tutorials and Examples
-
-Please refer to the [md/tutorial.md](md/tutorial.md) for a tutorial of the
-blocking synchronous interface of the SDK. Tutorials for the asynchronous
-interface can be found in the
-[md/async_event_loop.md](md/async_event_loop.md) and
-[md/async_callback.md](md/async_callback.md) for event-loop and reactor
-patterns, respectively. Examples code can be found in the [examples](examples/)
-directory.
+-->
 
 ## Development
 
 The [md/development.md](md/development.md) document describes how to setup the
 development environment for the SDK, compile the code outside of the context of
-an application, run unit tests, and deploy new versions of the SDK.
+an application, run unit tests, and release new versions of the SDK.

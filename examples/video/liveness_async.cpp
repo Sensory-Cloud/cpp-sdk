@@ -1,8 +1,8 @@
 // An example of face services based on OpenCV camera streams.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -137,36 +137,25 @@ int main(int argc, const char** argv) {
     sensory::service::OAuthService oauthService(config);
     sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasToken()) {  // the device is not registered
-        // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.hasSavedCredentials() ?
-            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
-
+    // Attempt to login and register the device if needed.
+    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
         std::cout << "Registering device with server..." << std::endl;
-
-        // Query the friendly device name
+        // Query the device name from the standard input.
         std::string name = "";
-        std::cout << "Device Name: ";
+        std::cout << "Device name: ";
         std::cin >> name;
-
-        // Query the shared pass-phrase
-        std::string password = "";
-        std::cout << "password: ";
-        std::cin >> password;
-
-        // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse registerResponse;
-        auto status = oauthService.registerDevice(&registerResponse,
-            name,
-            password,
-            credentials.id,
-            credentials.secret
-        );
-        if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to register device with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
-        }
+        // Query the credential for the user from the standard input.
+        std::string credential = "";
+        std::cout << "Credential: ";
+        std::cin >> credential;
+        // Return the device name and credential as a tuple.
+        return {name, credential};
+    });
+    // Check the status code from the attempted registration.
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to register device with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Create the video service -----------------------------------------
@@ -245,7 +234,7 @@ int main(int argc, const char** argv) {
     );
 
     // start the stream event thread in the background to handle events.
-    std::thread eventThread([&stream, &queue, &isLive, &alignmentCode, &frame, &frameMutex](){
+    std::thread eventThread([&stream, &queue, &isLive, &alignmentCode, &frame, &frameMutex, &VERBOSE](){
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
@@ -279,6 +268,11 @@ int main(int argc, const char** argv) {
                 isLive = stream->getResponse().isalive();
                 alignmentCode = stream->getResponse().score() < 100 ?
                     FaceAlignment::Valid : static_cast<FaceAlignment>(stream->getResponse().score());
+                if (VERBOSE) {
+                    std::cout << "Frame Response:" << std::endl;
+                    std::cout << "\tScore: "    << stream->getResponse().score() << std::endl;
+                    std::cout << "\tIs Alive: " << stream->getResponse().isalive() << std::endl;
+                }
                 // Issue a new read request.
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Finish) break;

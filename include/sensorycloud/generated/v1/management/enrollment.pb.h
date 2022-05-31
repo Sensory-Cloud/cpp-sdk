@@ -564,6 +564,7 @@ class EnrollmentResponse final :
     kCompressionFieldNumber = 10,
     kModelTypeFieldNumber = 6,
     kDidEnrollWithLivenessFieldNumber = 12,
+    kDidEnrollAsBiometricFieldNumber = 14,
   };
   // string id = 1;
   void clear_id();
@@ -749,6 +750,15 @@ class EnrollmentResponse final :
   void _internal_set_didenrollwithliveness(bool value);
   public:
 
+  // bool didEnrollAsBiometric = 14;
+  void clear_didenrollasbiometric();
+  bool didenrollasbiometric() const;
+  void set_didenrollasbiometric(bool value);
+  private:
+  bool _internal_didenrollasbiometric() const;
+  void _internal_set_didenrollasbiometric(bool value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.management.EnrollmentResponse)
  private:
   class _Internal;
@@ -769,6 +779,7 @@ class EnrollmentResponse final :
   ::sensory::api::common::CompressionConfiguration* compression_;
   int modeltype_;
   bool didenrollwithliveness_;
+  bool didenrollasbiometric_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fmanagement_2fenrollment_2eproto;
 };
@@ -3222,6 +3233,26 @@ inline void EnrollmentResponse::set_allocated_referenceid(std::string* reference
   referenceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), referenceid,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.EnrollmentResponse.referenceId)
+}
+
+// bool didEnrollAsBiometric = 14;
+inline void EnrollmentResponse::clear_didenrollasbiometric() {
+  didenrollasbiometric_ = false;
+}
+inline bool EnrollmentResponse::_internal_didenrollasbiometric() const {
+  return didenrollasbiometric_;
+}
+inline bool EnrollmentResponse::didenrollasbiometric() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.EnrollmentResponse.didEnrollAsBiometric)
+  return _internal_didenrollasbiometric();
+}
+inline void EnrollmentResponse::_internal_set_didenrollasbiometric(bool value) {
+  
+  didenrollasbiometric_ = value;
+}
+inline void EnrollmentResponse::set_didenrollasbiometric(bool value) {
+  _internal_set_didenrollasbiometric(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.EnrollmentResponse.didEnrollAsBiometric)
 }
 
 // -------------------------------------------------------------------

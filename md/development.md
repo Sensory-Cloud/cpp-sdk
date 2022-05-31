@@ -22,6 +22,16 @@ cmake -DSENSORY_CLOUD_GENERATE_PROTO=ON ..
 make
 ```
 
+## Docker image generation
+
+To generate docker images for testing on Linux:
+
+```shell
+docker compose build --parallel
+```
+
+this will build docker images according to the `docker-compose.yaml` file.
+
 ## Unit testing
 
 To build unit tests, execute:
@@ -29,6 +39,12 @@ To build unit tests, execute:
 ```shell
 cmake -DSENSORY_CLOUD_BUILD_TESTS=ON ..
 make
+```
+
+to execute unite tests, execute:
+
+```shell
+find . -name "test_sensorycloud*" -maxdepth 1 -type f -exec echo {} \; -exec {} \;
 ```
 
 ## Code release procedure

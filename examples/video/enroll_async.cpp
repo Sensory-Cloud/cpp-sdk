@@ -1,8 +1,8 @@
-// An example of face services based on OpenCV camera streams.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// An example of face biometric enrollment services using on OpenCV.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,6 @@
 #include <sensorycloud/config.hpp>
 #include <sensorycloud/services/health_service.hpp>
 #include <sensorycloud/services/oauth_service.hpp>
-#include <sensorycloud/services/management_service.hpp>
-#include <sensorycloud/services/audio_service.hpp>
 #include <sensorycloud/services/video_service.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
 #include <sensorycloud/token_manager/token_manager.hpp>
@@ -39,6 +37,12 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 #include "dep/argparse.hpp"
+
+using sensory::token_manager::TokenManager;
+using sensory::token_manager::InsecureCredentialStore;
+using sensory::service::HealthService;
+using sensory::service::VideoService;
+using sensory::service::OAuthService;
 
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
@@ -78,7 +82,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -103,7 +107,7 @@ int main(int argc, const char** argv) {
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
@@ -113,7 +117,7 @@ int main(int argc, const char** argv) {
     config.connect();
 
     // Query the health of the remote service.
-    sensory::service::HealthService healthService(config);
+    HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealth;
     auto status = healthService.getHealth(&serverHealth);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -131,42 +135,34 @@ int main(int argc, const char** argv) {
     // ------ Enroll the current user ----------------------------------------
 
     // Create an OAuth service
-    sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore> tokenManager(oauthService, keychain);
+    OAuthService oauthService(config);
+    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasToken()) {  // the device is not registered
-        // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.hasSavedCredentials() ?
-            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
-
+    // Attempt to login and register the device if needed.
+    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
         std::cout << "Registering device with server..." << std::endl;
-
-        // Query the friendly device name
+        // Query the device name from the standard input.
         std::string name = "";
-        std::cout << "Device Name: ";
+        std::cout << "Device name: ";
         std::cin >> name;
-
-        // Query the shared pass-phrase
-        std::string password = "";
-        std::cout << "Password: ";
-        std::cin >> password;
-
-        // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse registerResponse;
-        auto status = oauthService.registerDevice(&registerResponse,
-            name, password, credentials.id, credentials.secret);
-        if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to register device with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
-        }
+        // Query the credential for the user from the standard input.
+        std::string credential = "";
+        std::cout << "Credential: ";
+        std::cin >> credential;
+        // Return the device name and credential as a tuple.
+        return {name, credential};
+    });
+    // Check the status code from the attempted registration.
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to register device with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Create the video service -----------------------------------------
 
     // Create the video service based on the configuration and token manager.
-    sensory::service::VideoService<sensory::token_manager::InsecureCredentialStore>
-        videoService(config, tokenManager);
+    VideoService<InsecureCredentialStore> videoService(config, tokenManager);
 
     // ------ Query the available video models ---------------------------------
 

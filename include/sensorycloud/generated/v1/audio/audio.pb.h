@@ -219,12 +219,13 @@ enum AudioPostProcessingAction : int {
   NOT_SET = 0,
   FLUSH = 1,
   RESET = 2,
+  FINAL = 3,
   AudioPostProcessingAction_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   AudioPostProcessingAction_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool AudioPostProcessingAction_IsValid(int value);
 constexpr AudioPostProcessingAction AudioPostProcessingAction_MIN = NOT_SET;
-constexpr AudioPostProcessingAction AudioPostProcessingAction_MAX = RESET;
+constexpr AudioPostProcessingAction AudioPostProcessingAction_MAX = FINAL;
 constexpr int AudioPostProcessingAction_ARRAYSIZE = AudioPostProcessingAction_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AudioPostProcessingAction_descriptor();

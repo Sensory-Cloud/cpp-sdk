@@ -67,6 +67,14 @@ class DeviceService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncGetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncGetWhoAmIRaw(context, request, cq));
     }
+    // Returns device information
+    virtual ::grpc::Status GetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::sensory::api::v1::management::GetDeviceResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::GetDeviceResponse>> AsyncGetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::GetDeviceResponse>>(AsyncGetDeviceRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::GetDeviceResponse>> PrepareAsyncGetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::GetDeviceResponse>>(PrepareAsyncGetDeviceRaw(context, request, cq));
+    }
     // Returns a list of devices associated with the given userId
     virtual ::grpc::Status GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::sensory::api::v1::management::DeviceListResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceListResponse>> AsyncGetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) {
@@ -84,11 +92,11 @@ class DeviceService final {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncUpdateDeviceRaw(context, request, cq));
     }
     // Allows a device to be deleted
-    virtual ::grpc::Status DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> AsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+    virtual ::grpc::Status DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> AsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(AsyncDeleteDeviceRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncDeleteDeviceRaw(context, request, cq));
     }
     class async_interface {
@@ -105,6 +113,9 @@ class DeviceService final {
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Returns device information
+      virtual void GetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::GetDeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::GetDeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // Returns a list of devices associated with the given userId
       virtual void GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
@@ -112,8 +123,8 @@ class DeviceService final {
       virtual void UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // Allows a device to be deleted
-      virtual void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -125,12 +136,14 @@ class DeviceService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::GetDeviceResponse>* AsyncGetDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::GetDeviceResponse>* PrepareAsyncGetDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceListResponse>* AsyncGetDevicesRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceListResponse>* PrepareAsyncGetDevicesRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncUpdateDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncUpdateDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* AsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -156,6 +169,13 @@ class DeviceService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncGetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncGetWhoAmIRaw(context, request, cq));
     }
+    ::grpc::Status GetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::sensory::api::v1::management::GetDeviceResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::GetDeviceResponse>> AsyncGetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::GetDeviceResponse>>(AsyncGetDeviceRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::GetDeviceResponse>> PrepareAsyncGetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::GetDeviceResponse>>(PrepareAsyncGetDeviceRaw(context, request, cq));
+    }
     ::grpc::Status GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::sensory::api::v1::management::DeviceListResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceListResponse>> AsyncGetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceListResponse>>(AsyncGetDevicesRaw(context, request, cq));
@@ -170,11 +190,11 @@ class DeviceService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncUpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncUpdateDeviceRaw(context, request, cq));
     }
-    ::grpc::Status DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> AsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+    ::grpc::Status DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::sensory::api::v1::management::DeviceResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> AsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(AsyncDeleteDeviceRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>> PrepareAsyncDeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>>(PrepareAsyncDeleteDeviceRaw(context, request, cq));
     }
     class async final :
@@ -186,12 +206,14 @@ class DeviceService final {
       void RenewDeviceCredential(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
       void GetWhoAmI(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::GetDeviceResponse* response, std::function<void(::grpc::Status)>) override;
+      void GetDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::GetDeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response, std::function<void(::grpc::Status)>) override;
       void GetDevices(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
       void UpdateDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
-      void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, std::function<void(::grpc::Status)>) override;
+      void DeleteDevice(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -209,15 +231,18 @@ class DeviceService final {
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncRenewDeviceCredentialRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::RenewDeviceCredentialRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncGetWhoAmIRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::GetDeviceResponse>* AsyncGetDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::GetDeviceResponse>* PrepareAsyncGetDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceListResponse>* AsyncGetDevicesRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceListResponse>* PrepareAsyncGetDevicesRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::GetDevicesRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncUpdateDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncUpdateDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* AsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::management::DeviceResponse>* PrepareAsyncDeleteDeviceRaw(::grpc::ClientContext* context, const ::sensory::api::v1::management::DeviceRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_EnrollDevice_;
     const ::grpc::internal::RpcMethod rpcmethod_RenewDeviceCredential_;
     const ::grpc::internal::RpcMethod rpcmethod_GetWhoAmI_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetDevice_;
     const ::grpc::internal::RpcMethod rpcmethod_GetDevices_;
     const ::grpc::internal::RpcMethod rpcmethod_UpdateDevice_;
     const ::grpc::internal::RpcMethod rpcmethod_DeleteDevice_;
@@ -236,12 +261,14 @@ class DeviceService final {
     // Allows a device to fetch information about itself
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status GetWhoAmI(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
+    // Returns device information
+    virtual ::grpc::Status GetDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::GetDeviceResponse* response);
     // Returns a list of devices associated with the given userId
     virtual ::grpc::Status GetDevices(::grpc::ServerContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response);
     // Allows the name of a device to be updated
     virtual ::grpc::Status UpdateDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
     // Allows a device to be deleted
-    virtual ::grpc::Status DeleteDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
+    virtual ::grpc::Status DeleteDevice(::grpc::ServerContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_EnrollDevice : public BaseClass {
@@ -304,12 +331,32 @@ class DeviceService final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_GetDevice : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetDevice() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_GetDevice() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetDevice(::grpc::ServerContext* context, ::sensory::api::v1::management::DeviceRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::GetDeviceResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_GetDevices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetDevices() {
-      ::grpc::Service::MarkMethodAsync(3);
+      ::grpc::Service::MarkMethodAsync(4);
     }
     ~WithAsyncMethod_GetDevices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -320,7 +367,7 @@ class DeviceService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetDevices(::grpc::ServerContext* context, ::sensory::api::v1::management::GetDevicesRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::DeviceListResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -329,7 +376,7 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_UpdateDevice() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_UpdateDevice() override {
       BaseClassMustBeDerivedFromService(this);
@@ -340,7 +387,7 @@ class DeviceService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUpdateDevice(::grpc::ServerContext* context, ::sensory::api::v1::management::UpdateDeviceRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::DeviceResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -349,21 +396,21 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DeleteDevice() {
-      ::grpc::Service::MarkMethodAsync(5);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_DeleteDevice() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestDeleteDevice(::grpc::ServerContext* context, ::sensory::api::v1::management::DeleteDeviceRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::DeviceResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestDeleteDevice(::grpc::ServerContext* context, ::sensory::api::v1::management::DeviceRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::management::DeviceResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_EnrollDevice<WithAsyncMethod_RenewDeviceCredential<WithAsyncMethod_GetWhoAmI<WithAsyncMethod_GetDevices<WithAsyncMethod_UpdateDevice<WithAsyncMethod_DeleteDevice<Service > > > > > > AsyncService;
+  typedef WithAsyncMethod_EnrollDevice<WithAsyncMethod_RenewDeviceCredential<WithAsyncMethod_GetWhoAmI<WithAsyncMethod_GetDevice<WithAsyncMethod_GetDevices<WithAsyncMethod_UpdateDevice<WithAsyncMethod_DeleteDevice<Service > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_EnrollDevice : public BaseClass {
    private:
@@ -446,18 +493,45 @@ class DeviceService final {
       ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::DeviceGetWhoAmIRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_GetDevice : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetDevice() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::GetDeviceResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::GetDeviceResponse* response) { return this->GetDevice(context, request, response); }));}
+    void SetMessageAllocatorFor_GetDevice(
+        ::grpc::MessageAllocator< ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::GetDeviceResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::GetDeviceResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetDevice() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetDevice(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_GetDevices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetDevices() {
-      ::grpc::Service::MarkMethodCallback(3,
+      ::grpc::Service::MarkMethodCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::GetDevicesRequest* request, ::sensory::api::v1::management::DeviceListResponse* response) { return this->GetDevices(context, request, response); }));}
     void SetMessageAllocatorFor_GetDevices(
         ::grpc::MessageAllocator< ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -478,13 +552,13 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_UpdateDevice() {
-      ::grpc::Service::MarkMethodCallback(4,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::UpdateDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response) { return this->UpdateDevice(context, request, response); }));}
     void SetMessageAllocatorFor_UpdateDevice(
         ::grpc::MessageAllocator< ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -505,28 +579,28 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_DeleteDevice() {
-      ::grpc::Service::MarkMethodCallback(5,
-          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse>(
+      ::grpc::Service::MarkMethodCallback(6,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::DeviceResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::DeleteDeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response) { return this->DeleteDevice(context, request, response); }));}
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::management::DeviceRequest* request, ::sensory::api::v1::management::DeviceResponse* response) { return this->DeleteDevice(context, request, response); }));}
     void SetMessageAllocatorFor_DeleteDevice(
-        ::grpc::MessageAllocator< ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse>*>(handler)
+        ::grpc::MessageAllocator< ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::DeviceResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::DeviceResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~WithCallbackMethod_DeleteDevice() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* DeleteDevice(
-      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_EnrollDevice<WithCallbackMethod_RenewDeviceCredential<WithCallbackMethod_GetWhoAmI<WithCallbackMethod_GetDevices<WithCallbackMethod_UpdateDevice<WithCallbackMethod_DeleteDevice<Service > > > > > > CallbackService;
+  typedef WithCallbackMethod_EnrollDevice<WithCallbackMethod_RenewDeviceCredential<WithCallbackMethod_GetWhoAmI<WithCallbackMethod_GetDevice<WithCallbackMethod_GetDevices<WithCallbackMethod_UpdateDevice<WithCallbackMethod_DeleteDevice<Service > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_EnrollDevice : public BaseClass {
@@ -580,12 +654,29 @@ class DeviceService final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_GetDevice : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetDevice() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_GetDevice() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_GetDevices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetDevices() {
-      ::grpc::Service::MarkMethodGeneric(3);
+      ::grpc::Service::MarkMethodGeneric(4);
     }
     ~WithGenericMethod_GetDevices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -602,7 +693,7 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_UpdateDevice() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_UpdateDevice() override {
       BaseClassMustBeDerivedFromService(this);
@@ -619,13 +710,13 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DeleteDevice() {
-      ::grpc::Service::MarkMethodGeneric(5);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_DeleteDevice() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -691,12 +782,32 @@ class DeviceService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_GetDevice : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetDevice() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_GetDevice() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetDevice(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_GetDevices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetDevices() {
-      ::grpc::Service::MarkMethodRaw(3);
+      ::grpc::Service::MarkMethodRaw(4);
     }
     ~WithRawMethod_GetDevices() override {
       BaseClassMustBeDerivedFromService(this);
@@ -707,7 +818,7 @@ class DeviceService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetDevices(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -716,7 +827,7 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_UpdateDevice() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_UpdateDevice() override {
       BaseClassMustBeDerivedFromService(this);
@@ -727,7 +838,7 @@ class DeviceService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUpdateDevice(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -736,18 +847,18 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DeleteDevice() {
-      ::grpc::Service::MarkMethodRaw(5);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_DeleteDevice() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteDevice(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -817,12 +928,34 @@ class DeviceService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_GetDevice : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetDevice() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetDevice(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetDevice() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetDevice(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_GetDevices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetDevices() {
-      ::grpc::Service::MarkMethodRawCallback(3,
+      ::grpc::Service::MarkMethodRawCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetDevices(context, request, response); }));
@@ -844,7 +977,7 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_UpdateDevice() {
-      ::grpc::Service::MarkMethodRawCallback(4,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UpdateDevice(context, request, response); }));
@@ -866,7 +999,7 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_DeleteDevice() {
-      ::grpc::Service::MarkMethodRawCallback(5,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DeleteDevice(context, request, response); }));
@@ -875,7 +1008,7 @@ class DeviceService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -964,12 +1097,39 @@ class DeviceService final {
     virtual ::grpc::Status StreamedGetWhoAmI(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::DeviceGetWhoAmIRequest,::sensory::api::v1::management::DeviceResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_GetDevice : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetDevice() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::GetDeviceResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::GetDeviceResponse>* streamer) {
+                       return this->StreamedGetDevice(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetDevice() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::GetDeviceResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetDevice(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::DeviceRequest,::sensory::api::v1::management::GetDeviceResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_GetDevices : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetDevices() {
-      ::grpc::Service::MarkMethodStreamed(3,
+      ::grpc::Service::MarkMethodStreamed(4,
         new ::grpc::internal::StreamedUnaryHandler<
           ::sensory::api::v1::management::GetDevicesRequest, ::sensory::api::v1::management::DeviceListResponse>(
             [this](::grpc::ServerContext* context,
@@ -996,7 +1156,7 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_UpdateDevice() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::sensory::api::v1::management::UpdateDeviceRequest, ::sensory::api::v1::management::DeviceResponse>(
             [this](::grpc::ServerContext* context,
@@ -1023,12 +1183,12 @@ class DeviceService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DeleteDevice() {
-      ::grpc::Service::MarkMethodStreamed(5,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse>(
+          ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::DeviceResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::sensory::api::v1::management::DeleteDeviceRequest, ::sensory::api::v1::management::DeviceResponse>* streamer) {
+                     ::sensory::api::v1::management::DeviceRequest, ::sensory::api::v1::management::DeviceResponse>* streamer) {
                        return this->StreamedDeleteDevice(context,
                          streamer);
                   }));
@@ -1037,16 +1197,16 @@ class DeviceService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeleteDeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
+    ::grpc::Status DeleteDevice(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::management::DeviceRequest* /*request*/, ::sensory::api::v1::management::DeviceResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedDeleteDevice(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::DeleteDeviceRequest,::sensory::api::v1::management::DeviceResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedDeleteDevice(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::management::DeviceRequest,::sensory::api::v1::management::DeviceResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_RenewDeviceCredential<WithStreamedUnaryMethod_GetWhoAmI<WithStreamedUnaryMethod_GetDevices<WithStreamedUnaryMethod_UpdateDevice<WithStreamedUnaryMethod_DeleteDevice<Service > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_RenewDeviceCredential<WithStreamedUnaryMethod_GetWhoAmI<WithStreamedUnaryMethod_GetDevice<WithStreamedUnaryMethod_GetDevices<WithStreamedUnaryMethod_UpdateDevice<WithStreamedUnaryMethod_DeleteDevice<Service > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_RenewDeviceCredential<WithStreamedUnaryMethod_GetWhoAmI<WithStreamedUnaryMethod_GetDevices<WithStreamedUnaryMethod_UpdateDevice<WithStreamedUnaryMethod_DeleteDevice<Service > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_EnrollDevice<WithStreamedUnaryMethod_RenewDeviceCredential<WithStreamedUnaryMethod_GetWhoAmI<WithStreamedUnaryMethod_GetDevice<WithStreamedUnaryMethod_GetDevices<WithStreamedUnaryMethod_UpdateDevice<WithStreamedUnaryMethod_DeleteDevice<Service > > > > > > > StreamedService;
 };
 
 }  // namespace management

@@ -49,7 +49,7 @@ struct TableStruct_v1_2fmanagement_2fdevice_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -60,21 +60,24 @@ namespace sensory {
 namespace api {
 namespace v1 {
 namespace management {
-class DeleteDeviceRequest;
-struct DeleteDeviceRequestDefaultTypeInternal;
-extern DeleteDeviceRequestDefaultTypeInternal _DeleteDeviceRequest_default_instance_;
 class DeviceGetWhoAmIRequest;
 struct DeviceGetWhoAmIRequestDefaultTypeInternal;
 extern DeviceGetWhoAmIRequestDefaultTypeInternal _DeviceGetWhoAmIRequest_default_instance_;
 class DeviceListResponse;
 struct DeviceListResponseDefaultTypeInternal;
 extern DeviceListResponseDefaultTypeInternal _DeviceListResponse_default_instance_;
+class DeviceRequest;
+struct DeviceRequestDefaultTypeInternal;
+extern DeviceRequestDefaultTypeInternal _DeviceRequest_default_instance_;
 class DeviceResponse;
 struct DeviceResponseDefaultTypeInternal;
 extern DeviceResponseDefaultTypeInternal _DeviceResponse_default_instance_;
 class EnrollDeviceRequest;
 struct EnrollDeviceRequestDefaultTypeInternal;
 extern EnrollDeviceRequestDefaultTypeInternal _EnrollDeviceRequest_default_instance_;
+class GetDeviceResponse;
+struct GetDeviceResponseDefaultTypeInternal;
+extern GetDeviceResponseDefaultTypeInternal _GetDeviceResponse_default_instance_;
 class GetDevicesRequest;
 struct GetDevicesRequestDefaultTypeInternal;
 extern GetDevicesRequestDefaultTypeInternal _GetDevicesRequest_default_instance_;
@@ -89,11 +92,12 @@ extern UpdateDeviceRequestDefaultTypeInternal _UpdateDeviceRequest_default_insta
 }  // namespace api
 }  // namespace sensory
 PROTOBUF_NAMESPACE_OPEN
-template<> ::sensory::api::v1::management::DeleteDeviceRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeleteDeviceRequest>(Arena*);
 template<> ::sensory::api::v1::management::DeviceGetWhoAmIRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeviceGetWhoAmIRequest>(Arena*);
 template<> ::sensory::api::v1::management::DeviceListResponse* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeviceListResponse>(Arena*);
+template<> ::sensory::api::v1::management::DeviceRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeviceRequest>(Arena*);
 template<> ::sensory::api::v1::management::DeviceResponse* Arena::CreateMaybeMessage<::sensory::api::v1::management::DeviceResponse>(Arena*);
 template<> ::sensory::api::v1::management::EnrollDeviceRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::EnrollDeviceRequest>(Arena*);
+template<> ::sensory::api::v1::management::GetDeviceResponse* Arena::CreateMaybeMessage<::sensory::api::v1::management::GetDeviceResponse>(Arena*);
 template<> ::sensory::api::v1::management::GetDevicesRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::GetDevicesRequest>(Arena*);
 template<> ::sensory::api::v1::management::RenewDeviceCredentialRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::RenewDeviceCredentialRequest>(Arena*);
 template<> ::sensory::api::v1::management::UpdateDeviceRequest* Arena::CreateMaybeMessage<::sensory::api::v1::management::UpdateDeviceRequest>(Arena*);
@@ -632,6 +636,154 @@ class DeviceGetWhoAmIRequest final :
 };
 // -------------------------------------------------------------------
 
+class DeviceRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.DeviceRequest) */ {
+ public:
+  inline DeviceRequest() : DeviceRequest(nullptr) {}
+  ~DeviceRequest() override;
+  explicit constexpr DeviceRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  DeviceRequest(const DeviceRequest& from);
+  DeviceRequest(DeviceRequest&& from) noexcept
+    : DeviceRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline DeviceRequest& operator=(const DeviceRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DeviceRequest& operator=(DeviceRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const DeviceRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const DeviceRequest* internal_default_instance() {
+    return reinterpret_cast<const DeviceRequest*>(
+               &_DeviceRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(DeviceRequest& a, DeviceRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DeviceRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(DeviceRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline DeviceRequest* New() const final {
+    return new DeviceRequest();
+  }
+
+  DeviceRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<DeviceRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const DeviceRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const DeviceRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DeviceRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.management.DeviceRequest";
+  }
+  protected:
+  explicit DeviceRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDeviceIdFieldNumber = 1,
+  };
+  // string deviceId = 1 [(.validate.rules) = {
+  void clear_deviceid();
+  const std::string& deviceid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_deviceid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_deviceid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_deviceid();
+  void set_allocated_deviceid(std::string* deviceid);
+  private:
+  const std::string& _internal_deviceid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_deviceid(const std::string& value);
+  std::string* _internal_mutable_deviceid();
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.management.DeviceRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2fmanagement_2fdevice_2eproto;
+};
+// -------------------------------------------------------------------
+
 class GetDevicesRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.GetDevicesRequest) */ {
  public:
@@ -680,7 +832,7 @@ class GetDevicesRequest final :
                &_GetDevicesRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(GetDevicesRequest& a, GetDevicesRequest& b) {
     a.Swap(&b);
@@ -864,7 +1016,7 @@ class UpdateDeviceRequest final :
                &_UpdateDeviceRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(UpdateDeviceRequest& a, UpdateDeviceRequest& b) {
     a.Swap(&b);
@@ -975,154 +1127,6 @@ class UpdateDeviceRequest final :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_v1_2fmanagement_2fdevice_2eproto;
-};
-// -------------------------------------------------------------------
-
-class DeleteDeviceRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.DeleteDeviceRequest) */ {
- public:
-  inline DeleteDeviceRequest() : DeleteDeviceRequest(nullptr) {}
-  ~DeleteDeviceRequest() override;
-  explicit constexpr DeleteDeviceRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  DeleteDeviceRequest(const DeleteDeviceRequest& from);
-  DeleteDeviceRequest(DeleteDeviceRequest&& from) noexcept
-    : DeleteDeviceRequest() {
-    *this = ::std::move(from);
-  }
-
-  inline DeleteDeviceRequest& operator=(const DeleteDeviceRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline DeleteDeviceRequest& operator=(DeleteDeviceRequest&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const DeleteDeviceRequest& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const DeleteDeviceRequest* internal_default_instance() {
-    return reinterpret_cast<const DeleteDeviceRequest*>(
-               &_DeleteDeviceRequest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    5;
-
-  friend void swap(DeleteDeviceRequest& a, DeleteDeviceRequest& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(DeleteDeviceRequest* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(DeleteDeviceRequest* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline DeleteDeviceRequest* New() const final {
-    return new DeleteDeviceRequest();
-  }
-
-  DeleteDeviceRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<DeleteDeviceRequest>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const DeleteDeviceRequest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const DeleteDeviceRequest& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(DeleteDeviceRequest* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.management.DeleteDeviceRequest";
-  }
-  protected:
-  explicit DeleteDeviceRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kDeviceIdFieldNumber = 1,
-  };
-  // string deviceId = 1 [(.validate.rules) = {
-  void clear_deviceid();
-  const std::string& deviceid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_deviceid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_deviceid();
-  PROTOBUF_MUST_USE_RESULT std::string* release_deviceid();
-  void set_allocated_deviceid(std::string* deviceid);
-  private:
-  const std::string& _internal_deviceid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_deviceid(const std::string& value);
-  std::string* _internal_mutable_deviceid();
-  public:
-
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.management.DeleteDeviceRequest)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fmanagement_2fdevice_2eproto;
 };
@@ -1292,6 +1296,181 @@ class DeviceResponse final :
 };
 // -------------------------------------------------------------------
 
+class GetDeviceResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.GetDeviceResponse) */ {
+ public:
+  inline GetDeviceResponse() : GetDeviceResponse(nullptr) {}
+  ~GetDeviceResponse() override;
+  explicit constexpr GetDeviceResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetDeviceResponse(const GetDeviceResponse& from);
+  GetDeviceResponse(GetDeviceResponse&& from) noexcept
+    : GetDeviceResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline GetDeviceResponse& operator=(const GetDeviceResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetDeviceResponse& operator=(GetDeviceResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetDeviceResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetDeviceResponse* internal_default_instance() {
+    return reinterpret_cast<const GetDeviceResponse*>(
+               &_GetDeviceResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(GetDeviceResponse& a, GetDeviceResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetDeviceResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetDeviceResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetDeviceResponse* New() const final {
+    return new GetDeviceResponse();
+  }
+
+  GetDeviceResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetDeviceResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GetDeviceResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GetDeviceResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetDeviceResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.management.GetDeviceResponse";
+  }
+  protected:
+  explicit GetDeviceResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 1,
+    kDeviceIdFieldNumber = 2,
+    kUserCountFieldNumber = 3,
+  };
+  // string name = 1;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_MUST_USE_RESULT std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // string deviceId = 2;
+  void clear_deviceid();
+  const std::string& deviceid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_deviceid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_deviceid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_deviceid();
+  void set_allocated_deviceid(std::string* deviceid);
+  private:
+  const std::string& _internal_deviceid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_deviceid(const std::string& value);
+  std::string* _internal_mutable_deviceid();
+  public:
+
+  // int64 userCount = 3;
+  void clear_usercount();
+  ::PROTOBUF_NAMESPACE_ID::int64 usercount() const;
+  void set_usercount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_usercount() const;
+  void _internal_set_usercount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.management.GetDeviceResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
+  ::PROTOBUF_NAMESPACE_ID::int64 usercount_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2fmanagement_2fdevice_2eproto;
+};
+// -------------------------------------------------------------------
+
 class DeviceListResponse final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.management.DeviceListResponse) */ {
  public:
@@ -1340,7 +1519,7 @@ class DeviceListResponse final :
                &_DeviceListResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(DeviceListResponse& a, DeviceListResponse& b) {
     a.Swap(&b);
@@ -1937,6 +2116,56 @@ inline void RenewDeviceCredentialRequest::set_allocated_credential(std::string* 
 
 // -------------------------------------------------------------------
 
+// DeviceRequest
+
+// string deviceId = 1 [(.validate.rules) = {
+inline void DeviceRequest::clear_deviceid() {
+  deviceid_.ClearToEmpty();
+}
+inline const std::string& DeviceRequest::deviceid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.DeviceRequest.deviceId)
+  return _internal_deviceid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void DeviceRequest::set_deviceid(ArgT0&& arg0, ArgT... args) {
+ 
+ deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.DeviceRequest.deviceId)
+}
+inline std::string* DeviceRequest::mutable_deviceid() {
+  std::string* _s = _internal_mutable_deviceid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.DeviceRequest.deviceId)
+  return _s;
+}
+inline const std::string& DeviceRequest::_internal_deviceid() const {
+  return deviceid_.Get();
+}
+inline void DeviceRequest::_internal_set_deviceid(const std::string& value) {
+  
+  deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* DeviceRequest::_internal_mutable_deviceid() {
+  
+  return deviceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* DeviceRequest::release_deviceid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.DeviceRequest.deviceId)
+  return deviceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void DeviceRequest::set_allocated_deviceid(std::string* deviceid) {
+  if (deviceid != nullptr) {
+    
+  } else {
+    
+  }
+  deviceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.DeviceRequest.deviceId)
+}
+
+// -------------------------------------------------------------------
+
 // GetDevicesRequest
 
 // string tenantId = 1;
@@ -2215,56 +2444,6 @@ inline void UpdateDeviceRequest::set_allocated_name(std::string* name) {
 
 // -------------------------------------------------------------------
 
-// DeleteDeviceRequest
-
-// string deviceId = 1 [(.validate.rules) = {
-inline void DeleteDeviceRequest::clear_deviceid() {
-  deviceid_.ClearToEmpty();
-}
-inline const std::string& DeleteDeviceRequest::deviceid() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.management.DeleteDeviceRequest.deviceId)
-  return _internal_deviceid();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void DeleteDeviceRequest::set_deviceid(ArgT0&& arg0, ArgT... args) {
- 
- deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.management.DeleteDeviceRequest.deviceId)
-}
-inline std::string* DeleteDeviceRequest::mutable_deviceid() {
-  std::string* _s = _internal_mutable_deviceid();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.DeleteDeviceRequest.deviceId)
-  return _s;
-}
-inline const std::string& DeleteDeviceRequest::_internal_deviceid() const {
-  return deviceid_.Get();
-}
-inline void DeleteDeviceRequest::_internal_set_deviceid(const std::string& value) {
-  
-  deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* DeleteDeviceRequest::_internal_mutable_deviceid() {
-  
-  return deviceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* DeleteDeviceRequest::release_deviceid() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.management.DeleteDeviceRequest.deviceId)
-  return deviceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void DeleteDeviceRequest::set_allocated_deviceid(std::string* deviceid) {
-  if (deviceid != nullptr) {
-    
-  } else {
-    
-  }
-  deviceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceid,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.DeleteDeviceRequest.deviceId)
-}
-
-// -------------------------------------------------------------------
-
 // DeviceResponse
 
 // string name = 1;
@@ -2357,6 +2536,122 @@ inline void DeviceResponse::set_allocated_deviceid(std::string* deviceid) {
   deviceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceid,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.DeviceResponse.deviceId)
+}
+
+// -------------------------------------------------------------------
+
+// GetDeviceResponse
+
+// string name = 1;
+inline void GetDeviceResponse::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& GetDeviceResponse::name() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.GetDeviceResponse.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GetDeviceResponse::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.GetDeviceResponse.name)
+}
+inline std::string* GetDeviceResponse::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.GetDeviceResponse.name)
+  return _s;
+}
+inline const std::string& GetDeviceResponse::_internal_name() const {
+  return name_.Get();
+}
+inline void GetDeviceResponse::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* GetDeviceResponse::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* GetDeviceResponse::release_name() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.GetDeviceResponse.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void GetDeviceResponse::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.GetDeviceResponse.name)
+}
+
+// string deviceId = 2;
+inline void GetDeviceResponse::clear_deviceid() {
+  deviceid_.ClearToEmpty();
+}
+inline const std::string& GetDeviceResponse::deviceid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.GetDeviceResponse.deviceId)
+  return _internal_deviceid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GetDeviceResponse::set_deviceid(ArgT0&& arg0, ArgT... args) {
+ 
+ deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.GetDeviceResponse.deviceId)
+}
+inline std::string* GetDeviceResponse::mutable_deviceid() {
+  std::string* _s = _internal_mutable_deviceid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.management.GetDeviceResponse.deviceId)
+  return _s;
+}
+inline const std::string& GetDeviceResponse::_internal_deviceid() const {
+  return deviceid_.Get();
+}
+inline void GetDeviceResponse::_internal_set_deviceid(const std::string& value) {
+  
+  deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* GetDeviceResponse::_internal_mutable_deviceid() {
+  
+  return deviceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* GetDeviceResponse::release_deviceid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.management.GetDeviceResponse.deviceId)
+  return deviceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void GetDeviceResponse::set_allocated_deviceid(std::string* deviceid) {
+  if (deviceid != nullptr) {
+    
+  } else {
+    
+  }
+  deviceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.management.GetDeviceResponse.deviceId)
+}
+
+// int64 userCount = 3;
+inline void GetDeviceResponse::clear_usercount() {
+  usercount_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 GetDeviceResponse::_internal_usercount() const {
+  return usercount_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 GetDeviceResponse::usercount() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.management.GetDeviceResponse.userCount)
+  return _internal_usercount();
+}
+inline void GetDeviceResponse::_internal_set_usercount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  usercount_ = value;
+}
+inline void GetDeviceResponse::set_usercount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_usercount(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.management.GetDeviceResponse.userCount)
 }
 
 // -------------------------------------------------------------------
@@ -2492,6 +2787,8 @@ inline void DeviceListResponse::set_allocated_pagination(::sensory::api::common:
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

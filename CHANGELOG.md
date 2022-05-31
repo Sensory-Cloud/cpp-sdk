@@ -26,3 +26,13 @@
     accept a vector of enrollment IDs to create the group with
 -   Implemented a constructor in each service for building from pointers to
     each of the necessary stubs
+
+# 0.11.4
+
+-   Support for v0.11.4 of Sensory cloud API
+
+# 0.12.4
+
+-   Support for v0.12.4 of Sensory cloud API
+-   Updated speech-to-text (STT) example to use new `FINAL` post-processing
+    action to indicate the end of a finite audio stream.

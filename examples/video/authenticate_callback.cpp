@@ -1,8 +1,8 @@
-// An example of face services based on OpenCV camera streams.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// An example of face biometric authentication services using on OpenCV.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::VideoService;
 using sensory::service::OAuthService;
+using sensory::service::ManagementService;
 
 /// @brief A bidirection stream reactor for biometric enrollments from video
 /// stream data.
@@ -213,7 +214,7 @@ int main(int argc, const char** argv) {
         .help("DEVICE The ID of the OpenCV device to use.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto HOSTNAME = args.get<std::string>("host");
@@ -237,7 +238,7 @@ int main(int argc, const char** argv) {
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
     if (!keychain.contains("deviceID"))
         keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
     const auto DEVICE_ID(keychain.at("deviceID"));
@@ -249,7 +250,7 @@ int main(int argc, const char** argv) {
     // ------ Check server health ----------------------------------------------
 
     // Query the health of the remote service.
-    sensory::service::HealthService healthService(config);
+    HealthService healthService(config);
     sensory::api::common::ServerHealthResponse serverHealth;
     auto status = healthService.getHealth(&serverHealth);
     if (!status.ok()) {  // the call failed, print a descriptive message
@@ -272,38 +273,31 @@ int main(int argc, const char** argv) {
     OAuthService oauthService(config);
     TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
 
-    if (!tokenManager.hasToken()) {  // the device is not registered
-        // Generate a new clientID and clientSecret for this device
-        const auto credentials = tokenManager.hasSavedCredentials() ?
-            tokenManager.getSavedCredentials() : tokenManager.generateCredentials();
-
+    // Attempt to login and register the device if needed.
+    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
         std::cout << "Registering device with server..." << std::endl;
-
-        // Query the friendly device name
+        // Query the device name from the standard input.
         std::string name = "";
-        std::cout << "Device Name: ";
+        std::cout << "Device name: ";
         std::cin >> name;
-
-        // Query the shared pass-phrase
-        std::string password = "";
-        std::cout << "password: ";
-        std::cin >> password;
-
-        // Register this device with the remote host
-        sensory::api::v1::management::DeviceResponse registerResponse;
-        auto status = oauthService.registerDevice(&registerResponse,
-            name, password, credentials.id, credentials.secret);
-        if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to register device with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
-            return 1;
-        }
+        // Query the credential for the user from the standard input.
+        std::string credential = "";
+        std::cout << "Credential: ";
+        std::cin >> credential;
+        // Return the device name and credential as a tuple.
+        return {name, credential};
+    });
+    // Check the status code from the attempted registration.
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to register device with\n\t" <<
+            status.error_code() << ": " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Get an enrollment ID ---------------------------------------------
 
     if (USER_ID != "") {
-        sensory::service::ManagementService<sensory::token_manager::InsecureCredentialStore> mgmtService(config, tokenManager);
+        ManagementService<InsecureCredentialStore> mgmtService(config, tokenManager);
         sensory::api::v1::management::GetEnrollmentsResponse enrollmentResponse;
         auto status = mgmtService.getEnrollments(&enrollmentResponse, USER_ID);
         if (!status.ok()) {  // the call failed, print a descriptive message
