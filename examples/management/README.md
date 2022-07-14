@@ -1,6 +1,6 @@
-# Sensory Cloud Management Services
+# SensoryCloud Management Services
 
-This project implements Sensory Cloud management tools.
+This project implements SensoryCloud management tools.
 
 ## Compilation
 
@@ -15,13 +15,15 @@ make
 
 ## Usage
 
-Before getting started, you must spin up a Sensory Cloud inference server or
-have Sensory spin one up for you. You must also have the following pieces of
-information:
+Before getting started you must spin up a [SensoryCloud][sensory-cloud]
+inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
+must also have the following pieces of information:
 
--   Your inference server URL (and port number)
--   Your Sensory Tenant ID (UUID)
--   Your configured secret key used to register OAuth clients
+-   your inference server address and port number,
+-   your SensoryCloud tenant ID, and
+-   your configured secret key used for registering OAuth clients.
+
+[sensory-cloud]: https://sensorycloud.ai/
 
 ### Get server health
 

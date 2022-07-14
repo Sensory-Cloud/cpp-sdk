@@ -1,4 +1,4 @@
-# cmake build file for Sensory Cloud management service demo applications.
+# cmake build file for SensoryCloud management service demo applications.
 #
 # Copyright 2021 Sensory, Inc.
 #
@@ -23,7 +23,7 @@ project(sensory-cloud-management-applications)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.12.4
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.12.10
 )
 FetchContent_MakeAvailable(sensorycloud)
 

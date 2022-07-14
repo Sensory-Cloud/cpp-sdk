@@ -50,7 +50,7 @@ struct TableStruct_v1_2faudio_2faudio_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[23]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[26]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -103,6 +103,12 @@ extern GetModelsRequestDefaultTypeInternal _GetModelsRequest_default_instance_;
 class GetModelsResponse;
 struct GetModelsResponseDefaultTypeInternal;
 extern GetModelsResponseDefaultTypeInternal _GetModelsResponse_default_instance_;
+class SynthesizeSpeechRequest;
+struct SynthesizeSpeechRequestDefaultTypeInternal;
+extern SynthesizeSpeechRequestDefaultTypeInternal _SynthesizeSpeechRequest_default_instance_;
+class SynthesizeSpeechResponse;
+struct SynthesizeSpeechResponseDefaultTypeInternal;
+extern SynthesizeSpeechResponseDefaultTypeInternal _SynthesizeSpeechResponse_default_instance_;
 class TranscribeConfig;
 struct TranscribeConfigDefaultTypeInternal;
 extern TranscribeConfigDefaultTypeInternal _TranscribeConfig_default_instance_;
@@ -130,6 +136,9 @@ extern ValidateEventRequestDefaultTypeInternal _ValidateEventRequest_default_ins
 class ValidateEventResponse;
 struct ValidateEventResponseDefaultTypeInternal;
 extern ValidateEventResponseDefaultTypeInternal _ValidateEventResponse_default_instance_;
+class VoiceSynthesisConfig;
+struct VoiceSynthesisConfigDefaultTypeInternal;
+extern VoiceSynthesisConfigDefaultTypeInternal _VoiceSynthesisConfig_default_instance_;
 }  // namespace audio
 }  // namespace v1
 }  // namespace api
@@ -149,6 +158,8 @@ template<> ::sensory::api::v1::audio::CreateEnrollmentRequest* Arena::CreateMayb
 template<> ::sensory::api::v1::audio::CreateEnrollmentResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::CreateEnrollmentResponse>(Arena*);
 template<> ::sensory::api::v1::audio::GetModelsRequest* Arena::CreateMaybeMessage<::sensory::api::v1::audio::GetModelsRequest>(Arena*);
 template<> ::sensory::api::v1::audio::GetModelsResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::GetModelsResponse>(Arena*);
+template<> ::sensory::api::v1::audio::SynthesizeSpeechRequest* Arena::CreateMaybeMessage<::sensory::api::v1::audio::SynthesizeSpeechRequest>(Arena*);
+template<> ::sensory::api::v1::audio::SynthesizeSpeechResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::SynthesizeSpeechResponse>(Arena*);
 template<> ::sensory::api::v1::audio::TranscribeConfig* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeConfig>(Arena*);
 template<> ::sensory::api::v1::audio::TranscribeRequest* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeRequest>(Arena*);
 template<> ::sensory::api::v1::audio::TranscribeResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeResponse>(Arena*);
@@ -158,6 +169,7 @@ template<> ::sensory::api::v1::audio::ValidateEnrolledEventResponse* Arena::Crea
 template<> ::sensory::api::v1::audio::ValidateEventConfig* Arena::CreateMaybeMessage<::sensory::api::v1::audio::ValidateEventConfig>(Arena*);
 template<> ::sensory::api::v1::audio::ValidateEventRequest* Arena::CreateMaybeMessage<::sensory::api::v1::audio::ValidateEventRequest>(Arena*);
 template<> ::sensory::api::v1::audio::ValidateEventResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::ValidateEventResponse>(Arena*);
+template<> ::sensory::api::v1::audio::VoiceSynthesisConfig* Arena::CreateMaybeMessage<::sensory::api::v1::audio::VoiceSynthesisConfig>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sensory {
 namespace api {
@@ -2288,6 +2300,174 @@ class TranscribeRequest final :
 };
 // -------------------------------------------------------------------
 
+class SynthesizeSpeechRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.SynthesizeSpeechRequest) */ {
+ public:
+  inline SynthesizeSpeechRequest() : SynthesizeSpeechRequest(nullptr) {}
+  ~SynthesizeSpeechRequest() override;
+  explicit constexpr SynthesizeSpeechRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SynthesizeSpeechRequest(const SynthesizeSpeechRequest& from);
+  SynthesizeSpeechRequest(SynthesizeSpeechRequest&& from) noexcept
+    : SynthesizeSpeechRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline SynthesizeSpeechRequest& operator=(const SynthesizeSpeechRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SynthesizeSpeechRequest& operator=(SynthesizeSpeechRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SynthesizeSpeechRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SynthesizeSpeechRequest* internal_default_instance() {
+    return reinterpret_cast<const SynthesizeSpeechRequest*>(
+               &_SynthesizeSpeechRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(SynthesizeSpeechRequest& a, SynthesizeSpeechRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SynthesizeSpeechRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SynthesizeSpeechRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SynthesizeSpeechRequest* New() const final {
+    return new SynthesizeSpeechRequest();
+  }
+
+  SynthesizeSpeechRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SynthesizeSpeechRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SynthesizeSpeechRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const SynthesizeSpeechRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SynthesizeSpeechRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.audio.SynthesizeSpeechRequest";
+  }
+  protected:
+  explicit SynthesizeSpeechRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kPhraseFieldNumber = 1,
+    kConfigFieldNumber = 2,
+  };
+  // string phrase = 1;
+  void clear_phrase();
+  const std::string& phrase() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_phrase(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_phrase();
+  PROTOBUF_MUST_USE_RESULT std::string* release_phrase();
+  void set_allocated_phrase(std::string* phrase);
+  private:
+  const std::string& _internal_phrase() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_phrase(const std::string& value);
+  std::string* _internal_mutable_phrase();
+  public:
+
+  // .sensory.api.v1.audio.VoiceSynthesisConfig config = 2;
+  bool has_config() const;
+  private:
+  bool _internal_has_config() const;
+  public:
+  void clear_config();
+  const ::sensory::api::v1::audio::VoiceSynthesisConfig& config() const;
+  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::audio::VoiceSynthesisConfig* release_config();
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* mutable_config();
+  void set_allocated_config(::sensory::api::v1::audio::VoiceSynthesisConfig* config);
+  private:
+  const ::sensory::api::v1::audio::VoiceSynthesisConfig& _internal_config() const;
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* _internal_mutable_config();
+  public:
+  void unsafe_arena_set_allocated_config(
+      ::sensory::api::v1::audio::VoiceSynthesisConfig* config);
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* unsafe_arena_release_config();
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.audio.SynthesizeSpeechRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr phrase_;
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* config_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
+};
+// -------------------------------------------------------------------
+
 class CreateEnrollmentResponse final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.CreateEnrollmentResponse) */ {
  public:
@@ -2336,7 +2516,7 @@ class CreateEnrollmentResponse final :
                &_CreateEnrollmentResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(CreateEnrollmentResponse& a, CreateEnrollmentResponse& b) {
     a.Swap(&b);
@@ -2411,6 +2591,7 @@ class CreateEnrollmentResponse final :
     kModelNameFieldNumber = 4,
     kModelVersionFieldNumber = 5,
     kModelPromptFieldNumber = 6,
+    kEnrollmentTokenFieldNumber = 8,
     kPercentCompleteFieldNumber = 1,
     kPercentSegmentCompleteFieldNumber = 7,
     kAudioEnergyFieldNumber = 2,
@@ -2471,6 +2652,24 @@ class CreateEnrollmentResponse final :
   std::string* _internal_mutable_modelprompt();
   public:
 
+  // .sensory.api.common.EnrollmentToken enrollmentToken = 8;
+  bool has_enrollmenttoken() const;
+  private:
+  bool _internal_has_enrollmenttoken() const;
+  public:
+  void clear_enrollmenttoken();
+  const ::sensory::api::common::EnrollmentToken& enrollmenttoken() const;
+  PROTOBUF_MUST_USE_RESULT ::sensory::api::common::EnrollmentToken* release_enrollmenttoken();
+  ::sensory::api::common::EnrollmentToken* mutable_enrollmenttoken();
+  void set_allocated_enrollmenttoken(::sensory::api::common::EnrollmentToken* enrollmenttoken);
+  private:
+  const ::sensory::api::common::EnrollmentToken& _internal_enrollmenttoken() const;
+  ::sensory::api::common::EnrollmentToken* _internal_mutable_enrollmenttoken();
+  public:
+  void unsafe_arena_set_allocated_enrollmenttoken(
+      ::sensory::api::common::EnrollmentToken* enrollmenttoken);
+  ::sensory::api::common::EnrollmentToken* unsafe_arena_release_enrollmenttoken();
+
   // int64 percentComplete = 1;
   void clear_percentcomplete();
   ::PROTOBUF_NAMESPACE_ID::int64 percentcomplete() const;
@@ -2509,6 +2708,7 @@ class CreateEnrollmentResponse final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelname_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelversion_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelprompt_;
+  ::sensory::api::common::EnrollmentToken* enrollmenttoken_;
   ::PROTOBUF_NAMESPACE_ID::int64 percentcomplete_;
   ::PROTOBUF_NAMESPACE_ID::int64 percentsegmentcomplete_;
   float audioenergy_;
@@ -2565,7 +2765,7 @@ class AuthenticateResponse final :
                &_AuthenticateResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(AuthenticateResponse& a, AuthenticateResponse& b) {
     a.Swap(&b);
@@ -2798,7 +2998,7 @@ class ValidateEventResponse final :
                &_ValidateEventResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(ValidateEventResponse& a, ValidateEventResponse& b) {
     a.Swap(&b);
@@ -2999,7 +3199,7 @@ class ValidateEnrolledEventResponse final :
                &_ValidateEnrolledEventResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(ValidateEnrolledEventResponse& a, ValidateEnrolledEventResponse& b) {
     a.Swap(&b);
@@ -3201,7 +3401,7 @@ class TranscribeResponse final :
                &_TranscribeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(TranscribeResponse& a, TranscribeResponse& b) {
     a.Swap(&b);
@@ -3343,6 +3543,197 @@ class TranscribeResponse final :
 };
 // -------------------------------------------------------------------
 
+class SynthesizeSpeechResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.SynthesizeSpeechResponse) */ {
+ public:
+  inline SynthesizeSpeechResponse() : SynthesizeSpeechResponse(nullptr) {}
+  ~SynthesizeSpeechResponse() override;
+  explicit constexpr SynthesizeSpeechResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SynthesizeSpeechResponse(const SynthesizeSpeechResponse& from);
+  SynthesizeSpeechResponse(SynthesizeSpeechResponse&& from) noexcept
+    : SynthesizeSpeechResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline SynthesizeSpeechResponse& operator=(const SynthesizeSpeechResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SynthesizeSpeechResponse& operator=(SynthesizeSpeechResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SynthesizeSpeechResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  enum StreamingResponseCase {
+    kConfig = 1,
+    kAudioContent = 2,
+    STREAMINGRESPONSE_NOT_SET = 0,
+  };
+
+  static inline const SynthesizeSpeechResponse* internal_default_instance() {
+    return reinterpret_cast<const SynthesizeSpeechResponse*>(
+               &_SynthesizeSpeechResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(SynthesizeSpeechResponse& a, SynthesizeSpeechResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SynthesizeSpeechResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SynthesizeSpeechResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SynthesizeSpeechResponse* New() const final {
+    return new SynthesizeSpeechResponse();
+  }
+
+  SynthesizeSpeechResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SynthesizeSpeechResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SynthesizeSpeechResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const SynthesizeSpeechResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SynthesizeSpeechResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.audio.SynthesizeSpeechResponse";
+  }
+  protected:
+  explicit SynthesizeSpeechResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kConfigFieldNumber = 1,
+    kAudioContentFieldNumber = 2,
+  };
+  // .sensory.api.v1.audio.AudioConfig config = 1;
+  bool has_config() const;
+  private:
+  bool _internal_has_config() const;
+  public:
+  void clear_config();
+  const ::sensory::api::v1::audio::AudioConfig& config() const;
+  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::audio::AudioConfig* release_config();
+  ::sensory::api::v1::audio::AudioConfig* mutable_config();
+  void set_allocated_config(::sensory::api::v1::audio::AudioConfig* config);
+  private:
+  const ::sensory::api::v1::audio::AudioConfig& _internal_config() const;
+  ::sensory::api::v1::audio::AudioConfig* _internal_mutable_config();
+  public:
+  void unsafe_arena_set_allocated_config(
+      ::sensory::api::v1::audio::AudioConfig* config);
+  ::sensory::api::v1::audio::AudioConfig* unsafe_arena_release_config();
+
+  // bytes audioContent = 2;
+  bool has_audiocontent() const;
+  private:
+  bool _internal_has_audiocontent() const;
+  public:
+  void clear_audiocontent();
+  const std::string& audiocontent() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_audiocontent(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_audiocontent();
+  PROTOBUF_MUST_USE_RESULT std::string* release_audiocontent();
+  void set_allocated_audiocontent(std::string* audiocontent);
+  private:
+  const std::string& _internal_audiocontent() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_audiocontent(const std::string& value);
+  std::string* _internal_mutable_audiocontent();
+  public:
+
+  void clear_streamingResponse();
+  StreamingResponseCase streamingResponse_case() const;
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.audio.SynthesizeSpeechResponse)
+ private:
+  class _Internal;
+  void set_has_config();
+  void set_has_audiocontent();
+
+  inline bool has_streamingResponse() const;
+  inline void clear_has_streamingResponse();
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  union StreamingResponseUnion {
+    constexpr StreamingResponseUnion() : _constinit_{} {}
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+    ::sensory::api::v1::audio::AudioConfig* config_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr audiocontent_;
+  } streamingResponse_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
+
+  friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
+};
+// -------------------------------------------------------------------
+
 class CreateEnrollmentConfig final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.CreateEnrollmentConfig) */ {
  public:
@@ -3397,7 +3788,7 @@ class CreateEnrollmentConfig final :
                &_CreateEnrollmentConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    18;
 
   friend void swap(CreateEnrollmentConfig& a, CreateEnrollmentConfig& b) {
     a.Swap(&b);
@@ -3689,7 +4080,7 @@ class AuthenticateConfig final :
                &_AuthenticateConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    19;
 
   friend void swap(AuthenticateConfig& a, AuthenticateConfig& b) {
     a.Swap(&b);
@@ -3790,6 +4181,7 @@ class AuthenticateConfig final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kEnrollmentTokenFieldNumber = 8,
     kAudioFieldNumber = 1,
     kSensitivityFieldNumber = 5,
     kDoIncludeTokenFieldNumber = 4,
@@ -3798,6 +4190,20 @@ class AuthenticateConfig final :
     kEnrollmentIdFieldNumber = 2,
     kEnrollmentGroupIdFieldNumber = 3,
   };
+  // bytes enrollmentToken = 8;
+  void clear_enrollmenttoken();
+  const std::string& enrollmenttoken() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_enrollmenttoken(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_enrollmenttoken();
+  PROTOBUF_MUST_USE_RESULT std::string* release_enrollmenttoken();
+  void set_allocated_enrollmenttoken(std::string* enrollmenttoken);
+  private:
+  const std::string& _internal_enrollmenttoken() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_enrollmenttoken(const std::string& value);
+  std::string* _internal_mutable_enrollmenttoken();
+  public:
+
   // .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
   bool has_audio() const;
   private:
@@ -3902,6 +4308,7 @@ class AuthenticateConfig final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmenttoken_;
   ::sensory::api::v1::audio::AudioConfig* audio_;
   int sensitivity_;
   bool doincludetoken_;
@@ -3968,7 +4375,7 @@ class ValidateEventConfig final :
                &_ValidateEventConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    20;
 
   friend void swap(ValidateEventConfig& a, ValidateEventConfig& b) {
     a.Swap(&b);
@@ -4169,7 +4576,7 @@ class CreateEnrollmentEventConfig final :
                &_CreateEnrollmentEventConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    21;
 
   friend void swap(CreateEnrollmentEventConfig& a, CreateEnrollmentEventConfig& b) {
     a.Swap(&b);
@@ -4434,7 +4841,7 @@ class ValidateEnrolledEventConfig final :
                &_ValidateEnrolledEventConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    22;
 
   friend void swap(ValidateEnrolledEventConfig& a, ValidateEnrolledEventConfig& b) {
     a.Swap(&b);
@@ -4505,11 +4912,26 @@ class ValidateEnrolledEventConfig final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kEnrollmentTokenFieldNumber = 5,
     kAudioFieldNumber = 1,
     kSensitivityFieldNumber = 4,
     kEnrollmentIdFieldNumber = 2,
     kEnrollmentGroupIdFieldNumber = 3,
   };
+  // bytes enrollmentToken = 5;
+  void clear_enrollmenttoken();
+  const std::string& enrollmenttoken() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_enrollmenttoken(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_enrollmenttoken();
+  PROTOBUF_MUST_USE_RESULT std::string* release_enrollmenttoken();
+  void set_allocated_enrollmenttoken(std::string* enrollmenttoken);
+  private:
+  const std::string& _internal_enrollmenttoken() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_enrollmenttoken(const std::string& value);
+  std::string* _internal_mutable_enrollmenttoken();
+  public:
+
   // .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
   bool has_audio() const;
   private:
@@ -4587,6 +5009,7 @@ class ValidateEnrolledEventConfig final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmenttoken_;
   ::sensory::api::v1::audio::AudioConfig* audio_;
   int sensitivity_;
   union AuthIdUnion {
@@ -4650,7 +5073,7 @@ class TranscribeConfig final :
                &_TranscribeConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    23;
 
   friend void swap(TranscribeConfig& a, TranscribeConfig& b) {
     a.Swap(&b);
@@ -4834,7 +5257,7 @@ class AudioConfig final :
                &_AudioConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    24;
 
   friend void swap(AudioConfig& a, AudioConfig& b) {
     a.Swap(&b);
@@ -4994,6 +5417,174 @@ class AudioConfig final :
   int encoding_;
   ::PROTOBUF_NAMESPACE_ID::int32 sampleratehertz_;
   ::PROTOBUF_NAMESPACE_ID::int32 audiochannelcount_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
+};
+// -------------------------------------------------------------------
+
+class VoiceSynthesisConfig final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.VoiceSynthesisConfig) */ {
+ public:
+  inline VoiceSynthesisConfig() : VoiceSynthesisConfig(nullptr) {}
+  ~VoiceSynthesisConfig() override;
+  explicit constexpr VoiceSynthesisConfig(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  VoiceSynthesisConfig(const VoiceSynthesisConfig& from);
+  VoiceSynthesisConfig(VoiceSynthesisConfig&& from) noexcept
+    : VoiceSynthesisConfig() {
+    *this = ::std::move(from);
+  }
+
+  inline VoiceSynthesisConfig& operator=(const VoiceSynthesisConfig& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline VoiceSynthesisConfig& operator=(VoiceSynthesisConfig&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const VoiceSynthesisConfig& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const VoiceSynthesisConfig* internal_default_instance() {
+    return reinterpret_cast<const VoiceSynthesisConfig*>(
+               &_VoiceSynthesisConfig_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    25;
+
+  friend void swap(VoiceSynthesisConfig& a, VoiceSynthesisConfig& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(VoiceSynthesisConfig* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(VoiceSynthesisConfig* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline VoiceSynthesisConfig* New() const final {
+    return new VoiceSynthesisConfig();
+  }
+
+  VoiceSynthesisConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<VoiceSynthesisConfig>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const VoiceSynthesisConfig& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const VoiceSynthesisConfig& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(VoiceSynthesisConfig* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.audio.VoiceSynthesisConfig";
+  }
+  protected:
+  explicit VoiceSynthesisConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kVoiceFieldNumber = 2,
+    kAudioFieldNumber = 1,
+  };
+  // string voice = 2 [(.validate.rules) = {
+  void clear_voice();
+  const std::string& voice() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_voice(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_voice();
+  PROTOBUF_MUST_USE_RESULT std::string* release_voice();
+  void set_allocated_voice(std::string* voice);
+  private:
+  const std::string& _internal_voice() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_voice(const std::string& value);
+  std::string* _internal_mutable_voice();
+  public:
+
+  // .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
+  bool has_audio() const;
+  private:
+  bool _internal_has_audio() const;
+  public:
+  void clear_audio();
+  const ::sensory::api::v1::audio::AudioConfig& audio() const;
+  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::audio::AudioConfig* release_audio();
+  ::sensory::api::v1::audio::AudioConfig* mutable_audio();
+  void set_allocated_audio(::sensory::api::v1::audio::AudioConfig* audio);
+  private:
+  const ::sensory::api::v1::audio::AudioConfig& _internal_audio() const;
+  ::sensory::api::v1::audio::AudioConfig* _internal_mutable_audio();
+  public:
+  void unsafe_arena_set_allocated_audio(
+      ::sensory::api::v1::audio::AudioConfig* audio);
+  ::sensory::api::v1::audio::AudioConfig* unsafe_arena_release_audio();
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.audio.VoiceSynthesisConfig)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr voice_;
+  ::sensory::api::v1::audio::AudioConfig* audio_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
 };
@@ -6659,6 +7250,146 @@ inline TranscribeRequest::StreamingRequestCase TranscribeRequest::streamingReque
 }
 // -------------------------------------------------------------------
 
+// SynthesizeSpeechRequest
+
+// string phrase = 1;
+inline void SynthesizeSpeechRequest::clear_phrase() {
+  phrase_.ClearToEmpty();
+}
+inline const std::string& SynthesizeSpeechRequest::phrase() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.SynthesizeSpeechRequest.phrase)
+  return _internal_phrase();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void SynthesizeSpeechRequest::set_phrase(ArgT0&& arg0, ArgT... args) {
+ 
+ phrase_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.SynthesizeSpeechRequest.phrase)
+}
+inline std::string* SynthesizeSpeechRequest::mutable_phrase() {
+  std::string* _s = _internal_mutable_phrase();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.SynthesizeSpeechRequest.phrase)
+  return _s;
+}
+inline const std::string& SynthesizeSpeechRequest::_internal_phrase() const {
+  return phrase_.Get();
+}
+inline void SynthesizeSpeechRequest::_internal_set_phrase(const std::string& value) {
+  
+  phrase_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* SynthesizeSpeechRequest::_internal_mutable_phrase() {
+  
+  return phrase_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* SynthesizeSpeechRequest::release_phrase() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.SynthesizeSpeechRequest.phrase)
+  return phrase_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void SynthesizeSpeechRequest::set_allocated_phrase(std::string* phrase) {
+  if (phrase != nullptr) {
+    
+  } else {
+    
+  }
+  phrase_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), phrase,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.SynthesizeSpeechRequest.phrase)
+}
+
+// .sensory.api.v1.audio.VoiceSynthesisConfig config = 2;
+inline bool SynthesizeSpeechRequest::_internal_has_config() const {
+  return this != internal_default_instance() && config_ != nullptr;
+}
+inline bool SynthesizeSpeechRequest::has_config() const {
+  return _internal_has_config();
+}
+inline void SynthesizeSpeechRequest::clear_config() {
+  if (GetArenaForAllocation() == nullptr && config_ != nullptr) {
+    delete config_;
+  }
+  config_ = nullptr;
+}
+inline const ::sensory::api::v1::audio::VoiceSynthesisConfig& SynthesizeSpeechRequest::_internal_config() const {
+  const ::sensory::api::v1::audio::VoiceSynthesisConfig* p = config_;
+  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::audio::VoiceSynthesisConfig&>(
+      ::sensory::api::v1::audio::_VoiceSynthesisConfig_default_instance_);
+}
+inline const ::sensory::api::v1::audio::VoiceSynthesisConfig& SynthesizeSpeechRequest::config() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.SynthesizeSpeechRequest.config)
+  return _internal_config();
+}
+inline void SynthesizeSpeechRequest::unsafe_arena_set_allocated_config(
+    ::sensory::api::v1::audio::VoiceSynthesisConfig* config) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(config_);
+  }
+  config_ = config;
+  if (config) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.audio.SynthesizeSpeechRequest.config)
+}
+inline ::sensory::api::v1::audio::VoiceSynthesisConfig* SynthesizeSpeechRequest::release_config() {
+  
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* temp = config_;
+  config_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::sensory::api::v1::audio::VoiceSynthesisConfig* SynthesizeSpeechRequest::unsafe_arena_release_config() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.SynthesizeSpeechRequest.config)
+  
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* temp = config_;
+  config_ = nullptr;
+  return temp;
+}
+inline ::sensory::api::v1::audio::VoiceSynthesisConfig* SynthesizeSpeechRequest::_internal_mutable_config() {
+  
+  if (config_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensory::api::v1::audio::VoiceSynthesisConfig>(GetArenaForAllocation());
+    config_ = p;
+  }
+  return config_;
+}
+inline ::sensory::api::v1::audio::VoiceSynthesisConfig* SynthesizeSpeechRequest::mutable_config() {
+  ::sensory::api::v1::audio::VoiceSynthesisConfig* _msg = _internal_mutable_config();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.SynthesizeSpeechRequest.config)
+  return _msg;
+}
+inline void SynthesizeSpeechRequest::set_allocated_config(::sensory::api::v1::audio::VoiceSynthesisConfig* config) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete config_;
+  }
+  if (config) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::audio::VoiceSynthesisConfig>::GetOwningArena(config);
+    if (message_arena != submessage_arena) {
+      config = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, config, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  config_ = config;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.SynthesizeSpeechRequest.config)
+}
+
+// -------------------------------------------------------------------
+
 // CreateEnrollmentResponse
 
 // int64 percentComplete = 1;
@@ -6903,6 +7634,92 @@ inline void CreateEnrollmentResponse::_internal_set_percentsegmentcomplete(::PRO
 inline void CreateEnrollmentResponse::set_percentsegmentcomplete(::PROTOBUF_NAMESPACE_ID::int64 value) {
   _internal_set_percentsegmentcomplete(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.audio.CreateEnrollmentResponse.percentSegmentComplete)
+}
+
+// .sensory.api.common.EnrollmentToken enrollmentToken = 8;
+inline bool CreateEnrollmentResponse::_internal_has_enrollmenttoken() const {
+  return this != internal_default_instance() && enrollmenttoken_ != nullptr;
+}
+inline bool CreateEnrollmentResponse::has_enrollmenttoken() const {
+  return _internal_has_enrollmenttoken();
+}
+inline const ::sensory::api::common::EnrollmentToken& CreateEnrollmentResponse::_internal_enrollmenttoken() const {
+  const ::sensory::api::common::EnrollmentToken* p = enrollmenttoken_;
+  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::common::EnrollmentToken&>(
+      ::sensory::api::common::_EnrollmentToken_default_instance_);
+}
+inline const ::sensory::api::common::EnrollmentToken& CreateEnrollmentResponse::enrollmenttoken() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.CreateEnrollmentResponse.enrollmentToken)
+  return _internal_enrollmenttoken();
+}
+inline void CreateEnrollmentResponse::unsafe_arena_set_allocated_enrollmenttoken(
+    ::sensory::api::common::EnrollmentToken* enrollmenttoken) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(enrollmenttoken_);
+  }
+  enrollmenttoken_ = enrollmenttoken;
+  if (enrollmenttoken) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.audio.CreateEnrollmentResponse.enrollmentToken)
+}
+inline ::sensory::api::common::EnrollmentToken* CreateEnrollmentResponse::release_enrollmenttoken() {
+  
+  ::sensory::api::common::EnrollmentToken* temp = enrollmenttoken_;
+  enrollmenttoken_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::sensory::api::common::EnrollmentToken* CreateEnrollmentResponse::unsafe_arena_release_enrollmenttoken() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.CreateEnrollmentResponse.enrollmentToken)
+  
+  ::sensory::api::common::EnrollmentToken* temp = enrollmenttoken_;
+  enrollmenttoken_ = nullptr;
+  return temp;
+}
+inline ::sensory::api::common::EnrollmentToken* CreateEnrollmentResponse::_internal_mutable_enrollmenttoken() {
+  
+  if (enrollmenttoken_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensory::api::common::EnrollmentToken>(GetArenaForAllocation());
+    enrollmenttoken_ = p;
+  }
+  return enrollmenttoken_;
+}
+inline ::sensory::api::common::EnrollmentToken* CreateEnrollmentResponse::mutable_enrollmenttoken() {
+  ::sensory::api::common::EnrollmentToken* _msg = _internal_mutable_enrollmenttoken();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.CreateEnrollmentResponse.enrollmentToken)
+  return _msg;
+}
+inline void CreateEnrollmentResponse::set_allocated_enrollmenttoken(::sensory::api::common::EnrollmentToken* enrollmenttoken) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(enrollmenttoken_);
+  }
+  if (enrollmenttoken) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(enrollmenttoken));
+    if (message_arena != submessage_arena) {
+      enrollmenttoken = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, enrollmenttoken, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  enrollmenttoken_ = enrollmenttoken;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.CreateEnrollmentResponse.enrollmentToken)
 }
 
 // -------------------------------------------------------------------
@@ -7757,6 +8574,175 @@ inline void TranscribeResponse::set_allocated_postprocessingaction(::sensory::ap
 
 // -------------------------------------------------------------------
 
+// SynthesizeSpeechResponse
+
+// .sensory.api.v1.audio.AudioConfig config = 1;
+inline bool SynthesizeSpeechResponse::_internal_has_config() const {
+  return streamingResponse_case() == kConfig;
+}
+inline bool SynthesizeSpeechResponse::has_config() const {
+  return _internal_has_config();
+}
+inline void SynthesizeSpeechResponse::set_has_config() {
+  _oneof_case_[0] = kConfig;
+}
+inline void SynthesizeSpeechResponse::clear_config() {
+  if (_internal_has_config()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete streamingResponse_.config_;
+    }
+    clear_has_streamingResponse();
+  }
+}
+inline ::sensory::api::v1::audio::AudioConfig* SynthesizeSpeechResponse::release_config() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.SynthesizeSpeechResponse.config)
+  if (_internal_has_config()) {
+    clear_has_streamingResponse();
+      ::sensory::api::v1::audio::AudioConfig* temp = streamingResponse_.config_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    streamingResponse_.config_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::sensory::api::v1::audio::AudioConfig& SynthesizeSpeechResponse::_internal_config() const {
+  return _internal_has_config()
+      ? *streamingResponse_.config_
+      : reinterpret_cast< ::sensory::api::v1::audio::AudioConfig&>(::sensory::api::v1::audio::_AudioConfig_default_instance_);
+}
+inline const ::sensory::api::v1::audio::AudioConfig& SynthesizeSpeechResponse::config() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.SynthesizeSpeechResponse.config)
+  return _internal_config();
+}
+inline ::sensory::api::v1::audio::AudioConfig* SynthesizeSpeechResponse::unsafe_arena_release_config() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:sensory.api.v1.audio.SynthesizeSpeechResponse.config)
+  if (_internal_has_config()) {
+    clear_has_streamingResponse();
+    ::sensory::api::v1::audio::AudioConfig* temp = streamingResponse_.config_;
+    streamingResponse_.config_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void SynthesizeSpeechResponse::unsafe_arena_set_allocated_config(::sensory::api::v1::audio::AudioConfig* config) {
+  clear_streamingResponse();
+  if (config) {
+    set_has_config();
+    streamingResponse_.config_ = config;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.audio.SynthesizeSpeechResponse.config)
+}
+inline ::sensory::api::v1::audio::AudioConfig* SynthesizeSpeechResponse::_internal_mutable_config() {
+  if (!_internal_has_config()) {
+    clear_streamingResponse();
+    set_has_config();
+    streamingResponse_.config_ = CreateMaybeMessage< ::sensory::api::v1::audio::AudioConfig >(GetArenaForAllocation());
+  }
+  return streamingResponse_.config_;
+}
+inline ::sensory::api::v1::audio::AudioConfig* SynthesizeSpeechResponse::mutable_config() {
+  ::sensory::api::v1::audio::AudioConfig* _msg = _internal_mutable_config();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.SynthesizeSpeechResponse.config)
+  return _msg;
+}
+
+// bytes audioContent = 2;
+inline bool SynthesizeSpeechResponse::_internal_has_audiocontent() const {
+  return streamingResponse_case() == kAudioContent;
+}
+inline bool SynthesizeSpeechResponse::has_audiocontent() const {
+  return _internal_has_audiocontent();
+}
+inline void SynthesizeSpeechResponse::set_has_audiocontent() {
+  _oneof_case_[0] = kAudioContent;
+}
+inline void SynthesizeSpeechResponse::clear_audiocontent() {
+  if (_internal_has_audiocontent()) {
+    streamingResponse_.audiocontent_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+    clear_has_streamingResponse();
+  }
+}
+inline const std::string& SynthesizeSpeechResponse::audiocontent() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.SynthesizeSpeechResponse.audioContent)
+  return _internal_audiocontent();
+}
+template <typename ArgT0, typename... ArgT>
+inline void SynthesizeSpeechResponse::set_audiocontent(ArgT0&& arg0, ArgT... args) {
+  if (!_internal_has_audiocontent()) {
+    clear_streamingResponse();
+    set_has_audiocontent();
+    streamingResponse_.audiocontent_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  streamingResponse_.audiocontent_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.SynthesizeSpeechResponse.audioContent)
+}
+inline std::string* SynthesizeSpeechResponse::mutable_audiocontent() {
+  std::string* _s = _internal_mutable_audiocontent();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.SynthesizeSpeechResponse.audioContent)
+  return _s;
+}
+inline const std::string& SynthesizeSpeechResponse::_internal_audiocontent() const {
+  if (_internal_has_audiocontent()) {
+    return streamingResponse_.audiocontent_.Get();
+  }
+  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+}
+inline void SynthesizeSpeechResponse::_internal_set_audiocontent(const std::string& value) {
+  if (!_internal_has_audiocontent()) {
+    clear_streamingResponse();
+    set_has_audiocontent();
+    streamingResponse_.audiocontent_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  streamingResponse_.audiocontent_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* SynthesizeSpeechResponse::_internal_mutable_audiocontent() {
+  if (!_internal_has_audiocontent()) {
+    clear_streamingResponse();
+    set_has_audiocontent();
+    streamingResponse_.audiocontent_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  }
+  return streamingResponse_.audiocontent_.Mutable(
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* SynthesizeSpeechResponse::release_audiocontent() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.SynthesizeSpeechResponse.audioContent)
+  if (_internal_has_audiocontent()) {
+    clear_has_streamingResponse();
+    return streamingResponse_.audiocontent_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+  } else {
+    return nullptr;
+  }
+}
+inline void SynthesizeSpeechResponse::set_allocated_audiocontent(std::string* audiocontent) {
+  if (has_streamingResponse()) {
+    clear_streamingResponse();
+  }
+  if (audiocontent != nullptr) {
+    set_has_audiocontent();
+    streamingResponse_.audiocontent_.UnsafeSetDefault(audiocontent);
+    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
+    if (arena != nullptr) {
+      arena->Own(audiocontent);
+    }
+  }
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.SynthesizeSpeechResponse.audioContent)
+}
+
+inline bool SynthesizeSpeechResponse::has_streamingResponse() const {
+  return streamingResponse_case() != STREAMINGRESPONSE_NOT_SET;
+}
+inline void SynthesizeSpeechResponse::clear_has_streamingResponse() {
+  _oneof_case_[0] = STREAMINGRESPONSE_NOT_SET;
+}
+inline SynthesizeSpeechResponse::StreamingResponseCase SynthesizeSpeechResponse::streamingResponse_case() const {
+  return SynthesizeSpeechResponse::StreamingResponseCase(_oneof_case_[0]);
+}
+// -------------------------------------------------------------------
+
 // CreateEnrollmentConfig
 
 // .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
@@ -8520,6 +9506,52 @@ inline void AuthenticateConfig::_internal_set_islivenessenabled(bool value) {
 inline void AuthenticateConfig::set_islivenessenabled(bool value) {
   _internal_set_islivenessenabled(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.audio.AuthenticateConfig.isLivenessEnabled)
+}
+
+// bytes enrollmentToken = 8;
+inline void AuthenticateConfig::clear_enrollmenttoken() {
+  enrollmenttoken_.ClearToEmpty();
+}
+inline const std::string& AuthenticateConfig::enrollmenttoken() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.AuthenticateConfig.enrollmentToken)
+  return _internal_enrollmenttoken();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void AuthenticateConfig::set_enrollmenttoken(ArgT0&& arg0, ArgT... args) {
+ 
+ enrollmenttoken_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.AuthenticateConfig.enrollmentToken)
+}
+inline std::string* AuthenticateConfig::mutable_enrollmenttoken() {
+  std::string* _s = _internal_mutable_enrollmenttoken();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.AuthenticateConfig.enrollmentToken)
+  return _s;
+}
+inline const std::string& AuthenticateConfig::_internal_enrollmenttoken() const {
+  return enrollmenttoken_.Get();
+}
+inline void AuthenticateConfig::_internal_set_enrollmenttoken(const std::string& value) {
+  
+  enrollmenttoken_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* AuthenticateConfig::_internal_mutable_enrollmenttoken() {
+  
+  return enrollmenttoken_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* AuthenticateConfig::release_enrollmenttoken() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.AuthenticateConfig.enrollmentToken)
+  return enrollmenttoken_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void AuthenticateConfig::set_allocated_enrollmenttoken(std::string* enrollmenttoken) {
+  if (enrollmenttoken != nullptr) {
+    
+  } else {
+    
+  }
+  enrollmenttoken_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), enrollmenttoken,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.AuthenticateConfig.enrollmentToken)
 }
 
 inline bool AuthenticateConfig::has_authId() const {
@@ -9378,6 +10410,52 @@ inline void ValidateEnrolledEventConfig::set_sensitivity(::sensory::api::v1::aud
   // @@protoc_insertion_point(field_set:sensory.api.v1.audio.ValidateEnrolledEventConfig.sensitivity)
 }
 
+// bytes enrollmentToken = 5;
+inline void ValidateEnrolledEventConfig::clear_enrollmenttoken() {
+  enrollmenttoken_.ClearToEmpty();
+}
+inline const std::string& ValidateEnrolledEventConfig::enrollmenttoken() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.ValidateEnrolledEventConfig.enrollmentToken)
+  return _internal_enrollmenttoken();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ValidateEnrolledEventConfig::set_enrollmenttoken(ArgT0&& arg0, ArgT... args) {
+ 
+ enrollmenttoken_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.ValidateEnrolledEventConfig.enrollmentToken)
+}
+inline std::string* ValidateEnrolledEventConfig::mutable_enrollmenttoken() {
+  std::string* _s = _internal_mutable_enrollmenttoken();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.ValidateEnrolledEventConfig.enrollmentToken)
+  return _s;
+}
+inline const std::string& ValidateEnrolledEventConfig::_internal_enrollmenttoken() const {
+  return enrollmenttoken_.Get();
+}
+inline void ValidateEnrolledEventConfig::_internal_set_enrollmenttoken(const std::string& value) {
+  
+  enrollmenttoken_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ValidateEnrolledEventConfig::_internal_mutable_enrollmenttoken() {
+  
+  return enrollmenttoken_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ValidateEnrolledEventConfig::release_enrollmenttoken() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.ValidateEnrolledEventConfig.enrollmentToken)
+  return enrollmenttoken_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ValidateEnrolledEventConfig::set_allocated_enrollmenttoken(std::string* enrollmenttoken) {
+  if (enrollmenttoken != nullptr) {
+    
+  } else {
+    
+  }
+  enrollmenttoken_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), enrollmenttoken,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.ValidateEnrolledEventConfig.enrollmentToken)
+}
+
 inline bool ValidateEnrolledEventConfig::has_authId() const {
   return authId_case() != AUTHID_NOT_SET;
 }
@@ -9683,9 +10761,155 @@ inline void AudioConfig::set_allocated_languagecode(std::string* languagecode) {
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.AudioConfig.languageCode)
 }
 
+// -------------------------------------------------------------------
+
+// VoiceSynthesisConfig
+
+// .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
+inline bool VoiceSynthesisConfig::_internal_has_audio() const {
+  return this != internal_default_instance() && audio_ != nullptr;
+}
+inline bool VoiceSynthesisConfig::has_audio() const {
+  return _internal_has_audio();
+}
+inline void VoiceSynthesisConfig::clear_audio() {
+  if (GetArenaForAllocation() == nullptr && audio_ != nullptr) {
+    delete audio_;
+  }
+  audio_ = nullptr;
+}
+inline const ::sensory::api::v1::audio::AudioConfig& VoiceSynthesisConfig::_internal_audio() const {
+  const ::sensory::api::v1::audio::AudioConfig* p = audio_;
+  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::audio::AudioConfig&>(
+      ::sensory::api::v1::audio::_AudioConfig_default_instance_);
+}
+inline const ::sensory::api::v1::audio::AudioConfig& VoiceSynthesisConfig::audio() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
+  return _internal_audio();
+}
+inline void VoiceSynthesisConfig::unsafe_arena_set_allocated_audio(
+    ::sensory::api::v1::audio::AudioConfig* audio) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(audio_);
+  }
+  audio_ = audio;
+  if (audio) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
+}
+inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::release_audio() {
+  
+  ::sensory::api::v1::audio::AudioConfig* temp = audio_;
+  audio_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::unsafe_arena_release_audio() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
+  
+  ::sensory::api::v1::audio::AudioConfig* temp = audio_;
+  audio_ = nullptr;
+  return temp;
+}
+inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::_internal_mutable_audio() {
+  
+  if (audio_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensory::api::v1::audio::AudioConfig>(GetArenaForAllocation());
+    audio_ = p;
+  }
+  return audio_;
+}
+inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::mutable_audio() {
+  ::sensory::api::v1::audio::AudioConfig* _msg = _internal_mutable_audio();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
+  return _msg;
+}
+inline void VoiceSynthesisConfig::set_allocated_audio(::sensory::api::v1::audio::AudioConfig* audio) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete audio_;
+  }
+  if (audio) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::audio::AudioConfig>::GetOwningArena(audio);
+    if (message_arena != submessage_arena) {
+      audio = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, audio, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  audio_ = audio;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
+}
+
+// string voice = 2 [(.validate.rules) = {
+inline void VoiceSynthesisConfig::clear_voice() {
+  voice_.ClearToEmpty();
+}
+inline const std::string& VoiceSynthesisConfig::voice() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+  return _internal_voice();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void VoiceSynthesisConfig::set_voice(ArgT0&& arg0, ArgT... args) {
+ 
+ voice_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+}
+inline std::string* VoiceSynthesisConfig::mutable_voice() {
+  std::string* _s = _internal_mutable_voice();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+  return _s;
+}
+inline const std::string& VoiceSynthesisConfig::_internal_voice() const {
+  return voice_.Get();
+}
+inline void VoiceSynthesisConfig::_internal_set_voice(const std::string& value) {
+  
+  voice_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* VoiceSynthesisConfig::_internal_mutable_voice() {
+  
+  return voice_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* VoiceSynthesisConfig::release_voice() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+  return voice_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void VoiceSynthesisConfig::set_allocated_voice(std::string* voice) {
+  if (voice != nullptr) {
+    
+  } else {
+    
+  }
+  voice_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), voice,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

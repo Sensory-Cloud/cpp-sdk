@@ -1,4 +1,4 @@
-# cmake build file for Sensory Cloud applications based on OpenCV.
+# cmake build file for SensoryCloud applications based on OpenCV.
 #
 # Copyright 2021 Sensory, Inc.
 #
@@ -23,7 +23,7 @@ project(sensory-cloud-opencv-applications)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.12.4
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.12.10
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -37,42 +37,42 @@ include_directories(dep)
 
 # --- Authenticate -------------------------------------------------------------
 
-add_executable(authenticate authenticate.cpp)
+add_executable(authenticate synchronous/authenticate.cpp)
 target_link_libraries(authenticate PRIVATE sensorycloud)
 target_link_libraries(authenticate PRIVATE ${OpenCV_LIBS})
 
-add_executable(authenticate_async authenticate_async.cpp)
+add_executable(authenticate_async asynchronous_event/authenticate.cpp)
 target_link_libraries(authenticate_async PRIVATE sensorycloud)
 target_link_libraries(authenticate_async PRIVATE ${OpenCV_LIBS})
 
-add_executable(authenticate_callback authenticate_callback.cpp)
+add_executable(authenticate_callback asynchronous_callback/authenticate.cpp)
 target_link_libraries(authenticate_callback PRIVATE sensorycloud)
 target_link_libraries(authenticate_callback PRIVATE ${OpenCV_LIBS})
 
-# --- Create Enrollment --------------------------------------------------------
+# --- Enroll -------------------------------------------------------------------
 
-add_executable(enroll enroll.cpp)
+add_executable(enroll synchronous/enroll.cpp)
 target_link_libraries(enroll PRIVATE sensorycloud)
 target_link_libraries(enroll PRIVATE ${OpenCV_LIBS})
 
-add_executable(enroll_async enroll_async.cpp)
+add_executable(enroll_async asynchronous_event/enroll.cpp)
 target_link_libraries(enroll_async PRIVATE sensorycloud)
 target_link_libraries(enroll_async PRIVATE ${OpenCV_LIBS})
 
-add_executable(enroll_callback enroll_callback.cpp)
+add_executable(enroll_callback asynchronous_callback/enroll.cpp)
 target_link_libraries(enroll_callback PRIVATE sensorycloud)
 target_link_libraries(enroll_callback PRIVATE ${OpenCV_LIBS})
 
-# --- Validate Liveness --------------------------------------------------------
+# --- Liveness -----------------------------------------------------------------
 
-add_executable(liveness liveness.cpp)
+add_executable(liveness synchronous/liveness.cpp)
 target_link_libraries(liveness PRIVATE sensorycloud)
 target_link_libraries(liveness PRIVATE ${OpenCV_LIBS})
 
-add_executable(liveness_async liveness_async.cpp)
+add_executable(liveness_async asynchronous_event/liveness.cpp)
 target_link_libraries(liveness_async PRIVATE sensorycloud)
 target_link_libraries(liveness_async PRIVATE ${OpenCV_LIBS})
 
-add_executable(liveness_callback liveness_callback.cpp)
+add_executable(liveness_callback asynchronous_callback/liveness.cpp)
 target_link_libraries(liveness_callback PRIVATE sensorycloud)
 target_link_libraries(liveness_callback PRIVATE ${OpenCV_LIBS})

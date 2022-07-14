@@ -1,8 +1,8 @@
-// A secure credential store interface for the Sensory Cloud C++ SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// A secure credential store interface for the SensoryCloud C++ SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
+#ifndef SENSORYCLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
+#define SENSORYCLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
 
 #include <exception>
 #include <string>
@@ -54,7 +54,7 @@
 
 #endif
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 /// @brief Modules for generating and storing secure credentials.
@@ -358,7 +358,7 @@ inline void SecureCredentialStore::erase(const std::string& key) const {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
+#endif  // SENSORYCLOUD_TOKEN_MANAGER_SECURE_CREDENTIAL_STORE_HPP_
 
 
 

@@ -1,8 +1,8 @@
-// Configuration structures for the Sensory Cloud C++ SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// Configuration structures for the SensoryCloud C++ SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,16 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_SERVICES_ERRORS_HPP_
-#define SENSORY_CLOUD_SERVICES_ERRORS_HPP_
+#ifndef SENSORYCLOUD_SERVICES_ERRORS_HPP_
+#define SENSORYCLOUD_SERVICES_ERRORS_HPP_
 
 #include <exception>
 #include <string>
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
-/// @brief Sensory Cloud services.
+/// @brief SensoryCloud services.
 namespace service {
 
 /// @brief An error type thrown when a stream fails to initialize.
@@ -78,4 +78,4 @@ struct ReadStreamError : public std::runtime_error {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_SERVICES_ERRORS_HPP_
+#endif  // SENSORYCLOUD_SERVICES_ERRORS_HPP_

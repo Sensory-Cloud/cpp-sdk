@@ -1,8 +1,8 @@
-// Functions for cryptographically secure RNG for the Sensory Cloud C++ SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// Functions for cryptographically secure RNG for the SensoryCloud C++ SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,15 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
+#ifndef SENSORYCLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
+#define SENSORYCLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
 
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include "arc4random.hpp"
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 /// @brief Modules for generating and storing secure credentials.
@@ -57,4 +57,4 @@ std::string secure_random() {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
+#endif  // SENSORYCLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_

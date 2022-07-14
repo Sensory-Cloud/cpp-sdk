@@ -53,7 +53,7 @@ inline std::string getExtension(const std::string& path) {
 // /// @param sample_rate the sample rate of the data
 // /// @param channels the number of channels of interleaved samples
 // ///
-// int writeWAV(const std::string& path, const std::vector<float>& data, int sample_rate, int channels) {
+// int write_wav(const std::string& path, const std::vector<float>& data, int sample_rate, int channels) {
 //     drwav_data_format format;
 //     format.container = drwav_container_riff;
 //     format.format = DR_WAVE_FORMAT_IEEE_FLOAT;
@@ -103,36 +103,36 @@ struct AudioBuffer {
     };
 
     /// @brief Return the sample rate of the internal sample.
-    inline const float& getSampleRate() const { return sample_rate; }
+    inline const float& get_sample_rate() const { return sample_rate; }
 
     /// @brief Return the bit depth of the internal sample.
-    inline const float& getBitDepth() const { return bit_depth; }
+    inline const float& get_bit_depth() const { return bit_depth; }
 
     /// @brief Return the number of channels in the sample.
-    inline const float& getChannels() { return channels; }
+    inline const float& get_channels() { return channels; }
 
     /// @brief Return true if the sample is mono.
-    inline bool isMono() const { return channels == 1; }
+    inline bool is_mono() const { return channels == 1; }
 
     /// @brief Return true if the sample is stereo.
-    inline bool isStereo() const { return channels == 2; }
+    inline bool is_stereo() const { return channels == 2; }
 
     /// @brief Return the total length of the sample in samples.
-    inline float getNumSamples() const { return samples.size() / channels; }
+    inline float get_num_samples() const { return samples.size() / channels; }
 
     /// @brief Return the file-path that this sample was loaded from.
-    inline const std::string& getPath() const { return path; }
+    inline const std::string& get_path() const { return path; }
 
     /// @brief Return the sample for the given channel and index.
     ///
     /// @param channel the stereo channel to get a sample from
     /// @param index the index of the sample to return
     ///
-    inline const int16_t& getSample(const Channel& channel, const uint64_t& index) const {
+    inline const int16_t& get_sample(const Channel& channel, const uint64_t& index) const {
         return samples[static_cast<uint64_t>(channels) * index + static_cast<uint64_t>(channel)];
     }
 
-    inline const std::vector<int16_t>& getSamples() const { return samples; }
+    inline const std::vector<int16_t>& get_samples() const { return samples; }
 
     /// @brief Load the given file into the sample player.
     ///
@@ -140,7 +140,7 @@ struct AudioBuffer {
     /// @details
     /// https://mackron.github.io/dr_wav
     ///
-    inline LoadStatus loadWAV(const std::string& file_path) {
+    inline LoadStatus load_wav(const std::string& file_path) {
         // Load the file metadata structure.
         drwav file;
         if (!drwav_init_file(&file, file_path.c_str(), NULL))
@@ -163,7 +163,7 @@ struct AudioBuffer {
     /// @details
     /// https://mackron.github.io/dr_flac
     ///
-    inline LoadStatus loadFLAC(const std::string& file_path) {
+    inline LoadStatus load_flac(const std::string& file_path) {
         // Load the file metadata structure.
         drflac* file = drflac_open_file(file_path.c_str(), NULL);
         if (file == nullptr)
@@ -186,7 +186,7 @@ struct AudioBuffer {
     /// @details
     /// https://github.com/mackron/dr_libs/blob/master/dr_mp3.h
     ///
-    inline LoadStatus loadMP3(const std::string& file_path) {
+    inline LoadStatus load_mp3(const std::string& file_path) {
         // Load the file metadata structure.
         drmp3 file;
         if (!drmp3_init_file(&file, file_path.c_str(), NULL))
@@ -221,11 +221,11 @@ struct AudioBuffer {
             [](unsigned char c){ return std::tolower(c); });
         // Load the file based on the extension.
         if (extension.compare("wav") == 0)
-            return loadWAV(file);
+            return load_wav(file);
         else if (extension.compare("flac") == 0)
-            return loadFLAC(file);
+            return load_flac(file);
         else if (extension.compare("mp3") == 0)
-            return loadMP3(file);
+            return load_mp3(file);
         else  // unsupported file-type
             return LoadStatus::InvalidExtension;
     }
@@ -244,7 +244,7 @@ struct AudioBuffer {
     ///
     /// @param duration the duration in milliseconds to pad the buffer to
     ///
-    inline void padBack(const float& duration) {
+    inline void pad_back(const float& duration) {
         std::vector<int16_t> zeros(static_cast<int>(channels * sample_rate * duration / 1000), 0);
         samples.reserve(samples.size() + zeros.size());
         std::move(std::begin(zeros), std::end(zeros), std::back_inserter(samples));
@@ -255,21 +255,21 @@ struct AudioBuffer {
     // ///
     // /// @param path the path to write the buffer to as a WAV file
     // ///
-    // inline int writeWAV(const std::string& path) const {
-    //     return writeWAV(path, samples, sample_rate, channels);
+    // inline int write_wav(const std::string& path) const {
+    //     return write_wav(path, samples, sample_rate, channels);
     // }
 
     // /// @brief Remove the DC offset from the sample.
-    // inline void removeDC() {
+    // inline void remove_dc() {
     //     std::vector<double> mean(static_cast<unsigned>(channels));
     //     for (int c = 0; c < channels; c++) mean[c] = 0;
     //     // Calculate the mean of the sample.
-    //     for (int i = 0; i < getNumSamples(); i++)
+    //     for (int i = 0; i < get_num_samples(); i++)
     //         for (int c = 0; c < channels; c++)
     //             mean[c] += getSample(static_cast<Channel>(c), i);
-    //     for (int c = 0; c < channels; c++) mean[c] /= getNumSamples();
+    //     for (int c = 0; c < channels; c++) mean[c] /= get_num_samples();
     //     // Remove the mean from the sample.
-    //     for (int i = 0; i < getNumSamples(); i++)
+    //     for (int i = 0; i < get_num_samples(); i++)
     //         for (int c = 0; c < channels; c++)
     //             samples[channels * i + c] -= mean[c];
     // }

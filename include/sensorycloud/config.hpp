@@ -1,8 +1,8 @@
-// Configuration structures for the Sensory Cloud C++ SDK.
+// Configuration structures for the SensoryCloud C++ SDK.
+//
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
-//
-// Copyright (c) 2021 Sensory, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_CONFIG_HPP_
-#define SENSORY_CLOUD_CONFIG_HPP_
+#ifndef SENSORYCLOUD_CONFIG_HPP_
+#define SENSORYCLOUD_CONFIG_HPP_
 
 #include <grpc/grpc.h>
 #include <grpcpp/channel.h>
@@ -35,10 +35,11 @@
 #include <algorithm>
 #include <cstdint>
 #include <chrono>
+#include <limits>
 #include <string>
 #include <sstream>
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 /// @brief A config error type thrown when configuration parameters are invalid.
@@ -46,8 +47,12 @@ struct ConfigError : public std::runtime_error {
  public:
     /// @brief Reasons for configuration errors to occur.
     enum class Code {
+        /// The fully qualified domain name is not valid.
+        InvalidFQDN = 0,
         /// The host name is not valid.
-        InvalidHost = 0,
+        InvalidHost,
+        /// The port number is not valid.
+        InvalidPort,
         /// The tenant ID is not valid.
         InvalidTenantID,
         /// The device ID is not valid.
@@ -59,16 +64,20 @@ struct ConfigError : public std::runtime_error {
     /// @param code The code to get the error message for.
     /// @returns A text error message associated with the given error code.
     ///
-    static inline const std::string getMessage(const Code& code) {
+    static inline const std::string get_message(const Code& code) {
         switch (code) {  // switch over the possible code type cases
+        case Code::InvalidFQDN:
+            return "The fully qualified domain name is not valid";
         case Code::InvalidHost:
-            return "The host name is not valid!";
+            return "The host name is not valid";
+        case Code::InvalidPort:
+            return "The port number is not valid";
         case Code::InvalidTenantID:
-            return "The tenant ID is not valid!";
+            return "The tenant ID is not valid";
         case Code::InvalidDeviceID:
-            return "The device ID is not valid!";
+            return "The device ID is not valid";
         default:
-            return "Unrecognized Error Code";
+            return "Unrecognized error code";
         }
     }
 
@@ -77,7 +86,7 @@ struct ConfigError : public std::runtime_error {
     /// @param code The reason for the configuration error.
     ///
     explicit ConfigError(const Code& code) :
-        std::runtime_error(getMessage(code)),
+        std::runtime_error(get_message(code)),
         err_code(code) { }
 
     /// @brief Initialize a new configuration error.
@@ -103,168 +112,175 @@ struct ConfigError : public std::runtime_error {
     Code err_code;
 };
 
-/// @brief A configuration endpoint for Sensory Cloud.
+/// @brief Configuration for a cloud endpoint.
 class Config {
  private:
-    /// the name of the cloud host, i.e., DNS name
-    const std::string host;
-    /// the port that the cloud service is running on
-    const uint16_t port;
+    /// The fully qualified domain name of the server in host:port format.
+    const std::string fqdn;
     /// Tenant ID to use during device enrollment
-    const std::string tenantID;
+    const std::string tenant_id;
     /// Unique device identifier that model enrollments are associated to
-    const std::string deviceID;
+    const std::string device_id;
     /// whether the connection to the remote host should be secured by TLS/SSL
-    const bool isSecure;
-    /// the number of seconds to wait on a unary gRPC call before timing out
-    uint32_t timeout = 10;
+    const bool is_secure;
+    /// the number of milliseconds to wait on a unary gRPC call before timeout.
+    uint32_t timeout = 10 * 1000;
     /// the gRPC channel associated with this config.
     std::shared_ptr<::grpc::Channel> channel = nullptr;
 
  public:
-    /// @brief Initialize a new Sensory Cloud configuration object.
+    /// @brief Initialize a new configuration object.
     ///
-    /// @param host_ The host-name of the RPC service.
-    /// @param port_ The port number of the RPC service.
-    /// @param tenantID_ The unique ID of your tenant in Sensory Cloud.
-    /// @param deviceID_ The unique ID of the device running the SDK.
-    /// @param isSecure_ `true` to use SSL/TLS for message encryption, `false`
+    /// @param host_ The fully qualified domain name (FQDN) of the server in
+    ///     `host:port` format, e.g., `localhost:50051`.
+    /// @param tenant_id_ The UUID for your tenant.
+    /// @param device_id_ The UUID of the device running the SDK.
+    /// @param is_secure_ `true` to use SSL/TLS for message encryption, `false`
     /// to use an insecure connection.
     ///
+    /// @exception ConfigError If the FQDN is improperly formatted.
+    /// @exception ConfigError If the tenant ID is improperly formatted.
+    /// @exception ConfigError If the device ID is improperly formatted.
+    ///
     Config(
-        const std::string& host_,
-        const uint16_t& port_,
-        const std::string& tenantID_,
-        const std::string& deviceID_,
-        const bool& isSecure_ = true
+        const std::string& fqdn_,
+        const std::string& tenant_id_,
+        const std::string& device_id_,
+        const bool& is_secure_ = true
     ) :
-        host(host_),
-        port(port_),
-        tenantID(tenantID_),
-        deviceID(deviceID_),
-        isSecure(isSecure_) {
-        if (host.empty())  // the host name is not valid
-            throw ConfigError(ConfigError::Code::InvalidHost);
-        if (tenantID.empty())  // the tenant ID is not valid
+        fqdn(fqdn_),
+        tenant_id(tenant_id_),
+        device_id(device_id_),
+        is_secure(is_secure_) {
+        // Check that the FQDN is properly formatted in `host:port` format.
+        const auto idx = fqdn.find(':');
+        if (fqdn.empty() || idx == 0 || idx >= fqdn.length() - 1)
+            throw ConfigError(ConfigError::Code::InvalidFQDN);
+        // Parse the port as a 32-bit signed integer and ensure that the value
+        // is a valid 16-bit unsigned integer.
+        const auto port = std::stoi(fqdn.substr(idx + 1));
+        if (port < std::numeric_limits<uint16_t>::min() ||
+            port > std::numeric_limits<uint16_t>::max())
+            throw ConfigError(ConfigError::Code::InvalidPort);
+        // Ensure the tenant ID and device ID are not empty.
+        if (tenant_id.empty())  // the tenant ID is not valid
             throw ConfigError(ConfigError::Code::InvalidTenantID);
-        if (deviceID.empty())  // the device ID is not valid
+        if (device_id.empty())  // the device ID is not valid
             throw ConfigError(ConfigError::Code::InvalidDeviceID);
-    }
-
-    /// @brief Create the connection for the service.
-    void connect() {
         // Create the credentials for the channel based on the security setting.
-        // Use TLS (SSL) if `isSecure` is true, otherwise default to insecure
+        // Use TLS (SSL) if `is_secure` is true, otherwise default to insecure
         // channel credentials.
-        channel = ::grpc::CreateChannel(getFullyQualifiedDomainName(), isSecure ?
+        channel = ::grpc::CreateChannel(fqdn, is_secure ?
             ::grpc::SslCredentials(::grpc::SslCredentialsOptions()) :
             ::grpc::InsecureChannelCredentials()
         );
     }
 
-    /// @brief Return the name of the remote host.
+    /// @brief Initialize a new configuration object.
     ///
-    /// @returns The name of the remote host to connect to.
+    /// @param host_ The DNS name or IP address of the server.
+    /// @param port_ The port number for the service.
+    /// @param tenant_id_ The UUID for your tenant.
+    /// @param device_id_ The UUID of the device running the SDK.
+    /// @param is_secure_ `true` to use SSL/TLS for message encryption, `false`
+    /// to use an insecure connection.
     ///
-    inline const std::string& getHost() const { return host; }
+    /// @exception ConfigError If the host is improperly formatted.
+    /// @exception ConfigError If the tenant ID is improperly formatted.
+    /// @exception ConfigError If the device ID is improperly formatted.
+    ///
+    Config(
+        const std::string& host_,
+        const uint16_t& port_,
+        const std::string& tenant_id_,
+        const std::string& device_id_,
+        const bool& is_secure_ = true
+    ) : Config(host_ + ":" + std::to_string(port_), tenant_id_, device_id_, is_secure_) { }
 
-    /// @brief Return the port number of the remote host.
+    /// @brief Return the gRPC channel.
     ///
-    /// @returns The port number of the remote host to connect to.
+    /// @returns The gRPC channel to use for connecting services.
     ///
-    inline const uint16_t& getPort() const { return port; }
+    inline std::shared_ptr<::grpc::Channel> get_channel() const {
+        return channel;
+    }
 
-    /// @brief Return the ID of the tenant.
+    /// @brief Return the fully qualified domain name of the server.
     ///
-    /// @returns The tenant ID for identifying the customer's account.
+    /// @returns The fully qualified domain name in `host:port` format.
     ///
-    inline const std::string& getTenantID() const { return tenantID; }
+    inline const std::string& get_fully_qualified_domain_name() const {
+        return fqdn;
+    }
 
-    /// @brief Return the ID of the device.
+    /// @brief Return the host name of the server.
     ///
-    /// @returns The unique ID for identifying a device in a customer network.
+    /// @returns The host name.
     ///
-    inline const std::string& getDeviceID() const { return deviceID; }
+    inline std::string get_host() const {
+        // Note: Typically one would need to check that `find` returned a value
+        // other than std::string::npos; however, the fully qualified domain
+        // name is immutable and the existence of the ':' character is
+        // guaranteed past initialization time.
+        return fqdn.substr(0, fqdn.find(':'));
+    }
+
+    /// @brief Return the port number of the service.
+    ///
+    /// @returns The port number of the service.
+    ///
+    inline uint16_t get_port() const {
+        // Note: Typically one would need to check that `find` returned a value
+        // other than std::string::npos; however, the fully qualified domain
+        // name is immutable and the existence of the ':' character is
+        // guaranteed past initialization time.
+        return std::stoi(fqdn.substr(fqdn.find(':') + 1));
+    }
+
+    /// @brief Return the UUID of the tenant.
+    ///
+    /// @returns The UUID for identifying a tenant.
+    ///
+    inline const std::string& get_tenant_id() const {
+        return tenant_id;
+    }
+
+    /// @brief Return the UUID of the device.
+    ///
+    /// @returns The UUID for identifying a registered device.
+    ///
+    inline const std::string& get_device_id() const {
+        return device_id;
+    }
 
     /// @brief Return the security policy of the remote host.
     ///
     /// @returns `true` if the connection is secured with TLS/SSL, `false`
     /// otherwise.
     ///
-    inline const bool& getIsSecure() const { return isSecure; }
+    inline const bool& get_is_secure() const { return is_secure; }
 
-    /// @brief Set the timeout for gRPC unary calls to a new value.
+    /// @brief Set the timeout for unary gRPC calls to a new value.
     ///
-    /// @param timeout The timeout for gRPC unary calls in seconds.
+    /// @param timeout The timeout for unary gRPC calls in milliseconds.
     ///
-    inline void setTimeout(const uint32_t& timeout) { this->timeout = timeout; }
+    inline void set_timeout(const uint32_t& timeout) { this->timeout = timeout; }
 
-    /// @brief Return the timeout for gRPC unary calls.
+    /// @brief Return the timeout for unary gRPC calls.
     ///
-    /// @returns The timeout for gRPC unary calls in seconds.
+    /// @returns The timeout for unary gRPC calls in milliseconds.
     ///
-    inline const uint32_t getTimeout() const { return timeout; }
+    inline const uint32_t get_timeout() const { return timeout; }
 
-    /// @brief Create a new deadline based on the RPC timeout time.
+    /// @brief Create a new deadline from the current time and RPC timeout.
     ///
-    /// @returns The deadline for the next unary RPC call.
+    /// @returns A new deadline for an RPC call.
     ///
-    inline std::chrono::system_clock::time_point getDeadline() const {
-        return std::chrono::system_clock::now() + std::chrono::seconds(timeout);
-    }
-
-    /// @brief Return a formatted gRPC host-name and port combination.
-    ///
-    /// @returns A formatted string in `"{host}:{port}"` format.
-    ///
-    inline std::string getFullyQualifiedDomainName() const {
-        return host + std::string(":") + std::to_string(port);
-    }
-
-    /// @brief Create a new gRPC channel.
-    ///
-    /// @returns A new gRPC channel to connect a service to.
-    ///
-    inline std::shared_ptr<::grpc::Channel> getChannel() const {
-        if (channel == nullptr)
-            throw std::runtime_error("Attempt to get channel before Config::connect() has been called.");
-        return channel;
-    }
-
-    /// @brief Setup an existing client context for unary gRPC calls.
-    ///
-    /// @tparam TokenManager The type of the token manager.
-    /// @param context The context to setup with a Bearer token and deadline.
-    /// @param tokenManager The token manager for fetching tokens.
-    ///
-    template<typename TokenManager>
-    inline void setupUnaryClientContext(
-        ::grpc::ClientContext& context,
-        TokenManager& tokenManager
-    ) const {
-        context.AddMetadata("authorization",
-            std::string("Bearer ") + tokenManager.getAccessToken()
-        );
-        context.set_deadline(getDeadline());
-    }
-
-    /// @brief Setup an existing client context for bidirectional gRPC streams.
-    ///
-    /// @tparam TokenManager The type of the token manager.
-    /// @param context The context to setup with a Bearer token and deadline.
-    /// @param tokenManager The token manager for fetching tokens.
-    ///
-    template<typename TokenManager>
-    inline void setupBidiClientContext(
-        ::grpc::ClientContext& context,
-        TokenManager& tokenManager
-    ) const {
-        context.AddMetadata("authorization",
-            std::string("Bearer ") + tokenManager.getAccessToken()
-        );
+    inline std::chrono::system_clock::time_point get_deadline() const {
+        return std::chrono::system_clock::now() + std::chrono::milliseconds(timeout);
     }
 };
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_CONFIG_HPP_
+#endif  // SENSORYCLOUD_CONFIG_HPP_

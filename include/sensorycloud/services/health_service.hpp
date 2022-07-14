@@ -1,8 +1,8 @@
-// The health service for the Sensory Cloud SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// The health service for the SensoryCloud SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_SERVICES_HEALTH_SERVICE_HPP_
-#define SENSORY_CLOUD_SERVICES_HEALTH_SERVICE_HPP_
+#ifndef SENSORYCLOUD_SERVICES_HEALTH_SERVICE_HPP_
+#define SENSORYCLOUD_SERVICES_HEALTH_SERVICE_HPP_
 
 #include <memory>
 #include <string>
@@ -34,10 +34,10 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/call_data.hpp"
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
-/// @brief Sensory Cloud services.
+/// @brief SensoryCloud services.
 namespace service {
 
 /// @brief A service for querying the health of the remote server.
@@ -72,7 +72,7 @@ class HealthService {
     /// @param config_ The global configuration for the remote connection.
     ///
     explicit HealthService(const ::sensory::Config& config_) : config(config_),
-        stub(::sensory::api::health::HealthService::NewStub(config.getChannel())) { }
+        stub(::sensory::api::health::HealthService::NewStub(config.get_channel())) { }
 
     /// @brief Initialize a new health service.
     ///
@@ -83,6 +83,12 @@ class HealthService {
         const ::sensory::Config& config_,
         ::sensory::api::health::HealthService::StubInterface* stub_
     ) : config(config_), stub(stub_) { }
+
+    /// @brief Return the cloud configuration associated with this service.
+    ///
+    /// @returns the configuration used by this service.
+    ///
+    inline const ::sensory::Config& get_config() const { return config; }
 
     /// @brief Get the health status of the remote server.
     ///
@@ -181,4 +187,4 @@ class HealthService {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_SERVICES_HEALTH_SERVICE_HPP_
+#endif  // SENSORYCLOUD_SERVICES_HEALTH_SERVICE_HPP_

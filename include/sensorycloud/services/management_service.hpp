@@ -1,8 +1,8 @@
-// Management service for the Sensory Cloud SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// Management service for the SensoryCloud SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
-#define SENSORY_CLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
+#ifndef SENSORYCLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
+#define SENSORYCLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
 
 #include <memory>
 #include <string>
@@ -36,10 +36,10 @@
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/call_data.hpp"
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
-/// @brief Sensory Cloud services.
+/// @brief SensoryCloud services.
 namespace service {
 
 /// @brief A service for managing enrollments and enrollment groups.
@@ -83,7 +83,7 @@ class ManagementService {
         ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
     ) : config(config_),
         tokenManager(tokenManager_),
-        stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.getChannel())) { }
+        stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.get_channel())) { }
 
     /// @brief Initialize a new management service.
     ///
@@ -96,6 +96,12 @@ class ManagementService {
         ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
         ::sensory::api::v1::management::EnrollmentService::StubInterface* stub_
     ) : config(config_), tokenManager(tokenManager_), stub(stub_) { }
+
+    /// @brief Return the cloud configuration associated with this service.
+    ///
+    /// @returns the configuration used by this service.
+    ///
+    inline const ::sensory::Config& get_config() const { return config; }
 
     // ----- Get Enrollments ---------------------------------------------------
 
@@ -111,7 +117,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupUnaryClientContext(context, tokenManager);
+        tokenManager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
@@ -145,7 +151,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new GetEnrollmentsAsyncCall);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_userid(userID);
         call->rpc = stub->AsyncGetEnrollments(&call->context, call->request, queue);
@@ -188,7 +194,7 @@ class ManagementService {
         // possibility of a race condition.
         std::shared_ptr<GetEnrollmentsCallData>
             call(new GetEnrollmentsCallData);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         call->request.set_userid(userID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -225,7 +231,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         grpc::ClientContext context;
-        config.setupUnaryClientContext(context, tokenManager);
+        tokenManager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentRequest request;
         request.set_id(enrollmentID);
@@ -259,7 +265,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new DeleteEnrollmentAsyncCall);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_id(enrollmentID);
         call->rpc = stub->AsyncDeleteEnrollment(&call->context, call->request, queue);
@@ -305,7 +311,7 @@ class ManagementService {
         // possibility of a race condition.
         std::shared_ptr<DeleteEnrollmentCallData>
             call(new DeleteEnrollmentCallData);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         call->request.set_id(enrollmentID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -340,7 +346,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupUnaryClientContext(context, tokenManager);
+        tokenManager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
@@ -375,7 +381,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new GetEnrollmentGroupsAsyncCall);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_userid(userID);
         call->rpc = stub->AsyncGetEnrollmentGroups(&call->context, call->request, queue);
@@ -419,7 +425,7 @@ class ManagementService {
         // possibility of a race condition.
         std::shared_ptr<GetEnrollmentGroupsCallData>
             call(new GetEnrollmentGroupsCallData);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         call->request.set_userid(userID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -472,7 +478,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupUnaryClientContext(context, tokenManager);
+        tokenManager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest request;
         request.set_userid(userID);
@@ -528,7 +534,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new CreateEnrollmentGroupAsyncCall);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_userid(userID);
         call->request.set_id(
@@ -593,7 +599,7 @@ class ManagementService {
         // possibility of a race condition.
         std::shared_ptr<CreateEnrollmentGroupCallData>
             call(new CreateEnrollmentGroupCallData);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         call->request.set_userid(userID);
         call->request.set_id(
             groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
@@ -638,7 +644,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupUnaryClientContext(context, tokenManager);
+        tokenManager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest request;
         request.set_groupid(groupID);
@@ -677,7 +683,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new AppendEnrollmentGroupAsyncCall);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_groupid(groupID);
         for (auto& enrollment: enrollments)
@@ -725,7 +731,7 @@ class ManagementService {
         // possibility of a race condition.
         std::shared_ptr<AppendEnrollmentGroupCallData>
             call(new AppendEnrollmentGroupCallData);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         call->request.set_groupid(groupID);
         for (auto& enrollment: enrollments)
             call->request.add_enrollmentids(enrollment);
@@ -761,7 +767,7 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        config.setupUnaryClientContext(context, tokenManager);
+        tokenManager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest request;
         request.set_id(groupID);
@@ -795,7 +801,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new DeleteEnrollmentGroupAsyncCall);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_id(groupID);
         call->rpc = stub->AsyncDeleteEnrollmentGroup(&call->context, call->request, queue);
@@ -838,7 +844,7 @@ class ManagementService {
         // possibility of a race condition.
         std::shared_ptr<DeleteEnrollmentGroupCallData>
             call(new DeleteEnrollmentGroupCallData);
-        config.setupUnaryClientContext(call->context, tokenManager);
+        tokenManager.setup_unary_client_context(call->context);
         call->request.set_id(groupID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -863,4 +869,4 @@ class ManagementService {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_
+#endif  // SENSORYCLOUD_SERVICES_MANAGEMENT_SERVICE_HPP_

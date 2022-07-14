@@ -40,12 +40,15 @@ constexpr UsageEvent::UsageEvent(
   , id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , clientid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , route_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , timestamp_(nullptr)
   , duration_(int64_t{0})
-  , audiodurationms_(int64_t{0})
-  , videoframecount_(int64_t{0})
   , type_(0)
-{}
+
+  , billablefunction_(0)
+
+  , audiodurationms_(int64_t{0})
+  , videoframecount_(int64_t{0}){}
 struct UsageEventDefaultTypeInternal {
   constexpr UsageEventDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -55,6 +58,90 @@ struct UsageEventDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UsageEventDefaultTypeInternal _UsageEvent_default_instance_;
+constexpr UsageEventResponse::UsageEventResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : technologies_()
+  , _technologies_cached_byte_size_(0)
+  , models_()
+  , id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , clientid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , route_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , billableunits_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , timestamp_(nullptr)
+  , duration_(int64_t{0})
+  , type_(0)
+
+  , billablefunction_(0)
+
+  , billablevalue_(int64_t{0}){}
+struct UsageEventResponseDefaultTypeInternal {
+  constexpr UsageEventResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~UsageEventResponseDefaultTypeInternal() {}
+  union {
+    UsageEventResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UsageEventResponseDefaultTypeInternal _UsageEventResponse_default_instance_;
+constexpr UsageEventListRequest::UsageEventListRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : billablefunctions_()
+  , _billablefunctions_cached_byte_size_(0)
+  , tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , pagination_(nullptr)
+  , after_(nullptr)
+  , before_(nullptr){}
+struct UsageEventListRequestDefaultTypeInternal {
+  constexpr UsageEventListRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~UsageEventListRequestDefaultTypeInternal() {}
+  union {
+    UsageEventListRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UsageEventListRequestDefaultTypeInternal _UsageEventListRequest_default_instance_;
+constexpr UsageEventListResponse::UsageEventListResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : events_()
+  , pagination_(nullptr){}
+struct UsageEventListResponseDefaultTypeInternal {
+  constexpr UsageEventListResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~UsageEventListResponseDefaultTypeInternal() {}
+  union {
+    UsageEventListResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UsageEventListResponseDefaultTypeInternal _UsageEventListResponse_default_instance_;
+constexpr UsageEventSummary::UsageEventSummary(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : summaries_(){}
+struct UsageEventSummaryDefaultTypeInternal {
+  constexpr UsageEventSummaryDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~UsageEventSummaryDefaultTypeInternal() {}
+  union {
+    UsageEventSummary _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UsageEventSummaryDefaultTypeInternal _UsageEventSummary_default_instance_;
+constexpr UsageEventModelSummary::UsageEventModelSummary(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : units_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , value_(int64_t{0})
+  , count_(int64_t{0})
+  , billablefunction_(0)
+{}
+struct UsageEventModelSummaryDefaultTypeInternal {
+  constexpr UsageEventModelSummaryDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~UsageEventModelSummaryDefaultTypeInternal() {}
+  union {
+    UsageEventModelSummary _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT UsageEventModelSummaryDefaultTypeInternal _UsageEventModelSummary_default_instance_;
 constexpr PublishUsageEventsResponse::PublishUsageEventsResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
 struct PublishUsageEventsResponseDefaultTypeInternal {
@@ -70,7 +157,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PublishUsageEventsResponseDefau
 }  // namespace v1
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2fevent_2fevent_2eproto[3];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2fevent_2fevent_2eproto[8];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_v1_2fevent_2fevent_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_v1_2fevent_2fevent_2eproto = nullptr;
 
@@ -98,6 +185,62 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fevent_2fevent_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, models_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, audiodurationms_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, videoframecount_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, tenantid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, billablefunction_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, timestamp_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, duration_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, id_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, clientid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, type_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, route_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, technologies_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, models_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, billablevalue_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, billableunits_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, tenantid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, billablefunction_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListRequest, tenantid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListRequest, pagination_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListRequest, after_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListRequest, before_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListRequest, billablefunctions_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListResponse, events_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventListResponse, pagination_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventSummary, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventSummary, summaries_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventModelSummary, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventModelSummary, billablefunction_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventModelSummary, units_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventModelSummary, value_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventModelSummary, count_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::PublishUsageEventsResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -108,12 +251,22 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fevent_2fevent_2eproto::of
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsRequest)},
   { 7, -1, -1, sizeof(::sensory::api::v1::event::UsageEvent)},
-  { 23, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsResponse)},
+  { 25, -1, -1, sizeof(::sensory::api::v1::event::UsageEventResponse)},
+  { 43, -1, -1, sizeof(::sensory::api::v1::event::UsageEventListRequest)},
+  { 54, -1, -1, sizeof(::sensory::api::v1::event::UsageEventListResponse)},
+  { 62, -1, -1, sizeof(::sensory::api::v1::event::UsageEventSummary)},
+  { 69, -1, -1, sizeof(::sensory::api::v1::event::UsageEventModelSummary)},
+  { 79, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_PublishUsageEventsRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_UsageEvent_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_UsageEventResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_UsageEventListRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_UsageEventListResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_UsageEventSummary_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_UsageEventModelSummary_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::event::_PublishUsageEventsResponse_default_instance_),
 };
 
@@ -123,7 +276,7 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "alidate/validate.proto\032\023common/common.pr"
   "oto\"M\n\031PublishUsageEventsRequest\0220\n\006even"
   "ts\030\001 \003(\0132 .sensory.api.v1.event.UsageEve"
-  "nt\"\346\002\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
+  "nt\"\261\003\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
   "oogle.protobuf.TimestampB\010\372B\005\262\001\002\010\001\022\031\n\010du"
   "ration\030\002 \001(\003B\007\372B\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372B\005r\003"
   "\260\001\001\022\033\n\010clientId\030\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004type"
@@ -132,14 +285,48 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "8\n\014technologies\030\007 \003(\0162\".sensory.api.comm"
   "on.TechnologyType\022\016\n\006models\030\010 \003(\t\022\027\n\017aud"
   "ioDurationMs\030\t \001(\003\022\027\n\017videoFrameCount\030\n "
-  "\001(\003\"\034\n\032PublishUsageEventsResponse2\211\001\n\014Ev"
-  "entService\022y\n\022PublishUsageEvents\022/.senso"
-  "ry.api.v1.event.PublishUsageEventsReques"
-  "t\0320.sensory.api.v1.event.PublishUsageEve"
-  "ntsResponse\"\000Bt\n\034ai.sensorycloud.api.v1."
-  "eventB\026SensoryApiV1EventProtoP\001Z:gitlab."
-  "com/sensory-cloud/server/titan.git/pkg/a"
-  "pi/v1/eventb\006proto3"
+  "\001(\003\022\020\n\010tenantId\030\013 \001(\t\0227\n\020billableFunctio"
+  "n\030\014 \001(\0162\035.sensory.api.common.ModelType\"\265"
+  "\003\n\022UsageEventResponse\0227\n\ttimestamp\030\001 \001(\013"
+  "2\032.google.protobuf.TimestampB\010\372B\005\262\001\002\010\001\022\031"
+  "\n\010duration\030\002 \001(\003B\007\372B\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372"
+  "B\005r\003\260\001\001\022\033\n\010clientId\030\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004"
+  "type\030\005 \001(\0162\".sensory.api.common.UsageEve"
+  "ntTypeB\010\372B\005\202\001\002\020\001\022\031\n\005route\030\006 \001(\tB\n\372B\007r\005\020\001"
+  "\030\377\003\0228\n\014technologies\030\007 \003(\0162\".sensory.api."
+  "common.TechnologyType\022\016\n\006models\030\010 \003(\t\022\025\n"
+  "\rbillableValue\030\t \001(\003\022\025\n\rbillableUnits\030\n "
+  "\001(\t\022\020\n\010tenantId\030\013 \001(\t\0227\n\020billableFunctio"
+  "n\030\014 \001(\0162\035.sensory.api.common.ModelType\"\365"
+  "\001\n\025UsageEventListRequest\022\020\n\010tenantId\030\001 \001"
+  "(\t\0229\n\npagination\030\002 \001(\0132%.sensory.api.com"
+  "mon.PaginationOptions\022)\n\005after\030\003 \001(\0132\032.g"
+  "oogle.protobuf.Timestamp\022*\n\006before\030\004 \001(\013"
+  "2\032.google.protobuf.Timestamp\0228\n\021billable"
+  "Functions\030\005 \003(\0162\035.sensory.api.common.Mod"
+  "elType\"\216\001\n\026UsageEventListResponse\0228\n\006eve"
+  "nts\030\001 \003(\0132(.sensory.api.v1.event.UsageEv"
+  "entResponse\022:\n\npagination\030\002 \001(\0132&.sensor"
+  "y.api.common.PaginationResponse\"T\n\021Usage"
+  "EventSummary\022\?\n\tsummaries\030\001 \003(\0132,.sensor"
+  "y.api.v1.event.UsageEventModelSummary\"~\n"
+  "\026UsageEventModelSummary\0227\n\020billableFunct"
+  "ion\030\001 \001(\0162\035.sensory.api.common.ModelType"
+  "\022\r\n\005units\030\002 \001(\t\022\r\n\005value\030\003 \001(\003\022\r\n\005count\030"
+  "\004 \001(\003\"\034\n\032PublishUsageEventsResponse2\353\002\n\014"
+  "EventService\022y\n\022PublishUsageEvents\022/.sen"
+  "sory.api.v1.event.PublishUsageEventsRequ"
+  "est\0320.sensory.api.v1.event.PublishUsageE"
+  "ventsResponse\"\000\022p\n\021GetUsageEventList\022+.s"
+  "ensory.api.v1.event.UsageEventListReques"
+  "t\032,.sensory.api.v1.event.UsageEventListR"
+  "esponse\"\000\022n\n\024GetUsageEventSummary\022+.sens"
+  "ory.api.v1.event.UsageEventListRequest\032\'"
+  ".sensory.api.v1.event.UsageEventSummary\""
+  "\000Bt\n\034ai.sensorycloud.api.v1.eventB\026Senso"
+  "ryApiV1EventProtoP\001Z:gitlab.com/sensory-"
+  "cloud/server/titan.git/pkg/api/v1/eventb"
+  "\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fevent_2fevent_2eproto_deps[3] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -148,8 +335,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fevent_2fevent_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fevent_2fevent_2eproto = {
-  false, false, 859, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
-  &descriptor_table_v1_2fevent_2fevent_2eproto_once, descriptor_table_v1_2fevent_2fevent_2eproto_deps, 3, 3,
+  false, false, 2207, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
+  &descriptor_table_v1_2fevent_2fevent_2eproto_once, descriptor_table_v1_2fevent_2fevent_2eproto_deps, 3, 8,
   schemas, file_default_instances, TableStruct_v1_2fevent_2fevent_2eproto::offsets,
   file_level_metadata_v1_2fevent_2fevent_2eproto, file_level_enum_descriptors_v1_2fevent_2fevent_2eproto, file_level_service_descriptors_v1_2fevent_2fevent_2eproto,
 };
@@ -397,14 +584,19 @@ UsageEvent::UsageEvent(const UsageEvent& from)
     route_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_route(), 
       GetArenaForAllocation());
   }
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
   if (from._internal_has_timestamp()) {
     timestamp_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from.timestamp_);
   } else {
     timestamp_ = nullptr;
   }
   ::memcpy(&duration_, &from.duration_,
-    static_cast<size_t>(reinterpret_cast<char*>(&type_) -
-    reinterpret_cast<char*>(&duration_)) + sizeof(type_));
+    static_cast<size_t>(reinterpret_cast<char*>(&videoframecount_) -
+    reinterpret_cast<char*>(&duration_)) + sizeof(videoframecount_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEvent)
 }
 
@@ -412,10 +604,11 @@ void UsageEvent::SharedCtor() {
 id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 route_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&timestamp_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&type_) -
-    reinterpret_cast<char*>(&timestamp_)) + sizeof(type_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&videoframecount_) -
+    reinterpret_cast<char*>(&timestamp_)) + sizeof(videoframecount_));
 }
 
 UsageEvent::~UsageEvent() {
@@ -430,6 +623,7 @@ inline void UsageEvent::SharedDtor() {
   id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   clientid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   route_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete timestamp_;
 }
 
@@ -454,13 +648,14 @@ void UsageEvent::Clear() {
   id_.ClearToEmpty();
   clientid_.ClearToEmpty();
   route_.ClearToEmpty();
+  tenantid_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && timestamp_ != nullptr) {
     delete timestamp_;
   }
   timestamp_ = nullptr;
   ::memset(&duration_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&type_) -
-      reinterpret_cast<char*>(&duration_)) + sizeof(type_));
+      reinterpret_cast<char*>(&videoframecount_) -
+      reinterpret_cast<char*>(&duration_)) + sizeof(videoframecount_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -565,6 +760,25 @@ const char* UsageEvent::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
           videoframecount_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string tenantId = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 90)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEvent.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.ModelType billableFunction = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 96)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_billablefunction(static_cast<::sensory::api::common::ModelType>(val));
         } else
           goto handle_unusual;
         continue;
@@ -679,6 +893,23 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(10, this->_internal_videoframecount(), target);
   }
 
+  // string tenantId = 11;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEvent.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        11, this->_internal_tenantid(), target);
+  }
+
+  // .sensory.api.common.ModelType billableFunction = 12;
+  if (this->_internal_billablefunction() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      12, this->_internal_billablefunction(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -742,6 +973,13 @@ size_t UsageEvent::ByteSizeLong() const {
         this->_internal_route());
   }
 
+  // string tenantId = 11;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
   // .google.protobuf.Timestamp timestamp = 1 [(.validate.rules) = {
   if (this->_internal_has_timestamp()) {
     total_size += 1 +
@@ -754,6 +992,18 @@ size_t UsageEvent::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_duration());
   }
 
+  // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
+  if (this->_internal_type() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
+  }
+
+  // .sensory.api.common.ModelType billableFunction = 12;
+  if (this->_internal_billablefunction() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_billablefunction());
+  }
+
   // int64 audioDurationMs = 9;
   if (this->_internal_audiodurationms() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_audiodurationms());
@@ -762,12 +1012,6 @@ size_t UsageEvent::ByteSizeLong() const {
   // int64 videoFrameCount = 10;
   if (this->_internal_videoframecount() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_videoframecount());
-  }
-
-  // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
-  if (this->_internal_type() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -803,20 +1047,26 @@ void UsageEvent::MergeFrom(const UsageEvent& from) {
   if (!from._internal_route().empty()) {
     _internal_set_route(from._internal_route());
   }
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
   if (from._internal_has_timestamp()) {
     _internal_mutable_timestamp()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_timestamp());
   }
   if (from._internal_duration() != 0) {
     _internal_set_duration(from._internal_duration());
   }
+  if (from._internal_type() != 0) {
+    _internal_set_type(from._internal_type());
+  }
+  if (from._internal_billablefunction() != 0) {
+    _internal_set_billablefunction(from._internal_billablefunction());
+  }
   if (from._internal_audiodurationms() != 0) {
     _internal_set_audiodurationms(from._internal_audiodurationms());
   }
   if (from._internal_videoframecount() != 0) {
     _internal_set_videoframecount(from._internal_videoframecount());
-  }
-  if (from._internal_type() != 0) {
-    _internal_set_type(from._internal_type());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -854,9 +1104,14 @@ void UsageEvent::InternalSwap(UsageEvent* other) {
       &route_, lhs_arena,
       &other->route_, rhs_arena
   );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UsageEvent, type_)
-      + sizeof(UsageEvent::type_)
+      PROTOBUF_FIELD_OFFSET(UsageEvent, videoframecount_)
+      + sizeof(UsageEvent::videoframecount_)
       - PROTOBUF_FIELD_OFFSET(UsageEvent, timestamp_)>(
           reinterpret_cast<char*>(&timestamp_),
           reinterpret_cast<char*>(&other->timestamp_));
@@ -866,6 +1121,1707 @@ void UsageEvent::InternalSwap(UsageEvent* other) {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
       file_level_metadata_v1_2fevent_2fevent_2eproto[1]);
+}
+
+// ===================================================================
+
+class UsageEventResponse::_Internal {
+ public:
+  static const ::PROTOBUF_NAMESPACE_ID::Timestamp& timestamp(const UsageEventResponse* msg);
+};
+
+const ::PROTOBUF_NAMESPACE_ID::Timestamp&
+UsageEventResponse::_Internal::timestamp(const UsageEventResponse* msg) {
+  return *msg->timestamp_;
+}
+void UsageEventResponse::clear_timestamp() {
+  if (GetArenaForAllocation() == nullptr && timestamp_ != nullptr) {
+    delete timestamp_;
+  }
+  timestamp_ = nullptr;
+}
+UsageEventResponse::UsageEventResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  technologies_(arena),
+  models_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.event.UsageEventResponse)
+}
+UsageEventResponse::UsageEventResponse(const UsageEventResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      technologies_(from.technologies_),
+      models_(from.models_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_id(), 
+      GetArenaForAllocation());
+  }
+  clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_clientid().empty()) {
+    clientid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_clientid(), 
+      GetArenaForAllocation());
+  }
+  route_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_route().empty()) {
+    route_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_route(), 
+      GetArenaForAllocation());
+  }
+  billableunits_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_billableunits().empty()) {
+    billableunits_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_billableunits(), 
+      GetArenaForAllocation());
+  }
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
+  if (from._internal_has_timestamp()) {
+    timestamp_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from.timestamp_);
+  } else {
+    timestamp_ = nullptr;
+  }
+  ::memcpy(&duration_, &from.duration_,
+    static_cast<size_t>(reinterpret_cast<char*>(&billablevalue_) -
+    reinterpret_cast<char*>(&duration_)) + sizeof(billablevalue_));
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEventResponse)
+}
+
+void UsageEventResponse::SharedCtor() {
+id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+clientid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+route_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+billableunits_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&timestamp_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&billablevalue_) -
+    reinterpret_cast<char*>(&timestamp_)) + sizeof(billablevalue_));
+}
+
+UsageEventResponse::~UsageEventResponse() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.event.UsageEventResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void UsageEventResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  clientid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  route_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  billableunits_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete timestamp_;
+}
+
+void UsageEventResponse::ArenaDtor(void* object) {
+  UsageEventResponse* _this = reinterpret_cast< UsageEventResponse* >(object);
+  (void)_this;
+}
+void UsageEventResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void UsageEventResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void UsageEventResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.event.UsageEventResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  technologies_.Clear();
+  models_.Clear();
+  id_.ClearToEmpty();
+  clientid_.ClearToEmpty();
+  route_.ClearToEmpty();
+  billableunits_.ClearToEmpty();
+  tenantid_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && timestamp_ != nullptr) {
+    delete timestamp_;
+  }
+  timestamp_ = nullptr;
+  ::memset(&duration_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&billablevalue_) -
+      reinterpret_cast<char*>(&duration_)) + sizeof(billablevalue_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UsageEventResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .google.protobuf.Timestamp timestamp = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_timestamp(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 duration = 2 [(.validate.rules) = {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          duration_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string id = 3 [(.validate.rules) = {
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventResponse.id"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string clientId = 4 [(.validate.rules) = {
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_clientid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventResponse.clientId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_type(static_cast<::sensory::api::common::UsageEventType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // string route = 6 [(.validate.rules) = {
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          auto str = _internal_mutable_route();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventResponse.route"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .sensory.api.common.TechnologyType technologies = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser(_internal_mutable_technologies(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_add_technologies(static_cast<::sensory::api::common::TechnologyType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated string models = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 66)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_models();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventResponse.models"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 billableValue = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
+          billablevalue_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string billableUnits = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          auto str = _internal_mutable_billableunits();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventResponse.billableUnits"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string tenantId = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 90)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventResponse.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.ModelType billableFunction = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 96)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_billablefunction(static_cast<::sensory::api::common::ModelType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* UsageEventResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.event.UsageEventResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .google.protobuf.Timestamp timestamp = 1 [(.validate.rules) = {
+  if (this->_internal_has_timestamp()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        1, _Internal::timestamp(this), target, stream);
+  }
+
+  // int64 duration = 2 [(.validate.rules) = {
+  if (this->_internal_duration() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(2, this->_internal_duration(), target);
+  }
+
+  // string id = 3 [(.validate.rules) = {
+  if (!this->_internal_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventResponse.id");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_id(), target);
+  }
+
+  // string clientId = 4 [(.validate.rules) = {
+  if (!this->_internal_clientid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_clientid().data(), static_cast<int>(this->_internal_clientid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventResponse.clientId");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_clientid(), target);
+  }
+
+  // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
+  if (this->_internal_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_type(), target);
+  }
+
+  // string route = 6 [(.validate.rules) = {
+  if (!this->_internal_route().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_route().data(), static_cast<int>(this->_internal_route().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventResponse.route");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_route(), target);
+  }
+
+  // repeated .sensory.api.common.TechnologyType technologies = 7;
+  {
+    int byte_size = _technologies_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteEnumPacked(
+          7, technologies_, byte_size, target);
+    }
+  }
+
+  // repeated string models = 8;
+  for (int i = 0, n = this->_internal_models_size(); i < n; i++) {
+    const auto& s = this->_internal_models(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventResponse.models");
+    target = stream->WriteString(8, s, target);
+  }
+
+  // int64 billableValue = 9;
+  if (this->_internal_billablevalue() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(9, this->_internal_billablevalue(), target);
+  }
+
+  // string billableUnits = 10;
+  if (!this->_internal_billableunits().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_billableunits().data(), static_cast<int>(this->_internal_billableunits().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventResponse.billableUnits");
+    target = stream->WriteStringMaybeAliased(
+        10, this->_internal_billableunits(), target);
+  }
+
+  // string tenantId = 11;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventResponse.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        11, this->_internal_tenantid(), target);
+  }
+
+  // .sensory.api.common.ModelType billableFunction = 12;
+  if (this->_internal_billablefunction() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      12, this->_internal_billablefunction(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.event.UsageEventResponse)
+  return target;
+}
+
+size_t UsageEventResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.event.UsageEventResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.common.TechnologyType technologies = 7;
+  {
+    size_t data_size = 0;
+    unsigned int count = static_cast<unsigned int>(this->_internal_technologies_size());for (unsigned int i = 0; i < count; i++) {
+      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
+        this->_internal_technologies(static_cast<int>(i)));
+    }
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _technologies_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // repeated string models = 8;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(models_.size());
+  for (int i = 0, n = models_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      models_.Get(i));
+  }
+
+  // string id = 3 [(.validate.rules) = {
+  if (!this->_internal_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  // string clientId = 4 [(.validate.rules) = {
+  if (!this->_internal_clientid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_clientid());
+  }
+
+  // string route = 6 [(.validate.rules) = {
+  if (!this->_internal_route().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_route());
+  }
+
+  // string billableUnits = 10;
+  if (!this->_internal_billableunits().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_billableunits());
+  }
+
+  // string tenantId = 11;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
+  // .google.protobuf.Timestamp timestamp = 1 [(.validate.rules) = {
+  if (this->_internal_has_timestamp()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *timestamp_);
+  }
+
+  // int64 duration = 2 [(.validate.rules) = {
+  if (this->_internal_duration() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_duration());
+  }
+
+  // .sensory.api.common.UsageEventType type = 5 [(.validate.rules) = {
+  if (this->_internal_type() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
+  }
+
+  // .sensory.api.common.ModelType billableFunction = 12;
+  if (this->_internal_billablefunction() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_billablefunction());
+  }
+
+  // int64 billableValue = 9;
+  if (this->_internal_billablevalue() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_billablevalue());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UsageEventResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    UsageEventResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UsageEventResponse::GetClassData() const { return &_class_data_; }
+
+void UsageEventResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<UsageEventResponse *>(to)->MergeFrom(
+      static_cast<const UsageEventResponse &>(from));
+}
+
+
+void UsageEventResponse::MergeFrom(const UsageEventResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.event.UsageEventResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  technologies_.MergeFrom(from.technologies_);
+  models_.MergeFrom(from.models_);
+  if (!from._internal_id().empty()) {
+    _internal_set_id(from._internal_id());
+  }
+  if (!from._internal_clientid().empty()) {
+    _internal_set_clientid(from._internal_clientid());
+  }
+  if (!from._internal_route().empty()) {
+    _internal_set_route(from._internal_route());
+  }
+  if (!from._internal_billableunits().empty()) {
+    _internal_set_billableunits(from._internal_billableunits());
+  }
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
+  if (from._internal_has_timestamp()) {
+    _internal_mutable_timestamp()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_timestamp());
+  }
+  if (from._internal_duration() != 0) {
+    _internal_set_duration(from._internal_duration());
+  }
+  if (from._internal_type() != 0) {
+    _internal_set_type(from._internal_type());
+  }
+  if (from._internal_billablefunction() != 0) {
+    _internal_set_billablefunction(from._internal_billablefunction());
+  }
+  if (from._internal_billablevalue() != 0) {
+    _internal_set_billablevalue(from._internal_billablevalue());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UsageEventResponse::CopyFrom(const UsageEventResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.event.UsageEventResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UsageEventResponse::IsInitialized() const {
+  return true;
+}
+
+void UsageEventResponse::InternalSwap(UsageEventResponse* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  technologies_.InternalSwap(&other->technologies_);
+  models_.InternalSwap(&other->models_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &id_, lhs_arena,
+      &other->id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &clientid_, lhs_arena,
+      &other->clientid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &route_, lhs_arena,
+      &other->route_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &billableunits_, lhs_arena,
+      &other->billableunits_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UsageEventResponse, billablevalue_)
+      + sizeof(UsageEventResponse::billablevalue_)
+      - PROTOBUF_FIELD_OFFSET(UsageEventResponse, timestamp_)>(
+          reinterpret_cast<char*>(&timestamp_),
+          reinterpret_cast<char*>(&other->timestamp_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UsageEventResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
+      file_level_metadata_v1_2fevent_2fevent_2eproto[2]);
+}
+
+// ===================================================================
+
+class UsageEventListRequest::_Internal {
+ public:
+  static const ::sensory::api::common::PaginationOptions& pagination(const UsageEventListRequest* msg);
+  static const ::PROTOBUF_NAMESPACE_ID::Timestamp& after(const UsageEventListRequest* msg);
+  static const ::PROTOBUF_NAMESPACE_ID::Timestamp& before(const UsageEventListRequest* msg);
+};
+
+const ::sensory::api::common::PaginationOptions&
+UsageEventListRequest::_Internal::pagination(const UsageEventListRequest* msg) {
+  return *msg->pagination_;
+}
+const ::PROTOBUF_NAMESPACE_ID::Timestamp&
+UsageEventListRequest::_Internal::after(const UsageEventListRequest* msg) {
+  return *msg->after_;
+}
+const ::PROTOBUF_NAMESPACE_ID::Timestamp&
+UsageEventListRequest::_Internal::before(const UsageEventListRequest* msg) {
+  return *msg->before_;
+}
+void UsageEventListRequest::clear_pagination() {
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+}
+void UsageEventListRequest::clear_after() {
+  if (GetArenaForAllocation() == nullptr && after_ != nullptr) {
+    delete after_;
+  }
+  after_ = nullptr;
+}
+void UsageEventListRequest::clear_before() {
+  if (GetArenaForAllocation() == nullptr && before_ != nullptr) {
+    delete before_;
+  }
+  before_ = nullptr;
+}
+UsageEventListRequest::UsageEventListRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  billablefunctions_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.event.UsageEventListRequest)
+}
+UsageEventListRequest::UsageEventListRequest(const UsageEventListRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      billablefunctions_(from.billablefunctions_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
+  if (from._internal_has_pagination()) {
+    pagination_ = new ::sensory::api::common::PaginationOptions(*from.pagination_);
+  } else {
+    pagination_ = nullptr;
+  }
+  if (from._internal_has_after()) {
+    after_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from.after_);
+  } else {
+    after_ = nullptr;
+  }
+  if (from._internal_has_before()) {
+    before_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from.before_);
+  } else {
+    before_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEventListRequest)
+}
+
+void UsageEventListRequest::SharedCtor() {
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&pagination_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&before_) -
+    reinterpret_cast<char*>(&pagination_)) + sizeof(before_));
+}
+
+UsageEventListRequest::~UsageEventListRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.event.UsageEventListRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void UsageEventListRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete pagination_;
+  if (this != internal_default_instance()) delete after_;
+  if (this != internal_default_instance()) delete before_;
+}
+
+void UsageEventListRequest::ArenaDtor(void* object) {
+  UsageEventListRequest* _this = reinterpret_cast< UsageEventListRequest* >(object);
+  (void)_this;
+}
+void UsageEventListRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void UsageEventListRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void UsageEventListRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.event.UsageEventListRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  billablefunctions_.Clear();
+  tenantid_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+  if (GetArenaForAllocation() == nullptr && after_ != nullptr) {
+    delete after_;
+  }
+  after_ = nullptr;
+  if (GetArenaForAllocation() == nullptr && before_ != nullptr) {
+    delete before_;
+  }
+  before_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UsageEventListRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string tenantId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventListRequest.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.PaginationOptions pagination = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pagination(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .google.protobuf.Timestamp after = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_after(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .google.protobuf.Timestamp before = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          ptr = ctx->ParseMessage(_internal_mutable_before(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .sensory.api.common.ModelType billableFunctions = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser(_internal_mutable_billablefunctions(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_add_billablefunctions(static_cast<::sensory::api::common::ModelType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* UsageEventListRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.event.UsageEventListRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string tenantId = 1;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventListRequest.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_tenantid(), target);
+  }
+
+  // .sensory.api.common.PaginationOptions pagination = 2;
+  if (this->_internal_has_pagination()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::pagination(this), target, stream);
+  }
+
+  // .google.protobuf.Timestamp after = 3;
+  if (this->_internal_has_after()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        3, _Internal::after(this), target, stream);
+  }
+
+  // .google.protobuf.Timestamp before = 4;
+  if (this->_internal_has_before()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        4, _Internal::before(this), target, stream);
+  }
+
+  // repeated .sensory.api.common.ModelType billableFunctions = 5;
+  {
+    int byte_size = _billablefunctions_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteEnumPacked(
+          5, billablefunctions_, byte_size, target);
+    }
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.event.UsageEventListRequest)
+  return target;
+}
+
+size_t UsageEventListRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.event.UsageEventListRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.common.ModelType billableFunctions = 5;
+  {
+    size_t data_size = 0;
+    unsigned int count = static_cast<unsigned int>(this->_internal_billablefunctions_size());for (unsigned int i = 0; i < count; i++) {
+      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
+        this->_internal_billablefunctions(static_cast<int>(i)));
+    }
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _billablefunctions_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // string tenantId = 1;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
+  // .sensory.api.common.PaginationOptions pagination = 2;
+  if (this->_internal_has_pagination()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *pagination_);
+  }
+
+  // .google.protobuf.Timestamp after = 3;
+  if (this->_internal_has_after()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *after_);
+  }
+
+  // .google.protobuf.Timestamp before = 4;
+  if (this->_internal_has_before()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *before_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UsageEventListRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    UsageEventListRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UsageEventListRequest::GetClassData() const { return &_class_data_; }
+
+void UsageEventListRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<UsageEventListRequest *>(to)->MergeFrom(
+      static_cast<const UsageEventListRequest &>(from));
+}
+
+
+void UsageEventListRequest::MergeFrom(const UsageEventListRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.event.UsageEventListRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  billablefunctions_.MergeFrom(from.billablefunctions_);
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
+  if (from._internal_has_pagination()) {
+    _internal_mutable_pagination()->::sensory::api::common::PaginationOptions::MergeFrom(from._internal_pagination());
+  }
+  if (from._internal_has_after()) {
+    _internal_mutable_after()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_after());
+  }
+  if (from._internal_has_before()) {
+    _internal_mutable_before()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(from._internal_before());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UsageEventListRequest::CopyFrom(const UsageEventListRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.event.UsageEventListRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UsageEventListRequest::IsInitialized() const {
+  return true;
+}
+
+void UsageEventListRequest::InternalSwap(UsageEventListRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  billablefunctions_.InternalSwap(&other->billablefunctions_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UsageEventListRequest, before_)
+      + sizeof(UsageEventListRequest::before_)
+      - PROTOBUF_FIELD_OFFSET(UsageEventListRequest, pagination_)>(
+          reinterpret_cast<char*>(&pagination_),
+          reinterpret_cast<char*>(&other->pagination_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UsageEventListRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
+      file_level_metadata_v1_2fevent_2fevent_2eproto[3]);
+}
+
+// ===================================================================
+
+class UsageEventListResponse::_Internal {
+ public:
+  static const ::sensory::api::common::PaginationResponse& pagination(const UsageEventListResponse* msg);
+};
+
+const ::sensory::api::common::PaginationResponse&
+UsageEventListResponse::_Internal::pagination(const UsageEventListResponse* msg) {
+  return *msg->pagination_;
+}
+void UsageEventListResponse::clear_pagination() {
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+}
+UsageEventListResponse::UsageEventListResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  events_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.event.UsageEventListResponse)
+}
+UsageEventListResponse::UsageEventListResponse(const UsageEventListResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      events_(from.events_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_pagination()) {
+    pagination_ = new ::sensory::api::common::PaginationResponse(*from.pagination_);
+  } else {
+    pagination_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEventListResponse)
+}
+
+void UsageEventListResponse::SharedCtor() {
+pagination_ = nullptr;
+}
+
+UsageEventListResponse::~UsageEventListResponse() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.event.UsageEventListResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void UsageEventListResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete pagination_;
+}
+
+void UsageEventListResponse::ArenaDtor(void* object) {
+  UsageEventListResponse* _this = reinterpret_cast< UsageEventListResponse* >(object);
+  (void)_this;
+}
+void UsageEventListResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void UsageEventListResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void UsageEventListResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.event.UsageEventListResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  events_.Clear();
+  if (GetArenaForAllocation() == nullptr && pagination_ != nullptr) {
+    delete pagination_;
+  }
+  pagination_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UsageEventListResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // repeated .sensory.api.v1.event.UsageEventResponse events = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_events(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.PaginationResponse pagination = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_pagination(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* UsageEventListResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.event.UsageEventListResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.event.UsageEventResponse events = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_events_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, this->_internal_events(i), target, stream);
+  }
+
+  // .sensory.api.common.PaginationResponse pagination = 2;
+  if (this->_internal_has_pagination()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        2, _Internal::pagination(this), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.event.UsageEventListResponse)
+  return target;
+}
+
+size_t UsageEventListResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.event.UsageEventListResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.event.UsageEventResponse events = 1;
+  total_size += 1UL * this->_internal_events_size();
+  for (const auto& msg : this->events_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // .sensory.api.common.PaginationResponse pagination = 2;
+  if (this->_internal_has_pagination()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *pagination_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UsageEventListResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    UsageEventListResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UsageEventListResponse::GetClassData() const { return &_class_data_; }
+
+void UsageEventListResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<UsageEventListResponse *>(to)->MergeFrom(
+      static_cast<const UsageEventListResponse &>(from));
+}
+
+
+void UsageEventListResponse::MergeFrom(const UsageEventListResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.event.UsageEventListResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  events_.MergeFrom(from.events_);
+  if (from._internal_has_pagination()) {
+    _internal_mutable_pagination()->::sensory::api::common::PaginationResponse::MergeFrom(from._internal_pagination());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UsageEventListResponse::CopyFrom(const UsageEventListResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.event.UsageEventListResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UsageEventListResponse::IsInitialized() const {
+  return true;
+}
+
+void UsageEventListResponse::InternalSwap(UsageEventListResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  events_.InternalSwap(&other->events_);
+  swap(pagination_, other->pagination_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UsageEventListResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
+      file_level_metadata_v1_2fevent_2fevent_2eproto[4]);
+}
+
+// ===================================================================
+
+class UsageEventSummary::_Internal {
+ public:
+};
+
+UsageEventSummary::UsageEventSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  summaries_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.event.UsageEventSummary)
+}
+UsageEventSummary::UsageEventSummary(const UsageEventSummary& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      summaries_(from.summaries_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEventSummary)
+}
+
+void UsageEventSummary::SharedCtor() {
+}
+
+UsageEventSummary::~UsageEventSummary() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.event.UsageEventSummary)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void UsageEventSummary::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void UsageEventSummary::ArenaDtor(void* object) {
+  UsageEventSummary* _this = reinterpret_cast< UsageEventSummary* >(object);
+  (void)_this;
+}
+void UsageEventSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void UsageEventSummary::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void UsageEventSummary::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.event.UsageEventSummary)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  summaries_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UsageEventSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // repeated .sensory.api.v1.event.UsageEventModelSummary summaries = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_summaries(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* UsageEventSummary::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.event.UsageEventSummary)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.event.UsageEventModelSummary summaries = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_summaries_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, this->_internal_summaries(i), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.event.UsageEventSummary)
+  return target;
+}
+
+size_t UsageEventSummary::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.event.UsageEventSummary)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.event.UsageEventModelSummary summaries = 1;
+  total_size += 1UL * this->_internal_summaries_size();
+  for (const auto& msg : this->summaries_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UsageEventSummary::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    UsageEventSummary::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UsageEventSummary::GetClassData() const { return &_class_data_; }
+
+void UsageEventSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<UsageEventSummary *>(to)->MergeFrom(
+      static_cast<const UsageEventSummary &>(from));
+}
+
+
+void UsageEventSummary::MergeFrom(const UsageEventSummary& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.event.UsageEventSummary)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  summaries_.MergeFrom(from.summaries_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UsageEventSummary::CopyFrom(const UsageEventSummary& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.event.UsageEventSummary)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UsageEventSummary::IsInitialized() const {
+  return true;
+}
+
+void UsageEventSummary::InternalSwap(UsageEventSummary* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  summaries_.InternalSwap(&other->summaries_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UsageEventSummary::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
+      file_level_metadata_v1_2fevent_2fevent_2eproto[5]);
+}
+
+// ===================================================================
+
+class UsageEventModelSummary::_Internal {
+ public:
+};
+
+UsageEventModelSummary::UsageEventModelSummary(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.event.UsageEventModelSummary)
+}
+UsageEventModelSummary::UsageEventModelSummary(const UsageEventModelSummary& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  units_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_units().empty()) {
+    units_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_units(), 
+      GetArenaForAllocation());
+  }
+  ::memcpy(&value_, &from.value_,
+    static_cast<size_t>(reinterpret_cast<char*>(&billablefunction_) -
+    reinterpret_cast<char*>(&value_)) + sizeof(billablefunction_));
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEventModelSummary)
+}
+
+void UsageEventModelSummary::SharedCtor() {
+units_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&value_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&billablefunction_) -
+    reinterpret_cast<char*>(&value_)) + sizeof(billablefunction_));
+}
+
+UsageEventModelSummary::~UsageEventModelSummary() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.event.UsageEventModelSummary)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void UsageEventModelSummary::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  units_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void UsageEventModelSummary::ArenaDtor(void* object) {
+  UsageEventModelSummary* _this = reinterpret_cast< UsageEventModelSummary* >(object);
+  (void)_this;
+}
+void UsageEventModelSummary::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void UsageEventModelSummary::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void UsageEventModelSummary::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.event.UsageEventModelSummary)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  units_.ClearToEmpty();
+  ::memset(&value_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&billablefunction_) -
+      reinterpret_cast<char*>(&value_)) + sizeof(billablefunction_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UsageEventModelSummary::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .sensory.api.common.ModelType billableFunction = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_billablefunction(static_cast<::sensory::api::common::ModelType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // string units = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_units();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.event.UsageEventModelSummary.units"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 value = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 count = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* UsageEventModelSummary::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.event.UsageEventModelSummary)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .sensory.api.common.ModelType billableFunction = 1;
+  if (this->_internal_billablefunction() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_billablefunction(), target);
+  }
+
+  // string units = 2;
+  if (!this->_internal_units().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_units().data(), static_cast<int>(this->_internal_units().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.event.UsageEventModelSummary.units");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_units(), target);
+  }
+
+  // int64 value = 3;
+  if (this->_internal_value() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(3, this->_internal_value(), target);
+  }
+
+  // int64 count = 4;
+  if (this->_internal_count() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(4, this->_internal_count(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.event.UsageEventModelSummary)
+  return target;
+}
+
+size_t UsageEventModelSummary::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.event.UsageEventModelSummary)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string units = 2;
+  if (!this->_internal_units().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_units());
+  }
+
+  // int64 value = 3;
+  if (this->_internal_value() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_value());
+  }
+
+  // int64 count = 4;
+  if (this->_internal_count() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_count());
+  }
+
+  // .sensory.api.common.ModelType billableFunction = 1;
+  if (this->_internal_billablefunction() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_billablefunction());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UsageEventModelSummary::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    UsageEventModelSummary::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UsageEventModelSummary::GetClassData() const { return &_class_data_; }
+
+void UsageEventModelSummary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<UsageEventModelSummary *>(to)->MergeFrom(
+      static_cast<const UsageEventModelSummary &>(from));
+}
+
+
+void UsageEventModelSummary::MergeFrom(const UsageEventModelSummary& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.event.UsageEventModelSummary)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_units().empty()) {
+    _internal_set_units(from._internal_units());
+  }
+  if (from._internal_value() != 0) {
+    _internal_set_value(from._internal_value());
+  }
+  if (from._internal_count() != 0) {
+    _internal_set_count(from._internal_count());
+  }
+  if (from._internal_billablefunction() != 0) {
+    _internal_set_billablefunction(from._internal_billablefunction());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UsageEventModelSummary::CopyFrom(const UsageEventModelSummary& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.event.UsageEventModelSummary)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UsageEventModelSummary::IsInitialized() const {
+  return true;
+}
+
+void UsageEventModelSummary::InternalSwap(UsageEventModelSummary* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &units_, lhs_arena,
+      &other->units_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UsageEventModelSummary, billablefunction_)
+      + sizeof(UsageEventModelSummary::billablefunction_)
+      - PROTOBUF_FIELD_OFFSET(UsageEventModelSummary, value_)>(
+          reinterpret_cast<char*>(&value_),
+          reinterpret_cast<char*>(&other->value_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UsageEventModelSummary::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
+      file_level_metadata_v1_2fevent_2fevent_2eproto[6]);
 }
 
 // ===================================================================
@@ -904,7 +2860,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PublishUsageEventsResponse::Ge
 ::PROTOBUF_NAMESPACE_ID::Metadata PublishUsageEventsResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2fevent_2fevent_2eproto_getter, &descriptor_table_v1_2fevent_2fevent_2eproto_once,
-      file_level_metadata_v1_2fevent_2fevent_2eproto[2]);
+      file_level_metadata_v1_2fevent_2fevent_2eproto[7]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -918,6 +2874,21 @@ template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::PublishUsageEventsReques
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::UsageEvent* Arena::CreateMaybeMessage< ::sensory::api::v1::event::UsageEvent >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::event::UsageEvent >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::UsageEventResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::event::UsageEventResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::event::UsageEventResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::UsageEventListRequest* Arena::CreateMaybeMessage< ::sensory::api::v1::event::UsageEventListRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::event::UsageEventListRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::UsageEventListResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::event::UsageEventListResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::event::UsageEventListResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::UsageEventSummary* Arena::CreateMaybeMessage< ::sensory::api::v1::event::UsageEventSummary >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::event::UsageEventSummary >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::UsageEventModelSummary* Arena::CreateMaybeMessage< ::sensory::api::v1::event::UsageEventModelSummary >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::event::UsageEventModelSummary >(arena);
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::event::PublishUsageEventsResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::event::PublishUsageEventsResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::event::PublishUsageEventsResponse >(arena);

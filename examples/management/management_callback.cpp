@@ -1,4 +1,4 @@
-// The Sensory Cloud C++ SDK Management service demo (callback interface).
+// The SensoryCloud C++ SDK Management service demo (callback interface).
 //
 // Copyright (c) 2021 Sensory, Inc.
 //
@@ -26,70 +26,30 @@
 #include <iostream>
 #include <regex>
 #include <google/protobuf/util/time_util.h>
-#include <sensorycloud/config.hpp>
-#include <sensorycloud/services/health_service.hpp>
-#include <sensorycloud/services/oauth_service.hpp>
-#include <sensorycloud/services/management_service.hpp>
+#include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
-#include <sensorycloud/token_manager/token_manager.hpp>
 #include "dep/argparse.hpp"
 
+using sensory::SensoryCloud;
 using sensory::token_manager::InsecureCredentialStore;
-using sensory::token_manager::TokenManager;
-using sensory::service::HealthService;
-using sensory::service::OAuthService;
 using sensory::service::ManagementService;
-
-/// @brief Login to the OAuth service on the remote server.
-///
-/// @param oauthService The OAuth service for requesting tokens from the server
-/// @param tokenManager The token manager for storing and accessing credentials
-/// @returns 0 if the call succeeds, 1 otherwise.
-///
-int registerDevice(OAuthService& oauthService, TokenManager<InsecureCredentialStore>& tokenManager) {
-    // Attempt to login and register the device if needed.
-    auto status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
-        std::cout << "Registering device with server..." << std::endl;
-        // Query the device name from the standard input.
-        std::string name = "";
-        std::cout << "Device name: ";
-        std::cin >> name;
-        // Query the credential for the user from the standard input.
-        std::string credential = "";
-        std::cout << "Credential: ";
-        std::cin >> credential;
-        // Flush anything that may still be in the input buffer.
-        std::cin.ignore();
-        // Return the device name and credential as a tuple.
-        return {name, credential};
-    });
-    // Check the status code from the attempted registration.
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to register device with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return status.error_code();
-    }
-    return 0;
-}
 
 /// @brief Get the enrollments for the given user.
 ///
-/// @param mgmtService The management service for getting enrollments.
+/// @param service The management service for getting enrollments.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int getEnrollments(
-    ManagementService<InsecureCredentialStore>& mgmtService,
+    ManagementService<InsecureCredentialStore>& service,
     const std::string& userID
 ) {
-    int errCode = 0;
-    mgmtService.getEnrollments(
+    int error_code = 0;
+    service.getEnrollments(
         userID,
-        [&errCode](ManagementService<InsecureCredentialStore>::GetEnrollmentsCallData* call) {
+        [&error_code](ManagementService<InsecureCredentialStore>::GetEnrollmentsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to get enrollments with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-            errCode = call->getStatus().error_code();
+            std::cout << "Failed to get enrollments (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
+            error_code = call->getStatus().error_code();
         }
         if (call->getResponse().enrollments().size() == 0) {
             std::cout << "No enrollments" << std::endl;
@@ -110,51 +70,47 @@ int getEnrollments(
             std::cout << "\tID:            " << enrollment.id()    << std::endl;
         }
     })->await();
-    return errCode;
+    return error_code;
 }
 
 /// @brief Delete the enrollment with the given ID.
 ///
-/// @param mgmtService The management service for deleting the enrollment.
+/// @param service The management service for deleting the enrollment.
 /// @param enrollmentID The UUID of the enrollment to delete.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int deleteEnrollment(
-    ManagementService<InsecureCredentialStore>& mgmtService,
+    ManagementService<InsecureCredentialStore>& service,
     const std::string& enrollmentID
 ) {
-    int errCode = 0;
-    mgmtService.deleteEnrollment(
+    int error_code = 0;
+    service.deleteEnrollment(
         enrollmentID,
-        [&errCode](ManagementService<InsecureCredentialStore>::DeleteEnrollmentCallData* call) {
+        [&error_code](ManagementService<InsecureCredentialStore>::DeleteEnrollmentCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to delete enrollment with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-            errCode = call->getStatus().error_code();
+            std::cout << "Failed to delete enrollment (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
+            error_code = call->getStatus().error_code();
         }
     })->await();
-    return errCode;
+    return error_code;
 }
 
 /// @brief Get the enrollment groups for the given user.
 ///
-/// @param mgmtService The management service for getting enrollments.
+/// @param service The management service for getting enrollments.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int getEnrollmentGroups(
-    ManagementService<InsecureCredentialStore>& mgmtService,
+    ManagementService<InsecureCredentialStore>& service,
     const std::string& userID
 ) {
-    int errCode = 0;
-    mgmtService.getEnrollmentGroups(
+    int error_code = 0;
+    service.getEnrollmentGroups(
         userID,
-        [&errCode](ManagementService<InsecureCredentialStore>::GetEnrollmentGroupsCallData* call) {
+        [&error_code](ManagementService<InsecureCredentialStore>::GetEnrollmentGroupsCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to get enrollment groups with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-            errCode = call->getStatus().error_code();
+            std::cout << "Failed to get enrollment groups (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
+            error_code = call->getStatus().error_code();
         }
         if (call->getResponse().enrollmentgroups().size() == 0) {
             std::cout << "No enrollment groups" << std::endl;
@@ -174,12 +130,12 @@ int getEnrollmentGroups(
             std::cout << "\tID:            " << enrollment.id()    << std::endl;
         }
     })->await();
-    return errCode;
+    return error_code;
 }
 
 /// @brief Create a new enrollment group.
 ///
-/// @param mgmtService The management service for getting enrollments.
+/// @param service The management service for getting enrollments.
 /// @param userID The user ID of the user that owns the enrollment group.
 /// @param groupdID The optional group ID to create the group with (an empty
 /// string to generate the UUID on the server).
@@ -189,7 +145,7 @@ int getEnrollmentGroups(
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int createEnrollmentGroup(
-    ManagementService<InsecureCredentialStore>& mgmtService,
+    ManagementService<InsecureCredentialStore>& service,
     const std::string& userID,
     const std::string& groupID,
     const std::string& name,
@@ -197,87 +153,71 @@ int createEnrollmentGroup(
     const std::string& model,
     const std::vector<std::string>& enrollmentIDs
 ) {
-    int errCode = 0;
-    mgmtService.createEnrollmentGroup(userID, groupID,name, description, model, enrollmentIDs,
-        [&errCode](ManagementService<InsecureCredentialStore>::CreateEnrollmentGroupCallData* call) {
+    int error_code = 0;
+    service.createEnrollmentGroup(userID, groupID,name, description, model, enrollmentIDs,
+        [&error_code](ManagementService<InsecureCredentialStore>::CreateEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to create enrollment group with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-            errCode = call->getStatus().error_code();
+            std::cout << "Failed to create enrollment group (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
+            error_code = call->getStatus().error_code();
         }
     })->await();
-    return errCode;
+    return error_code;
 }
 
 /// @brief Append enrollment IDs to an existing enrollment group.
 ///
-/// @param mgmtService The management service for getting enrollments.
+/// @param service The management service for getting enrollments.
 /// @param groupID the UUID of the group to append enrollments to
 /// @param enrollments the list of enrollments to append to the group
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int appendEnrollmentGroup(
-    ManagementService<InsecureCredentialStore>& mgmtService,
+    ManagementService<InsecureCredentialStore>& service,
     const std::string& groupID,
     const std::vector<std::string>& enrollments
 ) {
-    int errCode = 0;
-    mgmtService.appendEnrollmentGroup(
+    int error_code = 0;
+    service.appendEnrollmentGroup(
         groupID,
         enrollments,
-        [&errCode](ManagementService<InsecureCredentialStore>::AppendEnrollmentGroupCallData* call) {
+        [&error_code](ManagementService<InsecureCredentialStore>::AppendEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to append enrollment group with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-            errCode = call->getStatus().error_code();
+            std::cout << "Failed to append enrollment group (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
+            error_code = call->getStatus().error_code();
         }
     })->await();
-    return errCode;
+    return error_code;
 }
 
 /// @brief Delete the enrollment group with the given ID.
 ///
-/// @param mgmtService The management service for deleting the enrollment group.
+/// @param service The management service for deleting the enrollment group.
 /// @param groupID The UUID of the enrollment group to delete.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int deleteEnrollmentGroup(
-    ManagementService<InsecureCredentialStore>& mgmtService,
+    ManagementService<InsecureCredentialStore>& service,
     const std::string& groupID
 ) {
-    int errCode = 0;
-    mgmtService.deleteEnrollmentGroup(
+    int error_code = 0;
+    service.deleteEnrollmentGroup(
         groupID,
-        [&errCode](ManagementService<InsecureCredentialStore>::DeleteEnrollmentGroupCallData* call) {
+        [&error_code](ManagementService<InsecureCredentialStore>::DeleteEnrollmentGroupCallData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
-            std::cout << "Failed to delete enrollment group with\n\t" <<
-                call->getStatus().error_code() << ": " <<
-                call->getStatus().error_message() << std::endl;
-            errCode = call->getStatus().error_code();
+            std::cout << "Failed to delete enrollment group (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
+            error_code = call->getStatus().error_code();
         }
     })->await();
-    return errCode;
+    return error_code;
 }
 
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
         .prog("authenticate")
-        .description("A tool for authenticating with face biometrics using Sensory Cloud.");
-    parser.add_argument({ "-H", "--host" })
-        .required(true)
-        .help("HOST The hostname of a Sensory Cloud inference server.");
-    parser.add_argument({ "-P", "--port" })
-        .required(true)
-        .help("PORT The port number that the Sensory Cloud inference server is running at.");
-    parser.add_argument({ "-T", "--tenant" })
-        .required(true)
-        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
-    parser.add_argument({ "-I", "--insecure" })
-        .action("store_true")
-        .help("INSECURE Disable TLS.");
+        .description("A tool for authenticating with face biometrics using SensoryCloud.");
+    parser.add_argument({ "path" })
+        .help("PATH The path to an INI file containing server metadata.");
     parser.add_argument("endpoint")
         .choices({
             "getHealth",
@@ -307,10 +247,7 @@ int main(int argc, const char** argv) {
         .help("VERBOSE Produce verbose output during authentication.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
-    const auto HOSTNAME = args.get<std::string>("host");
-    const auto PORT = args.get<uint16_t>("port");
-    const auto TENANT = args.get<std::string>("tenant");
-    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto PATH = args.get<std::string>("path");
     const auto ENDPOINT = args.get<std::string>("endpoint");
     const auto USER_ID = args.get<std::string>("userid");
     const auto ENROLLMENT_ID = args.get<std::string>("enrollmentid");
@@ -322,42 +259,37 @@ int main(int argc, const char** argv) {
 
     // Create an insecure credential store for keeping OAuth credentials in.
     InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
-    if (!keychain.contains("deviceID"))
-        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
-    const auto DEVICE_ID(keychain.at("deviceID"));
 
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
-    config.connect();
+    // Create the cloud services handle.
+    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.getHealth(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get server health with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
+        std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
-    } else if (ENDPOINT == "getHealth") {
-        // Report the health of the remote service
+    }
+    if (ENDPOINT == "getHealth") {
         std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-        std::cout << "\tid: " << serverHealth.id() << std::endl;
+        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
+        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
+        std::cout << "\tid: " << server_health.id() << std::endl;
         return 0;
     }
 
-    // Create an OAuth service and register this device with the server
-    OAuthService oauthService(config);
-    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
-    if (registerDevice(oauthService, tokenManager)) return 1;
+    // Initialize the client.
+    sensory::api::v1::management::DeviceResponse response;
+    status = cloud.initialize(&response);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to initialize (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
+    }
 
-    // Create the management service and execute the request.
-    ManagementService<InsecureCredentialStore> mgmtService(config, tokenManager);
-    if      (ENDPOINT == "getEnrollments")        return getEnrollments(mgmtService, USER_ID);
-    else if (ENDPOINT == "deleteEnrollment")      return deleteEnrollment(mgmtService, ENROLLMENT_ID);
-    else if (ENDPOINT == "getEnrollmentGroups")   return getEnrollmentGroups(mgmtService, USER_ID);
-    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(mgmtService, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
-    else if (ENDPOINT == "appendEnrollmentGroup") return appendEnrollmentGroup(mgmtService, ENROLLMENT_ID, ENROLLMENT_IDS);
-    else if (ENDPOINT == "deleteEnrollmentGroup") return deleteEnrollmentGroup(mgmtService, ENROLLMENT_ID);
+    if      (ENDPOINT == "getEnrollments")        return getEnrollments(cloud.management, USER_ID);
+    else if (ENDPOINT == "deleteEnrollment")      return deleteEnrollment(cloud.management, ENROLLMENT_ID);
+    else if (ENDPOINT == "getEnrollmentGroups")   return getEnrollmentGroups(cloud.management, USER_ID);
+    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(cloud.management, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
+    else if (ENDPOINT == "appendEnrollmentGroup") return appendEnrollmentGroup(cloud.management, ENROLLMENT_ID, ENROLLMENT_IDS);
+    else if (ENDPOINT == "deleteEnrollmentGroup") return deleteEnrollmentGroup(cloud.management, ENROLLMENT_ID);
 }

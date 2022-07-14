@@ -1,8 +1,8 @@
 // Test cases for the TokenManager in the sensory::token_manager namespace.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,45 +60,49 @@ struct SecureCredentialStore : public std::unordered_map<std::string, std::strin
 
 SCENARIO("a user wants to create a TokenManager based on an STL key-store") {
     GIVEN("an initialized STL key-value store object and an OAuthService") {
-        Config config(
-            "localhost",
-            50051,
-            "tenantID",
-            "deviceID"
-        );
-        config.connect();
-
+        Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         WHEN("a TokenManager is initialized with an empty key-value store") {
-            TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
+            TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
             THEN("the token manager has no credentials stored") {
-                REQUIRE_FALSE(tokenManager.hasSavedCredentials());
+                REQUIRE_FALSE(token_manager.has_saved_credentials());
+            }
+            THEN("get_saved_credentials throws an error") {
+                REQUIRE_THROWS(token_manager.get_saved_credentials());
             }
             THEN("the token manager has no token stored") {
-                REQUIRE_FALSE(tokenManager.hasToken());
+                REQUIRE_FALSE(token_manager.has_token());
             }
         }
         WHEN("a TokenManager is initialized with credentials in the key-value store") {
             keychain.emplace(TAGS.ClientID, "foo");
             keychain.emplace(TAGS.ClientSecret, "bar");
-            TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
-            THEN("the token manager has no credentials stored") {
-                REQUIRE(tokenManager.hasSavedCredentials());
+            TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+            THEN("the token manager has credentials stored") {
+                REQUIRE(token_manager.has_saved_credentials());
+            }
+            THEN("get_saved_credentials returns the credentials") {
+                auto credentials = token_manager.get_saved_credentials();
+                REQUIRE_THAT(credentials.id, Catch::Equals(keychain.at(TAGS.ClientID)));
+                REQUIRE_THAT(credentials.secret, Catch::Equals(keychain.at(TAGS.ClientSecret)));
             }
             THEN("the token manager has no token stored") {
-                REQUIRE_FALSE(tokenManager.hasToken());
+                REQUIRE_FALSE(token_manager.has_token());
             }
         }
         WHEN("a TokenManager is initialized with a token in the key-value store") {
             keychain.emplace(TAGS.AccessToken, "foo");
             keychain.emplace(TAGS.Expiration, "bar");
-            TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
+            TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
             THEN("the token manager has no credentials stored") {
-                REQUIRE_FALSE(tokenManager.hasSavedCredentials());
+                REQUIRE_FALSE(token_manager.has_saved_credentials());
             }
-            THEN("the token manager has no token stored") {
-                REQUIRE(tokenManager.hasToken());
+            THEN("get_saved_credentials throws an error") {
+                REQUIRE_THROWS(token_manager.get_saved_credentials());
+            }
+            THEN("the token manager has a token stored") {
+                REQUIRE(token_manager.has_token());
             }
         }
     }
@@ -106,19 +110,12 @@ SCENARIO("a user wants to create a TokenManager based on an STL key-store") {
 
 SCENARIO("a user wants to generate credentials in an empty secure store") {
     GIVEN("an initialized TokenManager") {
-        Config config(
-            "localhost",
-            50051,
-            "tenantID",
-            "deviceID"
-        );
-        config.connect();
-
+        Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
-        TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
+        TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
         WHEN("credentials are generated") {
-            const auto credentials = tokenManager.generateCredentials();
+            const auto credentials = token_manager.generate_credentials();
             THEN("The returned credentials should be in the key-value store") {
                 REQUIRE_THAT(credentials.id, Catch::Equals(keychain.at(TAGS.ClientID)));
                 REQUIRE_THAT(credentials.secret, Catch::Equals(keychain.at(TAGS.ClientSecret)));
@@ -135,21 +132,14 @@ SCENARIO("a user wants to generate credentials in an empty secure store") {
 
 SCENARIO("a user wants to overwrite credentials in a secure store") {
     GIVEN("an initialized TokenManager with existing client ID and secret") {
-        Config config(
-            "localhost",
-            50051,
-            "tenantID",
-            "deviceID"
-        );
-        config.connect();
-
+        Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         keychain.emplace(TAGS.ClientID, "foo");
         keychain.emplace(TAGS.ClientSecret, "bar");
-        TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
+        TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
         WHEN("new credentials are generated") {
-            const auto credentials = tokenManager.generateCredentials();
+            const auto credentials = token_manager.generate_credentials();
             THEN("The returned credentials should be in the key-value store") {
                 REQUIRE_THAT(credentials.id, Catch::Equals(keychain.at(TAGS.ClientID)));
                 REQUIRE_THAT(credentials.secret, Catch::Equals(keychain.at(TAGS.ClientSecret)));
@@ -166,14 +156,7 @@ SCENARIO("a user wants to overwrite credentials in a secure store") {
 
 SCENARIO("a user wants to erase credentials in a secure store") {
     GIVEN("an initialized TokenManager with existing all keys") {
-        Config config(
-            "localhost",
-            50051,
-            "tenantID",
-            "deviceID"
-        );
-        config.connect();
-
+        Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
         SecureCredentialStore keychain;
         keychain.emplace(TAGS.ClientID, "foo");
@@ -183,9 +166,9 @@ SCENARIO("a user wants to erase credentials in a secure store") {
         const std::string ARB_KEY = "arb";
         const std::string ARB_VALUE = "asdf";
         keychain.emplace(ARB_KEY, ARB_VALUE);
-        TokenManager<SecureCredentialStore> tokenManager(oauth_service, keychain);
+        TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
         WHEN("credentials are erased") {
-            tokenManager.deleteCredentials();
+            token_manager.delete_credentials();
             THEN("The keychain is cleared of the values") {
                 REQUIRE_FALSE(keychain.contains(TAGS.ClientID));
                 REQUIRE_FALSE(keychain.contains(TAGS.ClientSecret));

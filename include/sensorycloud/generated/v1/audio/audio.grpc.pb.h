@@ -1239,6 +1239,219 @@ class AudioTranscriptions final {
   typedef Service StreamedService;
 };
 
+// Handles synthesizing audio from text
+class AudioSynthesis final {
+ public:
+  static constexpr char const* service_full_name() {
+    return "sensory.api.v1.audio.AudioSynthesis";
+  }
+  class StubInterface {
+   public:
+    virtual ~StubInterface() {}
+    // Synthesizes speech from text
+    // Authorization metadata is required {"authorization": "Bearer <TOKNE>"}
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>> SynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>>(SynthesizeSpeechRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>> AsyncSynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>>(AsyncSynthesizeSpeechRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>> PrepareAsyncSynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>>(PrepareAsyncSynthesizeSpeechRaw(context, request, cq));
+    }
+    class async_interface {
+     public:
+      virtual ~async_interface() {}
+      // Synthesizes speech from text
+      // Authorization metadata is required {"authorization": "Bearer <TOKNE>"}
+      virtual void SynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* request, ::grpc::ClientReadReactor< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* reactor) = 0;
+    };
+    typedef class async_interface experimental_async_interface;
+    virtual class async_interface* async() { return nullptr; }
+    class async_interface* experimental_async() { return async(); }
+   private:
+    virtual ::grpc::ClientReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* SynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* AsyncSynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* PrepareAsyncSynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq) = 0;
+  };
+  class Stub final : public StubInterface {
+   public:
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+    std::unique_ptr< ::grpc::ClientReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>> SynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>>(SynthesizeSpeechRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>> AsyncSynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>>(AsyncSynthesizeSpeechRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>> PrepareAsyncSynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>>(PrepareAsyncSynthesizeSpeechRaw(context, request, cq));
+    }
+    class async final :
+      public StubInterface::async_interface {
+     public:
+      void SynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* request, ::grpc::ClientReadReactor< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* reactor) override;
+     private:
+      friend class Stub;
+      explicit async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class async* async() override { return &async_stub_; }
+
+   private:
+    std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class async async_stub_{this};
+    ::grpc::ClientReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* SynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request) override;
+    ::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* AsyncSynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* PrepareAsyncSynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_SynthesizeSpeech_;
+  };
+  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+
+  class Service : public ::grpc::Service {
+   public:
+    Service();
+    virtual ~Service();
+    // Synthesizes speech from text
+    // Authorization metadata is required {"authorization": "Bearer <TOKNE>"}
+    virtual ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* request, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* writer);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_SynthesizeSpeech : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_SynthesizeSpeech() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_SynthesizeSpeech() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSynthesizeSpeech(::grpc::ServerContext* context, ::sensory::api::v1::audio::SynthesizeSpeechRequest* request, ::grpc::ServerAsyncWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(0, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_SynthesizeSpeech<Service > AsyncService;
+  template <class BaseClass>
+  class WithCallbackMethod_SynthesizeSpeech : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_SynthesizeSpeech() {
+      ::grpc::Service::MarkMethodCallback(0,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::sensory::api::v1::audio::SynthesizeSpeechRequest, ::sensory::api::v1::audio::SynthesizeSpeechResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* request) { return this->SynthesizeSpeech(context, request); }));
+    }
+    ~WithCallbackMethod_SynthesizeSpeech() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* SynthesizeSpeech(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_SynthesizeSpeech<Service > CallbackService;
+  typedef CallbackService ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_SynthesizeSpeech : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_SynthesizeSpeech() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_SynthesizeSpeech() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_SynthesizeSpeech : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_SynthesizeSpeech() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_SynthesizeSpeech() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSynthesizeSpeech(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(0, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_SynthesizeSpeech : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_SynthesizeSpeech() {
+      ::grpc::Service::MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->SynthesizeSpeech(context, request); }));
+    }
+    ~WithRawCallbackMethod_SynthesizeSpeech() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* SynthesizeSpeech(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
+  };
+  typedef Service StreamedUnaryService;
+  template <class BaseClass>
+  class WithSplitStreamingMethod_SynthesizeSpeech : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithSplitStreamingMethod_SynthesizeSpeech() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::SplitServerStreamingHandler<
+          ::sensory::api::v1::audio::SynthesizeSpeechRequest, ::sensory::api::v1::audio::SynthesizeSpeechResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerSplitStreamer<
+                     ::sensory::api::v1::audio::SynthesizeSpeechRequest, ::sensory::api::v1::audio::SynthesizeSpeechResponse>* streamer) {
+                       return this->StreamedSynthesizeSpeech(context,
+                         streamer);
+                  }));
+    }
+    ~WithSplitStreamingMethod_SynthesizeSpeech() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status SynthesizeSpeech(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* /*request*/, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with split streamed
+    virtual ::grpc::Status StreamedSynthesizeSpeech(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::sensory::api::v1::audio::SynthesizeSpeechRequest,::sensory::api::v1::audio::SynthesizeSpeechResponse>* server_split_streamer) = 0;
+  };
+  typedef WithSplitStreamingMethod_SynthesizeSpeech<Service > SplitStreamedService;
+  typedef WithSplitStreamingMethod_SynthesizeSpeech<Service > StreamedService;
+};
+
 }  // namespace audio
 }  // namespace v1
 }  // namespace api

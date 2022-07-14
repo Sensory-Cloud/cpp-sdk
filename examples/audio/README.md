@@ -1,11 +1,11 @@
-# Sensory Cloud Audio Services using PortAudio for Audio Input
+# SensoryCloud Audio Services
 
-This project uses PortAudio to provide a generic microphone interface that will
-compile on most major build platforms.
+This project provides a demonstration of SensoryCloud audio services using
+PortAudio as the audio interface driver.
 
 ## Compilation
 
-To compile the various projects:
+To compile the applications in this project:
 
 ```shell
 mkdir -p build
@@ -16,20 +16,26 @@ make
 
 ## Usage
 
-Before getting started, you must spin up a Sensory Cloud inference server or
-have Sensory spin one up for you. You must also have the following pieces of
-information:
+Before getting started you must spin up a [SensoryCloud][sensory-cloud]
+inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
+must also have the following pieces of information:
 
--   Your inference server URL (and port number)
--   Your Sensory Tenant ID (UUID)
--   Your configured secret key used to register OAuth clients
+-   your inference server address and port number,
+-   your SensoryCloud tenant ID, and
+-   your configured secret key used for registering OAuth clients.
 
-### Transcribe
+[sensory-cloud]: https://sensorycloud.ai/
 
-To transcribe speech to text:
+### Speech-to-text (STT)
+
+SensoryCloud STT utilizes an end-to-end architecture that has been designed to
+offer high flexibility and accuracy. An optional domain-specific language model
+can be customized and applied to support unique domains with special vocabulary
+or industry-specific jargon. The platform is suitable for use with both
+streaming audio and batch modes. To transcribe speech to text:
 
 ```shell
-./examples/audio/build/transcribe \
+./transcribe \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -38,47 +44,38 @@ To transcribe speech to text:
     -L <language code>
 ```
 
-### Validate Event
+<!-- ### Text-to-speech (TTS)
 
-To fetch the available event validation models:
-
-```shell
-./examples/audio/build/wakeword -g \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID>
-```
-
-To validate an event, i.e., a voice event (wakeword):
+SensoryCloud TTS is based on a combination of end-to-end models and neural
+vocoders. The end result is perfectly human sounding sythesized speech that
+also runs significantly faster than real-time to minimize synthesis delay.
+To synthesize speech from text:
 
 ```shell
-./examples/audio/build/validate_event \
+./synthesize \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
     -m <model name> \
     -u <user ID> \
     -L <language code>
-```
+    -t "Hello, World!"
+``` -->
 
-To validate an event, i.e., a sound event:
+### Speaker Identification
 
-```shell
-./examples/audio/build/validate_event \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> \
-    -u <user ID> \
-    -L <language code>
-```
+Speaker identification automatically identifies and authenticates users based
+on their voice. The technology offers support for multiple enrolled users and
+enables brands to deliver new experiences where a device instantly associates a
+user’s voice with a profile, allowing it to access specific data, track
+conversations, or control access to features and capabilities.
 
-### Enroll
+#### Enrollment
 
 To fetch available biometric voice models:
 
 ```shell
-./examples/audio/build/enroll -g \
+./enroll -g \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID>
@@ -87,7 +84,7 @@ To fetch available biometric voice models:
 To create an enrollment without an active liveness check using a wakeword:
 
 ```shell
-./examples/audio/build/enroll \
+./enroll \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -101,7 +98,7 @@ To create an enrollment without an active liveness check using a
 text-independent model:
 
 ```shell
-./examples/audio/build/enroll \
+./enroll \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -115,7 +112,7 @@ To create an enrollment with an active liveness check using a text-independent
 model:
 
 ```shell
-./examples/audio/build/enroll \
+./enroll \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -125,12 +122,12 @@ model:
     -L <language code>
 ```
 
-### Authenticate
+#### Authentication
 
 To fetch biometric voice enrollments for a user ID:
 
 ```shell
-./examples/audio/build/authenticate \
+./authenticate \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -140,7 +137,7 @@ To fetch biometric voice enrollments for a user ID:
 To authenticate without a liveness check:
 
 ```shell
-./examples/audio/build/authenticate \
+./authenticate \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -151,7 +148,7 @@ To authenticate without a liveness check:
 To authenticate with a liveness check:
 
 ```shell
-./examples/audio/build/authenticate \
+./authenticate \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -160,12 +157,49 @@ To authenticate with a liveness check:
     -L <language code>
 ```
 
-### Enroll Event
+### Wake Word Verification and Sound ID
 
-To fetch available audio event models:
+Most wake words live on the edge, but cloud-based verification can
+significantly improve wake word performance. Enabling verification in the cloud
+is a valuable technique for reducing false alarms. The wake word data can also
+be used to automatically train new edge-based models for ongoing improvements.
+Similarly, Sound ID makes devices cognizant of concerning sounds and can warn
+people when they occur to enhance situational awareness at home, at work and
+more. Our models are trained to recognize a variety of environmental sounds,
+including glass breaking, babies crying, dogs barking, home security alarms,
+smoke/CO alarms, doorbells, knocking, snoring and more. SensoryCloud provides
+both of these technologies using a shared interface with support for enrolled
+event detection.
+
+#### Event Validation
+
+To fetch the available event validation models:
 
 ```shell
-./examples/audio/build/enroll_event -g \
+./validate_event -g \
+    -H <inference server URL> \
+    -P <inference server port> \
+    -T <tenant ID>
+```
+
+To detect a sound event like a wake-word or a dog bark:
+
+```shell
+./validate_event \
+    -H <inference server URL> \
+    -P <inference server port> \
+    -T <tenant ID> \
+    -m <model name> \
+    -u <user ID> \
+    -L <language code>
+```
+
+#### Event Enrollment
+
+To fetch the available enrollable event validation models:
+
+```shell
+./enroll_event -g \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID>
@@ -174,7 +208,7 @@ To fetch available audio event models:
 To create an enrolled event:
 
 ```shell
-./examples/audio/build/enroll_event \
+./enroll_event \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -184,22 +218,22 @@ To create an enrolled event:
     -L <language code>
 ```
 
-### Validate Enrolled Event
+#### Enrolled Event Validation
 
-To fetch enrolled events for a particular user:
+To fetch enrolled events belonging to a particular user:
 
 ```shell
-./examples/audio/build/validate_enrolled_event \
+./validate_enrolled_event \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
     -u <user ID>
 ```
 
-To validate an enrolled event
+To validate an enrolled event:
 
 ```shell
-./examples/audio/build/validate_enrolled_event \
+./validate_enrolled_event \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
