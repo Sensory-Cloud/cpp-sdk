@@ -74,7 +74,7 @@ optimizations.
 ### Obtaining Audio Models
 
 Certain audio models are available to your application depending on the models
-that are configured for your instance of Sensory Cloud. In order to determine
+that are configured for your instance of SensoryCloud. In order to determine
 which audio models are accessible to you, you can execute the below code.
 
 ```c++
@@ -131,7 +131,7 @@ handler to respond to read and write events.
 ### Obtaining Video Models
 
 Certain video models are available to your application depending on the models
-that are configured for your instance of Sensory Cloud. In order to determine
+that are configured for your instance of SensoryCloud. In order to determine
 which video models are accessible to you, you can execute the below cod based
 on a callback pattern.
 

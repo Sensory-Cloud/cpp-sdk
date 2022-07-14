@@ -346,6 +346,60 @@ AudioTranscriptions::Service::~Service() {
 }
 
 
+static const char* AudioSynthesis_method_names[] = {
+  "/sensory.api.v1.audio.AudioSynthesis/SynthesizeSpeech",
+};
+
+std::unique_ptr< AudioSynthesis::Stub> AudioSynthesis::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< AudioSynthesis::Stub> stub(new AudioSynthesis::Stub(channel, options));
+  return stub;
+}
+
+AudioSynthesis::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_SynthesizeSpeech_(AudioSynthesis_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  {}
+
+::grpc::ClientReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* AudioSynthesis::Stub::SynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request) {
+  return ::grpc::internal::ClientReaderFactory< ::sensory::api::v1::audio::SynthesizeSpeechResponse>::Create(channel_.get(), rpcmethod_SynthesizeSpeech_, context, request);
+}
+
+void AudioSynthesis::Stub::async::SynthesizeSpeech(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* request, ::grpc::ClientReadReactor< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* reactor) {
+  ::grpc::internal::ClientCallbackReaderFactory< ::sensory::api::v1::audio::SynthesizeSpeechResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_SynthesizeSpeech_, context, request, reactor);
+}
+
+::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* AudioSynthesis::Stub::AsyncSynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::sensory::api::v1::audio::SynthesizeSpeechResponse>::Create(channel_.get(), cq, rpcmethod_SynthesizeSpeech_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* AudioSynthesis::Stub::PrepareAsyncSynthesizeSpeechRaw(::grpc::ClientContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::sensory::api::v1::audio::SynthesizeSpeechResponse>::Create(channel_.get(), cq, rpcmethod_SynthesizeSpeech_, context, request, false, nullptr);
+}
+
+AudioSynthesis::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      AudioSynthesis_method_names[0],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< AudioSynthesis::Service, ::sensory::api::v1::audio::SynthesizeSpeechRequest, ::sensory::api::v1::audio::SynthesizeSpeechResponse>(
+          [](AudioSynthesis::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::audio::SynthesizeSpeechRequest* req,
+             ::grpc::ServerWriter<::sensory::api::v1::audio::SynthesizeSpeechResponse>* writer) {
+               return service->SynthesizeSpeech(ctx, req, writer);
+             }, this)));
+}
+
+AudioSynthesis::Service::~Service() {
+}
+
+::grpc::Status AudioSynthesis::Service::SynthesizeSpeech(::grpc::ServerContext* context, const ::sensory::api::v1::audio::SynthesizeSpeechRequest* request, ::grpc::ServerWriter< ::sensory::api::v1::audio::SynthesizeSpeechResponse>* writer) {
+  (void) context;
+  (void) request;
+  (void) writer;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
 }  // namespace sensory
 }  // namespace api
 }  // namespace v1

@@ -40,7 +40,7 @@
 #include <cstdlib>
 #include <mutex>
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 /// @brief Modules for generating and storing secure credentials.

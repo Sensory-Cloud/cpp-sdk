@@ -1,21 +1,19 @@
-# Sensory Cloud Video Services using OpenCV for Video Input
+# SensoryCloud Video Services
 
-This project uses OpenCV to provide a generic camera interface that will compile
-on most major build platforms.
+This project provides a demonstration of SensoryCloud video services using
+OpenCV as the video interface driver.
 
 ## Requirements
 
-### OpenCV
-
 To install the OpenCV library and header files, run the following.
 
-#### Debian
+### Debian
 
 ```shell
 sudo apt install libopencv-dev
 ```
 
-#### MacOS
+### MacOS
 
 ```shell
 brew install opencv
@@ -23,7 +21,7 @@ brew install opencv
 
 ## Compilation
 
-To compile the various projects:
+To compile the applications in this project:
 
 ```shell
 mkdir -p build
@@ -34,62 +32,40 @@ make
 
 ## Usage
 
-Before getting started, you must spin up a Sensory Cloud inference server or
-have Sensory spin one up for you. You must also have the following pieces of
-information:
+Before getting started you must spin up a [SensoryCloud][sensory-cloud]
+inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
+must also have the following pieces of information:
 
--   Your inference server URL (and port number)
--   Your Sensory Tenant ID (UUID)
--   Your configured secret key used to register OAuth clients
+-   your inference server address and port number,
+-   your SensoryCloud tenant ID, and
+-   your configured secret key used for registering OAuth clients.
 
-### Authenticate
+[sensory-cloud]: https://sensorycloud.ai/
 
-To fetch enrollments for a particular user:
+### Face Recognition
 
-```shell
-./examples/video/build/authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -u <user ID>
-```
+A highly flexible facial recognition solution allows app developers or OEMs to
+quickly add face biometrics to any mobile or desktop application or device.
+SensoryCloud Face Recognition supports advanced cloud features such as
+single-frame liveness, cross-device authentication, and continuous model
+updates to verify identity by matching the user’s face to a stored biometric
+template translated to an irreversible encrypted code.
 
-To authenticate without liveness:
+#### Enrollment
 
-```shell
-./examples/video/build/authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID>
-```
-
-To authenticate with liveness:
+To fetch video models that support enrollment:
 
 ```shell
-./examples/video/build/authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID> \
-    -l -t HIGH
-```
-
-### Enroll
-
-To fetch enrollable video models:
-
-```shell
-./examples/video/build/enroll -g \
+./enroll -g \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID>
 ```
 
-To rnroll without a liveness check:
+To enroll without a liveness check:
 
 ```shell
-./examples/video/build/enroll \
+./enroll \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -101,7 +77,7 @@ To rnroll without a liveness check:
 To enroll with a liveness check:
 
 ```shell
-./examples/video/build/enroll \
+./enroll \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \
@@ -111,21 +87,54 @@ To enroll with a liveness check:
     -l -t HIGH
 ```
 
-### Validate Liveness
+#### Authentication
+
+To fetch enrollments for a particular user:
+
+```shell
+./authenticate \
+    -H <inference server URL> \
+    -P <inference server port> \
+    -T <tenant ID> \
+    -u <user ID>
+```
+
+To authenticate without liveness:
+
+```shell
+./authenticate \
+    -H <inference server URL> \
+    -P <inference server port> \
+    -T <tenant ID> \
+    -e <enrollment ID>
+```
+
+To authenticate with liveness:
+
+```shell
+./authenticate \
+    -H <inference server URL> \
+    -P <inference server port> \
+    -T <tenant ID> \
+    -e <enrollment ID> \
+    -l -t HIGH
+```
+
+#### Liveness Validation
 
 To fetch available video liveness models:
 
 ```shell
-./examples/video/build/liveness -g \
+./liveness -g \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID>
 ```
 
-To validate video liveness:
+To validate video liveness (outside of the context of a biometric enrollment):
 
 ```shell
-./examples/video/build/liveness \
+./liveness \
     -H <inference server URL> \
     -P <inference server port> \
     -T <tenant ID> \

@@ -1,8 +1,8 @@
 // Test cases for the OAuth service.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,6 @@ using testing::_;
 TEST_CASE("Should create OAuthService from Config") {
     // Create the configuration that provides information about the remote host.
     Config config("hostname.com", 443, "tenant ID", "device ID");
-    config.connect();
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
     OAuthService service(config);
@@ -62,7 +61,6 @@ SCENARIO("A client requires a synchronous interface to the video service") {
     GIVEN("An initialized video service.") {
         // Create the configuration that provides information about the remote host.
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
-        config.connect();
         // Create the service with the mock stubs.
         auto deviceStub = new ::sensory::api::v1::management::MockDeviceServiceStub;
         auto oauthStub = new ::sensory::api::oauth::MockOauthServiceStub;

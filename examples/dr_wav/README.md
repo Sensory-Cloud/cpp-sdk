@@ -1,4 +1,4 @@
-# Sensory Cloud Audio Services using Files for Audio Input
+# SensoryCloud audio services with files
 
 This project uses [dr_wav][dr_wav], [dr_flac][dr_flac], and [dr_mp3][dr_mp3] to
 provide an audio file interface that will compile on most major build platforms.
@@ -20,26 +20,44 @@ make
 
 ## Usage
 
-Before getting started, you must spin up a Sensory Cloud inference server or
-have Sensory spin one up for you. You must also have the following pieces of
-information:
+Before getting started you must spin up a [SensoryCloud][sensory-cloud]
+inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
+must also have the following pieces of information:
 
--   Your inference server URL (and port number)
--   Your Sensory Tenant ID (UUID)
--   Your configured secret key used to register OAuth clients
+-   your inference server address and port number,
+-   your SensoryCloud tenant ID, and
+-   your configured secret key used for registering OAuth clients.
 
-### Transcription
+[sensory-cloud]: https://sensorycloud.ai/
 
-To transcribe audio from an MP3, WAV, or FLAC file:
+### Speech-To-Text (STT)
+
+SensoryCloud STT utilizes an end-to-end architecture that has been designed to
+offer high flexibility and accuracy. An optional domain-specific language model
+can be customized and applied to support unique domains with special vocabulary
+or industry-specific jargon. The platform is suitable for use with both
+streaming audio and batch modes. To transcribe speech to text:
 
 ```shell
-./transcribe \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
+./transcribe <path to config.ini file> \
     -i <path to WAV, MP3, or FLAC file> \
     -o <path to output text file> \
     -m <transcription model name> \
     -u <user ID> \
     -l <language code>
+```
+
+### Text-To-Speech (TTS)
+
+SensoryCloud TTS is based on a combination of end-to-end models and neural
+vocoders. The end result is perfectly human sounding sythesized speech that
+also runs significantly faster than real-time to minimize synthesis delay.
+To synthesize speech from text:
+
+```shell
+./synthesize_speech <path to config.ini file> \
+    -o <path to output text file> \
+    -l <language code> \
+    -V <synthesis voice> \
+    -p <text to synthesize into speech> \
 ```

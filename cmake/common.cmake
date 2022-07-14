@@ -1,4 +1,4 @@
-# Common cmake build file for C++ Sensory Cloud.
+# Common cmake build file for C++ SensoryCloud.
 #
 # Copyright 2021 Sensory, Inc.
 #

@@ -1,8 +1,8 @@
 // Test cases for the health service.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,6 @@ using testing::_;
 TEST_CASE("Should create HealthService from Config") {
     // Create the configuration that provides information about the remote host.
     Config config("hostname.com", 443, "tenant ID", "device ID");
-    config.connect();
     // Create the health service.
     HealthService service(config);
 }
@@ -50,7 +49,6 @@ SCENARIO("A client requires a synchronous interface to the health service") {
     GIVEN("An initialized health service.") {
         // Create the configuration that provides information about the remote host.
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
-        config.connect();
         auto stub = new ::sensory::api::health::MockHealthServiceStub;
         HealthService service(config, stub);
 

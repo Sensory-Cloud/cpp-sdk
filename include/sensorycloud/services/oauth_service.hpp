@@ -1,8 +1,8 @@
-// The OAuth service for the Sensory Cloud SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// The OAuth service for the SensoryCloud SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_SERVICES_OAUTH_SERVICE_HPP_
-#define SENSORY_CLOUD_SERVICES_OAUTH_SERVICE_HPP_
+#ifndef SENSORYCLOUD_SERVICES_OAUTH_SERVICE_HPP_
+#define SENSORYCLOUD_SERVICES_OAUTH_SERVICE_HPP_
 
 #include <memory>
 #include <string>
@@ -36,10 +36,10 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/call_data.hpp"
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
-/// @brief Sensory Cloud services.
+/// @brief SensoryCloud services.
 namespace service {
 
 /// @brief A service for handling device and user authentication.
@@ -76,8 +76,8 @@ class OAuthService {
     /// @param config_ The global configuration for the remote connection.
     ///
     explicit OAuthService(const ::sensory::Config& config_) : config(config_),
-        deviceStub(::sensory::api::v1::management::DeviceService::NewStub(config.getChannel())),
-        oauthStub(::sensory::api::oauth::OauthService::NewStub(config.getChannel())) { }
+        deviceStub(::sensory::api::v1::management::DeviceService::NewStub(config.get_channel())),
+        oauthStub(::sensory::api::oauth::OauthService::NewStub(config.get_channel())) { }
 
     /// @brief Initialize a new OAuth service.
     ///
@@ -91,9 +91,15 @@ class OAuthService {
         ::sensory::api::oauth::OauthService::StubInterface* oauthStub_
     ) : config(config_), deviceStub(deviceStub_), oauthStub(oauthStub_) { }
 
+    /// @brief Return the cloud configuration associated with this service.
+    ///
+    /// @returns the configuration used by this service.
+    ///
+    inline const ::sensory::Config& get_config() const { return config; }
+
     // ----- Register Device ---------------------------------------------------
 
-    /// @brief Register a new device with the Sensory Cloud service.
+    /// @brief Register a new device with the SensoryCloud service.
     ///
     /// @param response The device response to store the result of the RPC into.
     /// @param name The friendly name of the device that is being registered.
@@ -123,8 +129,8 @@ class OAuthService {
         ::grpc::ClientContext context;
         // Create the request from the parameters.
         ::sensory::api::v1::management::EnrollDeviceRequest request;
-        request.set_deviceid(config.getDeviceID());
-        request.set_tenantid(config.getTenantID());
+        request.set_deviceid(config.get_device_id());
+        request.set_tenantid(config.get_tenant_id());
         request.set_name(name);
         request.set_credential(credential);
         auto clientRequest = new ::sensory::api::common::GenericClient;
@@ -143,7 +149,7 @@ class OAuthService {
         ::sensory::api::v1::management::DeviceResponse
     > RegisterDeviceAsyncCall;
 
-    /// @brief Register a new device with the Sensory Cloud service.
+    /// @brief Register a new device with the SensoryCloud service.
     ///
     /// @param queue The completion queue handling the event-loop processing.
     /// @param name The friendly name of the device that is being registered.
@@ -178,8 +184,8 @@ class OAuthService {
         // this object is passed to the caller.
         auto call(new RegisterDeviceAsyncCall);
         // Start the asynchronous RPC with the call's context and queue.
-        call->request.set_deviceid(config.getDeviceID());
-        call->request.set_tenantid(config.getTenantID());
+        call->request.set_deviceid(config.get_device_id());
+        call->request.set_tenantid(config.get_tenant_id());
         call->request.set_name(name);
         call->request.set_credential(credential);
         auto clientRequest = new ::sensory::api::common::GenericClient;
@@ -206,7 +212,7 @@ class OAuthService {
         ::sensory::api::v1::management::DeviceResponse
     > RegisterDeviceCallData;
 
-    /// @brief Register a new device with the Sensory Cloud service.
+    /// @brief Register a new device with the SensoryCloud service.
     ///
     /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `RegisterDeviceCallData*`.
@@ -241,8 +247,8 @@ class OAuthService {
         // possibility of a race condition.
         std::shared_ptr<RegisterDeviceCallData>
             call(new RegisterDeviceCallData);
-        call->request.set_deviceid(config.getDeviceID());
-        call->request.set_tenantid(config.getTenantID());
+        call->request.set_deviceid(config.get_device_id());
+        call->request.set_tenantid(config.get_tenant_id());
         call->request.set_name(name);
         call->request.set_credential(credential);
         auto clientRequest = new ::sensory::api::common::GenericClient;
@@ -269,7 +275,7 @@ class OAuthService {
 
     // ----- Renew Credential --------------------------------------------------
 
-    /// @brief Renew a device's credential with the Sensory Cloud service.
+    /// @brief Renew a device's credential with the SensoryCloud service.
     ///
     /// @param response The device response to store the result of the RPC into.
     /// @param credential A credential string to authenticate that this device
@@ -295,8 +301,8 @@ class OAuthService {
         ::grpc::ClientContext context;
         // Create the request from the parameters.
         ::sensory::api::v1::management::RenewDeviceCredentialRequest request;
-        request.set_deviceid(config.getDeviceID());
-        request.set_tenantid(config.getTenantID());
+        request.set_deviceid(config.get_device_id());
+        request.set_tenantid(config.get_tenant_id());
         request.set_credential(credential);
         request.set_clientid(clientID);
         // Execute the RPC synchronously and return the status
@@ -311,7 +317,7 @@ class OAuthService {
         ::sensory::api::v1::management::DeviceResponse
     > RenewCredentialAsyncCall;
 
-    /// @brief Renew a device's credential with the Sensory Cloud service.
+    /// @brief Renew a device's credential with the SensoryCloud service.
     ///
     /// @param queue The completion queue handling the event-loop processing.
     /// @param credential A credential string to authenticate that this device
@@ -342,8 +348,8 @@ class OAuthService {
         // this object is passed to the caller.
         auto call(new RenewCredentialAsyncCall);
         // Start the asynchronous RPC with the call's context and queue.
-        call->request.set_deviceid(config.getDeviceID());
-        call->request.set_tenantid(config.getTenantID());
+        call->request.set_deviceid(config.get_device_id());
+        call->request.set_tenantid(config.get_tenant_id());
         call->request.set_credential(credential);
         call->request.set_clientid(clientID);
         call->rpc = deviceStub->AsyncRenewDeviceCredential(&call->context, call->request, queue);
@@ -366,7 +372,7 @@ class OAuthService {
         ::sensory::api::v1::management::DeviceResponse
     > RenewCredentialCallData;
 
-    /// @brief Renew a device's credential with the Sensory Cloud service.
+    /// @brief Renew a device's credential with the SensoryCloud service.
     ///
     /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `RenewCredentialCallData*`.
@@ -397,8 +403,8 @@ class OAuthService {
         // possibility of a race condition.
         std::shared_ptr<RenewCredentialCallData>
             call(new RenewCredentialCallData);
-        call->request.set_deviceid(config.getDeviceID());
-        call->request.set_tenantid(config.getTenantID());
+        call->request.set_deviceid(config.get_device_id());
+        call->request.set_tenantid(config.get_tenant_id());
         call->request.set_credential(credential);
         call->request.set_clientid(clientID);
         // Start the asynchronous call with the data from the request and
@@ -435,7 +441,7 @@ class OAuthService {
     // ///
     // ::grpc::Status getWhoAmI(::sensory::api::v1::management::WhoAmIResponse* response) {
     //     ::grpc::ClientContext context;
-    //     config.setupUnaryClientContext(context, tokenManager);
+    //     config.setup_unary_client_context(context, tokenManager);
     //     return deviceStub->GetWhoAmI(&context, {}, response);
     // }
 
@@ -463,7 +469,7 @@ class OAuthService {
     //     // this object is passed to the caller.
     //     auto call(new WhoAmIAsyncCall);
     //     // Set the client context for a unary call.
-    //     config.setupUnaryClientContext(call->context, tokenManager);
+    //     config.setup_unary_client_context(call->context, tokenManager);
     //     // Start the asynchronous RPC with the call's context and queue.
     //     call->rpc = deviceStub->AsyncGetWhoAmI(&call->context, call->request, queue);
     //     // Finish the RPC to tell it where the response and status buffers are
@@ -505,7 +511,7 @@ class OAuthService {
     //     // also allows the caller to safely use `await()` without the
     //     // possibility of a race condition.
     //     std::shared_ptr<WhoAmICallData> call(new WhoAmICallData);
-    //     config.setupUnaryClientContext(call->context, tokenManager);
+    //     config.setup_unary_client_context(call->context, tokenManager);
     //     // Start the asynchronous call with the data from the request and
     //     // forward the input callback into the reactor callback.
     //     deviceStub->async()->GetWhoAmI(
@@ -599,7 +605,7 @@ class OAuthService {
         ::sensory::api::common::TokenResponse
     > GetTokenCallData;
 
-    /// @brief Register a new device with the Sensory Cloud service.
+    /// @brief Register a new device with the SensoryCloud service.
     ///
     /// @tparam Callback The type of the callback function. The callback should
     /// accept a single pointer of type `GetTokenCallData*`.
@@ -665,7 +671,7 @@ class OAuthService {
     // ///
     // ::grpc::Status getWhoAmI(::sensory::api::oauth::WhoAmIResponse* response) {
     //     ::grpc::ClientContext context;
-    //     config.setupUnaryClientContext(context, tokenManager);
+    //     config.setup_unary_client_context(context, tokenManager);
     //     return oauthStub->GetWhoAmI(&context, {}, response);
     // }
 
@@ -693,7 +699,7 @@ class OAuthService {
     //     // this object is passed to the caller.
     //     auto call(new WhoAmIAsyncCall);
     //     // Set the client context for a unary call.
-    //     config.setupUnaryClientContext(call->context, tokenManager);
+    //     config.setup_unary_client_context(call->context, tokenManager);
     //     // Start the asynchronous RPC with the call's context and queue.
     //     call->rpc = oauthStub->AsyncGetWhoAmI(&call->context, call->request, queue);
     //     // Finish the RPC to tell it where the response and status buffers are
@@ -735,7 +741,7 @@ class OAuthService {
     //     // also allows the caller to safely use `await()` without the
     //     // possibility of a race condition.
     //     std::shared_ptr<WhoAmICallData> call(new WhoAmICallData);
-    //     config.setupUnaryClientContext(call->context, tokenManager);
+    //     config.setup_unary_client_context(call->context, tokenManager);
     //     // Start the asynchronous call with the data from the request and
     //     // forward the input callback into the reactor callback.
     //     oauthStub->async()->GetWhoAmI(
@@ -759,4 +765,4 @@ class OAuthService {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_SERVICES_OAUTH_SERVICE_HPP_
+#endif  // SENSORYCLOUD_SERVICES_OAUTH_SERVICE_HPP_

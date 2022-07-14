@@ -1,8 +1,8 @@
-// Functions for interacting with timestamps for the Sensory Cloud C++ SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// Functions for interacting with timestamps for the SensoryCloud C++ SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,15 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_TIME_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_TIME_HPP_
+#ifndef SENSORYCLOUD_TOKEN_MANAGER_TIME_HPP_
+#define SENSORYCLOUD_TOKEN_MANAGER_TIME_HPP_
 
 #include <chrono>
 #include <ctime>
 #include <utility>
 #include <string>
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 /// @brief Modules for generating and storing secure credentials.
@@ -71,4 +71,4 @@ inline std::chrono::system_clock::time_point timestamp_to_timepoint(const std::s
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_TIME_HPP_
+#endif  // SENSORYCLOUD_TOKEN_MANAGER_TIME_HPP_

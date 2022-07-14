@@ -71,7 +71,7 @@ SDK.
     make
     cd ..
     git add include/sensorycloud/generated/
-    git commit -m 'regenerate proto files for <branch or tag>'
+    git commit -m 'regenerate proto/grpc headers and source for <branch or tag>'
     ```
 
 1.  Run unit tests against all target platforms and confirm a green light.
@@ -84,24 +84,13 @@ SDK.
     ```
 
 1.  Compile example projects against target platforms using the development
-    branch.
-    -   Make a **temporary** change to the `CMakeLists.txt` file for each
-        example
+    branch and execute the example applications to test as needed.
 
-        ```cmake
-        GIT_REPOSITORY git@gitlab.com:sensory-cloud/sdk/cpp-sdk.git
-        GIT_TAG        <development branch>
-        ```
-
-    -   Compile the example applications
-
-        ```shell
-        mkdir -p build && cd build
-        cmake -DSENSORY_CLOUD_GENERATE_PROTO=OFF -DSENSORY_CLOUD_BUILD_TESTS=OFF ..
-        make
-        ```
-
-    -   Execute the applications to test as needed.
+    ```shell
+    mkdir -p build && cd build
+    cmake -DSENSORY_CLOUD_BUILD_EXAMPLES=ON ..
+    make
+    ```
 
 1.  Update the `URL` in the README snippets and `CMakeLists.txt` of example
     projects (replace `<tag to target>` with the tag for the next release).
@@ -119,5 +108,6 @@ SDK.
 1.  Update `CHANGELOG.md` with the new features / bug fixes / changes.
 1.  Request a code review from another team member.
 1.  Merge changes into the main branch (they will be mirrored to GitHub).
-1.  Tag the commit and document the changes in the release notes.
-1.  Compile example projects against all target platforms using new tag.
+1.  Tag the commit and document the changes in the release notes on GitLab.
+1.  Compile example projects against all target platforms using the
+    released production code from GitHub.

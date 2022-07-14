@@ -1,4 +1,4 @@
-// An example of face services based on OpenCV camera streams.
+// An example of face liveness validation based on OpenCV camera streams.
 //
 // Copyright (c) 2021 Sensory, Inc.
 //
@@ -27,32 +27,18 @@
 #include <thread>
 #include <mutex>
 #include <google/protobuf/util/time_util.h>
-#include <sensorycloud/config.hpp>
-#include <sensorycloud/services/health_service.hpp>
-#include <sensorycloud/services/oauth_service.hpp>
-#include <sensorycloud/services/video_service.hpp>
+#include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
-#include <sensorycloud/token_manager/token_manager.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
-#include "dep/argparse.hpp"
+#include "../dep/argparse.hpp"
 
-using sensory::token_manager::TokenManager;
-using sensory::token_manager::InsecureCredentialStore;
-using sensory::service::HealthService;
+using sensory::SensoryCloud;
 using sensory::service::VideoService;
-using sensory::service::OAuthService;
-
-enum class FaceAlignment : int {
-    Valid = 0,
-    Unknown = 100,
-    NoFace = 101,
-    SmallFace = 102,
-    BadFQ = 103,
-    NotCentered = 104,
-    NotVertical = 105
-};
+using sensory::token_manager::InsecureCredentialStore;
+using sensory::api::v1::video::RecognitionThreshold;
+using sensory::service::video::FaceAlignment;
 
 /// @brief A bidirection stream reactor for biometric liveness validation from
 /// video stream data.
@@ -64,14 +50,14 @@ class OpenCVReactor :
     public VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor {
  private:
     /// A flag determining whether the last sent frame was detected as live.
-    std::atomic<bool> isLive;
+    std::atomic<bool> is_live;
     /// A code for adjusting the face when the face box is misaligned.
-    std::atomic<FaceAlignment> alignmentCode;
+    std::atomic<FaceAlignment> alignment_code;
     /// An OpenCV matrix containing the frame data from the camera.
     cv::Mat frame;
     /// A mutual exclusion for locking access to the frame between foreground
     /// (frame capture) and background (network stream processing) threads.
-    std::mutex frameMutex;
+    std::mutex frame_mutex;
     /// Whether to produce verbose output in the reactor
     bool verbose = false;
 
@@ -79,8 +65,8 @@ class OpenCVReactor :
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
     OpenCVReactor(const bool& verbose_ = false) :
         VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor(),
-        isLive(false),
-        alignmentCode(FaceAlignment::Valid),
+        is_live(false),
+        alignment_code(FaceAlignment::Valid),
         verbose(verbose_) { }
 
     /// @brief React to a _write done_ event.
@@ -92,7 +78,7 @@ class OpenCVReactor :
         if (!ok) return;
         std::vector<unsigned char> buffer;
         {  // Lock the mutex and encode the frame with JPEG into a buffer.
-            std::lock_guard<std::mutex> lock(frameMutex);
+            std::lock_guard<std::mutex> lock(frame_mutex);
             cv::imencode(".jpg", frame, buffer);
         }
         // Create the request from the encoded image data.
@@ -115,8 +101,8 @@ class OpenCVReactor :
             std::cout << "\tIs Alive: " << response.isalive() << std::endl;
         }
         // Set the liveness status of the last frame.
-        isLive = response.isalive();
-        alignmentCode = response.score() < 100 ?
+        is_live = response.isalive();
+        alignment_code = response.score() < 100 ?
             FaceAlignment::Valid : static_cast<FaceAlignment>(response.score());
         StartRead(&response);
     }
@@ -125,13 +111,13 @@ class OpenCVReactor :
     ///
     /// @param capture The OpenCV capture device.
     ///
-    ::grpc::Status streamVideo(cv::VideoCapture& capture) {
+    ::grpc::Status stream_video(cv::VideoCapture& capture) {
         // Start the call to initiate the stream in the background.
         StartCall();
         // Start capturing frames from the device.
         while (true) {
             {  // Lock the mutex and read a frame.
-                std::lock_guard<std::mutex> lock(frameMutex);
+                std::lock_guard<std::mutex> lock(frame_mutex);
                 capture >> frame;
             }
             // If the frame is empty, something went wrong, exit the capture
@@ -139,7 +125,7 @@ class OpenCVReactor :
             if (frame.empty()) break;
             // Decode the error message to display on the view finder.
             std::string message = "";
-            switch (static_cast<FaceAlignment>(alignmentCode)) {
+            switch (static_cast<FaceAlignment>(alignment_code)) {
             case FaceAlignment::Valid:        // No pre-processor issue.
                 message = "Spoof!";
                 break;
@@ -164,18 +150,18 @@ class OpenCVReactor :
             }
             // If the frame is live, no error occurred, so overwrite the message
             // with an indicator that the frame is live.
-            if (isLive) message = "Live!";
-            auto presentationFrame = frame.clone();
-            cv::putText(presentationFrame,
+            if (is_live) message = "Live!";
+            auto presentation_frame = frame.clone();
+            cv::putText(presentation_frame,
                 message,
                 cv::Point(10, 40),
                 cv::FONT_HERSHEY_SIMPLEX,
                 1,  // font scale
-                isLive ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
+                is_live ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
                 2   // thickness
             );
             // Show the frame in a view-finder window.
-            cv::imshow("Sensory Cloud Face Liveness Demo", presentationFrame);
+            cv::imshow("SensoryCloud Face Liveness Demo", presentation_frame);
             // Listen for keyboard interrupts to terminate the capture.
             char c = (char) cv::waitKey(10);
             if (c == 27 || c == 'q' || c == 'Q') break;
@@ -188,19 +174,9 @@ int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
         .prog("liveness")
-        .description("A tool for authenticating with face biometrics using Sensory Cloud.");
-    parser.add_argument({ "-H", "--host" })
-        .required(true)
-        .help("HOST The hostname of a Sensory Cloud inference server.");
-    parser.add_argument({ "-P", "--port" })
-        .required(true)
-        .help("PORT The port number that the Sensory Cloud inference server is running at.");
-    parser.add_argument({ "-T", "--tenant" })
-        .required(true)
-        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
-    parser.add_argument({ "-I", "--insecure" })
-        .action("store_true")
-        .help("INSECURE Disable TLS.");
+        .description("A tool for validating face liveness using SensoryCloud.");
+    parser.add_argument({ "path" })
+        .help("PATH The path to an INI file containing server metadata.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
         .help("GETMODELS Whether to query for a list of available models.");
@@ -220,94 +196,64 @@ int main(int argc, const char** argv) {
         .help("VERBOSE Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
-    const auto HOSTNAME = args.get<std::string>("host");
-    const auto PORT = args.get<uint16_t>("port");
-    const auto TENANT = args.get<std::string>("tenant");
-    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto PATH = args.get<std::string>("path");
     const auto GETMODELS = args.get<bool>("getmodels");
     const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
-    sensory::api::v1::video::RecognitionThreshold THRESHOLD;
+    RecognitionThreshold THRESHOLD;
     if (args.get<std::string>("threshold") == "LOW")
-        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::LOW;
+        THRESHOLD = RecognitionThreshold::LOW;
     else if (args.get<std::string>("threshold") == "MEDIUM")
-        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::MEDIUM;
+        THRESHOLD = RecognitionThreshold::MEDIUM;
     else if (args.get<std::string>("threshold") == "HIGH")
-        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::HIGH;
+        THRESHOLD = RecognitionThreshold::HIGH;
     else if (args.get<std::string>("threshold") == "HIGHEST")
-        THRESHOLD = sensory::api::v1::video::RecognitionThreshold::HIGHEST;
+        THRESHOLD = RecognitionThreshold::HIGHEST;
     const auto DEVICE = args.get<int>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
-    if (!keychain.contains("deviceID"))
-        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
-    const auto DEVICE_ID(keychain.at("deviceID"));
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
 
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
-    config.connect();
+    // Create the cloud services handle.
+    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    sensory::service::HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.getHealth(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get server health with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
+        std::cout << "Failed to get server health ("
+            << status.error_code() << "): "
+            << status.error_message() << std::endl;
         return 1;
-    } else if (VERBOSE) {
-        // Report the health of the remote service
+    }
+    if (VERBOSE) {
         std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-        std::cout << "\tid: " << serverHealth.id() << std::endl;
+        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
+        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
+        std::cout << "\tid: " << server_health.id() << std::endl;
     }
 
-    // ------ Authorize the current device -------------------------------------
-
-    // Create an OAuth service
-    OAuthService oauthService(config);
-    TokenManager<InsecureCredentialStore> tokenManager(oauthService, keychain);
-
-    // Attempt to login and register the device if needed.
-    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
-        std::cout << "Registering device with server..." << std::endl;
-        // Query the device name from the standard input.
-        std::string name = "";
-        std::cout << "Device name: ";
-        std::cin >> name;
-        // Query the credential for the user from the standard input.
-        std::string credential = "";
-        std::cout << "Credential: ";
-        std::cin >> credential;
-        // Return the device name and credential as a tuple.
-        return {name, credential};
-    });
-    // Check the status code from the attempted registration.
+    // Initialize the client.
+    sensory::api::v1::management::DeviceResponse response;
+    status = cloud.initialize(&response);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to register device with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
+        std::cout << "Failed to initialize ("
+            << status.error_code() << "): "
+            << status.error_message() << std::endl;
         return 1;
     }
-
-    // ------ Create the video service -----------------------------------------
-
-    // Create the video service based on the configuration and token manager.
-    VideoService<InsecureCredentialStore>
-        videoService(config, tokenManager);
 
     // ------ Query the available video models ---------------------------------
 
     if (GETMODELS) {
-        int errCode = 0;
-        videoService.getModels([&errCode](VideoService<InsecureCredentialStore>::GetModelsCallData* call) {
+        int error_code = 0;
+        cloud.video.getModels([&error_code](VideoService<InsecureCredentialStore>::GetModelsCallData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
-                std::cout << "Failed to get video models with\n\t" <<
-                    call->getStatus().error_code() << ": " <<
-                    call->getStatus().error_message() << std::endl;
-                errCode = 1;
+                std::cout << "Failed to get video models ("
+                    << call->getStatus().error_code() << "): "
+                    << call->getStatus().error_message() << std::endl;
+                error_code = 1;
             } else {
                 // Iterate over the models returned in the response
                 for (auto& model : call->getResponse().models()) {
@@ -318,7 +264,7 @@ int main(int argc, const char** argv) {
                 }
             }
         })->await();
-        return errCode;
+        return error_code;
     }
 
     // Create an image capture object
@@ -330,19 +276,20 @@ int main(int argc, const char** argv) {
 
     // Create the stream.
     OpenCVReactor reactor(VERBOSE);
-    videoService.validateLiveness(&reactor,
-        sensory::service::video::newValidateRecognitionConfig(MODEL, USER_ID, THRESHOLD)
+    cloud.video.validateLiveness(&reactor,
+        sensory::service::video::new_validate_recognition_config(MODEL, USER_ID, THRESHOLD)
     );
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd
     // runtime errors can occur.
-    status = reactor.streamVideo(capture);
+    status = reactor.stream_video(capture);
 
     if (!status.ok()) {
-        std::cout << "Failed to validate liveness with\n\t" <<
-            status.error_code() << ": " <<
-            status.error_message() << std::endl;
+        std::cout << "Failed to validate liveness ("
+            << status.error_code() << "): "
+            << status.error_message() << std::endl;
+        return 1;
     }
 
     return 0;

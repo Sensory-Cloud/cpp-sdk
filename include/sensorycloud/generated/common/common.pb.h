@@ -49,7 +49,7 @@ struct TableStruct_common_2fcommon_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[11]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -65,6 +65,9 @@ extern CompressionConfigurationDefaultTypeInternal _CompressionConfiguration_def
 class CpuSummary;
 struct CpuSummaryDefaultTypeInternal;
 extern CpuSummaryDefaultTypeInternal _CpuSummary_default_instance_;
+class EnrollmentToken;
+struct EnrollmentTokenDefaultTypeInternal;
+extern EnrollmentTokenDefaultTypeInternal _EnrollmentToken_default_instance_;
 class GenericClient;
 struct GenericClientDefaultTypeInternal;
 extern GenericClientDefaultTypeInternal _GenericClient_default_instance_;
@@ -98,6 +101,7 @@ extern TokenResponseDefaultTypeInternal _TokenResponse_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::sensory::api::common::CompressionConfiguration* Arena::CreateMaybeMessage<::sensory::api::common::CompressionConfiguration>(Arena*);
 template<> ::sensory::api::common::CpuSummary* Arena::CreateMaybeMessage<::sensory::api::common::CpuSummary>(Arena*);
+template<> ::sensory::api::common::EnrollmentToken* Arena::CreateMaybeMessage<::sensory::api::common::EnrollmentToken>(Arena*);
 template<> ::sensory::api::common::GenericClient* Arena::CreateMaybeMessage<::sensory::api::common::GenericClient>(Arena*);
 template<> ::sensory::api::common::MemorySummary* Arena::CreateMaybeMessage<::sensory::api::common::MemorySummary>(Arena*);
 template<> ::sensory::api::common::PaginationOptions* Arena::CreateMaybeMessage<::sensory::api::common::PaginationOptions>(Arena*);
@@ -190,7 +194,7 @@ inline bool FeatureFlag_Parse(
     FeatureFlag_descriptor(), name, value);
 }
 enum ModelType : int {
-  VOICE_BIOMETRIC_TEXT_DEPENDENT = 0,
+  UNKNOWN = 0,
   VOICE_BIOMETRIC_TEXT_INDEPENDENT = 1,
   VOICE_BIOMETRIC_WAKEWORD = 2,
   VOICE_EVENT_WAKEWORD = 3,
@@ -199,6 +203,8 @@ enum ModelType : int {
   VOICE_RECOGNITION_ACTIVITY_DETECTION = 6,
   VOICE_FEATURE_EXTRACTOR = 7,
   VOICE_BIOMETRIC_LIVENESS_DIGIT = 8,
+  VOICE_BIOMETRIC_TEXT_DEPENDENT = 9,
+  VOICE_SYNTHESIS = 10,
   SOUND_EVENT_ENROLLABLE = 100,
   SOUND_EVENT_REVALIDATION = 101,
   SOUND_EVENT_FIXED = 102,
@@ -207,13 +213,12 @@ enum ModelType : int {
   FACE_RECOGNITION = 202,
   OBJECT_RECOGNITION = 203,
   IMAGE_TRANSFORM = 204,
-  UNKNOWN = 1000,
   ModelType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ModelType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ModelType_IsValid(int value);
-constexpr ModelType ModelType_MIN = VOICE_BIOMETRIC_TEXT_DEPENDENT;
-constexpr ModelType ModelType_MAX = UNKNOWN;
+constexpr ModelType ModelType_MIN = UNKNOWN;
+constexpr ModelType ModelType_MAX = IMAGE_TRANSFORM;
 constexpr int ModelType_ARRAYSIZE = ModelType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ModelType_descriptor();
@@ -236,12 +241,13 @@ enum TechnologyType : int {
   TS = 2,
   TNL = 3,
   STT = 4,
+  TTS = 5,
   TechnologyType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   TechnologyType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool TechnologyType_IsValid(int value);
 constexpr TechnologyType TechnologyType_MIN = NOT_SET;
-constexpr TechnologyType TechnologyType_MAX = STT;
+constexpr TechnologyType TechnologyType_MAX = TTS;
 constexpr int TechnologyType_ARRAYSIZE = TechnologyType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TechnologyType_descriptor();
@@ -287,12 +293,14 @@ enum ClientType : int {
   DEVICE = 1,
   CLUSTER = 2,
   USER = 3,
+  SUPER_USER = 4,
+  BILLING_USER = 5,
   ClientType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ClientType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ClientType_IsValid(int value);
 constexpr ClientType ClientType_MIN = ROOT;
-constexpr ClientType ClientType_MAX = USER;
+constexpr ClientType ClientType_MAX = BILLING_USER;
 constexpr int ClientType_ARRAYSIZE = ClientType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ClientType_descriptor();
@@ -313,12 +321,14 @@ enum UsageEventType : int {
   AUTHENTICATION = 0,
   RECOGNITION = 1,
   ENROLLMENT = 2,
+  SYNTHESIS = 3,
+  TRANSCRIPTION = 4,
   UsageEventType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   UsageEventType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool UsageEventType_IsValid(int value);
 constexpr UsageEventType UsageEventType_MIN = AUTHENTICATION;
-constexpr UsageEventType UsageEventType_MAX = ENROLLMENT;
+constexpr UsageEventType UsageEventType_MAX = TRANSCRIPTION;
 constexpr int UsageEventType_ARRAYSIZE = UsageEventType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UsageEventType_descriptor();
@@ -2452,6 +2462,165 @@ class PaginationResponse final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_common_2fcommon_2eproto;
 };
+// -------------------------------------------------------------------
+
+class EnrollmentToken final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.EnrollmentToken) */ {
+ public:
+  inline EnrollmentToken() : EnrollmentToken(nullptr) {}
+  ~EnrollmentToken() override;
+  explicit constexpr EnrollmentToken(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  EnrollmentToken(const EnrollmentToken& from);
+  EnrollmentToken(EnrollmentToken&& from) noexcept
+    : EnrollmentToken() {
+    *this = ::std::move(from);
+  }
+
+  inline EnrollmentToken& operator=(const EnrollmentToken& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline EnrollmentToken& operator=(EnrollmentToken&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const EnrollmentToken& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const EnrollmentToken* internal_default_instance() {
+    return reinterpret_cast<const EnrollmentToken*>(
+               &_EnrollmentToken_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(EnrollmentToken& a, EnrollmentToken& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(EnrollmentToken* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(EnrollmentToken* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline EnrollmentToken* New() const final {
+    return new EnrollmentToken();
+  }
+
+  EnrollmentToken* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<EnrollmentToken>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const EnrollmentToken& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const EnrollmentToken& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(EnrollmentToken* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.EnrollmentToken";
+  }
+  protected:
+  explicit EnrollmentToken(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTokenFieldNumber = 1,
+    kExpirationFieldNumber = 2,
+  };
+  // bytes token = 1;
+  void clear_token();
+  const std::string& token() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_token(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_token();
+  PROTOBUF_MUST_USE_RESULT std::string* release_token();
+  void set_allocated_token(std::string* token);
+  private:
+  const std::string& _internal_token() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_token(const std::string& value);
+  std::string* _internal_mutable_token();
+  public:
+
+  // int64 expiration = 2;
+  void clear_expiration();
+  ::PROTOBUF_NAMESPACE_ID::int64 expiration() const;
+  void set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_expiration() const;
+  void _internal_set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.EnrollmentToken)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
+  ::PROTOBUF_NAMESPACE_ID::int64 expiration_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
 // ===================================================================
 
 
@@ -4131,9 +4300,81 @@ inline void PaginationResponse::set_nextpageindex(::PROTOBUF_NAMESPACE_ID::int32
   // @@protoc_insertion_point(field_set:sensory.api.common.PaginationResponse.nextPageIndex)
 }
 
+// -------------------------------------------------------------------
+
+// EnrollmentToken
+
+// bytes token = 1;
+inline void EnrollmentToken::clear_token() {
+  token_.ClearToEmpty();
+}
+inline const std::string& EnrollmentToken::token() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.EnrollmentToken.token)
+  return _internal_token();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void EnrollmentToken::set_token(ArgT0&& arg0, ArgT... args) {
+ 
+ token_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.EnrollmentToken.token)
+}
+inline std::string* EnrollmentToken::mutable_token() {
+  std::string* _s = _internal_mutable_token();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.EnrollmentToken.token)
+  return _s;
+}
+inline const std::string& EnrollmentToken::_internal_token() const {
+  return token_.Get();
+}
+inline void EnrollmentToken::_internal_set_token(const std::string& value) {
+  
+  token_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* EnrollmentToken::_internal_mutable_token() {
+  
+  return token_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* EnrollmentToken::release_token() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.EnrollmentToken.token)
+  return token_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void EnrollmentToken::set_allocated_token(std::string* token) {
+  if (token != nullptr) {
+    
+  } else {
+    
+  }
+  token_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), token,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.EnrollmentToken.token)
+}
+
+// int64 expiration = 2;
+inline void EnrollmentToken::clear_expiration() {
+  expiration_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 EnrollmentToken::_internal_expiration() const {
+  return expiration_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 EnrollmentToken::expiration() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.EnrollmentToken.expiration)
+  return _internal_expiration();
+}
+inline void EnrollmentToken::_internal_set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  expiration_ = value;
+}
+inline void EnrollmentToken::set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_expiration(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.EnrollmentToken.expiration)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

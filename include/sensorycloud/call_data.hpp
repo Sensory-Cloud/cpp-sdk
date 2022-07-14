@@ -1,8 +1,8 @@
 // An abstraction of asynchronous call data.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_CALL_DATA_HPP_
-#define SENSORY_CLOUD_CALL_DATA_HPP_
+#ifndef SENSORYCLOUD_CALL_DATA_HPP_
+#define SENSORYCLOUD_CALL_DATA_HPP_
 
 #include <grpc/grpc.h>
 #include <grpcpp/client_context.h>
@@ -37,7 +37,7 @@
 #include <thread>
 #include <utility>
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 // -----------------------------------------------------------------------------
@@ -428,6 +428,178 @@ class AwaitableBidiReactor : public ::grpc::ClientBidiReactor<Request, Response>
     }
 };
 
+/// @brief A type for encapsulating data for asynchronous streaming calls.
+/// @tparam Factory The factory class that will manage the scope of the stream.
+/// @tparam Response The type of the response message.
+///
+/// @details
+/// The `Factory` is marked as a friend in order to provide mutable access to
+/// private attributes of the structure. This allows instances of `Factory` to
+/// mutate to the structure while all external scopes are limited to the
+/// immutable interface exposed by the public accessor functions. Instances of
+/// `AwaitableBidiReactor` are mutable within the scope of `Factory`, but
+/// immutable outside of the scope of `Factory`.
+///
+template<typename Factory, typename Response>
+class AwaitableReadReactor : public ::grpc::ClientReadReactor<Response> {
+ private:
+    /// The gPRC context that the call is initiated with.
+    ::grpc::ClientContext context;
+    /// The status of the RPC after the response is processed.
+    ::grpc::Status status;
+    /// A flag determining whether the asynchronous has terminated.
+    bool isDone;
+    /// A mutex for guarding access to the `isDone` and `status` variables.
+    std::mutex mutex;
+    /// A condition variable for signalling to an awaiting process.
+    std::condition_variable conditionVariable;
+
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
+
+ public:
+    /// The response buffer
+    Response response;
+
+    /// @brief Create a new read reactor.
+    AwaitableReadReactor() : isDone(false) { }
+
+    /// @brief Respond to the completion of the stream.
+    ///
+    /// @param status_ The completion status of the stream.
+    ///
+    inline virtual void OnDone(const grpc::Status& status_) override {
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::lock_guard<std::mutex> lock(mutex);
+        status = status_;
+        isDone = true;
+        // Notify the awaiting thread that the condition variable has changed.
+        conditionVariable.notify_one();
+    }
+
+    /// @brief Return the status of the stream.
+    ///
+    /// @returns The gRPC status of the stream after completion.
+    ///
+    inline ::grpc::Status getStatus() {
+        // Lock the critical section for querying the `status`.
+        std::lock_guard<std::mutex> lock(mutex);
+        return status;
+    }
+
+    /// @brief Return a flag determining if the stream has concluded.
+    ///
+    /// @returns `true` if the stream has resolved, `false` otherwise.
+    ///
+    inline bool getIsDone() {
+        // Lock the critical section for querying the `isDone` flag.
+        std::lock_guard<std::mutex> lock(mutex);
+        return isDone;
+    }
+
+    /// @brief Block until the `onDone` callback is triggered in the background.
+    ///
+    /// @returns The final gRPC status of the stream.
+    ///
+    inline ::grpc::Status await() {
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::unique_lock<std::mutex> lock(mutex);
+        // Wait for the signal that the `isDone` flag has changed.
+        conditionVariable.wait(lock, [this] { return isDone; });
+        return status;
+    }
+};
+
+/// @brief A type for encapsulating data for asynchronous streaming calls.
+/// @tparam Factory The factory class that will manage the scope of the stream.
+/// @tparam Request The type of the request message.
+///
+/// @details
+/// The `Factory` is marked as a friend in order to provide mutable access to
+/// private attributes of the structure. This allows instances of `Factory` to
+/// mutate to the structure while all external scopes are limited to the
+/// immutable interface exposed by the public accessor functions. Instances of
+/// `AwaitableBidiReactor` are mutable within the scope of `Factory`, but
+/// immutable outside of the scope of `Factory`.
+///
+template<typename Factory, typename Request>
+class AwaitableWriteReactor : public ::grpc::ClientWriteReactor<Request> {
+ private:
+    /// The gPRC context that the call is initiated with.
+    ::grpc::ClientContext context;
+    /// The status of the RPC after the response is processed.
+    ::grpc::Status status;
+    /// A flag determining whether the asynchronous has terminated.
+    bool isDone;
+    /// A mutex for guarding access to the `isDone` and `status` variables.
+    std::mutex mutex;
+    /// A condition variable for signalling to an awaiting process.
+    std::condition_variable conditionVariable;
+
+    // Mark the Factory type as a friend to allow it to have write access to
+    // the internal types. This allows the parent scope to have mutability, but
+    // all other scopes must access data through the immutable `get` interface.
+    friend Factory;
+
+ public:
+    /// The request buffer
+    Request request;
+
+    /// @brief Create a new bidirectional reactor.
+    AwaitableWriteReactor() : isDone(false) { }
+
+    /// @brief Respond to the completion of the stream.
+    ///
+    /// @param status_ The completion status of the stream.
+    ///
+    inline virtual void OnDone(const grpc::Status& status_) override {
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::lock_guard<std::mutex> lock(mutex);
+        status = status_;
+        isDone = true;
+        // Notify the awaiting thread that the condition variable has changed.
+        conditionVariable.notify_one();
+    }
+
+    /// @brief Return the status of the stream.
+    ///
+    /// @returns The gRPC status of the stream after completion.
+    ///
+    inline ::grpc::Status getStatus() {
+        // Lock the critical section for querying the `status`.
+        std::lock_guard<std::mutex> lock(mutex);
+        return status;
+    }
+
+    /// @brief Return a flag determining if the stream has concluded.
+    ///
+    /// @returns `true` if the stream has resolved, `false` otherwise.
+    ///
+    inline bool getIsDone() {
+        // Lock the critical section for querying the `isDone` flag.
+        std::lock_guard<std::mutex> lock(mutex);
+        return isDone;
+    }
+
+    /// @brief Block until the `onDone` callback is triggered in the background.
+    ///
+    /// @returns The final gRPC status of the stream.
+    ///
+    inline ::grpc::Status await() {
+        // Lock the critical section for updating the `isDone` flag and the
+        // gRPC `status` variable.
+        std::unique_lock<std::mutex> lock(mutex);
+        // Wait for the signal that the `isDone` flag has changed.
+        conditionVariable.wait(lock, [this] { return isDone; });
+        return status;
+    }
+};
+
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_CALL_DATA_HPP_
+#endif  // SENSORYCLOUD_CALL_DATA_HPP_

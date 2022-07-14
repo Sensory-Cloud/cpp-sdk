@@ -1,8 +1,8 @@
 // Test cases for the video service.
 //
-// Author: Christian Kauten (ckauten@sensoryinc.com)
-//
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,14 +52,14 @@ using ::sensory::api::v1::video::LivenessRecognitionResponse;
 using ::sensory::api::v1::video::RecognitionThreshold;
 using ::sensory::api::v1::video::ValidateRecognitionRequest;
 
-using ::sensory::service::video::newCreateEnrollmentConfig;
-using ::sensory::service::video::newAuthenticateConfig;
-using ::sensory::service::video::newValidateRecognitionConfig;
+using ::sensory::service::video::new_create_enrollment_config;
+using ::sensory::service::video::new_authenticate_config;
+using ::sensory::service::video::new_validate_recognition_config;
 
 using testing::_;
 
 // ---------------------------------------------------------------------------
-// MARK: newCreateEnrollmentConfig
+// MARK: new_create_enrollment_config
 // ---------------------------------------------------------------------------
 
 SCENARIO("A user needs to create a CreateEnrollmentConfig") {
@@ -71,7 +71,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
         const auto livenessThreshold = RecognitionThreshold::LOW;
         const int32_t numLivenessFramesRequired = 7;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = newCreateEnrollmentConfig(
+            auto config = new_create_enrollment_config(
                 modelName,
                 userID,
                 description,
@@ -93,7 +93,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
 }
 
 // ---------------------------------------------------------------------------
-// MARK: newAuthenticateConfig
+// MARK: new_authenticate_config
 // ---------------------------------------------------------------------------
 
 SCENARIO("A user needs to create an AuthenticateConfig") {
@@ -102,7 +102,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
         const bool isLivenessEnabled = true;
         const auto livenessThreshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = newAuthenticateConfig(
+            auto config = new_authenticate_config(
                 enrollmentID,
                 isLivenessEnabled,
                 livenessThreshold
@@ -117,7 +117,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
             delete config;
         }
         WHEN("the config is dynamically allocated as an enrollment group") {
-            auto config = newAuthenticateConfig(
+            auto config = new_authenticate_config(
                 enrollmentID,
                 isLivenessEnabled,
                 livenessThreshold,
@@ -136,7 +136,7 @@ SCENARIO("A user needs to create an AuthenticateConfig") {
 }
 
 // ---------------------------------------------------------------------------
-// MARK: newValidateRecognitionConfig
+// MARK: new_validate_recognition_config
 // ---------------------------------------------------------------------------
 
 SCENARIO("A user needs to create a ValidateRecognitionConfig") {
@@ -145,7 +145,7 @@ SCENARIO("A user needs to create a ValidateRecognitionConfig") {
         const std::string userID = "userID";
         const auto threshold = RecognitionThreshold::LOW;
         WHEN("the config is dynamically allocated from the parameters") {
-            auto config = newValidateRecognitionConfig(
+            auto config = new_validate_recognition_config(
                 modelName,
                 userID,
                 threshold
@@ -168,7 +168,6 @@ SCENARIO("A user needs to create a ValidateRecognitionConfig") {
 TEST_CASE("Should create VideoService from Config and TokenManager") {
     // Create the configuration that provides information about the remote host.
     Config config("hostname.com", 443, "tenant ID", "device ID");
-    config.connect();
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
     OAuthService oauthService(config);
@@ -184,7 +183,6 @@ SCENARIO("A client requires a synchronous interface to the video service") {
     GIVEN("An initialized video service.") {
         // Create the configuration that provides information about the remote host.
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
-        config.connect();
         // Create the OAuth service for requesting and managing OAuth tokens through
         // a token manager instance.
         OAuthService oauthService(config);
@@ -229,7 +227,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.createEnrollment(&context, newCreateEnrollmentConfig(
+                REQUIRE_THROWS_AS(service.createEnrollment(&context, new_create_enrollment_config(
                     "modelName",
                     "userID",
                     "description",
@@ -249,7 +247,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.createEnrollment(&context, newCreateEnrollmentConfig(
+                REQUIRE_THROWS_AS(service.createEnrollment(&context, new_create_enrollment_config(
                     "modelName",
                     "userID",
                     "description",
@@ -278,7 +276,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             ClientContext context;
-            auto stream = service.createEnrollment(&context, newCreateEnrollmentConfig(
+            auto stream = service.createEnrollment(&context, new_create_enrollment_config(
                 "modelName",
                 "userID",
                 "description",
@@ -298,7 +296,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.authenticate(&context, newAuthenticateConfig(
+                REQUIRE_THROWS_AS(service.authenticate(&context, new_authenticate_config(
                     "enrollmentID",
                     true,
                     RecognitionThreshold::LOW
@@ -316,7 +314,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.authenticate(&context, newAuthenticateConfig(
+                REQUIRE_THROWS_AS(service.authenticate(&context, new_authenticate_config(
                     "enrollmentID",
                     true,
                     RecognitionThreshold::LOW
@@ -340,7 +338,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             ClientContext context;
-            auto stream = service.authenticate(&context, newAuthenticateConfig(
+            auto stream = service.authenticate(&context, new_authenticate_config(
                 "enrollmentID",
                 true,
                 RecognitionThreshold::LOW
@@ -358,7 +356,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.validateLiveness(&context, newValidateRecognitionConfig(
+                REQUIRE_THROWS_AS(service.validateLiveness(&context, new_validate_recognition_config(
                     "modelName",
                     "userID",
                     RecognitionThreshold::LOW
@@ -376,7 +374,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.validateLiveness(&context, newValidateRecognitionConfig(
+                REQUIRE_THROWS_AS(service.validateLiveness(&context, new_validate_recognition_config(
                     "modelName",
                     "userID",
                     RecognitionThreshold::LOW
@@ -400,7 +398,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             ClientContext context;
-            auto stream = service.validateLiveness(&context, newValidateRecognitionConfig(
+            auto stream = service.validateLiveness(&context, new_validate_recognition_config(
                 "modelName",
                 "userID",
                 RecognitionThreshold::LOW

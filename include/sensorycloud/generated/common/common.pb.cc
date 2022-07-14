@@ -188,10 +188,23 @@ struct PaginationResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PaginationResponseDefaultTypeInternal _PaginationResponse_default_instance_;
+constexpr EnrollmentToken::EnrollmentToken(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : token_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , expiration_(int64_t{0}){}
+struct EnrollmentTokenDefaultTypeInternal {
+  constexpr EnrollmentTokenDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~EnrollmentTokenDefaultTypeInternal() {}
+  union {
+    EnrollmentToken _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT EnrollmentTokenDefaultTypeInternal _EnrollmentToken_default_instance_;
 }  // namespace common
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_common_2fcommon_2eproto[11];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_common_2fcommon_2eproto[12];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_common_2fcommon_2eproto[9];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_common_2fcommon_2eproto = nullptr;
 
@@ -308,6 +321,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_common_2fcommon_2eproto::offse
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::PaginationResponse, prevpageindex_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::PaginationResponse, currentpageindex_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::PaginationResponse, nextpageindex_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::EnrollmentToken, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::EnrollmentToken, token_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::EnrollmentToken, expiration_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::common::CompressionConfiguration)},
@@ -321,6 +342,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 78, -1, -1, sizeof(::sensory::api::common::TenantResponse)},
   { 88, -1, -1, sizeof(::sensory::api::common::PaginationOptions)},
   { 98, -1, -1, sizeof(::sensory::api::common::PaginationResponse)},
+  { 112, -1, -1, sizeof(::sensory::api::common::EnrollmentToken)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -335,6 +357,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_TenantResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_PaginationOptions_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_PaginationResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_EnrollmentToken_default_instance_),
 };
 
 const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -373,34 +396,37 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "Orderings\030\003 \003(\t\022\022\n\ntotalCount\030\004 \001(\003\022\020\n\010p"
   "ageSize\030\005 \001(\005\022\025\n\rprevPageIndex\030\006 \001(\005\022\030\n\020"
   "currentPageIndex\030\007 \001(\005\022\025\n\rnextPageIndex\030"
-  "\010 \001(\005*\026\n\004Void\022\016\n\nVOID_VALUE\020\000*Q\n\007KeyType"
-  "\022\016\n\nPUBLIC_KEY\020\000\022\026\n\022PUBLIC_KEY_ED25519\020\001"
-  "\022\021\n\rSHARED_SECRET\020\003\022\013\n\007AES_256\020\004*4\n\013Feat"
-  "ureFlag\022\014\n\010TSSV_ALL\020\000\022\n\n\006TS_ALL\020\001\022\013\n\007TNL"
-  "_ALL\020\002*\220\004\n\tModelType\022\"\n\036VOICE_BIOMETRIC_"
-  "TEXT_DEPENDENT\020\000\022$\n VOICE_BIOMETRIC_TEXT"
-  "_INDEPENDENT\020\001\022\034\n\030VOICE_BIOMETRIC_WAKEWO"
-  "RD\020\002\022\030\n\024VOICE_EVENT_WAKEWORD\020\003\022\034\n\030VOICE_"
-  "TRANSCRIBE_GRAMMAR\020\004\022\'\n#VOICE_TRANSCRIBE"
-  "_COMMAND_AND_SEARCH\020\005\022(\n$VOICE_RECOGNITI"
-  "ON_ACTIVITY_DETECTION\020\006\022\033\n\027VOICE_FEATURE"
-  "_EXTRACTOR\020\007\022\"\n\036VOICE_BIOMETRIC_LIVENESS"
-  "_DIGIT\020\010\022\032\n\026SOUND_EVENT_ENROLLABLE\020d\022\034\n\030"
-  "SOUND_EVENT_REVALIDATION\020e\022\025\n\021SOUND_EVEN"
-  "T_FIXED\020f\022\025\n\021SOUND_SCENE_FIXED\020g\022\023\n\016FACE"
-  "_BIOMETRIC\020\311\001\022\025\n\020FACE_RECOGNITION\020\312\001\022\027\n\022"
-  "OBJECT_RECOGNITION\020\313\001\022\024\n\017IMAGE_TRANSFORM"
-  "\020\314\001\022\014\n\007UNKNOWN\020\350\007*A\n\016TechnologyType\022\013\n\007N"
-  "OT_SET\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003\022\007\n\003S"
-  "TT\020\004*&\n\017CompressionType\022\023\n\017IMAGE_GRAYSCA"
-  "LE\020\000*9\n\nClientType\022\010\n\004ROOT\020\000\022\n\n\006DEVICE\020\001"
-  "\022\013\n\007CLUSTER\020\002\022\010\n\004USER\020\003*E\n\016UsageEventTyp"
-  "e\022\022\n\016AUTHENTICATION\020\000\022\017\n\013RECOGNITION\020\001\022\016"
-  "\n\nENROLLMENT\020\002*\037\n\nServerType\022\t\n\005TITAN\020\000\022"
-  "\006\n\002IO\020\001Bo\n\032ai.sensorycloud.api.commonB\025S"
-  "ensoryApiCommonProtoP\001Z8gitlab.com/senso"
-  "ry-cloud/server/titan.git/pkg/api/common"
-  "b\006proto3"
+  "\010 \001(\005\"4\n\017EnrollmentToken\022\r\n\005token\030\001 \001(\014\022"
+  "\022\n\nexpiration\030\002 \001(\003*\026\n\004Void\022\016\n\nVOID_VALU"
+  "E\020\000*Q\n\007KeyType\022\016\n\nPUBLIC_KEY\020\000\022\026\n\022PUBLIC"
+  "_KEY_ED25519\020\001\022\021\n\rSHARED_SECRET\020\003\022\013\n\007AES"
+  "_256\020\004*4\n\013FeatureFlag\022\014\n\010TSSV_ALL\020\000\022\n\n\006T"
+  "S_ALL\020\001\022\013\n\007TNL_ALL\020\002*\244\004\n\tModelType\022\013\n\007UN"
+  "KNOWN\020\000\022$\n VOICE_BIOMETRIC_TEXT_INDEPEND"
+  "ENT\020\001\022\034\n\030VOICE_BIOMETRIC_WAKEWORD\020\002\022\030\n\024V"
+  "OICE_EVENT_WAKEWORD\020\003\022\034\n\030VOICE_TRANSCRIB"
+  "E_GRAMMAR\020\004\022\'\n#VOICE_TRANSCRIBE_COMMAND_"
+  "AND_SEARCH\020\005\022(\n$VOICE_RECOGNITION_ACTIVI"
+  "TY_DETECTION\020\006\022\033\n\027VOICE_FEATURE_EXTRACTO"
+  "R\020\007\022\"\n\036VOICE_BIOMETRIC_LIVENESS_DIGIT\020\010\022"
+  "\"\n\036VOICE_BIOMETRIC_TEXT_DEPENDENT\020\t\022\023\n\017V"
+  "OICE_SYNTHESIS\020\n\022\032\n\026SOUND_EVENT_ENROLLAB"
+  "LE\020d\022\034\n\030SOUND_EVENT_REVALIDATION\020e\022\025\n\021SO"
+  "UND_EVENT_FIXED\020f\022\025\n\021SOUND_SCENE_FIXED\020g"
+  "\022\023\n\016FACE_BIOMETRIC\020\311\001\022\025\n\020FACE_RECOGNITIO"
+  "N\020\312\001\022\027\n\022OBJECT_RECOGNITION\020\313\001\022\024\n\017IMAGE_T"
+  "RANSFORM\020\314\001*J\n\016TechnologyType\022\013\n\007NOT_SET"
+  "\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003\022\007\n\003STT\020\004\022\007"
+  "\n\003TTS\020\005*&\n\017CompressionType\022\023\n\017IMAGE_GRAY"
+  "SCALE\020\000*[\n\nClientType\022\010\n\004ROOT\020\000\022\n\n\006DEVIC"
+  "E\020\001\022\013\n\007CLUSTER\020\002\022\010\n\004USER\020\003\022\016\n\nSUPER_USER"
+  "\020\004\022\020\n\014BILLING_USER\020\005*g\n\016UsageEventType\022\022"
+  "\n\016AUTHENTICATION\020\000\022\017\n\013RECOGNITION\020\001\022\016\n\nE"
+  "NROLLMENT\020\002\022\r\n\tSYNTHESIS\020\003\022\021\n\rTRANSCRIPT"
+  "ION\020\004*\037\n\nServerType\022\t\n\005TITAN\020\000\022\006\n\002IO\020\001Bo"
+  "\n\032ai.sensorycloud.api.commonB\025SensoryApi"
+  "CommonProtoP\001Z8gitlab.com/sensory-cloud/"
+  "server/titan.git/pkg/api/commonb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2fcommon_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
@@ -408,8 +434,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2fcommon_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2fcommon_2eproto = {
-  false, false, 2488, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
-  &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 2, 11,
+  false, false, 2639, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
+  &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 2, 12,
   schemas, file_default_instances, TableStruct_common_2fcommon_2eproto::offsets,
   file_level_metadata_common_2fcommon_2eproto, file_level_enum_descriptors_common_2fcommon_2eproto, file_level_service_descriptors_common_2fcommon_2eproto,
 };
@@ -481,6 +507,8 @@ bool ModelType_IsValid(int value) {
     case 6:
     case 7:
     case 8:
+    case 9:
+    case 10:
     case 100:
     case 101:
     case 102:
@@ -489,7 +517,6 @@ bool ModelType_IsValid(int value) {
     case 202:
     case 203:
     case 204:
-    case 1000:
       return true;
     default:
       return false;
@@ -507,6 +534,7 @@ bool TechnologyType_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -536,6 +564,8 @@ bool ClientType_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -551,6 +581,8 @@ bool UsageEventType_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -3791,6 +3823,224 @@ void PaginationResponse::InternalSwap(PaginationResponse* other) {
       file_level_metadata_common_2fcommon_2eproto[10]);
 }
 
+// ===================================================================
+
+class EnrollmentToken::_Internal {
+ public:
+};
+
+EnrollmentToken::EnrollmentToken(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.common.EnrollmentToken)
+}
+EnrollmentToken::EnrollmentToken(const EnrollmentToken& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  token_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_token().empty()) {
+    token_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_token(), 
+      GetArenaForAllocation());
+  }
+  expiration_ = from.expiration_;
+  // @@protoc_insertion_point(copy_constructor:sensory.api.common.EnrollmentToken)
+}
+
+void EnrollmentToken::SharedCtor() {
+token_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+expiration_ = int64_t{0};
+}
+
+EnrollmentToken::~EnrollmentToken() {
+  // @@protoc_insertion_point(destructor:sensory.api.common.EnrollmentToken)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void EnrollmentToken::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  token_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void EnrollmentToken::ArenaDtor(void* object) {
+  EnrollmentToken* _this = reinterpret_cast< EnrollmentToken* >(object);
+  (void)_this;
+}
+void EnrollmentToken::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void EnrollmentToken::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void EnrollmentToken::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.common.EnrollmentToken)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  token_.ClearToEmpty();
+  expiration_ = int64_t{0};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* EnrollmentToken::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // bytes token = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_token();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 expiration = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          expiration_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* EnrollmentToken::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.common.EnrollmentToken)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bytes token = 1;
+  if (!this->_internal_token().empty()) {
+    target = stream->WriteBytesMaybeAliased(
+        1, this->_internal_token(), target);
+  }
+
+  // int64 expiration = 2;
+  if (this->_internal_expiration() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(2, this->_internal_expiration(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.common.EnrollmentToken)
+  return target;
+}
+
+size_t EnrollmentToken::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.common.EnrollmentToken)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // bytes token = 1;
+  if (!this->_internal_token().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_token());
+  }
+
+  // int64 expiration = 2;
+  if (this->_internal_expiration() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_expiration());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData EnrollmentToken::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    EnrollmentToken::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*EnrollmentToken::GetClassData() const { return &_class_data_; }
+
+void EnrollmentToken::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<EnrollmentToken *>(to)->MergeFrom(
+      static_cast<const EnrollmentToken &>(from));
+}
+
+
+void EnrollmentToken::MergeFrom(const EnrollmentToken& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.common.EnrollmentToken)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_token().empty()) {
+    _internal_set_token(from._internal_token());
+  }
+  if (from._internal_expiration() != 0) {
+    _internal_set_expiration(from._internal_expiration());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void EnrollmentToken::CopyFrom(const EnrollmentToken& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.common.EnrollmentToken)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool EnrollmentToken::IsInitialized() const {
+  return true;
+}
+
+void EnrollmentToken::InternalSwap(EnrollmentToken* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &token_, lhs_arena,
+      &other->token_, rhs_arena
+  );
+  swap(expiration_, other->expiration_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata EnrollmentToken::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_common_2fcommon_2eproto_getter, &descriptor_table_common_2fcommon_2eproto_once,
+      file_level_metadata_common_2fcommon_2eproto[11]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace common
 }  // namespace api
@@ -3828,6 +4078,9 @@ template<> PROTOBUF_NOINLINE ::sensory::api::common::PaginationOptions* Arena::C
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::common::PaginationResponse* Arena::CreateMaybeMessage< ::sensory::api::common::PaginationResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::common::PaginationResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::common::EnrollmentToken* Arena::CreateMaybeMessage< ::sensory::api::common::EnrollmentToken >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::common::EnrollmentToken >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

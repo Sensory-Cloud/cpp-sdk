@@ -104,6 +104,7 @@ constexpr CreateEnrollmentResponse::CreateEnrollmentResponse(
   : enrollmentid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , modelname_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , modelversion_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , enrollmenttoken_(nullptr)
   , percentcomplete_(int64_t{0})
   , isalive_(false)
   , score_(0){}
@@ -169,7 +170,8 @@ struct CreateEnrollmentConfigDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CreateEnrollmentConfigDefaultTypeInternal _CreateEnrollmentConfig_default_instance_;
 constexpr AuthenticateConfig::AuthenticateConfig(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : compression_(nullptr)
+  : enrollmenttoken_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , compression_(nullptr)
   , livenessthreshold_(0)
 
   , islivenessenabled_(false)
@@ -273,6 +275,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fvideo_2fvideo_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, modelname_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, modelversion_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, score_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, enrollmenttoken_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -320,6 +323,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fvideo_2fvideo_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateConfig, livenessthreshold_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateConfig, compression_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateConfig, doincludetoken_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateConfig, enrollmenttoken_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateConfig, authId_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::ValidateRecognitionConfig, _internal_metadata_),
@@ -339,11 +343,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 35, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateRequest)},
   { 44, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionRequest)},
   { 53, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentResponse)},
-  { 65, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateResponse)},
-  { 77, -1, -1, sizeof(::sensory::api::v1::video::LivenessRecognitionResponse)},
-  { 85, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentConfig)},
-  { 100, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateConfig)},
-  { 113, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionConfig)},
+  { 66, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateResponse)},
+  { 78, -1, -1, sizeof(::sensory::api::v1::video::LivenessRecognitionResponse)},
+  { 86, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentConfig)},
+  { 101, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateConfig)},
+  { 115, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionConfig)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -382,55 +386,57 @@ const char descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto[] PROTOBUF_SECTI
   "\"\220\001\n\032ValidateRecognitionRequest\022A\n\006confi"
   "g\030\001 \001(\0132/.sensory.api.v1.video.ValidateR"
   "ecognitionConfigH\000\022\026\n\014imageContent\030\002 \001(\014"
-  "H\000B\027\n\020streamingRequest\022\003\370B\001\"\222\001\n\030CreateEn"
+  "H\000B\027\n\020streamingRequest\022\003\370B\001\"\320\001\n\030CreateEn"
   "rollmentResponse\022\027\n\017percentComplete\030\001 \001("
   "\003\022\017\n\007isAlive\030\002 \001(\010\022\024\n\014enrollmentId\030\003 \001(\t"
   "\022\021\n\tmodelName\030\004 \001(\t\022\024\n\014modelVersion\030\005 \001("
-  "\t\022\r\n\005score\030\006 \001(\002\"\237\001\n\024AuthenticateRespons"
-  "e\022\017\n\007success\030\001 \001(\010\022\r\n\005score\030\002 \001(\002\022\017\n\007isA"
-  "live\030\003 \001(\010\0220\n\005token\030\004 \001(\0132!.sensory.api."
-  "common.TokenResponse\022\016\n\006userId\030\005 \001(\t\022\024\n\014"
-  "enrollmentId\030\006 \001(\t\"=\n\033LivenessRecognitio"
-  "nResponse\022\017\n\007isAlive\030\001 \001(\010\022\r\n\005score\030\002 \001("
-  "\002\"\376\002\n\026CreateEnrollmentConfig\022\031\n\006userId\030\001"
-  " \001(\tB\t\372B\006r\004\020\001\030\177\022\033\n\010deviceId\030\002 \001(\tB\t\372B\006r\004"
-  "\020\001\030\177\022\035\n\tmodelName\030\003 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013d"
-  "escription\030\004 \001(\tB\010\372B\005r\003\030\377\007\022\031\n\021isLiveness"
-  "Enabled\030\005 \001(\010\022O\n\021livenessThreshold\030\006 \001(\016"
+  "\t\022\r\n\005score\030\006 \001(\002\022<\n\017enrollmentToken\030\007 \001("
+  "\0132#.sensory.api.common.EnrollmentToken\"\237"
+  "\001\n\024AuthenticateResponse\022\017\n\007success\030\001 \001(\010"
+  "\022\r\n\005score\030\002 \001(\002\022\017\n\007isAlive\030\003 \001(\010\0220\n\005toke"
+  "n\030\004 \001(\0132!.sensory.api.common.TokenRespon"
+  "se\022\016\n\006userId\030\005 \001(\t\022\024\n\014enrollmentId\030\006 \001(\t"
+  "\"=\n\033LivenessRecognitionResponse\022\017\n\007isAli"
+  "ve\030\001 \001(\010\022\r\n\005score\030\002 \001(\002\"\376\002\n\026CreateEnroll"
+  "mentConfig\022\031\n\006userId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\033\n"
+  "\010deviceId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022\035\n\tmodelName\030"
+  "\003 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013description\030\004 \001(\tB\010"
+  "\372B\005r\003\030\377\007\022\031\n\021isLivenessEnabled\030\005 \001(\010\022O\n\021l"
+  "ivenessThreshold\030\006 \001(\0162*.sensory.api.v1."
+  "video.RecognitionThresholdB\010\372B\005\202\001\002\020\001\022A\n\013"
+  "compression\030\007 \001(\0132,.sensory.api.common.C"
+  "ompressionConfiguration\022\034\n\013referenceId\030\010"
+  " \001(\tB\007\372B\004r\002\030\177\022!\n\031numLivenessFramesRequir"
+  "ed\030\t \001(\005\"\302\002\n\022AuthenticateConfig\022 \n\014enrol"
+  "lmentId\030\001 \001(\tB\010\372B\005r\003\260\001\001H\000\022\033\n\021enrollmentG"
+  "roupId\030\002 \001(\tH\000\022\031\n\021isLivenessEnabled\030\003 \001("
+  "\010\022O\n\021livenessThreshold\030\004 \001(\0162*.sensory.a"
+  "pi.v1.video.RecognitionThresholdB\010\372B\005\202\001\002"
+  "\020\001\022A\n\013compression\030\005 \001(\0132,.sensory.api.co"
+  "mmon.CompressionConfiguration\022\026\n\016doInclu"
+  "deToken\030\006 \001(\010\022\027\n\017enrollmentToken\030\007 \001(\014B\r"
+  "\n\006authId\022\003\370B\001\"\236\001\n\031ValidateRecognitionCon"
+  "fig\022\035\n\tmodelName\030\001 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031\n\006us"
+  "erId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022G\n\tthreshold\030\003 \001(\016"
   "2*.sensory.api.v1.video.RecognitionThres"
-  "holdB\010\372B\005\202\001\002\020\001\022A\n\013compression\030\007 \001(\0132,.se"
-  "nsory.api.common.CompressionConfiguratio"
-  "n\022\034\n\013referenceId\030\010 \001(\tB\007\372B\004r\002\030\177\022!\n\031numLi"
-  "venessFramesRequired\030\t \001(\005\"\251\002\n\022Authentic"
-  "ateConfig\022 \n\014enrollmentId\030\001 \001(\tB\010\372B\005r\003\260\001"
-  "\001H\000\022\033\n\021enrollmentGroupId\030\002 \001(\tH\000\022\031\n\021isLi"
-  "venessEnabled\030\003 \001(\010\022O\n\021livenessThreshold"
-  "\030\004 \001(\0162*.sensory.api.v1.video.Recognitio"
-  "nThresholdB\010\372B\005\202\001\002\020\001\022A\n\013compression\030\005 \001("
-  "\0132,.sensory.api.common.CompressionConfig"
-  "uration\022\026\n\016doIncludeToken\030\006 \001(\010B\r\n\006authI"
-  "d\022\003\370B\001\"\236\001\n\031ValidateRecognitionConfig\022\035\n\t"
-  "modelName\030\001 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031\n\006userId\030\002 "
-  "\001(\tB\t\372B\006r\004\020\001\030\177\022G\n\tthreshold\030\003 \001(\0162*.sens"
-  "ory.api.v1.video.RecognitionThresholdB\010\372"
-  "B\005\202\001\002\020\001*B\n\024RecognitionThreshold\022\007\n\003LOW\020\000"
-  "\022\n\n\006MEDIUM\020\001\022\010\n\004HIGH\020\002\022\013\n\007HIGHEST\020\0032m\n\013V"
-  "ideoModels\022^\n\tGetModels\022&.sensory.api.v1"
-  ".video.GetModelsRequest\032\'.sensory.api.v1"
-  ".video.GetModelsResponse\"\0002\367\001\n\017VideoBiom"
-  "etrics\022w\n\020CreateEnrollment\022-.sensory.api"
-  ".v1.video.CreateEnrollmentRequest\032..sens"
-  "ory.api.v1.video.CreateEnrollmentRespons"
-  "e\"\000(\0010\001\022k\n\014Authenticate\022).sensory.api.v1"
-  ".video.AuthenticateRequest\032*.sensory.api"
-  ".v1.video.AuthenticateResponse\"\000(\0010\0012\221\001\n"
-  "\020VideoRecognition\022}\n\020ValidateLiveness\0220."
-  "sensory.api.v1.video.ValidateRecognition"
-  "Request\0321.sensory.api.v1.video.LivenessR"
-  "ecognitionResponse\"\000(\0010\001Bt\n\034ai.sensorycl"
-  "oud.api.v1.videoB\026SensoryApiV1VideoProto"
-  "P\001Z:gitlab.com/sensory-cloud/server/tita"
-  "n.git/pkg/api/v1/videob\006proto3"
+  "holdB\010\372B\005\202\001\002\020\001*B\n\024RecognitionThreshold\022\007"
+  "\n\003LOW\020\000\022\n\n\006MEDIUM\020\001\022\010\n\004HIGH\020\002\022\013\n\007HIGHEST"
+  "\020\0032m\n\013VideoModels\022^\n\tGetModels\022&.sensory"
+  ".api.v1.video.GetModelsRequest\032\'.sensory"
+  ".api.v1.video.GetModelsResponse\"\0002\367\001\n\017Vi"
+  "deoBiometrics\022w\n\020CreateEnrollment\022-.sens"
+  "ory.api.v1.video.CreateEnrollmentRequest"
+  "\032..sensory.api.v1.video.CreateEnrollment"
+  "Response\"\000(\0010\001\022k\n\014Authenticate\022).sensory"
+  ".api.v1.video.AuthenticateRequest\032*.sens"
+  "ory.api.v1.video.AuthenticateResponse\"\000("
+  "\0010\0012\221\001\n\020VideoRecognition\022}\n\020ValidateLive"
+  "ness\0220.sensory.api.v1.video.ValidateReco"
+  "gnitionRequest\0321.sensory.api.v1.video.Li"
+  "venessRecognitionResponse\"\000(\0010\001Bt\n\034ai.se"
+  "nsorycloud.api.v1.videoB\026SensoryApiV1Vid"
+  "eoProtoP\001Z:gitlab.com/sensory-cloud/serv"
+  "er/titan.git/pkg/api/v1/videob\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fvideo_2fvideo_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -438,7 +444,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fvideo_2fvideo_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fvideo_2fvideo_2eproto = {
-  false, false, 2750, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
+  false, false, 2837, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
   &descriptor_table_v1_2fvideo_2fvideo_2eproto_once, descriptor_table_v1_2fvideo_2fvideo_2eproto_deps, 2, 12,
   schemas, file_default_instances, TableStruct_v1_2fvideo_2fvideo_2eproto::offsets,
   file_level_metadata_v1_2fvideo_2fvideo_2eproto, file_level_enum_descriptors_v1_2fvideo_2fvideo_2eproto, file_level_service_descriptors_v1_2fvideo_2fvideo_2eproto,
@@ -1917,8 +1923,19 @@ void ValidateRecognitionRequest::InternalSwap(ValidateRecognitionRequest* other)
 
 class CreateEnrollmentResponse::_Internal {
  public:
+  static const ::sensory::api::common::EnrollmentToken& enrollmenttoken(const CreateEnrollmentResponse* msg);
 };
 
+const ::sensory::api::common::EnrollmentToken&
+CreateEnrollmentResponse::_Internal::enrollmenttoken(const CreateEnrollmentResponse* msg) {
+  return *msg->enrollmenttoken_;
+}
+void CreateEnrollmentResponse::clear_enrollmenttoken() {
+  if (GetArenaForAllocation() == nullptr && enrollmenttoken_ != nullptr) {
+    delete enrollmenttoken_;
+  }
+  enrollmenttoken_ = nullptr;
+}
 CreateEnrollmentResponse::CreateEnrollmentResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -1946,6 +1963,11 @@ CreateEnrollmentResponse::CreateEnrollmentResponse(const CreateEnrollmentRespons
     modelversion_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_modelversion(), 
       GetArenaForAllocation());
   }
+  if (from._internal_has_enrollmenttoken()) {
+    enrollmenttoken_ = new ::sensory::api::common::EnrollmentToken(*from.enrollmenttoken_);
+  } else {
+    enrollmenttoken_ = nullptr;
+  }
   ::memcpy(&percentcomplete_, &from.percentcomplete_,
     static_cast<size_t>(reinterpret_cast<char*>(&score_) -
     reinterpret_cast<char*>(&percentcomplete_)) + sizeof(score_));
@@ -1957,9 +1979,9 @@ enrollmentid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStrin
 modelname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 modelversion_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&percentcomplete_) - reinterpret_cast<char*>(this)),
+    reinterpret_cast<char*>(&enrollmenttoken_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&percentcomplete_)) + sizeof(score_));
+    reinterpret_cast<char*>(&enrollmenttoken_)) + sizeof(score_));
 }
 
 CreateEnrollmentResponse::~CreateEnrollmentResponse() {
@@ -1974,6 +1996,7 @@ inline void CreateEnrollmentResponse::SharedDtor() {
   enrollmentid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   modelname_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   modelversion_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete enrollmenttoken_;
 }
 
 void CreateEnrollmentResponse::ArenaDtor(void* object) {
@@ -1995,6 +2018,10 @@ void CreateEnrollmentResponse::Clear() {
   enrollmentid_.ClearToEmpty();
   modelname_.ClearToEmpty();
   modelversion_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && enrollmenttoken_ != nullptr) {
+    delete enrollmenttoken_;
+  }
+  enrollmenttoken_ = nullptr;
   ::memset(&percentcomplete_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&score_) -
       reinterpret_cast<char*>(&percentcomplete_)) + sizeof(score_));
@@ -2058,6 +2085,14 @@ const char* CreateEnrollmentResponse::_InternalParse(const char* ptr, ::PROTOBUF
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 53)) {
           score_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.EnrollmentToken enrollmentToken = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          ptr = ctx->ParseMessage(_internal_mutable_enrollmenttoken(), ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -2138,6 +2173,14 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(6, this->_internal_score(), target);
   }
 
+  // .sensory.api.common.EnrollmentToken enrollmentToken = 7;
+  if (this->_internal_has_enrollmenttoken()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        7, _Internal::enrollmenttoken(this), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2173,6 +2216,13 @@ size_t CreateEnrollmentResponse::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_modelversion());
+  }
+
+  // .sensory.api.common.EnrollmentToken enrollmentToken = 7;
+  if (this->_internal_has_enrollmenttoken()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *enrollmenttoken_);
   }
 
   // int64 percentComplete = 1;
@@ -2221,6 +2271,9 @@ void CreateEnrollmentResponse::MergeFrom(const CreateEnrollmentResponse& from) {
   if (!from._internal_modelversion().empty()) {
     _internal_set_modelversion(from._internal_modelversion());
   }
+  if (from._internal_has_enrollmenttoken()) {
+    _internal_mutable_enrollmenttoken()->::sensory::api::common::EnrollmentToken::MergeFrom(from._internal_enrollmenttoken());
+  }
   if (from._internal_percentcomplete() != 0) {
     _internal_set_percentcomplete(from._internal_percentcomplete());
   }
@@ -2267,9 +2320,9 @@ void CreateEnrollmentResponse::InternalSwap(CreateEnrollmentResponse* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(CreateEnrollmentResponse, score_)
       + sizeof(CreateEnrollmentResponse::score_)
-      - PROTOBUF_FIELD_OFFSET(CreateEnrollmentResponse, percentcomplete_)>(
-          reinterpret_cast<char*>(&percentcomplete_),
-          reinterpret_cast<char*>(&other->percentcomplete_));
+      - PROTOBUF_FIELD_OFFSET(CreateEnrollmentResponse, enrollmenttoken_)>(
+          reinterpret_cast<char*>(&enrollmenttoken_),
+          reinterpret_cast<char*>(&other->enrollmenttoken_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CreateEnrollmentResponse::GetMetadata() const {
@@ -3389,6 +3442,11 @@ AuthenticateConfig::AuthenticateConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 AuthenticateConfig::AuthenticateConfig(const AuthenticateConfig& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  enrollmenttoken_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_enrollmenttoken().empty()) {
+    enrollmenttoken_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_enrollmenttoken(), 
+      GetArenaForAllocation());
+  }
   if (from._internal_has_compression()) {
     compression_ = new ::sensory::api::common::CompressionConfiguration(*from.compression_);
   } else {
@@ -3415,6 +3473,7 @@ AuthenticateConfig::AuthenticateConfig(const AuthenticateConfig& from)
 }
 
 void AuthenticateConfig::SharedCtor() {
+enrollmenttoken_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&compression_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&doincludetoken_) -
@@ -3431,6 +3490,7 @@ AuthenticateConfig::~AuthenticateConfig() {
 
 inline void AuthenticateConfig::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  enrollmenttoken_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete compression_;
   if (has_authId()) {
     clear_authId();
@@ -3472,6 +3532,7 @@ void AuthenticateConfig::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  enrollmenttoken_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && compression_ != nullptr) {
     delete compression_;
   }
@@ -3538,6 +3599,15 @@ const char* AuthenticateConfig::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
           doincludetoken_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bytes enrollmentToken = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
+          auto str = _internal_mutable_enrollmenttoken();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -3618,6 +3688,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_doincludetoken(), target);
   }
 
+  // bytes enrollmentToken = 7;
+  if (!this->_internal_enrollmenttoken().empty()) {
+    target = stream->WriteBytesMaybeAliased(
+        7, this->_internal_enrollmenttoken(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3633,6 +3709,13 @@ size_t AuthenticateConfig::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // bytes enrollmentToken = 7;
+  if (!this->_internal_enrollmenttoken().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_enrollmenttoken());
+  }
 
   // .sensory.api.common.CompressionConfiguration compression = 5;
   if (this->_internal_has_compression()) {
@@ -3698,6 +3781,9 @@ void AuthenticateConfig::MergeFrom(const AuthenticateConfig& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_enrollmenttoken().empty()) {
+    _internal_set_enrollmenttoken(from._internal_enrollmenttoken());
+  }
   if (from._internal_has_compression()) {
     _internal_mutable_compression()->::sensory::api::common::CompressionConfiguration::MergeFrom(from._internal_compression());
   }
@@ -3739,7 +3825,14 @@ bool AuthenticateConfig::IsInitialized() const {
 
 void AuthenticateConfig::InternalSwap(AuthenticateConfig* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &enrollmenttoken_, lhs_arena,
+      &other->enrollmenttoken_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(AuthenticateConfig, doincludetoken_)
       + sizeof(AuthenticateConfig::doincludetoken_)

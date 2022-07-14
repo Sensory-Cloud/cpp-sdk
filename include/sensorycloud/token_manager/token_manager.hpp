@@ -1,8 +1,8 @@
-// An OAuth Token manager for the Sensory Cloud C++ SDK.
-//
-// Author: Christian Kauten (ckauten@sensoryinc.com)
+// An OAuth Token manager for the SensoryCloud C++ SDK.
 //
 // Copyright (c) 2021 Sensory, Inc.
+//
+// Author: Christian Kauten (ckauten@sensoryinc.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,8 @@
 // SOFTWARE.
 //
 
-#ifndef SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
-#define SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
+#ifndef SENSORYCLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
+#define SENSORYCLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 
 #include <mutex>
 #include "sensorycloud/token_manager/uuid.hpp"
@@ -32,7 +32,7 @@
 #include "sensorycloud/token_manager/time.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 
-/// @brief The Sensory Cloud SDK.
+/// @brief The SensoryCloud SDK.
 namespace sensory {
 
 /// @brief Modules for generating and storing secure credentials.
@@ -46,7 +46,7 @@ struct AccessTokenCredentials {
     const std::string secret;
 };
 
-/// @brief Key-value tags used to store OAuth credentials for Sensory Cloud.
+/// @brief Key-value tags used to store OAuth credentials for SensoryCloud.
 static const struct {
     /// The ID of the client device (A RFC-4122v4 UUID).
     const std::string ClientID     = "clientID";
@@ -108,7 +108,7 @@ class TokenManager {
     /// generated using this function, i.e., the `clientID` and `clientSecret`
     /// in the keychain.
     ///
-    inline AccessTokenCredentials generateCredentials() const {
+    inline AccessTokenCredentials generate_credentials() const {
         // Generate a new client ID and secure random secret string.
         const auto clientID = uuid_v4();  // v4 UUIDs don't identify the host.
         const auto secret = secure_random<24>();  // Use a 24 character secret.
@@ -125,7 +125,7 @@ class TokenManager {
     /// @returns The `clientID` and `clientSecret` from the keychain in an
     /// `AccessTokenCredentials` instance.
     ///
-    inline AccessTokenCredentials getSavedCredentials() const {
+    inline AccessTokenCredentials get_saved_credentials() const {
         return {keychain.at(TAGS.ClientID), keychain.at(TAGS.ClientSecret)};
     }
 
@@ -137,7 +137,7 @@ class TokenManager {
     /// This function checks for the existence of the `clientID` and
     /// `clientSecret` keys in the keychain.
     ///
-    inline bool hasSavedCredentials() const {
+    inline bool has_saved_credentials() const {
         return keychain.contains(TAGS.ClientID) &&
             keychain.contains(TAGS.ClientSecret);
     }
@@ -150,7 +150,7 @@ class TokenManager {
     /// This function checks for the existence of the `accessToken` and
     /// `expiration` keys in the keychain.
     ///
-    inline bool hasToken() const {
+    inline bool has_token() const {
         return keychain.contains(TAGS.AccessToken) &&
             keychain.contains(TAGS.Expiration);
     }
@@ -162,14 +162,14 @@ class TokenManager {
     /// This will erase the `clientID`, `clientSecret`, `accessToken`, and
     /// `expiration` keys-value pairs from the secure credential store.
     ///
-    inline void deleteCredentials() const {
+    inline void delete_credentials() const {
         keychain.erase(TAGS.AccessToken);
         keychain.erase(TAGS.Expiration);
         keychain.erase(TAGS.ClientID);
         keychain.erase(TAGS.ClientSecret);
     }
 
-    /// @brief Return a valid access token for Sensory Cloud gRPC calls.
+    /// @brief Return a valid access token for SensoryCloud gRPC calls.
     ///
     /// @returns A valid access token
     /// @throws An error if one occurs while retrieving the saved token, or if
@@ -180,71 +180,68 @@ class TokenManager {
     /// block on the current thread until a new token has been fetched from
     /// the server.
     ///
-    std::string getAccessToken() const {
+    std::string get_access_token() const {
         // Prevent multiple access tokens from being requested at the same time.
         static std::mutex mutex;
         std::lock_guard<std::mutex> lock(mutex);
 
-        if (!hasToken())  // no access token has been generated and stored
-            return fetchNewAccessToken();
+        if (!has_token())  // no access token has been generated and stored
+            return fetch_new_access_token();
         // fetch existing access token and expiration date from the secure store
-        const auto accessToken = keychain.at(TAGS.AccessToken);
-        const auto expirationDate = keychain.at(TAGS.Expiration);
+        const auto access_token = keychain.at(TAGS.AccessToken);
+        const auto expiration_date = keychain.at(TAGS.Expiration);
         // check for expiration of the token
         const auto now = std::chrono::system_clock::now();
-        const auto expiration = timestamp_to_timepoint(expirationDate);
+        const auto expiration = timestamp_to_timepoint(expiration_date);
         if (now > expiration - std::chrono::minutes(5))  // token has expired
-            return fetchNewAccessToken();
-        return accessToken;
+            return fetch_new_access_token();
+        return access_token;
     }
 
     /// @brief Fetch a new access token from a remote server.
     ///
     /// @returns The new token as a string.
     ///
-    std::string fetchNewAccessToken() const {
+    std::string fetch_new_access_token() const {
         // Check if credentials have been generated already, otherwise create
         // new credentials.
-        if (!hasSavedCredentials()) generateCredentials();
+        if (!has_saved_credentials()) generate_credentials();
         // Get the ID of the client and the secret from the secure store.
-        const auto clientID = keychain.at(TAGS.ClientID);
+        const auto client_id = keychain.at(TAGS.ClientID);
         const auto secret = keychain.at(TAGS.ClientSecret);
         // Synchronously request a new token from the server.
         api::common::TokenResponse response;
-        const auto status = service.getToken(&response, clientID, secret);
+        const auto status = service.getToken(&response, client_id, secret);
         // Insert the OAuth access token for the client in the secure store
         keychain.emplace(TAGS.AccessToken, response.accesstoken());
         // Determine when the token will expire and store this time
-        const auto expirationDate =
+        const auto expiration_date =
             std::chrono::system_clock::now() + std::chrono::seconds(response.expiresin());
-        const auto expiration = timepoint_to_timestamp(expirationDate);
-        keychain.emplace(TAGS.Expiration, expiration);
+        keychain.emplace(TAGS.Expiration, timepoint_to_timestamp(expiration_date));
         // Return the newly created OAuth token
         return response.accesstoken();
     }
 
-    /// @brief Register the device using the token manager's OAuth service.
+    /// @brief Setup an existing client context for unary gRPC calls.
     ///
-    /// @param getUserCredentials A callback function that should return the
-    /// device name and credential in the event that the device needs to be
-    /// registered with the server.
-    /// @returns The success code if the device is already registered, otherwise
-    /// the gRPC status from the synchronous registration request.
+    /// @param context The context to setup with a Bearer token and deadline.
+    /// @param token_manager The token manager for fetching OAuth tokens.
     ///
-    template<typename T>
-    ::grpc::Status registerDevice(const T& getUserCredentials) const {
-        if (hasToken()) return {};  // the device is already registered.
-        // Generate a new clientID and clientSecret for this device.
-        const auto deviceCredentials = hasSavedCredentials() ?
-            getSavedCredentials() : generateCredentials();
-        // Register this device with the remote host.
-        const auto userCredentials = getUserCredentials();
-        sensory::api::v1::management::DeviceResponse response;
-        return service.registerDevice(&response,
-            std::get<0>(userCredentials),
-            std::get<1>(userCredentials),
-            deviceCredentials.id,
-            deviceCredentials.secret
+    inline void setup_unary_client_context(::grpc::ClientContext& context) const {
+        context.AddMetadata("authorization",
+            std::string("Bearer ") + get_access_token()
+        );
+        context.set_deadline(service.get_config().get_deadline());
+    }
+
+    /// @brief Setup an existing client context for bidirectional gRPC streams.
+    ///
+    /// @param context The context to setup with a Bearer token and deadline.
+    /// @param token_manager The token manager for fetching OAuth tokens.
+    ///
+    inline void setup_bidi_client_context(::grpc::ClientContext& context) const {
+        context.AddMetadata("authorization",
+            std::string("Bearer ") + get_access_token()
         );
     }
 };
@@ -253,4 +250,4 @@ class TokenManager {
 
 }  // namespace sensory
 
-#endif  // SENSORY_CLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
+#endif  // SENSORYCLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_

@@ -1,16 +1,17 @@
-# Sensory Cloud C++ SDK
+# SensoryCloud C++ SDK
 
-This repository contains the source code for the [Sensory Cloud][sensory-cloud]
+This repository contains the source code for the [SensoryCloud][sensory-cloud]
 C++ SDK.
 
 ## General Information
 
-Before getting started, you must spin up a [Sensory Cloud][sensory-cloud]
-inference server or have [Sensory][sensory-cloud] spin one up for you. You must
-also have the following pieces of information:
+Before getting started you must spin up a [SensoryCloud][sensory-cloud]
+inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
+must also have the following pieces of information:
 
--   Your inference server URL (and port number)
--   Your Sensory Tenant ID (UUID)
+-   your inference server address and port number,
+-   your SensoryCloud tenant ID, and
+-   your configured secret key used for registering OAuth clients.
 
 [sensory-cloud]: https://sensorycloud.ai/
 
@@ -75,13 +76,13 @@ TODO
 
 ## Integration
 
-To include the Sensory Cloud C++ SDK in your project, add the following snippet
+To include the SensoryCloud C++ SDK in your project, add the following snippet
 to your `CMakeLists.txt`.
 
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.11.4
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.12.10
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```
@@ -97,7 +98,7 @@ target_link_libraries(your_program PRIVATE sensorycloud)
 
 Example code for each available service and programming model are available in
 the [examples](examples) directory. These act both as a point of reference and
-as a starting point for the integration of Sensory Cloud with your application.
+as a starting point for the integration of SensoryCloud with your application.
 
 Please refer to [md/tutorial.md](md/tutorial.md) for a tutorial of the
 blocking synchronous interface of the SDK. Tutorials for the asynchronous

@@ -1,9 +1,9 @@
 # Tutorial
 
-The tutorial provides an overview of the Sensory Cloud C++ SDK. This tutorial
+The tutorial provides an overview of the SensoryCloud C++ SDK. This tutorial
 will show you how to:
 
--   setup a C++ project and include the Sensory Cloud C++ SDK in your build,
+-   setup a C++ project and include the SensoryCloud C++ SDK in your build,
 -   connect to your server and query the server's health,
 -   implement secure credential storage, a token manager, and an OAuth service
     for maintaining access tokens,
@@ -38,7 +38,7 @@ dependencies locally.
 # CMake version 3.11 is required to use FetchContent
 cmake_minimum_required(VERSION 3.11)
 
-# C++11 with gcc >4.9 is required to compile the Sensory Cloud C++ SDK.
+# C++11 with gcc >4.9 is required to compile the SensoryCloud C++ SDK.
 set(CMAKE_CXX_STANDARD 11)
 
 # Use FetchContent to compile the SDK with your project.
@@ -62,7 +62,7 @@ To connect to your Sensory Inference server, you will need to know:
 
 1.  the host-name or IP address that the service is running at,
 2.  the specific port that the service is running at -- typically `443`, --
-3.  your tenant ID that uniquely identifies your tenant in Sensory Cloud, and
+3.  your tenant ID that uniquely identifies your tenant in SensoryCloud, and
 4.  a way of uniquely identifying devices in your application.
 
 This information is provided to the SDK using a `sensory::Config` object:
@@ -208,7 +208,7 @@ if (!tokenManager.hasToken()) {  // The device is not registered.
 
 ## Creating an `AudioService`
 
-`AudioService` provides methods to stream audio to Sensory Cloud. It is
+`AudioService` provides methods to stream audio to SensoryCloud. It is
 recommended to only have 1 instance of `AudioService` instantiated per `Config`.
 
 ```c++
@@ -220,7 +220,7 @@ sensory::service::AudioService<sensory::token_manager::SecureCredentialStore>
 ### Obtaining Audio Models
 
 Certain audio models are available to your application depending on the models
-that are configured for your instance of Sensory Cloud. In order to determine
+that are configured for your instance of SensoryCloud. In order to determine
 which audio models are accessible to you, you can execute the below code.
 
 ```c++
@@ -460,10 +460,10 @@ TODO
 
 ## Creating a `VideoService`
 
-`VideoService` provides methods to stream images to Sensory Cloud. It is
+`VideoService` provides methods to stream images to SensoryCloud. It is
 recommended to only have 1 instance of `VideoService` instantiated per
 `Config`. In most circumstances you will only ever have one `Config`, unless
-your app communicates with multiple Sensory Cloud servers.
+your app communicates with multiple SensoryCloud servers.
 
 ```c++
 // Create the video service based on the configuration and token manager.
@@ -474,7 +474,7 @@ sensory::service::VideoService<sensory::token_manager::SecureCredentialStore>
 ### Obtaining Video Models
 
 Certain video models are available to your application depending on the models
-that are configured for your instance of Sensory Cloud. In order to determine
+that are configured for your instance of SensoryCloud. In order to determine
 which video models are accessible to you, you can execute the below code.
 
 ```c++
@@ -651,7 +651,7 @@ Instances of `LivenessRecognitionResponse` will have the following attributes:
 ## Creating A Management Service
 
 The `ManagementService` is used to manage typical _CRUD_ operations with
-Sensory Cloud, such as deleting enrollments or creating enrollment groups.
+SensoryCloud, such as deleting enrollments or creating enrollment groups.
 
 ```c++
 // Create the management service based on the configuration and token manager.

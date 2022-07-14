@@ -1,4 +1,4 @@
-// An example of Sound ID triggers based on PortAudio blocking input streams.
+// An example of biometric voice enrollment using SensoryCloud with PortAudio.
 //
 // Copyright (c) 2021 Sensory, Inc.
 //
@@ -26,14 +26,12 @@
 #include <portaudio.h>
 #include <google/protobuf/util/time_util.h>
 #include <iostream>
-#include <sensorycloud/config.hpp>
-#include <sensorycloud/services/health_service.hpp>
-#include <sensorycloud/services/oauth_service.hpp>
-#include <sensorycloud/services/management_service.hpp>
-#include <sensorycloud/services/audio_service.hpp>
+#include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/insecure_credential_store.hpp>
-#include <sensorycloud/token_manager/token_manager.hpp>
-#include "dep/argparse.hpp"
+#include "../dep/argparse.hpp"
+
+using sensory::SensoryCloud;
+using sensory::token_manager::InsecureCredentialStore;
 
 /// @brief Print a description of a PortAudio error that occurred.
 ///
@@ -51,19 +49,9 @@ int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
     auto parser = argparse::ArgumentParser(argc, argv)
         .prog("enroll")
-        .description("A tool for authenticating with voice biometrics using Sensory Cloud.");
-    parser.add_argument({ "-H", "--host" })
-        .required(true)
-        .help("HOST The hostname of a Sensory Cloud inference server.");
-    parser.add_argument({ "-P", "--port" })
-        .required(true)
-        .help("PORT The port number that the Sensory Cloud inference server is running at.");
-    parser.add_argument({ "-T", "--tenant" })
-        .required(true)
-        .help("TENANT The ID of your tenant on a Sensory Cloud inference server.");
-    parser.add_argument({ "-I", "--insecure" })
-        .action("store_true")
-        .help("INSECURE Disable TLS.");
+        .description("A tool for authenticating with voice biometrics using SensoryCloud.");
+    parser.add_argument({ "path" })
+        .help("PATH The path to an INI file containing server metadata.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
         .help("GETMODELS Whether to query for a list of available models.");
@@ -96,10 +84,7 @@ int main(int argc, const char** argv) {
         .help("VERBOSE Produce verbose output during authentication.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
-    const auto HOSTNAME = args.get<std::string>("host");
-    const auto PORT = args.get<uint16_t>("port");
-    const auto TENANT = args.get<std::string>("tenant");
-    const auto IS_SECURE = !args.get<bool>("insecure");
+    const auto PATH = args.get<std::string>("path");
     const auto GETMODELS = args.get<bool>("getmodels");
     const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
@@ -113,66 +98,33 @@ int main(int argc, const char** argv) {
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
-    if (!keychain.contains("deviceID"))
-        keychain.emplace("deviceID", sensory::token_manager::uuid_v4());
-    const auto DEVICE_ID(keychain.at("deviceID"));
-
-    // Initialize the configuration to the host for given address and port
-    sensory::Config config(HOSTNAME, PORT, TENANT, DEVICE_ID, IS_SECURE);
-    config.connect();
+    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create the cloud services handle.
+    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    sensory::service::HealthService healthService(config);
-    sensory::api::common::ServerHealthResponse serverHealth;
-    auto status = healthService.getHealth(&serverHealth);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.getHealth(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to get server health with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
+        std::cout << "Failed to get server health ("
+            << status.error_code() << "): "
+            << status.error_message() << std::endl;
         return 1;
-    } else if (VERBOSE) {
-        // Report the health of the remote service
+    }
+    if (VERBOSE) {
         std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << serverHealth.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << serverHealth.serverversion() << std::endl;
-        std::cout << "\tid: " << serverHealth.id() << std::endl;
+        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
+        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
+        std::cout << "\tid: " << server_health.id() << std::endl;
     }
-
-    // Create an OAuth service
-    sensory::service::OAuthService oauthService(config);
-    sensory::token_manager::TokenManager<sensory::token_manager::InsecureCredentialStore>
-        tokenManager(oauthService, keychain);
-
-    // Attempt to login and register the device if needed.
-    status = tokenManager.registerDevice([]() -> std::tuple<std::string, std::string> {
-        std::cout << "Registering device with server..." << std::endl;
-        // Query the device name from the standard input.
-        std::string name = "";
-        std::cout << "Device name: ";
-        std::cin >> name;
-        // Query the credential for the user from the standard input.
-        std::string credential = "";
-        std::cout << "Credential: ";
-        std::cin >> credential;
-        // Return the device name and credential as a tuple.
-        return {name, credential};
-    });
-    // Check the status code from the attempted registration.
-    if (!status.ok()) {  // the call failed, print a descriptive message
-        std::cout << "Failed to register device with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-        return 1;
-    }
-
-    sensory::service::AudioService<sensory::token_manager::InsecureCredentialStore>
-        audioService(config, tokenManager);
 
     if (GETMODELS) {
         sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
-        status = audioService.getModels(&audioModelsResponse);
+        status = cloud.audio.getModels(&audioModelsResponse);
         if (!status.ok()) {  // the call failed, print a descriptive message
-            std::cout << "Failed to get audio models with\n\t" <<
-                status.error_code() << ": " << status.error_message() << std::endl;
+            std::cout << "Failed to get audio models ("
+                << status.error_code() << "): "
+                << status.error_message() << std::endl;
             return 1;
         }
         for (auto& model : audioModelsResponse.models()) {
@@ -198,12 +150,12 @@ int main(int argc, const char** argv) {
 
     // Initialize the stream for creating the enrollment.
     grpc::ClientContext context;
-    auto stream = audioService.createEnrollment(&context,
-        sensory::service::audio::newAudioConfig(
+    auto stream = cloud.audio.createEnrollment(&context,
+        sensory::service::audio::new_audio_config(
             sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
             SAMPLE_RATE, 1, LANGUAGE
         ),
-        sensory::service::audio::newCreateEnrollmentConfig(
+        sensory::service::audio::new_create_enrollment_config(
             MODEL,
             USER_ID,
             DESCRIPTION,
@@ -219,22 +171,22 @@ int main(int argc, const char** argv) {
     if (err != paNoError) return describe_pa_error(err);
 
     // Setup the input parameters for the port audio stream.
-    PaStreamParameters inputParameters;
-    inputParameters.device = Pa_GetDefaultInputDevice();
-    if (inputParameters.device == paNoDevice) {
+    PaStreamParameters input_parameters;
+    input_parameters.device = Pa_GetDefaultInputDevice();
+    if (input_parameters.device == paNoDevice) {
         fprintf(stderr,"Error: No default input device.\n");
         return 1;
     }
-    inputParameters.channelCount = 1;
-    inputParameters.sampleFormat = paInt16;  // Sensory expects 16-bit audio
-    inputParameters.suggestedLatency =
-        Pa_GetDeviceInfo(inputParameters.device)->defaultHighInputLatency;
-    inputParameters.hostApiSpecificStreamInfo = NULL;
+    input_parameters.channelCount = 1;
+    input_parameters.sampleFormat = paInt16;  // Sensory expects 16-bit audio
+    input_parameters.suggestedLatency =
+        Pa_GetDeviceInfo(input_parameters.device)->defaultHighInputLatency;
+    input_parameters.hostApiSpecificStreamInfo = NULL;
 
     // Open the portaudio stream with the input device.
     PaStream* audioStream;
     err = Pa_OpenStream(&audioStream,
-        &inputParameters,
+        &input_parameters,
         NULL,       // no output parameters for an input stream
         SAMPLE_RATE,
         CHUNK_SIZE,
@@ -250,15 +202,15 @@ int main(int argc, const char** argv) {
 
     // Create a buffer for the audio samples based on the number of bytes in
     // a block of samples.
-    uint8_t sampleBlock[BYTES_PER_BLOCK];
+    uint8_t sample_block[BYTES_PER_BLOCK];
     for (int i = 0; i < (MAX_DURATION * SAMPLE_RATE) / CHUNK_SIZE; ++i) {
         // Read a block of samples from the ADC.
-        err = Pa_ReadStream(audioStream, sampleBlock, CHUNK_SIZE);
+        err = Pa_ReadStream(audioStream, sample_block, CHUNK_SIZE);
         if (err) return describe_pa_error(err);
 
         // Create a new request with the audio content.
         sensory::api::v1::audio::CreateEnrollmentRequest request;
-        request.set_audiocontent(sampleBlock, BYTES_PER_BLOCK);
+        request.set_audiocontent(sample_block, BYTES_PER_BLOCK);
         if (!stream->Write(request)) break;
 
         // Read a new response from the server.
@@ -308,10 +260,6 @@ int main(int argc, const char** argv) {
     // Close the stream and check the status code in case the stream broke.
     stream->WritesDone();
     status = stream->Finish();
-    if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "Enrollment stream broke with\n\t" <<
-            status.error_code() << ": " << status.error_message() << std::endl;
-    }
 
     // Stop the audio stream.
     err = Pa_StopStream(audioStream);
@@ -319,6 +267,13 @@ int main(int argc, const char** argv) {
 
     // Terminate the port audio session.
     Pa_Terminate();
+
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Enrollment stream broke ("
+            << status.error_code() << "): "
+            << status.error_message() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
