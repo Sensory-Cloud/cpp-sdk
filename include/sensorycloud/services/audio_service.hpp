@@ -283,20 +283,20 @@ class TranscriptAggregator {
     ///
     /// @param response The current word list from the server.
     ///
-    void process_response(::sensory::api::v1::audio::TranscribeWordResponse* response) {
+    void process_response(const ::sensory::api::v1::audio::TranscribeWordResponse& response) {
         // If nothing is returned, do nothing
-        if (response == nullptr || !response->words().size()) return;
+        if (response.words().empty()) return;
         // Grow the list of words if the last word index has increased past the
         // size of the transcription buffer.
-        if (response->lastwordindex() >= word_list.size())
-            word_list.resize(response->lastwordindex() + 1);
+        if (response.lastwordindex() >= word_list.size())
+            word_list.resize(response.lastwordindex() + 1);
         // Loop through returned words and set the returned value at the
         // specified index in the transcript.
-        for (const auto& word : response->words())
+        for (const auto& word : response.words())
             word_list[word.wordindex()] = word;
         // Shrink the word list if the incoming transcript is smaller.
-        if (response->lastwordindex() < word_list.size() - 1)
-            word_list.erase(word_list.begin() + response->lastwordindex() + 1, word_list.end());
+        if (response.lastwordindex() < word_list.size() - 1)
+            word_list.erase(word_list.begin() + response.lastwordindex() + 1, word_list.end());
     }
 
     /// @brief Return a constant reference to the complete transcript.

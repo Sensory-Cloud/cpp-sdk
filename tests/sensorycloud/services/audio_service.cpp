@@ -412,8 +412,8 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
     }
     GIVEN("An empty transcript aggregator") {
         TranscriptAggregator aggregator;
-        WHEN("A null response is passed to the aggregator") {
-            aggregator.process_response(nullptr);
+        WHEN("An empty response is passed to the aggregator") {
+            aggregator.process_response({});
             THEN("The initial state of the aggregator does not change") {
                 REQUIRE(aggregator.get_word_list().empty());
                 REQUIRE(aggregator.get_transcript().empty());
@@ -430,7 +430,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
             rsp.set_lastwordindex(0);
             (*rsp.mutable_words()->Add()) = foo;
             // Update the structure with the single word transcript.
-            aggregator.process_response(&rsp);
+            aggregator.process_response(rsp);
             THEN("The aggregator is updated with the transcript state") {
                 REQUIRE(1 == aggregator.get_word_list().size());
                 REQUIRE_THAT("foo", Catch::Equals(aggregator.get_transcript()));
@@ -450,7 +450,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
             rsp.set_lastwordindex(1);
             (*rsp.mutable_words()->Add()) = foo;
             (*rsp.mutable_words()->Add()) = bar;
-            aggregator.process_response(&rsp);
+            aggregator.process_response(rsp);
             THEN("The aggregator is updated with the transcript state") {
                 REQUIRE(2 == aggregator.get_word_list().size());
                 REQUIRE_THAT("foo bar", Catch::Equals(aggregator.get_transcript()));
@@ -472,7 +472,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
         rsp0.set_lastwordindex(1);
         (*rsp0.mutable_words()->Add()) = foo;
         (*rsp0.mutable_words()->Add()) = bar;
-        aggregator.process_response(&rsp0);
+        aggregator.process_response(rsp0);
         WHEN("An update response is passed to the aggregator that adds a word") {
             TranscribeWord baz;
             baz.set_word("baz");
@@ -481,7 +481,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
             rsp1.set_firstwordindex(0);
             rsp1.set_lastwordindex(2);
             (*rsp1.mutable_words()->Add()) = baz;
-            aggregator.process_response(&rsp1);
+            aggregator.process_response(rsp1);
             THEN("The aggregator is updated with the new word") {
                 REQUIRE(3 == aggregator.get_word_list().size());
                 REQUIRE_THAT("foo bar baz", Catch::Equals(aggregator.get_transcript()));
@@ -495,7 +495,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
             rsp1.set_firstwordindex(0);
             rsp1.set_lastwordindex(1);
             (*rsp1.mutable_words()->Add()) = food;
-            aggregator.process_response(&rsp1);
+            aggregator.process_response(rsp1);
             THEN("The aggregator is updated with the replacement word") {
                 REQUIRE(2 == aggregator.get_word_list().size());
                 REQUIRE_THAT("food bar", Catch::Equals(aggregator.get_transcript()));
@@ -509,7 +509,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
             rsp1.set_firstwordindex(0);
             rsp1.set_lastwordindex(0);
             (*rsp1.mutable_words()->Add()) = word;
-            aggregator.process_response(&rsp1);
+            aggregator.process_response(rsp1);
             THEN("The aggregator is updated with the sub-string replacement") {
                 REQUIRE(1 == aggregator.get_word_list().size());
                 REQUIRE_THAT("foobar", Catch::Equals(aggregator.get_transcript()));
