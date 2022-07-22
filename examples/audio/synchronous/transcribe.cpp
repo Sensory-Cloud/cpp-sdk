@@ -187,6 +187,8 @@ int main(int argc, const char** argv) {
             // Read a message and break out of the loop if the read fails.
             sensory::api::v1::audio::TranscribeResponse response;
             if (!stream->Read(&response)) break;
+            // Set the content of the local transcript buffer.
+            aggregator.process_response(response.wordlist());
             // Log the current transcription to the terminal.
             if (VERBOSE) {
                 // Relative energy of the processed audio as a value between 0 and 1.
@@ -230,8 +232,6 @@ int main(int argc, const char** argv) {
                 #endif
                 std::cout << aggregator.get_transcript() << std::endl;
             }
-            // Set the content of the local transcript buffer.
-            aggregator.process_response(response.wordlist());
         }
     });
 
