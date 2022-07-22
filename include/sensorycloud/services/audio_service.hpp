@@ -284,19 +284,28 @@ class TranscriptAggregator {
     /// @param response The current word list from the server.
     ///
     void process_response(const ::sensory::api::v1::audio::TranscribeWordResponse& response) {
-        // If nothing is returned, do nothing
         if (response.words().empty()) return;
-        // Grow the list of words if the last word index has increased past the
-        // size of the transcription buffer.
-        if (response.lastwordindex() >= word_list.size())
-            word_list.resize(response.lastwordindex() + 1);
-        // Loop through returned words and set the returned value at the
-        // specified index in the transcript.
-        for (const auto& word : response.words())
+        // Get the expected transcript size from the index of the last word.
+        const auto response_size = response.lastwordindex() + 1;
+        // Grow the word buffer if the incoming transcript is larger.
+        if (response_size > word_list.size())
+            word_list.resize(response_size);
+        // Loop through returned words and replace buffered words that changed.
+        for (const auto& word : response.words()) {
+            // Sanity check the word index to prevent the possibility of
+            // unexpected segmentation faults in favor of descriptive errors.
+            if (word.wordindex() >= word_list.size())
+                throw std::runtime_error(
+                    "Attempting to update word at index " +
+                    std::to_string(word.wordindex()) +
+                    " that exceeds the expected buffer size of " +
+                    std::to_string(word_list.size())
+                );
             word_list[word.wordindex()] = word;
+        }
         // Shrink the word list if the incoming transcript is smaller.
-        if (response.lastwordindex() < word_list.size() - 1)
-            word_list.erase(word_list.begin() + response.lastwordindex() + 1, word_list.end());
+        if (response_size < word_list.size())
+            word_list.erase(word_list.begin() + response_size, word_list.end());
     }
 
     /// @brief Return a constant reference to the complete transcript.
