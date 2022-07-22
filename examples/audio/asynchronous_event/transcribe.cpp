@@ -33,6 +33,8 @@
 using sensory::SensoryCloud;
 using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::AudioService;
+using sensory::service::audio::TranscriptAggregator;
+using sensory::api::v1::audio::WordState;
 
 /// @brief Print a description of a PortAudio error that occurred.
 ///
@@ -100,8 +102,6 @@ int main(int argc, const char** argv) {
         std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
         std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
     }
-
-    // ------ Create the audio service -----------------------------------------
 
     // ------ Query the available audio models ---------------------------------
 
@@ -205,6 +205,9 @@ int main(int argc, const char** argv) {
         err = Pa_StartStream(capture);
         if (err != paNoError) return describe_pa_error(err);
 
+        /// An aggregator for accumulating partial updates into a transcript.
+        TranscriptAggregator aggregator;
+
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
@@ -239,18 +242,49 @@ int main(int argc, const char** argv) {
                 stream->getRequest().set_audiocontent(sample_block.get(), BYTES_PER_BLOCK);
                 stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
+                // Set the content of the local transcript buffer.
+                aggregator.process_response(stream->getResponse().wordlist());
                 if (VERBOSE) {
-                    std::cout << "Response" << std::endl;
-                    std::cout << "\tAudio Energy: " << stream->getResponse().audioenergy()     << std::endl;
-                    std::cout << "\tTranscript:   " << stream->getResponse().transcript()      << std::endl;
-                    std::cout << "\tIs Partial:   " << stream->getResponse().ispartialresult() << std::endl;
+                    // Relative energy of the processed audio as a value between 0 and 1.
+                    // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
+                    std::cout << "Audio Energy: " << stream->getResponse().audioenergy() << std::endl;
+                    // The text of the current transcript as a sliding window on the last
+                    // ~7 seconds of processed audio.
+                    std::cout << "Sliding Transcript: " << stream->getResponse().transcript() << std::endl;
+                    // The word list contains the directives to the TranscriptAggregator
+                    // for accumulating the sliding window transcript over time.
+                    for (const auto& word : stream->getResponse().wordlist().words()) {
+                        std::string state = "";
+                        switch (word.wordstate()) {
+                            case WordState::WORDSTATE_PENDING: state = "PENDING"; break;
+                            case WordState::WORDSTATE_FINAL: state = "FINAL"; break;
+                            default: break;
+                        }
+                        std::cout << "word=" << word.word() << ", "
+                            << "state=" << state << ", "
+                            << "index=" << word.wordindex() << ", "
+                            << "confidence=" << word.confidence() << ", "
+                            << "begin_time=" << word.begintimems() << ", "
+                            << "end_time=" << word.endtimems() << std::endl;
+                    }
+                    // The post-processing actions convey pipeline specific
+                    // functionality to/from the server. In this case the "FINAL" action
+                    // is sent to indicate when the server has finished transcribing.
+                    if (stream->getResponse().has_postprocessingaction()) {
+                        const auto& action = stream->getResponse().postprocessingaction();
+                        std::cout << "Post-processing "
+                            << "actionid=" << action.actionid() << ", "
+                            << "action=" << action.action() << std::endl;
+                    }
+                    std::cout << "Aggregated Transcript: " << aggregator.get_transcript() << std::endl;
+                    std::cout << std::endl;
                 } else {
                     #if defined(_WIN32) || defined(_WIN64)  // Windows
                         std::system("clr");
                     #else
                         std::system("clear");
                     #endif
-                    std::cout << stream->getResponse().transcript() << std::endl;
+                    std::cout << aggregator.get_transcript() << std::endl;
                 }
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Finish) break;
