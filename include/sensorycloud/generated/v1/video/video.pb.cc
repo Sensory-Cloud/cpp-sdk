@@ -155,9 +155,10 @@ constexpr CreateEnrollmentConfig::CreateEnrollmentConfig(
   , description_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , referenceid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , compression_(nullptr)
-  , islivenessenabled_(false)
   , livenessthreshold_(0)
 
+  , islivenessenabled_(false)
+  , disableserverenrollmenttemplatestorage_(false)
   , numlivenessframesrequired_(0){}
 struct CreateEnrollmentConfigDefaultTypeInternal {
   constexpr CreateEnrollmentConfigDefaultTypeInternal()
@@ -311,6 +312,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fvideo_2fvideo_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentConfig, compression_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentConfig, referenceid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentConfig, numlivenessframesrequired_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentConfig, disableserverenrollmenttemplatestorage_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateConfig, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -346,8 +348,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 66, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateResponse)},
   { 78, -1, -1, sizeof(::sensory::api::v1::video::LivenessRecognitionResponse)},
   { 86, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentConfig)},
-  { 101, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateConfig)},
-  { 115, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionConfig)},
+  { 102, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateConfig)},
+  { 116, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionConfig)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -397,7 +399,7 @@ const char descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto[] PROTOBUF_SECTI
   "n\030\004 \001(\0132!.sensory.api.common.TokenRespon"
   "se\022\016\n\006userId\030\005 \001(\t\022\024\n\014enrollmentId\030\006 \001(\t"
   "\"=\n\033LivenessRecognitionResponse\022\017\n\007isAli"
-  "ve\030\001 \001(\010\022\r\n\005score\030\002 \001(\002\"\376\002\n\026CreateEnroll"
+  "ve\030\001 \001(\010\022\r\n\005score\030\002 \001(\002\"\256\003\n\026CreateEnroll"
   "mentConfig\022\031\n\006userId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\033\n"
   "\010deviceId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022\035\n\tmodelName\030"
   "\003 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013description\030\004 \001(\tB\010"
@@ -407,36 +409,38 @@ const char descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto[] PROTOBUF_SECTI
   "compression\030\007 \001(\0132,.sensory.api.common.C"
   "ompressionConfiguration\022\034\n\013referenceId\030\010"
   " \001(\tB\007\372B\004r\002\030\177\022!\n\031numLivenessFramesRequir"
-  "ed\030\t \001(\005\"\302\002\n\022AuthenticateConfig\022 \n\014enrol"
-  "lmentId\030\001 \001(\tB\010\372B\005r\003\260\001\001H\000\022\033\n\021enrollmentG"
-  "roupId\030\002 \001(\tH\000\022\031\n\021isLivenessEnabled\030\003 \001("
-  "\010\022O\n\021livenessThreshold\030\004 \001(\0162*.sensory.a"
-  "pi.v1.video.RecognitionThresholdB\010\372B\005\202\001\002"
-  "\020\001\022A\n\013compression\030\005 \001(\0132,.sensory.api.co"
-  "mmon.CompressionConfiguration\022\026\n\016doInclu"
-  "deToken\030\006 \001(\010\022\027\n\017enrollmentToken\030\007 \001(\014B\r"
-  "\n\006authId\022\003\370B\001\"\236\001\n\031ValidateRecognitionCon"
-  "fig\022\035\n\tmodelName\030\001 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031\n\006us"
-  "erId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022G\n\tthreshold\030\003 \001(\016"
-  "2*.sensory.api.v1.video.RecognitionThres"
-  "holdB\010\372B\005\202\001\002\020\001*B\n\024RecognitionThreshold\022\007"
-  "\n\003LOW\020\000\022\n\n\006MEDIUM\020\001\022\010\n\004HIGH\020\002\022\013\n\007HIGHEST"
-  "\020\0032m\n\013VideoModels\022^\n\tGetModels\022&.sensory"
-  ".api.v1.video.GetModelsRequest\032\'.sensory"
-  ".api.v1.video.GetModelsResponse\"\0002\367\001\n\017Vi"
-  "deoBiometrics\022w\n\020CreateEnrollment\022-.sens"
-  "ory.api.v1.video.CreateEnrollmentRequest"
-  "\032..sensory.api.v1.video.CreateEnrollment"
-  "Response\"\000(\0010\001\022k\n\014Authenticate\022).sensory"
-  ".api.v1.video.AuthenticateRequest\032*.sens"
-  "ory.api.v1.video.AuthenticateResponse\"\000("
-  "\0010\0012\221\001\n\020VideoRecognition\022}\n\020ValidateLive"
-  "ness\0220.sensory.api.v1.video.ValidateReco"
-  "gnitionRequest\0321.sensory.api.v1.video.Li"
-  "venessRecognitionResponse\"\000(\0010\001Bt\n\034ai.se"
-  "nsorycloud.api.v1.videoB\026SensoryApiV1Vid"
-  "eoProtoP\001Z:gitlab.com/sensory-cloud/serv"
-  "er/titan.git/pkg/api/v1/videob\006proto3"
+  "ed\030\t \001(\005\022.\n&disableServerEnrollmentTempl"
+  "ateStorage\030\n \001(\010\"\302\002\n\022AuthenticateConfig\022"
+  " \n\014enrollmentId\030\001 \001(\tB\010\372B\005r\003\260\001\001H\000\022\033\n\021enr"
+  "ollmentGroupId\030\002 \001(\tH\000\022\031\n\021isLivenessEnab"
+  "led\030\003 \001(\010\022O\n\021livenessThreshold\030\004 \001(\0162*.s"
+  "ensory.api.v1.video.RecognitionThreshold"
+  "B\010\372B\005\202\001\002\020\001\022A\n\013compression\030\005 \001(\0132,.sensor"
+  "y.api.common.CompressionConfiguration\022\026\n"
+  "\016doIncludeToken\030\006 \001(\010\022\027\n\017enrollmentToken"
+  "\030\007 \001(\014B\r\n\006authId\022\003\370B\001\"\236\001\n\031ValidateRecogn"
+  "itionConfig\022\035\n\tmodelName\030\001 \001(\tB\n\372B\007r\005\020\001\030"
+  "\377\001\022\031\n\006userId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022G\n\tthresho"
+  "ld\030\003 \001(\0162*.sensory.api.v1.video.Recognit"
+  "ionThresholdB\010\372B\005\202\001\002\020\001*B\n\024RecognitionThr"
+  "eshold\022\007\n\003LOW\020\000\022\n\n\006MEDIUM\020\001\022\010\n\004HIGH\020\002\022\013\n"
+  "\007HIGHEST\020\0032m\n\013VideoModels\022^\n\tGetModels\022&"
+  ".sensory.api.v1.video.GetModelsRequest\032\'"
+  ".sensory.api.v1.video.GetModelsResponse\""
+  "\0002\367\001\n\017VideoBiometrics\022w\n\020CreateEnrollmen"
+  "t\022-.sensory.api.v1.video.CreateEnrollmen"
+  "tRequest\032..sensory.api.v1.video.CreateEn"
+  "rollmentResponse\"\000(\0010\001\022k\n\014Authenticate\022)"
+  ".sensory.api.v1.video.AuthenticateReques"
+  "t\032*.sensory.api.v1.video.AuthenticateRes"
+  "ponse\"\000(\0010\0012\221\001\n\020VideoRecognition\022}\n\020Vali"
+  "dateLiveness\0220.sensory.api.v1.video.Vali"
+  "dateRecognitionRequest\0321.sensory.api.v1."
+  "video.LivenessRecognitionResponse\"\000(\0010\001B"
+  "t\n\034ai.sensorycloud.api.v1.videoB\026Sensory"
+  "ApiV1VideoProtoP\001Z:gitlab.com/sensory-cl"
+  "oud/server/titan.git/pkg/api/v1/videob\006p"
+  "roto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fvideo_2fvideo_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -444,7 +448,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fvideo_2fvideo_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fvideo_2fvideo_2eproto = {
-  false, false, 2837, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
+  false, false, 2885, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
   &descriptor_table_v1_2fvideo_2fvideo_2eproto_once, descriptor_table_v1_2fvideo_2fvideo_2eproto_deps, 2, 12,
   schemas, file_default_instances, TableStruct_v1_2fvideo_2fvideo_2eproto::offsets,
   file_level_metadata_v1_2fvideo_2fvideo_2eproto, file_level_enum_descriptors_v1_2fvideo_2fvideo_2eproto, file_level_service_descriptors_v1_2fvideo_2fvideo_2eproto,
@@ -2971,9 +2975,9 @@ CreateEnrollmentConfig::CreateEnrollmentConfig(const CreateEnrollmentConfig& fro
   } else {
     compression_ = nullptr;
   }
-  ::memcpy(&islivenessenabled_, &from.islivenessenabled_,
+  ::memcpy(&livenessthreshold_, &from.livenessthreshold_,
     static_cast<size_t>(reinterpret_cast<char*>(&numlivenessframesrequired_) -
-    reinterpret_cast<char*>(&islivenessenabled_)) + sizeof(numlivenessframesrequired_));
+    reinterpret_cast<char*>(&livenessthreshold_)) + sizeof(numlivenessframesrequired_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.video.CreateEnrollmentConfig)
 }
 
@@ -3031,9 +3035,9 @@ void CreateEnrollmentConfig::Clear() {
     delete compression_;
   }
   compression_ = nullptr;
-  ::memset(&islivenessenabled_, 0, static_cast<size_t>(
+  ::memset(&livenessthreshold_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&numlivenessframesrequired_) -
-      reinterpret_cast<char*>(&islivenessenabled_)) + sizeof(numlivenessframesrequired_));
+      reinterpret_cast<char*>(&livenessthreshold_)) + sizeof(numlivenessframesrequired_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3122,6 +3126,14 @@ const char* CreateEnrollmentConfig::_InternalParse(const char* ptr, ::PROTOBUF_N
       case 9:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72)) {
           numlivenessframesrequired_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool disableServerEnrollmentTemplateStorage = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
+          disableserverenrollmenttemplatestorage_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -3232,6 +3244,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(9, this->_internal_numlivenessframesrequired(), target);
   }
 
+  // bool disableServerEnrollmentTemplateStorage = 10;
+  if (this->_internal_disableserverenrollmenttemplatestorage() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(10, this->_internal_disableserverenrollmenttemplatestorage(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3290,15 +3308,20 @@ size_t CreateEnrollmentConfig::ByteSizeLong() const {
         *compression_);
   }
 
+  // .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 6 [(.validate.rules) = {
+  if (this->_internal_livenessthreshold() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_livenessthreshold());
+  }
+
   // bool isLivenessEnabled = 5;
   if (this->_internal_islivenessenabled() != 0) {
     total_size += 1 + 1;
   }
 
-  // .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 6 [(.validate.rules) = {
-  if (this->_internal_livenessthreshold() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_livenessthreshold());
+  // bool disableServerEnrollmentTemplateStorage = 10;
+  if (this->_internal_disableserverenrollmenttemplatestorage() != 0) {
+    total_size += 1 + 1;
   }
 
   // int32 numLivenessFramesRequired = 9;
@@ -3346,11 +3369,14 @@ void CreateEnrollmentConfig::MergeFrom(const CreateEnrollmentConfig& from) {
   if (from._internal_has_compression()) {
     _internal_mutable_compression()->::sensory::api::common::CompressionConfiguration::MergeFrom(from._internal_compression());
   }
+  if (from._internal_livenessthreshold() != 0) {
+    _internal_set_livenessthreshold(from._internal_livenessthreshold());
+  }
   if (from._internal_islivenessenabled() != 0) {
     _internal_set_islivenessenabled(from._internal_islivenessenabled());
   }
-  if (from._internal_livenessthreshold() != 0) {
-    _internal_set_livenessthreshold(from._internal_livenessthreshold());
+  if (from._internal_disableserverenrollmenttemplatestorage() != 0) {
+    _internal_set_disableserverenrollmenttemplatestorage(from._internal_disableserverenrollmenttemplatestorage());
   }
   if (from._internal_numlivenessframesrequired() != 0) {
     _internal_set_numlivenessframesrequired(from._internal_numlivenessframesrequired());

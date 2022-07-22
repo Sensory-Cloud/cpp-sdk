@@ -1952,8 +1952,9 @@ class CreateEnrollmentConfig final :
     kDescriptionFieldNumber = 4,
     kReferenceIdFieldNumber = 8,
     kCompressionFieldNumber = 7,
-    kIsLivenessEnabledFieldNumber = 5,
     kLivenessThresholdFieldNumber = 6,
+    kIsLivenessEnabledFieldNumber = 5,
+    kDisableServerEnrollmentTemplateStorageFieldNumber = 10,
     kNumLivenessFramesRequiredFieldNumber = 9,
   };
   // string userId = 1 [(.validate.rules) = {
@@ -2044,6 +2045,15 @@ class CreateEnrollmentConfig final :
       ::sensory::api::common::CompressionConfiguration* compression);
   ::sensory::api::common::CompressionConfiguration* unsafe_arena_release_compression();
 
+  // .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 6 [(.validate.rules) = {
+  void clear_livenessthreshold();
+  ::sensory::api::v1::video::RecognitionThreshold livenessthreshold() const;
+  void set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
+  private:
+  ::sensory::api::v1::video::RecognitionThreshold _internal_livenessthreshold() const;
+  void _internal_set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
+  public:
+
   // bool isLivenessEnabled = 5;
   void clear_islivenessenabled();
   bool islivenessenabled() const;
@@ -2053,13 +2063,13 @@ class CreateEnrollmentConfig final :
   void _internal_set_islivenessenabled(bool value);
   public:
 
-  // .sensory.api.v1.video.RecognitionThreshold livenessThreshold = 6 [(.validate.rules) = {
-  void clear_livenessthreshold();
-  ::sensory::api::v1::video::RecognitionThreshold livenessthreshold() const;
-  void set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
+  // bool disableServerEnrollmentTemplateStorage = 10;
+  void clear_disableserverenrollmenttemplatestorage();
+  bool disableserverenrollmenttemplatestorage() const;
+  void set_disableserverenrollmenttemplatestorage(bool value);
   private:
-  ::sensory::api::v1::video::RecognitionThreshold _internal_livenessthreshold() const;
-  void _internal_set_livenessthreshold(::sensory::api::v1::video::RecognitionThreshold value);
+  bool _internal_disableserverenrollmenttemplatestorage() const;
+  void _internal_set_disableserverenrollmenttemplatestorage(bool value);
   public:
 
   // int32 numLivenessFramesRequired = 9;
@@ -2084,8 +2094,9 @@ class CreateEnrollmentConfig final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr description_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr referenceid_;
   ::sensory::api::common::CompressionConfiguration* compression_;
-  bool islivenessenabled_;
   int livenessthreshold_;
+  bool islivenessenabled_;
+  bool disableserverenrollmenttemplatestorage_;
   ::PROTOBUF_NAMESPACE_ID::int32 numlivenessframesrequired_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
@@ -4290,6 +4301,26 @@ inline void CreateEnrollmentConfig::_internal_set_numlivenessframesrequired(::PR
 inline void CreateEnrollmentConfig::set_numlivenessframesrequired(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_numlivenessframesrequired(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentConfig.numLivenessFramesRequired)
+}
+
+// bool disableServerEnrollmentTemplateStorage = 10;
+inline void CreateEnrollmentConfig::clear_disableserverenrollmenttemplatestorage() {
+  disableserverenrollmenttemplatestorage_ = false;
+}
+inline bool CreateEnrollmentConfig::_internal_disableserverenrollmenttemplatestorage() const {
+  return disableserverenrollmenttemplatestorage_;
+}
+inline bool CreateEnrollmentConfig::disableserverenrollmenttemplatestorage() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentConfig.disableServerEnrollmentTemplateStorage)
+  return _internal_disableserverenrollmenttemplatestorage();
+}
+inline void CreateEnrollmentConfig::_internal_set_disableserverenrollmenttemplatestorage(bool value) {
+  
+  disableserverenrollmenttemplatestorage_ = value;
+}
+inline void CreateEnrollmentConfig::set_disableserverenrollmenttemplatestorage(bool value) {
+  _internal_set_disableserverenrollmenttemplatestorage(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentConfig.disableServerEnrollmentTemplateStorage)
 }
 
 // -------------------------------------------------------------------

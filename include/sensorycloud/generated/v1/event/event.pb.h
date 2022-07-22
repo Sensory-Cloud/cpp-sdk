@@ -706,6 +706,7 @@ class UsageEventResponse final :
     kTypeFieldNumber = 5,
     kBillableFunctionFieldNumber = 12,
     kBillableValueFieldNumber = 9,
+    kCreditsFieldNumber = 13,
   };
   // repeated .sensory.api.common.TechnologyType technologies = 7;
   int technologies_size() const;
@@ -872,6 +873,15 @@ class UsageEventResponse final :
   void _internal_set_billablevalue(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
+  // double credits = 13;
+  void clear_credits();
+  double credits() const;
+  void set_credits(double value);
+  private:
+  double _internal_credits() const;
+  void _internal_set_credits(double value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.event.UsageEventResponse)
  private:
   class _Internal;
@@ -892,6 +902,7 @@ class UsageEventResponse final :
   int type_;
   int billablefunction_;
   ::PROTOBUF_NAMESPACE_ID::int64 billablevalue_;
+  double credits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fevent_2fevent_2eproto;
 };
@@ -1571,6 +1582,7 @@ class UsageEventModelSummary final :
     kUnitsFieldNumber = 2,
     kValueFieldNumber = 3,
     kCountFieldNumber = 4,
+    kCreditsFieldNumber = 5,
     kBillableFunctionFieldNumber = 1,
   };
   // string units = 2;
@@ -1605,6 +1617,15 @@ class UsageEventModelSummary final :
   void _internal_set_count(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
+  // double credits = 5;
+  void clear_credits();
+  double credits() const;
+  void set_credits(double value);
+  private:
+  double _internal_credits() const;
+  void _internal_set_credits(double value);
+  public:
+
   // .sensory.api.common.ModelType billableFunction = 1;
   void clear_billablefunction();
   ::sensory::api::common::ModelType billablefunction() const;
@@ -1624,6 +1645,7 @@ class UsageEventModelSummary final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr units_;
   ::PROTOBUF_NAMESPACE_ID::int64 value_;
   ::PROTOBUF_NAMESPACE_ID::int64 count_;
+  double credits_;
   int billablefunction_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fevent_2fevent_2eproto;
@@ -2804,6 +2826,26 @@ inline void UsageEventResponse::set_billablefunction(::sensory::api::common::Mod
   // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEventResponse.billableFunction)
 }
 
+// double credits = 13;
+inline void UsageEventResponse::clear_credits() {
+  credits_ = 0;
+}
+inline double UsageEventResponse::_internal_credits() const {
+  return credits_;
+}
+inline double UsageEventResponse::credits() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEventResponse.credits)
+  return _internal_credits();
+}
+inline void UsageEventResponse::_internal_set_credits(double value) {
+  
+  credits_ = value;
+}
+inline void UsageEventResponse::set_credits(double value) {
+  _internal_set_credits(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEventResponse.credits)
+}
+
 // -------------------------------------------------------------------
 
 // UsageEventListRequest
@@ -3437,6 +3479,26 @@ inline void UsageEventModelSummary::_internal_set_count(::PROTOBUF_NAMESPACE_ID:
 inline void UsageEventModelSummary::set_count(::PROTOBUF_NAMESPACE_ID::int64 value) {
   _internal_set_count(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEventModelSummary.count)
+}
+
+// double credits = 5;
+inline void UsageEventModelSummary::clear_credits() {
+  credits_ = 0;
+}
+inline double UsageEventModelSummary::_internal_credits() const {
+  return credits_;
+}
+inline double UsageEventModelSummary::credits() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEventModelSummary.credits)
+  return _internal_credits();
+}
+inline void UsageEventModelSummary::_internal_set_credits(double value) {
+  
+  credits_ = value;
+}
+inline void UsageEventModelSummary::set_credits(double value) {
+  _internal_set_credits(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEventModelSummary.credits)
 }
 
 // -------------------------------------------------------------------
