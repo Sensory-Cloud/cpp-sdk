@@ -288,9 +288,8 @@ class TranscriptAggregator {
         if (response == nullptr || !response->words().size()) return;
         // Grow the list of words if the last word index has increased past the
         // size of the transcription buffer.
-        const auto new_words = static_cast<int>(response->lastwordindex()) - static_cast<int>(word_list.size()) + 1;
-        for (int i = 0; i < new_words; i++)
-            word_list.push_back({});
+        if (response->lastwordindex() >= word_list.size())
+            word_list.resize(response->lastwordindex() + 1);
         // Loop through returned words and set the returned value at the
         // specified index in the transcript.
         for (const auto& word : response->words())
