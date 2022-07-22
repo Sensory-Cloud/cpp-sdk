@@ -53,13 +53,12 @@ class AudioBufferReactor :
     uint32_t frames_per_block;
     /// The current index of the audio stream.
     std::size_t index = 0;
+    /// An aggregator for accumulating partial updates into a transcript.
+    TranscriptAggregator aggregator;
     /// Whether to produce verbose output.
     bool verbose = false;
     /// The progress bar for providing a response per frame written.
     tqdm bar;
-
-    /// An aggregator for accumulating partial updates into a transcript.
-    TranscriptAggregator aggregator;
 
     // A contained scope for the data associated with receiving the FINAL
     // signal from the server.
