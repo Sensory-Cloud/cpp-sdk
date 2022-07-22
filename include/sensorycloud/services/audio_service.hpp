@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <utility>
 #include "sensorycloud/generated/v1/audio/audio.pb.h"
 #include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
@@ -267,6 +268,62 @@ inline ::sensory::api::v1::audio::TranscribeConfig* new_transcribe_config(
     config->set_userid(userID);
     return config;
 }
+
+/// @brief A structure that aggregates and stores transcription responses.
+/// @details
+/// This class can maintain the full transcript returned from the server's
+/// windows responses.
+class TranscriptAggregator {
+ private:
+    /// An internal buffer of the complete transcript from the server.
+    std::vector<::sensory::api::v1::audio::TranscribeWord> word_list;
+
+ public:
+    /// @brief Process a single sliding-window response from the server.
+    ///
+    /// @param response The current word list from the server.
+    ///
+    void process_response(::sensory::api::v1::audio::TranscribeWordResponse* response) {
+        // If nothing is returned, do nothing
+        if (response == nullptr || !response->words().size()) return;
+        // Grow the list of words if the last word index has increased past the
+        // size of the transcription buffer.
+        const auto new_words = static_cast<int>(response->lastwordindex()) - static_cast<int>(word_list.size()) + 1;
+        for (int i = 0; i < new_words; i++)
+            word_list.push_back({});
+        // Loop through returned words and set the returned value at the
+        // specified index in the transcript.
+        for (const auto& word : response->words())
+            word_list[word.wordindex()] = word;
+        // Shrink the word list if the incoming transcript is smaller.
+        if (response->lastwordindex() < word_list.size() - 1)
+            word_list.erase(word_list.begin() + response->lastwordindex() + 1, word_list.end());
+    }
+
+    /// @brief Return a constant reference to the complete transcript.
+    ///
+    /// @returns A vector with the transcribed words and associated metadata.
+    ///
+    const std::vector<::sensory::api::v1::audio::TranscribeWord>& get_word_list() const {
+        return word_list;
+    }
+
+    /// @brief Return the full transcript as computed from the current word list.
+    ///
+    /// @returns An imploded string representation of the underlying word list.
+    ///
+    std::string get_transcript() const {
+        // If there are no words, then there is no transcript.
+        if (word_list.size() == 0) return "";
+        // Iterate over the word responses to accumulate the transcript.
+        std::string transcript = "";
+        for (const auto& word : word_list)
+            transcript += " " + word.word();
+        // Remove the extra space at the front of the transcript.
+        transcript.erase(0, 1);
+        return transcript;
+    }
+};
 
 }  // namespace audio
 
