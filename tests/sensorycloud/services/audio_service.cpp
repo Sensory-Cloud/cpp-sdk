@@ -516,6 +516,19 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
             }
         }
     }
+    WHEN("A transcript aggregator is passed an invalid index") {
+        TranscriptAggregator aggregator;
+        TranscribeWord word;
+        word.set_word("foobar");
+        word.set_wordindex(1);
+        TranscribeWordResponse rsp;
+        rsp.set_firstwordindex(0);
+        rsp.set_lastwordindex(0);
+        (*rsp.mutable_words()->Add()) = word;
+        THEN("An expected runtime error is raised") {
+            REQUIRE_THROWS(aggregator.process_response(rsp));
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
