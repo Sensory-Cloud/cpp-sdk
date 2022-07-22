@@ -68,8 +68,6 @@ inline ::sensory::api::v1::audio::AudioConfig* new_audio_config(
     return config;
 }
 
-// TODO: implement `referenceId` for CreateEnrollmentConfig?
-
 /// @brief Allocate a new configuration object for enrollment creation.
 ///
 /// @param modelName The name of the model to use to create the enrollment.
@@ -83,7 +81,9 @@ inline ::sensory::api::v1::audio::AudioConfig* new_audio_config(
 /// with liveness enabled.
 /// @param numUtterances The number of utterances that should be required
 /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
-///
+/// @param reference_id An optional reference ID allows clients to assign their
+/// own identifier to enrollments for various purposes such as tying an audio
+/// and video enrollment together.
 /// @returns A pointer to the `CreateEnrollmentConfig` object.
 ///
 /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
@@ -105,7 +105,8 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* new_create_enrollment_
     const std::string& description,
     const bool& isLivenessEnabled,
     const float enrollmentDuration = 0.f,
-    const uint32_t numUtterances = 0
+    const uint32_t numUtterances = 0,
+    const std::string& reference_id = ""
 ) {
     // The number of utterances and the enrollment duration cannot both be
     // specified in the message, so check for sentinel "null" values and if
@@ -122,6 +123,7 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* new_create_enrollment_
         config->set_enrollmentduration(enrollmentDuration);
     else if (numUtterances > 0)  // number of utterances provided
         config->set_enrollmentnumutterances(numUtterances);
+    config->set_referenceid(reference_id);
     return config;
 }
 
@@ -177,8 +179,6 @@ inline ::sensory::api::v1::audio::ValidateEventConfig* new_validate_event_config
     return config;
 }
 
-// TODO: implement `referenceId` for CreateEnrollmentEventConfig?
-
 /// @brief Allocate a new configuration object for creating enrolled events.
 ///
 /// @param modelName The name of the model to use to create the enrollment.
@@ -189,6 +189,9 @@ inline ::sensory::api::v1::audio::ValidateEventConfig* new_validate_event_config
 /// with liveness enabled.
 /// @param numUtterances The number of utterances that should be required
 /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+/// @param reference_id An optional reference ID allows clients to assign their
+/// own identifier to enrollments for various purposes such as tying an audio
+/// and video enrollment together.
 ///
 /// @returns A pointer to the `CreateEnrollmentEventConfig` object.
 ///
@@ -210,7 +213,8 @@ inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* new_create_enroll
     const std::string& userID,
     const std::string& description,
     const float enrollmentDuration = 0.f,
-    const uint32_t numUtterances = 0
+    const uint32_t numUtterances = 0,
+    const std::string& reference_id = ""
 ) {
     // The number of utterances and the enrollment duration cannot both be
     // specified in the message, so check for sentinel "null" values and if
@@ -226,6 +230,7 @@ inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* new_create_enroll
         config->set_enrollmentduration(enrollmentDuration);
     else if (numUtterances > 0)  // number of utterances provided
         config->set_enrollmentnumutterances(numUtterances);
+    config->set_referenceid(reference_id);
     return config;
 }
 

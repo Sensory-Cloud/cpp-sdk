@@ -133,6 +133,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
                 REQUIRE(config->islivenessenabled() == isLivenessEnabled);
                 REQUIRE(config->enrollmentduration() == enrollmentDuration);
                 REQUIRE(config->enrollmentnumutterances() == numUtterances);
+                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
             }
             delete config;
         }
@@ -161,6 +162,7 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
                 REQUIRE(config->islivenessenabled() == isLivenessEnabled);
                 REQUIRE(config->enrollmentduration() == enrollmentDuration);
                 REQUIRE(config->enrollmentnumutterances() == numUtterances);
+                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
             }
             delete config;
         }
@@ -183,6 +185,37 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
                     numUtterances
                 ));
             }
+        }
+    }
+    GIVEN("parameters for the enrollment with a reference ID") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const bool& isLivenessEnabled = true;
+        const float enrollmentDuration = 0.f;
+        const int32_t numUtterances = 0;
+        const std::string reference_id = "reference_id";
+        WHEN("the config is allocated from the parameters") {
+            auto config = new_create_enrollment_config(
+                modelName,
+                userID,
+                description,
+                isLivenessEnabled,
+                enrollmentDuration,
+                numUtterances,
+                reference_id
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
+                REQUIRE(config->enrollmentduration() == enrollmentDuration);
+                REQUIRE(config->enrollmentnumutterances() == numUtterances);
+                REQUIRE_THAT(reference_id, Catch::Equals(config->referenceid()));
+            }
+            delete config;
         }
     }
 }
@@ -290,6 +323,7 @@ SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
                 REQUIRE(config->description() == description);
                 REQUIRE(config->enrollmentduration() == enrollmentDuration);
                 REQUIRE(config->enrollmentnumutterances() == numUtterances);
+                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
             }
             delete config;
         }
@@ -315,6 +349,7 @@ SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
                 REQUIRE(config->description() == description);
                 REQUIRE(config->enrollmentduration() == enrollmentDuration);
                 REQUIRE(config->enrollmentnumutterances() == numUtterances);
+                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
             }
             delete config;
         }
@@ -335,6 +370,34 @@ SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
                     numUtterances
                 ));
             }
+        }
+    }
+    GIVEN("parameters for the enrollment with a reference ID") {
+        const std::string& modelName = "modelName";
+        const std::string& userID = "userID";
+        const std::string& description = "Description";
+        const float enrollmentDuration = 0.f;
+        const int32_t numUtterances = 0;
+        const std::string reference_id = "reference_id";
+        WHEN("the config is allocated from the parameters") {
+            auto config = new_create_enrollment_event_config(
+                modelName,
+                userID,
+                description,
+                enrollmentDuration,
+                numUtterances,
+                reference_id
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->enrollmentduration() == enrollmentDuration);
+                REQUIRE(config->enrollmentnumutterances() == numUtterances);
+                REQUIRE_THAT(reference_id, Catch::Equals(config->referenceid()));
+            }
+            delete config;
         }
     }
 }
