@@ -312,14 +312,12 @@ class TranscriptAggregator {
     /// @returns An imploded string representation of the underlying word list.
     ///
     std::string get_transcript() const {
-        // If there are no words, then there is no transcript.
-        if (word_list.size() == 0) return "";
-        // Iterate over the word responses to accumulate the transcript.
+        if (word_list.empty()) return "";
+        // Iterate over the word responses to accumulate the transcript. If a
+        // language has a convention for word delimitters, that will be handled
+        // server-side and embedded into the individual word strings.
         std::string transcript = "";
-        for (const auto& word : word_list)
-            transcript += " " + word.word();
-        // Remove the extra space at the front of the transcript.
-        transcript.erase(0, 1);
+        for (const auto& word : word_list) transcript += word.word();
         return transcript;
     }
 };
