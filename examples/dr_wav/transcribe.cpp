@@ -167,7 +167,7 @@ class AudioBufferReactor :
             std::cout << "Audio Energy: " << response.audioenergy() << std::endl;
             // The text of the current transcript as a sliding window on the last
             // ~7 seconds of processed audio.
-            std::cout << "Transcript: " << response.transcript() << std::endl;
+            std::cout << "Sliding Transcript: " << response.transcript() << std::endl;
             // The word list contains the directives to the TranscriptAggregator
             // for accumulating the sliding window transcript over time.
             for (const auto& word : response.wordlist().words()) {
@@ -193,6 +193,7 @@ class AudioBufferReactor :
                     << "actionid=" << action.actionid() << ", "
                     << "action=" << action.action() << std::endl;
             }
+            std::cout << "Aggregated Transcript: " << aggregator.get_transcript() << std::endl;
             std::cout << std::endl;
         }
         // Set the content of the local transcript buffer.
