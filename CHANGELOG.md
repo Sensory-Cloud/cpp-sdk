@@ -68,3 +68,12 @@
 # 0.12.1
 
 -   Support for `SynthesizeSpeech` (text-to-speech) endpoints
+
+# 0.15.1
+
+-   Support for `v0.15.1` of the SensoryCloud API
+    -   New `sensory::services::audio::TranscribeAggregator` for aggregating
+        partial speech-to-text updates from the server into a final transcript.
+    -   Audio transcription examples updated with
+        `sensory::services::audio::TranscribeAggregator` and optional
+        closed-captioning mode for rendering partial transcripts.
