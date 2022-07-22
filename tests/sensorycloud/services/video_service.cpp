@@ -86,6 +86,37 @@ SCENARIO("A user needs to create a CreateEnrollmentConfig") {
                 REQUIRE(config->description() == description);
                 REQUIRE(config->livenessthreshold() == livenessThreshold);
                 REQUIRE(config->numlivenessframesrequired() == numLivenessFramesRequired);
+                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
+            }
+            delete config;
+        }
+    }
+    GIVEN("parameters for an enrollment creation stream with a reference ID") {
+        const std::string modelName = "modelName";
+        const std::string userID = "userID";
+        const std::string description = "description";
+        const bool isLivenessEnabled = true;
+        const auto livenessThreshold = RecognitionThreshold::LOW;
+        const int32_t numLivenessFramesRequired = 7;
+        const std::string reference_id = "reference_id";
+        WHEN("the config is dynamically allocated from the parameters") {
+            auto config = new_create_enrollment_config(
+                modelName,
+                userID,
+                description,
+                isLivenessEnabled,
+                livenessThreshold,
+                numLivenessFramesRequired,
+                reference_id
+            );
+            THEN("a pointer is returned with the variables set") {
+                REQUIRE(config != nullptr);
+                REQUIRE(config->modelname() == modelName);
+                REQUIRE(config->userid() == userID);
+                REQUIRE(config->description() == description);
+                REQUIRE(config->livenessthreshold() == livenessThreshold);
+                REQUIRE(config->numlivenessframesrequired() == numLivenessFramesRequired);
+                REQUIRE_THAT(reference_id, Catch::Equals(config->referenceid()));
             }
             delete config;
         }
