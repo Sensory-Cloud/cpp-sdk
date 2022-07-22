@@ -32,6 +32,8 @@
 using sensory::SensoryCloud;
 using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::AudioService;
+using sensory::service::audio::TranscriptAggregator;
+using sensory::api::v1::audio::WordState;
 
 /// @brief Print a description of a PortAudio error that occurred.
 ///
@@ -66,6 +68,8 @@ class PortAudioReactor :
     uint32_t frames_per_block;
     /// The maximum duration of the stream in seconds.
     float duration;
+    /// An aggregator for accumulating partial updates into a transcript.
+    TranscriptAggregator aggregator;
     /// Whether to produce verbose output from the reactor
     bool verbose = false;
     /// The buffer for the block of samples from the port audio input device.
@@ -135,19 +139,50 @@ class PortAudioReactor :
     void OnReadDone(bool ok) override {
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
+        // Set the content of the local transcript buffer.
+        aggregator.process_response(response.wordlist());
         // Log the current transcription to the terminal.
         if (verbose) {
-            std::cout << "Response" << std::endl;
-            std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
-            std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
-            std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+            // Relative energy of the processed audio as a value between 0 and 1.
+            // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
+            std::cout << "Audio Energy: " << response.audioenergy() << std::endl;
+            // The text of the current transcript as a sliding window on the last
+            // ~7 seconds of processed audio.
+            std::cout << "Sliding Transcript: " << response.transcript() << std::endl;
+            // The word list contains the directives to the TranscriptAggregator
+            // for accumulating the sliding window transcript over time.
+            for (const auto& word : response.wordlist().words()) {
+                std::string state = "";
+                switch (word.wordstate()) {
+                    case WordState::WORDSTATE_PENDING: state = "PENDING"; break;
+                    case WordState::WORDSTATE_FINAL: state = "FINAL"; break;
+                    default: break;
+                }
+                std::cout << "word=" << word.word() << ", "
+                    << "state=" << state << ", "
+                    << "index=" << word.wordindex() << ", "
+                    << "confidence=" << word.confidence() << ", "
+                    << "begin_time=" << word.begintimems() << ", "
+                    << "end_time=" << word.endtimems() << std::endl;
+            }
+            // The post-processing actions convey pipeline specific
+            // functionality to/from the server. In this case the "FINAL" action
+            // is sent to indicate when the server has finished transcribing.
+            if (response.has_postprocessingaction()) {
+                const auto& action = response.postprocessingaction();
+                std::cout << "Post-processing "
+                    << "actionid=" << action.actionid() << ", "
+                    << "action=" << action.action() << std::endl;
+            }
+            std::cout << "Aggregated Transcript: " << aggregator.get_transcript() << std::endl;
+            std::cout << std::endl;
         } else {
             #if defined(_WIN32) || defined(_WIN64)  // Windows
                 std::system("clr");
             #else
                 std::system("clear");
             #endif
-            std::cout << response.transcript() << std::endl;
+            std::cout << aggregator.get_transcript() << std::endl;
         }
         // Start the next read request
         StartRead(&response);
