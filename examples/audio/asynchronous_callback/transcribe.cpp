@@ -70,6 +70,8 @@ class PortAudioReactor :
     float duration;
     /// An aggregator for accumulating partial updates into a transcript.
     TranscriptAggregator aggregator;
+    /// Whether to render transcripts as closed captions.
+    bool closed_captioning = false;
     /// Whether to produce verbose output from the reactor
     bool verbose = false;
     /// The buffer for the block of samples from the port audio input device.
@@ -85,7 +87,9 @@ class PortAudioReactor :
     /// @param sample_size_ The number of bytes in an individual frame.
     /// @param sample_rate_ The sampling rate of the audio stream.
     /// @param frames_per_block_ The number of frames in a block of audio.
-    /// @param duration_ the maximum duration for the audio capture
+    /// @param duration_ The maximum duration for the audio capture.
+    /// @param closed_captioning_ True to enable closed captioning outputs.
+    /// @param verbose_ True to enable verbose outputs.
     ///
     PortAudioReactor(PaStream* capture_,
         uint32_t num_channels_ = 1,
@@ -93,6 +97,7 @@ class PortAudioReactor :
         uint32_t sample_rate_ = 16000,
         uint32_t frames_per_block_ = 4096,
         float duration_ = 60,
+        bool closed_captioning_ = false,
         bool verbose_ = false
     ) :
         AudioService<InsecureCredentialStore>::TranscribeBidiReactor(),
@@ -102,6 +107,7 @@ class PortAudioReactor :
         sample_rate(sample_rate_),
         frames_per_block(frames_per_block_),
         duration(duration_),
+        closed_captioning(closed_captioning_),
         verbose(verbose_),
         sample_block(static_cast<uint8_t*>(malloc(frames_per_block_ * num_channels_ * sample_size_))),
         blocks_written(0) {
@@ -182,7 +188,10 @@ class PortAudioReactor :
             #else
                 std::system("clear");
             #endif
-            std::cout << aggregator.get_transcript() << std::endl;
+            if (closed_captioning)
+                std::cout << ">>>" << response.transcript() << std::endl;
+            else
+                std::cout << aggregator.get_transcript() << std::endl;
         }
         // Start the next read request
         StartRead(&response);
@@ -205,6 +214,9 @@ int main(int argc, const char** argv) {
         .help("USERID The name of the user ID for the transcription.");
     parser.add_argument({ "-L", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    parser.add_argument({ "-cc", "--closedcaptioning" })
+        .action("store_true")
+        .help("CLOSEDCAPTIONING Whether to render simplified closed captioning transcription outputs.");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("CHUNKSIZE The number of audio samples per message (default 4096).")
     //     .default_value("4096");
@@ -223,6 +235,7 @@ int main(int argc, const char** argv) {
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
+    const auto CLOSEDCAPTIONING = args.get<bool>("closedcaptioning");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
@@ -320,6 +333,7 @@ int main(int argc, const char** argv) {
         SAMPLE_RATE,
         CHUNK_SIZE,
         DURATION,
+        CLOSEDCAPTIONING,
         VERBOSE
     );
     // Initialize the stream with the reactor for callbacks, given audio model,
