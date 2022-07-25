@@ -1,4 +1,4 @@
-# SensoryCloud audio services with files
+# SensoryCloud Audio Services (from files)
 
 This project uses [dr_wav][dr_wav], [dr_flac][dr_flac], and [dr_mp3][dr_mp3] to
 provide an audio file interface that will compile on most major build platforms.

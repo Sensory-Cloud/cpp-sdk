@@ -1,4 +1,4 @@
-# SensoryCloud Video Services
+# SensoryCloud Video Services (Real-time)
 
 This project provides a demonstration of SensoryCloud video services using
 OpenCV as the video interface driver.
@@ -56,35 +56,21 @@ template translated to an irreversible encrypted code.
 To fetch video models that support enrollment:
 
 ```shell
-./enroll -g \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID>
+./enroll <path to config.ini file> -g
 ```
 
 To enroll without a liveness check:
 
 ```shell
-./enroll \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> \
-    -u <user ID> \
+./enroll <path to config.ini file> -m <model name> -u <user ID>
     -d "A description of the enrollment"
 ```
 
 To enroll with a liveness check:
 
 ```shell
-./enroll \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> \
-    -u <user ID> \
-    -d "A description of the enrollment" \
-    -l -t HIGH
+./enroll <path to config.ini file> -m <model name> -u <user ID> -l -t HIGH \
+    -d "A description of the enrollment"
 ```
 
 #### Authentication
@@ -92,32 +78,19 @@ To enroll with a liveness check:
 To fetch enrollments for a particular user:
 
 ```shell
-./authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -u <user ID>
+./authenticate <path to config.ini file> -u <user ID>
 ```
 
 To authenticate without liveness:
 
 ```shell
-./authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID>
+./authenticate <path to config.ini file> -e <enrollment ID>
 ```
 
 To authenticate with liveness:
 
 ```shell
-./authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID> \
-    -l -t HIGH
+./authenticate <path to config.ini file> -e <enrollment ID> -l -t HIGH
 ```
 
 #### Liveness Validation
@@ -125,20 +98,11 @@ To authenticate with liveness:
 To fetch available video liveness models:
 
 ```shell
-./liveness -g \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID>
+./liveness <path to config.ini file> -g
 ```
 
 To validate video liveness (outside of the context of a biometric enrollment):
 
 ```shell
-./liveness \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> \
-    -u <user ID> \
-    -t HIGH
+./liveness <path to config.ini file> -m <model name> -u <user ID> -t HIGH
 ```
