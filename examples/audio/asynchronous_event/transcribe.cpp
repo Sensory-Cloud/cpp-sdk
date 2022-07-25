@@ -33,6 +33,8 @@
 using sensory::SensoryCloud;
 using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::AudioService;
+using sensory::service::audio::TranscriptAggregator;
+using sensory::api::v1::audio::WordState;
 
 /// @brief Print a description of a PortAudio error that occurred.
 ///
@@ -62,6 +64,9 @@ int main(int argc, const char** argv) {
         .help("USERID The name of the user ID for the transcription.");
     parser.add_argument({ "-L", "--language" })
         .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    parser.add_argument({ "-cc", "--closedcaptioning" })
+        .action("store_true")
+        .help("CLOSEDCAPTIONING Whether to render simplified closed captioning transcription outputs.");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("CHUNKSIZE The number of audio samples per message (default 4096).")
     //     .default_value("4096");
@@ -80,6 +85,7 @@ int main(int argc, const char** argv) {
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
+    const auto CLOSEDCAPTIONING = args.get<bool>("closedcaptioning");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
@@ -100,8 +106,6 @@ int main(int argc, const char** argv) {
         std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
         std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
     }
-
-    // ------ Create the audio service -----------------------------------------
 
     // ------ Query the available audio models ---------------------------------
 
@@ -163,7 +167,7 @@ int main(int argc, const char** argv) {
     );
 
     // start the stream event thread in the background to handle events.
-    std::thread audioThread([&stream, &queue, &VERBOSE](){
+    std::thread audioThread([&stream, &queue, &CLOSEDCAPTIONING, &VERBOSE](){
         // The number of audio blocks written for detecting expiration of the
         // stream.
         uint32_t blocks_written = 0;
@@ -205,6 +209,9 @@ int main(int argc, const char** argv) {
         err = Pa_StartStream(capture);
         if (err != paNoError) return describe_pa_error(err);
 
+        /// An aggregator for accumulating partial updates into a transcript.
+        TranscriptAggregator aggregator;
+
         void* tag(nullptr);
         bool ok(false);
         while (queue.Next(&tag, &ok)) {
@@ -239,18 +246,52 @@ int main(int argc, const char** argv) {
                 stream->getRequest().set_audiocontent(sample_block.get(), BYTES_PER_BLOCK);
                 stream->getCall()->Write(stream->getRequest(), (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
+                // Set the content of the local transcript buffer.
+                aggregator.process_response(stream->getResponse().wordlist());
                 if (VERBOSE) {
-                    std::cout << "Response" << std::endl;
-                    std::cout << "\tAudio Energy: " << stream->getResponse().audioenergy()     << std::endl;
-                    std::cout << "\tTranscript:   " << stream->getResponse().transcript()      << std::endl;
-                    std::cout << "\tIs Partial:   " << stream->getResponse().ispartialresult() << std::endl;
+                    // Relative energy of the processed audio as a value between 0 and 1.
+                    // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
+                    std::cout << "Audio Energy: " << stream->getResponse().audioenergy() << std::endl;
+                    // The text of the current transcript as a sliding window on the last
+                    // ~7 seconds of processed audio.
+                    std::cout << "Sliding Transcript: " << stream->getResponse().transcript() << std::endl;
+                    // The word list contains the directives to the TranscriptAggregator
+                    // for accumulating the sliding window transcript over time.
+                    for (const auto& word : stream->getResponse().wordlist().words()) {
+                        std::string state = "";
+                        switch (word.wordstate()) {
+                            case WordState::WORDSTATE_PENDING: state = "PENDING"; break;
+                            case WordState::WORDSTATE_FINAL: state = "FINAL"; break;
+                            default: break;
+                        }
+                        std::cout << "word=" << word.word() << ", "
+                            << "state=" << state << ", "
+                            << "index=" << word.wordindex() << ", "
+                            << "confidence=" << word.confidence() << ", "
+                            << "begin_time=" << word.begintimems() << ", "
+                            << "end_time=" << word.endtimems() << std::endl;
+                    }
+                    // The post-processing actions convey pipeline specific
+                    // functionality to/from the server. In this case the "FINAL" action
+                    // is sent to indicate when the server has finished transcribing.
+                    if (stream->getResponse().has_postprocessingaction()) {
+                        const auto& action = stream->getResponse().postprocessingaction();
+                        std::cout << "Post-processing "
+                            << "actionid=" << action.actionid() << ", "
+                            << "action=" << action.action() << std::endl;
+                    }
+                    std::cout << "Aggregated Transcript: " << aggregator.get_transcript() << std::endl;
+                    std::cout << std::endl;
                 } else {
                     #if defined(_WIN32) || defined(_WIN64)  // Windows
                         std::system("clr");
                     #else
                         std::system("clear");
                     #endif
-                    std::cout << stream->getResponse().transcript() << std::endl;
+                    if (CLOSEDCAPTIONING)
+                        std::cout << ">>>" << stream->getResponse().transcript() << std::endl;
+                    else
+                        std::cout << aggregator.get_transcript() << std::endl;
                 }
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Finish) break;

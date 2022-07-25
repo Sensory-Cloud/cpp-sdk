@@ -1013,6 +1013,7 @@ class ServerHealthResponse final :
     kServerVersionFieldNumber = 2,
     kIdFieldNumber = 3,
     kIsHealthyFieldNumber = 1,
+    kIsLeaderFieldNumber = 6,
     kServerTypeFieldNumber = 5,
   };
   // repeated .sensory.api.common.ServiceHealth services = 4;
@@ -1070,6 +1071,15 @@ class ServerHealthResponse final :
   void _internal_set_ishealthy(bool value);
   public:
 
+  // bool isLeader = 6;
+  void clear_isleader();
+  bool isleader() const;
+  void set_isleader(bool value);
+  private:
+  bool _internal_isleader() const;
+  void _internal_set_isleader(bool value);
+  public:
+
   // .sensory.api.common.ServerType serverType = 5;
   void clear_servertype();
   ::sensory::api::common::ServerType servertype() const;
@@ -1090,6 +1100,7 @@ class ServerHealthResponse final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr serverversion_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
   bool ishealthy_;
+  bool isleader_;
   int servertype_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_common_2fcommon_2eproto;
@@ -3127,6 +3138,26 @@ inline void ServerHealthResponse::_internal_set_servertype(::sensory::api::commo
 inline void ServerHealthResponse::set_servertype(::sensory::api::common::ServerType value) {
   _internal_set_servertype(value);
   // @@protoc_insertion_point(field_set:sensory.api.common.ServerHealthResponse.serverType)
+}
+
+// bool isLeader = 6;
+inline void ServerHealthResponse::clear_isleader() {
+  isleader_ = false;
+}
+inline bool ServerHealthResponse::_internal_isleader() const {
+  return isleader_;
+}
+inline bool ServerHealthResponse::isleader() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.ServerHealthResponse.isLeader)
+  return _internal_isleader();
+}
+inline void ServerHealthResponse::_internal_set_isleader(bool value) {
+  
+  isleader_ = value;
+}
+inline void ServerHealthResponse::set_isleader(bool value) {
+  _internal_set_isleader(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.ServerHealthResponse.isLeader)
 }
 
 // -------------------------------------------------------------------

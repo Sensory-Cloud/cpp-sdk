@@ -64,7 +64,6 @@ enum class FaceAlignment : int {
 };
 
 // TODO: implement `compression`?
-// TODO: implement `referenceId`?
 
 /// @brief Allocation a create enrollment config for initializing an
 /// enrollment creation stream.
@@ -91,7 +90,8 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* new_create_enrollment_
     const std::string& description,
     const bool& isLivenessEnabled,
     const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold,
-    const int32_t& numLivenessFramesRequired = 0
+    const int32_t& numLivenessFramesRequired = 0,
+    const std::string& reference_id = ""
 ) {
     auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
     config->set_modelname(modelName);
@@ -100,6 +100,7 @@ inline ::sensory::api::v1::video::CreateEnrollmentConfig* new_create_enrollment_
     config->set_islivenessenabled(isLivenessEnabled);
     config->set_livenessthreshold(livenessThreshold);
     config->set_numlivenessframesrequired(numLivenessFramesRequired);
+    config->set_referenceid(reference_id);
     return config;
 }
 

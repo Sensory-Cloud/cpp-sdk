@@ -35,6 +35,8 @@
 using sensory::SensoryCloud;
 using sensory::token_manager::InsecureCredentialStore;
 using sensory::service::AudioService;
+using sensory::service::audio::TranscriptAggregator;
+using sensory::api::v1::audio::WordState;
 
 /// @brief A bi-directional reactor for transcribing an audio buffer to text.
 ///
@@ -51,35 +53,12 @@ class AudioBufferReactor :
     uint32_t frames_per_block;
     /// The current index of the audio stream.
     std::size_t index = 0;
+    /// An aggregator for accumulating partial updates into a transcript.
+    TranscriptAggregator aggregator;
     /// Whether to produce verbose output.
     bool verbose = false;
     /// The progress bar for providing a response per frame written.
     tqdm bar;
-
-    /// A contained scope for the transcript data from the server.
-    struct {
-     private:
-        /// A mutex for guarding access to the transcript.
-        std::mutex mutex;
-        /// The current transcription from the server
-        std::string text = "";
-
-     public:
-        /// Set the transcript to a new value.
-        ///
-        /// @param text_ The text to set the transcript to.
-        ///
-        inline void set(const std::string& text_ = "") {
-            std::lock_guard<std::mutex> lock(mutex);
-            text = text_;
-        }
-
-        /// @brief Return the current transcript.
-        inline std::string get() {
-            std::lock_guard<std::mutex> lock(mutex);
-            return text;
-        }
-    } transcript;
 
     // A contained scope for the data associated with receiving the FINAL
     // signal from the server.
@@ -167,6 +146,7 @@ class AudioBufferReactor :
             auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
             action->set_action(::sensory::api::v1::audio::FINAL);
             request.set_allocated_postprocessingaction(action);
+            std::cout << "Audio uploaded, awaiting FINAL response..." << std::endl;
         }
 
         // If the number of blocks written surpasses the maximal length, close
@@ -182,19 +162,42 @@ class AudioBufferReactor :
         // If the status is not OK, an error occurred, exit gracefully.
         if (!ok) return;
         if (verbose) {
-            std::cout << "\tAudio Energy: " << response.audioenergy()     << std::endl;
-            std::cout << "\tTranscript:   " << response.transcript()      << std::endl;
-            std::cout << "\tIs Partial:   " << response.ispartialresult() << std::endl;
+            // Relative energy of the processed audio as a value between 0 and 1.
+            // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
+            std::cout << "Audio Energy: " << response.audioenergy() << std::endl;
+            // The text of the current transcript as a sliding window on the last
+            // ~7 seconds of processed audio.
+            std::cout << "Sliding Transcript: " << response.transcript() << std::endl;
+            // The word list contains the directives to the TranscriptAggregator
+            // for accumulating the sliding window transcript over time.
+            for (const auto& word : response.wordlist().words()) {
+                std::string state = "";
+                switch (word.wordstate()) {
+                    case WordState::WORDSTATE_PENDING: state = "PENDING"; break;
+                    case WordState::WORDSTATE_FINAL: state = "FINAL"; break;
+                    default: break;
+                }
+                std::cout << "word=" << word.word() << ", "
+                    << "state=" << state << ", "
+                    << "index=" << word.wordindex() << ", "
+                    << "confidence=" << word.confidence() << ", "
+                    << "begin_time=" << word.begintimems() << ", "
+                    << "end_time=" << word.endtimems() << std::endl;
+            }
+            // The post-processing actions convey pipeline specific
+            // functionality to/from the server. In this case the "FINAL" action
+            // is sent to indicate when the server has finished transcribing.
             if (response.has_postprocessingaction()) {
                 const auto& action = response.postprocessingaction();
-                std::cout << "\tPost Processing" << std::endl;
-                std::cout << "\t\t Action ID: " << action.actionid() << std::endl;
-                std::cout << "\t\t Action: " << action.action() << std::endl;
+                std::cout << "Post-processing "
+                    << "actionid=" << action.actionid() << ", "
+                    << "action=" << action.action() << std::endl;
             }
+            std::cout << "Aggregated Transcript: " << aggregator.get_transcript() << std::endl;
             std::cout << std::endl;
         }
         // Set the content of the local transcript buffer.
-        transcript.set(response.transcript());
+        aggregator.process_response(response.wordlist());
         // Look for a post-processing action to determine the end of the stream.
         if (response.has_postprocessingaction()) {
             const auto& action = response.postprocessingaction();
@@ -214,7 +217,9 @@ class AudioBufferReactor :
     }
 
     /// @brief Return the current transcript.
-    inline std::string get_transcript() { return transcript.get(); }
+    inline std::string get_transcript() {
+        return aggregator.get_transcript();
+    }
 };
 
 int main(int argc, const char** argv) {

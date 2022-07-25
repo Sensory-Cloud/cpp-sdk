@@ -82,7 +82,7 @@ to your `CMakeLists.txt`.
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.12.10
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.1
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```
@@ -94,47 +94,16 @@ applications or other libraries using:
 target_link_libraries(your_program PRIVATE sensorycloud)
 ```
 
-### Examples
+### Tutorial & Examples
 
-Example code for each available service and programming model are available in
-the [examples](examples) directory. These act both as a point of reference and
-as a starting point for the integration of SensoryCloud with your application.
+Please refer to [TUTORIAL.md](TUTORIAL.md) for a brief tutorial of the
+SDK. Example code for each available service and programming model are
+available in the [examples](examples) directory. These act both as a point of
+reference and as a starting point for the integration of SensoryCloud with your
+application.
 
-Please refer to [md/tutorial.md](md/tutorial.md) for a tutorial of the
-blocking synchronous interface of the SDK. Tutorials for the asynchronous
-interface can be found in the
-[md/async_event_loop.md](md/async_event_loop.md) and
-[md/async_callback.md](md/async_callback.md) for event-loop and reactor
-patterns, respectively.
+## Contributing
 
-<!--
-### SecureCredentialStore _(Experimental feature)_
-
-To optionally compile an operating system specific `SecureCredentialStore`
-using system libraries, execute:
-
-```shell
-cmake -DSENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE=ON <source directory>
-```
-
-The table below provides information about the implementations of
-`SecureCredentialStore` that are provided. Please refer to
-[md/tutorial.md](md/tutorial.md) for more information about the
-`SecureCredentialStore` object.
-
-| Operating System  | Secure Secret Library                  |
-|:------------------|:---------------------------------------|
-| Linux             | [Libsecret][Libsecret]                 |
-| Mac OS            | [Keychain Services][Keychain-Services] |
-| Windows           | [Credential Locker][Credential-Locker] |
-
-[Keychain-Services]: https://developer.apple.com/documentation/security/keychain_services
-[Credential-Locker]: https://docs.microsoft.com/en-us/windows/uwp/security/credential-locker
-[Libsecret]: https://wiki.gnome.org/Projects/Libsecret
--->
-
-## Development
-
-The [md/development.md](md/development.md) document describes how to setup the
+The [CONTRIBUTING.md](CONTRIBUTING.md) document describes how to setup the
 development environment for the SDK, compile the code outside of the context of
 an application, run unit tests, and release new versions of the SDK.

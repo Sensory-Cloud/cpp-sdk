@@ -50,7 +50,7 @@ struct TableStruct_v1_2faudio_2faudio_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[26]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[28]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -118,6 +118,12 @@ extern TranscribeRequestDefaultTypeInternal _TranscribeRequest_default_instance_
 class TranscribeResponse;
 struct TranscribeResponseDefaultTypeInternal;
 extern TranscribeResponseDefaultTypeInternal _TranscribeResponse_default_instance_;
+class TranscribeWord;
+struct TranscribeWordDefaultTypeInternal;
+extern TranscribeWordDefaultTypeInternal _TranscribeWord_default_instance_;
+class TranscribeWordResponse;
+struct TranscribeWordResponseDefaultTypeInternal;
+extern TranscribeWordResponseDefaultTypeInternal _TranscribeWordResponse_default_instance_;
 class ValidateEnrolledEventConfig;
 struct ValidateEnrolledEventConfigDefaultTypeInternal;
 extern ValidateEnrolledEventConfigDefaultTypeInternal _ValidateEnrolledEventConfig_default_instance_;
@@ -163,6 +169,8 @@ template<> ::sensory::api::v1::audio::SynthesizeSpeechResponse* Arena::CreateMay
 template<> ::sensory::api::v1::audio::TranscribeConfig* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeConfig>(Arena*);
 template<> ::sensory::api::v1::audio::TranscribeRequest* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeRequest>(Arena*);
 template<> ::sensory::api::v1::audio::TranscribeResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeResponse>(Arena*);
+template<> ::sensory::api::v1::audio::TranscribeWord* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeWord>(Arena*);
+template<> ::sensory::api::v1::audio::TranscribeWordResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::TranscribeWordResponse>(Arena*);
 template<> ::sensory::api::v1::audio::ValidateEnrolledEventConfig* Arena::CreateMaybeMessage<::sensory::api::v1::audio::ValidateEnrolledEventConfig>(Arena*);
 template<> ::sensory::api::v1::audio::ValidateEnrolledEventRequest* Arena::CreateMaybeMessage<::sensory::api::v1::audio::ValidateEnrolledEventRequest>(Arena*);
 template<> ::sensory::api::v1::audio::ValidateEnrolledEventResponse* Arena::CreateMaybeMessage<::sensory::api::v1::audio::ValidateEnrolledEventResponse>(Arena*);
@@ -253,6 +261,31 @@ inline bool AudioPostProcessingAction_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, AudioPostProcessingAction* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<AudioPostProcessingAction>(
     AudioPostProcessingAction_descriptor(), name, value);
+}
+enum WordState : int {
+  WORDSTATE_PENDING = 0,
+  WORDSTATE_FINAL = 1,
+  WordState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  WordState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+};
+bool WordState_IsValid(int value);
+constexpr WordState WordState_MIN = WORDSTATE_PENDING;
+constexpr WordState WordState_MAX = WORDSTATE_FINAL;
+constexpr int WordState_ARRAYSIZE = WordState_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* WordState_descriptor();
+template<typename T>
+inline const std::string& WordState_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, WordState>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function WordState_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    WordState_descriptor(), enum_t_value);
+}
+inline bool WordState_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, WordState* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<WordState>(
+    WordState_descriptor(), name, value);
 }
 enum ThresholdSensitivity : int {
   LOWEST = 0,
@@ -3353,6 +3386,383 @@ class ValidateEnrolledEventResponse final :
 };
 // -------------------------------------------------------------------
 
+class TranscribeWord final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.TranscribeWord) */ {
+ public:
+  inline TranscribeWord() : TranscribeWord(nullptr) {}
+  ~TranscribeWord() override;
+  explicit constexpr TranscribeWord(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TranscribeWord(const TranscribeWord& from);
+  TranscribeWord(TranscribeWord&& from) noexcept
+    : TranscribeWord() {
+    *this = ::std::move(from);
+  }
+
+  inline TranscribeWord& operator=(const TranscribeWord& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TranscribeWord& operator=(TranscribeWord&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TranscribeWord& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TranscribeWord* internal_default_instance() {
+    return reinterpret_cast<const TranscribeWord*>(
+               &_TranscribeWord_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    16;
+
+  friend void swap(TranscribeWord& a, TranscribeWord& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TranscribeWord* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TranscribeWord* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TranscribeWord* New() const final {
+    return new TranscribeWord();
+  }
+
+  TranscribeWord* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TranscribeWord>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TranscribeWord& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const TranscribeWord& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TranscribeWord* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.audio.TranscribeWord";
+  }
+  protected:
+  explicit TranscribeWord(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kWordFieldNumber = 6,
+    kBegintimeMsFieldNumber = 1,
+    kEndtimeMsFieldNumber = 2,
+    kConfidenceFieldNumber = 3,
+    kWordStateFieldNumber = 4,
+    kWordIndexFieldNumber = 5,
+  };
+  // string word = 6;
+  void clear_word();
+  const std::string& word() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_word(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_word();
+  PROTOBUF_MUST_USE_RESULT std::string* release_word();
+  void set_allocated_word(std::string* word);
+  private:
+  const std::string& _internal_word() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_word(const std::string& value);
+  std::string* _internal_mutable_word();
+  public:
+
+  // uint64 begintimeMs = 1;
+  void clear_begintimems();
+  ::PROTOBUF_NAMESPACE_ID::uint64 begintimems() const;
+  void set_begintimems(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_begintimems() const;
+  void _internal_set_begintimems(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 endtimeMs = 2;
+  void clear_endtimems();
+  ::PROTOBUF_NAMESPACE_ID::uint64 endtimems() const;
+  void set_endtimems(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_endtimems() const;
+  void _internal_set_endtimems(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // float confidence = 3;
+  void clear_confidence();
+  float confidence() const;
+  void set_confidence(float value);
+  private:
+  float _internal_confidence() const;
+  void _internal_set_confidence(float value);
+  public:
+
+  // .sensory.api.v1.audio.WordState wordState = 4;
+  void clear_wordstate();
+  ::sensory::api::v1::audio::WordState wordstate() const;
+  void set_wordstate(::sensory::api::v1::audio::WordState value);
+  private:
+  ::sensory::api::v1::audio::WordState _internal_wordstate() const;
+  void _internal_set_wordstate(::sensory::api::v1::audio::WordState value);
+  public:
+
+  // uint64 wordIndex = 5;
+  void clear_wordindex();
+  ::PROTOBUF_NAMESPACE_ID::uint64 wordindex() const;
+  void set_wordindex(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_wordindex() const;
+  void _internal_set_wordindex(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.audio.TranscribeWord)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr word_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 begintimems_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 endtimems_;
+  float confidence_;
+  int wordstate_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 wordindex_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TranscribeWordResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.TranscribeWordResponse) */ {
+ public:
+  inline TranscribeWordResponse() : TranscribeWordResponse(nullptr) {}
+  ~TranscribeWordResponse() override;
+  explicit constexpr TranscribeWordResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TranscribeWordResponse(const TranscribeWordResponse& from);
+  TranscribeWordResponse(TranscribeWordResponse&& from) noexcept
+    : TranscribeWordResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline TranscribeWordResponse& operator=(const TranscribeWordResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TranscribeWordResponse& operator=(TranscribeWordResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TranscribeWordResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TranscribeWordResponse* internal_default_instance() {
+    return reinterpret_cast<const TranscribeWordResponse*>(
+               &_TranscribeWordResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(TranscribeWordResponse& a, TranscribeWordResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TranscribeWordResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TranscribeWordResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TranscribeWordResponse* New() const final {
+    return new TranscribeWordResponse();
+  }
+
+  TranscribeWordResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TranscribeWordResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TranscribeWordResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const TranscribeWordResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TranscribeWordResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.audio.TranscribeWordResponse";
+  }
+  protected:
+  explicit TranscribeWordResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kWordsFieldNumber = 1,
+    kFirstWordIndexFieldNumber = 2,
+    kLastWordIndexFieldNumber = 3,
+  };
+  // repeated .sensory.api.v1.audio.TranscribeWord words = 1;
+  int words_size() const;
+  private:
+  int _internal_words_size() const;
+  public:
+  void clear_words();
+  ::sensory::api::v1::audio::TranscribeWord* mutable_words(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::audio::TranscribeWord >*
+      mutable_words();
+  private:
+  const ::sensory::api::v1::audio::TranscribeWord& _internal_words(int index) const;
+  ::sensory::api::v1::audio::TranscribeWord* _internal_add_words();
+  public:
+  const ::sensory::api::v1::audio::TranscribeWord& words(int index) const;
+  ::sensory::api::v1::audio::TranscribeWord* add_words();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::audio::TranscribeWord >&
+      words() const;
+
+  // uint64 firstWordIndex = 2;
+  void clear_firstwordindex();
+  ::PROTOBUF_NAMESPACE_ID::uint64 firstwordindex() const;
+  void set_firstwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_firstwordindex() const;
+  void _internal_set_firstwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint64 lastWordIndex = 3;
+  void clear_lastwordindex();
+  ::PROTOBUF_NAMESPACE_ID::uint64 lastwordindex() const;
+  void set_lastwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_lastwordindex() const;
+  void _internal_set_lastwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.audio.TranscribeWordResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::audio::TranscribeWord > words_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 firstwordindex_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 lastwordindex_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
+};
+// -------------------------------------------------------------------
+
 class TranscribeResponse final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.audio.TranscribeResponse) */ {
  public:
@@ -3401,7 +3811,7 @@ class TranscribeResponse final :
                &_TranscribeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    18;
 
   friend void swap(TranscribeResponse& a, TranscribeResponse& b) {
     a.Swap(&b);
@@ -3473,6 +3883,7 @@ class TranscribeResponse final :
 
   enum : int {
     kTranscriptFieldNumber = 2,
+    kWordListFieldNumber = 4,
     kPostProcessingActionFieldNumber = 10,
     kAudioEnergyFieldNumber = 1,
     kIsPartialResultFieldNumber = 3,
@@ -3490,6 +3901,24 @@ class TranscribeResponse final :
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_transcript(const std::string& value);
   std::string* _internal_mutable_transcript();
   public:
+
+  // .sensory.api.v1.audio.TranscribeWordResponse wordList = 4;
+  bool has_wordlist() const;
+  private:
+  bool _internal_has_wordlist() const;
+  public:
+  void clear_wordlist();
+  const ::sensory::api::v1::audio::TranscribeWordResponse& wordlist() const;
+  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::audio::TranscribeWordResponse* release_wordlist();
+  ::sensory::api::v1::audio::TranscribeWordResponse* mutable_wordlist();
+  void set_allocated_wordlist(::sensory::api::v1::audio::TranscribeWordResponse* wordlist);
+  private:
+  const ::sensory::api::v1::audio::TranscribeWordResponse& _internal_wordlist() const;
+  ::sensory::api::v1::audio::TranscribeWordResponse* _internal_mutable_wordlist();
+  public:
+  void unsafe_arena_set_allocated_wordlist(
+      ::sensory::api::v1::audio::TranscribeWordResponse* wordlist);
+  ::sensory::api::v1::audio::TranscribeWordResponse* unsafe_arena_release_wordlist();
 
   // .sensory.api.v1.audio.AudioResponsePostProcessingAction postProcessingAction = 10;
   bool has_postprocessingaction() const;
@@ -3518,10 +3947,10 @@ class TranscribeResponse final :
   void _internal_set_audioenergy(float value);
   public:
 
-  // bool isPartialResult = 3;
-  void clear_ispartialresult();
-  bool ispartialresult() const;
-  void set_ispartialresult(bool value);
+  // bool isPartialResult = 3 [deprecated = true];
+  PROTOBUF_DEPRECATED void clear_ispartialresult();
+  PROTOBUF_DEPRECATED bool ispartialresult() const;
+  PROTOBUF_DEPRECATED void set_ispartialresult(bool value);
   private:
   bool _internal_ispartialresult() const;
   void _internal_set_ispartialresult(bool value);
@@ -3535,6 +3964,7 @@ class TranscribeResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr transcript_;
+  ::sensory::api::v1::audio::TranscribeWordResponse* wordlist_;
   ::sensory::api::v1::audio::AudioResponsePostProcessingAction* postprocessingaction_;
   float audioenergy_;
   bool ispartialresult_;
@@ -3597,7 +4027,7 @@ class SynthesizeSpeechResponse final :
                &_SynthesizeSpeechResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    19;
 
   friend void swap(SynthesizeSpeechResponse& a, SynthesizeSpeechResponse& b) {
     a.Swap(&b);
@@ -3788,7 +4218,7 @@ class CreateEnrollmentConfig final :
                &_CreateEnrollmentConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    20;
 
   friend void swap(CreateEnrollmentConfig& a, CreateEnrollmentConfig& b) {
     a.Swap(&b);
@@ -3866,6 +4296,7 @@ class CreateEnrollmentConfig final :
     kReferenceIdFieldNumber = 9,
     kAudioFieldNumber = 1,
     kIsLivenessEnabledFieldNumber = 6,
+    kDisableServerEnrollmentTemplateStorageFieldNumber = 10,
     kEnrollmentNumUtterancesFieldNumber = 7,
     kEnrollmentDurationFieldNumber = 8,
   };
@@ -3966,6 +4397,15 @@ class CreateEnrollmentConfig final :
   void _internal_set_islivenessenabled(bool value);
   public:
 
+  // bool disableServerEnrollmentTemplateStorage = 10;
+  void clear_disableserverenrollmenttemplatestorage();
+  bool disableserverenrollmenttemplatestorage() const;
+  void set_disableserverenrollmenttemplatestorage(bool value);
+  private:
+  bool _internal_disableserverenrollmenttemplatestorage() const;
+  void _internal_set_disableserverenrollmenttemplatestorage(bool value);
+  public:
+
   // uint32 enrollmentNumUtterances = 7 [(.validate.rules) = {
   bool has_enrollmentnumutterances() const;
   private:
@@ -4013,6 +4453,7 @@ class CreateEnrollmentConfig final :
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr referenceid_;
   ::sensory::api::v1::audio::AudioConfig* audio_;
   bool islivenessenabled_;
+  bool disableserverenrollmenttemplatestorage_;
   union EnrollLengthUnion {
     constexpr EnrollLengthUnion() : _constinit_{} {}
       ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
@@ -4080,7 +4521,7 @@ class AuthenticateConfig final :
                &_AuthenticateConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    21;
 
   friend void swap(AuthenticateConfig& a, AuthenticateConfig& b) {
     a.Swap(&b);
@@ -4375,7 +4816,7 @@ class ValidateEventConfig final :
                &_ValidateEventConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    22;
 
   friend void swap(ValidateEventConfig& a, ValidateEventConfig& b) {
     a.Swap(&b);
@@ -4576,7 +5017,7 @@ class CreateEnrollmentEventConfig final :
                &_CreateEnrollmentEventConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    23;
 
   friend void swap(CreateEnrollmentEventConfig& a, CreateEnrollmentEventConfig& b) {
     a.Swap(&b);
@@ -4841,7 +5282,7 @@ class ValidateEnrolledEventConfig final :
                &_ValidateEnrolledEventConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    24;
 
   friend void swap(ValidateEnrolledEventConfig& a, ValidateEnrolledEventConfig& b) {
     a.Swap(&b);
@@ -5073,7 +5514,7 @@ class TranscribeConfig final :
                &_TranscribeConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    25;
 
   friend void swap(TranscribeConfig& a, TranscribeConfig& b) {
     a.Swap(&b);
@@ -5257,7 +5698,7 @@ class AudioConfig final :
                &_AudioConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    26;
 
   friend void swap(AudioConfig& a, AudioConfig& b) {
     a.Swap(&b);
@@ -5470,7 +5911,7 @@ class VoiceSynthesisConfig final :
                &_VoiceSynthesisConfig_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    27;
 
   friend void swap(VoiceSynthesisConfig& a, VoiceSynthesisConfig& b) {
     a.Swap(&b);
@@ -8394,6 +8835,240 @@ inline void ValidateEnrolledEventResponse::set_allocated_modelprompt(std::string
 
 // -------------------------------------------------------------------
 
+// TranscribeWord
+
+// uint64 begintimeMs = 1;
+inline void TranscribeWord::clear_begintimems() {
+  begintimems_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWord::_internal_begintimems() const {
+  return begintimems_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWord::begintimems() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWord.begintimeMs)
+  return _internal_begintimems();
+}
+inline void TranscribeWord::_internal_set_begintimems(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  begintimems_ = value;
+}
+inline void TranscribeWord::set_begintimems(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_begintimems(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWord.begintimeMs)
+}
+
+// uint64 endtimeMs = 2;
+inline void TranscribeWord::clear_endtimems() {
+  endtimems_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWord::_internal_endtimems() const {
+  return endtimems_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWord::endtimems() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWord.endtimeMs)
+  return _internal_endtimems();
+}
+inline void TranscribeWord::_internal_set_endtimems(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  endtimems_ = value;
+}
+inline void TranscribeWord::set_endtimems(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_endtimems(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWord.endtimeMs)
+}
+
+// float confidence = 3;
+inline void TranscribeWord::clear_confidence() {
+  confidence_ = 0;
+}
+inline float TranscribeWord::_internal_confidence() const {
+  return confidence_;
+}
+inline float TranscribeWord::confidence() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWord.confidence)
+  return _internal_confidence();
+}
+inline void TranscribeWord::_internal_set_confidence(float value) {
+  
+  confidence_ = value;
+}
+inline void TranscribeWord::set_confidence(float value) {
+  _internal_set_confidence(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWord.confidence)
+}
+
+// .sensory.api.v1.audio.WordState wordState = 4;
+inline void TranscribeWord::clear_wordstate() {
+  wordstate_ = 0;
+}
+inline ::sensory::api::v1::audio::WordState TranscribeWord::_internal_wordstate() const {
+  return static_cast< ::sensory::api::v1::audio::WordState >(wordstate_);
+}
+inline ::sensory::api::v1::audio::WordState TranscribeWord::wordstate() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWord.wordState)
+  return _internal_wordstate();
+}
+inline void TranscribeWord::_internal_set_wordstate(::sensory::api::v1::audio::WordState value) {
+  
+  wordstate_ = value;
+}
+inline void TranscribeWord::set_wordstate(::sensory::api::v1::audio::WordState value) {
+  _internal_set_wordstate(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWord.wordState)
+}
+
+// uint64 wordIndex = 5;
+inline void TranscribeWord::clear_wordindex() {
+  wordindex_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWord::_internal_wordindex() const {
+  return wordindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWord::wordindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWord.wordIndex)
+  return _internal_wordindex();
+}
+inline void TranscribeWord::_internal_set_wordindex(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  wordindex_ = value;
+}
+inline void TranscribeWord::set_wordindex(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_wordindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWord.wordIndex)
+}
+
+// string word = 6;
+inline void TranscribeWord::clear_word() {
+  word_.ClearToEmpty();
+}
+inline const std::string& TranscribeWord::word() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWord.word)
+  return _internal_word();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void TranscribeWord::set_word(ArgT0&& arg0, ArgT... args) {
+ 
+ word_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWord.word)
+}
+inline std::string* TranscribeWord::mutable_word() {
+  std::string* _s = _internal_mutable_word();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.TranscribeWord.word)
+  return _s;
+}
+inline const std::string& TranscribeWord::_internal_word() const {
+  return word_.Get();
+}
+inline void TranscribeWord::_internal_set_word(const std::string& value) {
+  
+  word_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* TranscribeWord::_internal_mutable_word() {
+  
+  return word_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* TranscribeWord::release_word() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.TranscribeWord.word)
+  return word_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void TranscribeWord::set_allocated_word(std::string* word) {
+  if (word != nullptr) {
+    
+  } else {
+    
+  }
+  word_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), word,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.TranscribeWord.word)
+}
+
+// -------------------------------------------------------------------
+
+// TranscribeWordResponse
+
+// repeated .sensory.api.v1.audio.TranscribeWord words = 1;
+inline int TranscribeWordResponse::_internal_words_size() const {
+  return words_.size();
+}
+inline int TranscribeWordResponse::words_size() const {
+  return _internal_words_size();
+}
+inline void TranscribeWordResponse::clear_words() {
+  words_.Clear();
+}
+inline ::sensory::api::v1::audio::TranscribeWord* TranscribeWordResponse::mutable_words(int index) {
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.TranscribeWordResponse.words)
+  return words_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::audio::TranscribeWord >*
+TranscribeWordResponse::mutable_words() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.audio.TranscribeWordResponse.words)
+  return &words_;
+}
+inline const ::sensory::api::v1::audio::TranscribeWord& TranscribeWordResponse::_internal_words(int index) const {
+  return words_.Get(index);
+}
+inline const ::sensory::api::v1::audio::TranscribeWord& TranscribeWordResponse::words(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWordResponse.words)
+  return _internal_words(index);
+}
+inline ::sensory::api::v1::audio::TranscribeWord* TranscribeWordResponse::_internal_add_words() {
+  return words_.Add();
+}
+inline ::sensory::api::v1::audio::TranscribeWord* TranscribeWordResponse::add_words() {
+  ::sensory::api::v1::audio::TranscribeWord* _add = _internal_add_words();
+  // @@protoc_insertion_point(field_add:sensory.api.v1.audio.TranscribeWordResponse.words)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::audio::TranscribeWord >&
+TranscribeWordResponse::words() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.audio.TranscribeWordResponse.words)
+  return words_;
+}
+
+// uint64 firstWordIndex = 2;
+inline void TranscribeWordResponse::clear_firstwordindex() {
+  firstwordindex_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWordResponse::_internal_firstwordindex() const {
+  return firstwordindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWordResponse::firstwordindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWordResponse.firstWordIndex)
+  return _internal_firstwordindex();
+}
+inline void TranscribeWordResponse::_internal_set_firstwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  firstwordindex_ = value;
+}
+inline void TranscribeWordResponse::set_firstwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_firstwordindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWordResponse.firstWordIndex)
+}
+
+// uint64 lastWordIndex = 3;
+inline void TranscribeWordResponse::clear_lastwordindex() {
+  lastwordindex_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWordResponse::_internal_lastwordindex() const {
+  return lastwordindex_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 TranscribeWordResponse::lastwordindex() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeWordResponse.lastWordIndex)
+  return _internal_lastwordindex();
+}
+inline void TranscribeWordResponse::_internal_set_lastwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  lastwordindex_ = value;
+}
+inline void TranscribeWordResponse::set_lastwordindex(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_lastwordindex(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeWordResponse.lastWordIndex)
+}
+
+// -------------------------------------------------------------------
+
 // TranscribeResponse
 
 // float audioEnergy = 1;
@@ -8462,7 +9137,7 @@ inline void TranscribeResponse::set_allocated_transcript(std::string* transcript
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.TranscribeResponse.transcript)
 }
 
-// bool isPartialResult = 3;
+// bool isPartialResult = 3 [deprecated = true];
 inline void TranscribeResponse::clear_ispartialresult() {
   ispartialresult_ = false;
 }
@@ -8480,6 +9155,96 @@ inline void TranscribeResponse::_internal_set_ispartialresult(bool value) {
 inline void TranscribeResponse::set_ispartialresult(bool value) {
   _internal_set_ispartialresult(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeResponse.isPartialResult)
+}
+
+// .sensory.api.v1.audio.TranscribeWordResponse wordList = 4;
+inline bool TranscribeResponse::_internal_has_wordlist() const {
+  return this != internal_default_instance() && wordlist_ != nullptr;
+}
+inline bool TranscribeResponse::has_wordlist() const {
+  return _internal_has_wordlist();
+}
+inline void TranscribeResponse::clear_wordlist() {
+  if (GetArenaForAllocation() == nullptr && wordlist_ != nullptr) {
+    delete wordlist_;
+  }
+  wordlist_ = nullptr;
+}
+inline const ::sensory::api::v1::audio::TranscribeWordResponse& TranscribeResponse::_internal_wordlist() const {
+  const ::sensory::api::v1::audio::TranscribeWordResponse* p = wordlist_;
+  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::audio::TranscribeWordResponse&>(
+      ::sensory::api::v1::audio::_TranscribeWordResponse_default_instance_);
+}
+inline const ::sensory::api::v1::audio::TranscribeWordResponse& TranscribeResponse::wordlist() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeResponse.wordList)
+  return _internal_wordlist();
+}
+inline void TranscribeResponse::unsafe_arena_set_allocated_wordlist(
+    ::sensory::api::v1::audio::TranscribeWordResponse* wordlist) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(wordlist_);
+  }
+  wordlist_ = wordlist;
+  if (wordlist) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.audio.TranscribeResponse.wordList)
+}
+inline ::sensory::api::v1::audio::TranscribeWordResponse* TranscribeResponse::release_wordlist() {
+  
+  ::sensory::api::v1::audio::TranscribeWordResponse* temp = wordlist_;
+  wordlist_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::sensory::api::v1::audio::TranscribeWordResponse* TranscribeResponse::unsafe_arena_release_wordlist() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.TranscribeResponse.wordList)
+  
+  ::sensory::api::v1::audio::TranscribeWordResponse* temp = wordlist_;
+  wordlist_ = nullptr;
+  return temp;
+}
+inline ::sensory::api::v1::audio::TranscribeWordResponse* TranscribeResponse::_internal_mutable_wordlist() {
+  
+  if (wordlist_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensory::api::v1::audio::TranscribeWordResponse>(GetArenaForAllocation());
+    wordlist_ = p;
+  }
+  return wordlist_;
+}
+inline ::sensory::api::v1::audio::TranscribeWordResponse* TranscribeResponse::mutable_wordlist() {
+  ::sensory::api::v1::audio::TranscribeWordResponse* _msg = _internal_mutable_wordlist();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.TranscribeResponse.wordList)
+  return _msg;
+}
+inline void TranscribeResponse::set_allocated_wordlist(::sensory::api::v1::audio::TranscribeWordResponse* wordlist) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete wordlist_;
+  }
+  if (wordlist) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::audio::TranscribeWordResponse>::GetOwningArena(wordlist);
+    if (message_arena != submessage_arena) {
+      wordlist = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, wordlist, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  wordlist_ = wordlist;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.TranscribeResponse.wordList)
 }
 
 // .sensory.api.v1.audio.AudioResponsePostProcessingAction postProcessingAction = 10;
@@ -9159,6 +9924,26 @@ inline void CreateEnrollmentConfig::set_allocated_referenceid(std::string* refer
   referenceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), referenceid,
       GetArenaForAllocation());
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.CreateEnrollmentConfig.referenceId)
+}
+
+// bool disableServerEnrollmentTemplateStorage = 10;
+inline void CreateEnrollmentConfig::clear_disableserverenrollmenttemplatestorage() {
+  disableserverenrollmenttemplatestorage_ = false;
+}
+inline bool CreateEnrollmentConfig::_internal_disableserverenrollmenttemplatestorage() const {
+  return disableserverenrollmenttemplatestorage_;
+}
+inline bool CreateEnrollmentConfig::disableserverenrollmenttemplatestorage() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.CreateEnrollmentConfig.disableServerEnrollmentTemplateStorage)
+  return _internal_disableserverenrollmenttemplatestorage();
+}
+inline void CreateEnrollmentConfig::_internal_set_disableserverenrollmenttemplatestorage(bool value) {
+  
+  disableserverenrollmenttemplatestorage_ = value;
+}
+inline void CreateEnrollmentConfig::set_disableserverenrollmenttemplatestorage(bool value) {
+  _internal_set_disableserverenrollmenttemplatestorage(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.CreateEnrollmentConfig.disableServerEnrollmentTemplateStorage)
 }
 
 inline bool CreateEnrollmentConfig::has_enrollLength() const {
@@ -10954,6 +11739,10 @@ inline void VoiceSynthesisConfig::set_allocated_voice(std::string* voice) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -10978,6 +11767,11 @@ template <> struct is_proto_enum< ::sensory::api::v1::audio::AudioPostProcessing
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::v1::audio::AudioPostProcessingAction>() {
   return ::sensory::api::v1::audio::AudioPostProcessingAction_descriptor();
+}
+template <> struct is_proto_enum< ::sensory::api::v1::audio::WordState> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::v1::audio::WordState>() {
+  return ::sensory::api::v1::audio::WordState_descriptor();
 }
 template <> struct is_proto_enum< ::sensory::api::v1::audio::ThresholdSensitivity> : ::std::true_type {};
 template <>

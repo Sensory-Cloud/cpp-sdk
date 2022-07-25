@@ -1,4 +1,4 @@
-# SensoryCloud Audio Services
+# SensoryCloud Audio Services (Real-time)
 
 This project provides a demonstration of SensoryCloud audio services using
 PortAudio as the audio interface driver.
@@ -35,10 +35,7 @@ or industry-specific jargon. The platform is suitable for use with both
 streaming audio and batch modes. To transcribe speech to text:
 
 ```shell
-./transcribe \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
+./transcribe <path to config.ini file> \
     -m <model name> \
     -u <user ID> \
     -L <language code>
@@ -53,9 +50,6 @@ To synthesize speech from text:
 
 ```shell
 ./synthesize \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
     -m <model name> \
     -u <user ID> \
     -L <language code>
@@ -75,51 +69,33 @@ conversations, or control access to features and capabilities.
 To fetch available biometric voice models:
 
 ```shell
-./enroll -g \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID>
+./enroll <path to config.ini file> -g
 ```
 
 To create an enrollment without an active liveness check using a wakeword:
 
 ```shell
-./enroll \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> -n <num utterances> \
-    -u <user ID> \
-    -d "A description of the enrollment" \
-    -L <language code>
+./enroll <path to config.ini file> -u <user ID> \
+    -m <model name> -n <num utterances> -L <language code> \
+    -d "A description of the enrollment"
 ```
 
 To create an enrollment without an active liveness check using a
 text-independent model:
 
 ```shell
-./enroll \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> -d <max duration> \
-    -u <user ID> \
-    -d "A description of the enrollment" \
-    -L <language code>
+./enroll <path to config.ini file> -u <user ID> \
+    -m <model name> -d <max duration> -L <language code> \
+    -d "A description of the enrollment"
 ```
 
 To create an enrollment with an active liveness check using a text-independent
 model:
 
 ```shell
-./enroll \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> -l \
-    -u <user ID> \
-    -d "A description of the enrollment" \
-    -L <language code>
+./enroll <path to config.ini file> -u <user ID> \
+    -m <model name> -l -L <language code> \
+    -d "A description of the enrollment"
 ```
 
 #### Authentication
@@ -127,34 +103,20 @@ model:
 To fetch biometric voice enrollments for a user ID:
 
 ```shell
-./authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -u <user ID>
+./authenticate <path to config.ini file> -u <user ID>
 ```
 
 To authenticate without a liveness check:
 
 ```shell
-./authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID> \
-    -L <language code>
+./authenticate <path to config.ini file> -e <enrollment ID> -L <language code>
 ```
 
 To authenticate with a liveness check:
 
 ```shell
-./authenticate \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID> \
-    -l -s HIGH -t HIGH \
-    -L <language code>
+./authenticate <path to config.ini file> -e <enrollment ID> \
+    -l -s HIGH -t HIGH -L <language code>
 ```
 
 ### Wake Word Verification and Sound ID
@@ -176,22 +138,14 @@ event detection.
 To fetch the available event validation models:
 
 ```shell
-./validate_event -g \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID>
+./validate_event <path to config.ini file> -g
 ```
 
 To detect a sound event like a wake-word or a dog bark:
 
 ```shell
-./validate_event \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> \
-    -u <user ID> \
-    -L <language code>
+./validate_event <path to config.ini file> -u <user ID> \
+    -m <model name> -L <language code>
 ```
 
 #### Event Enrollment
@@ -199,23 +153,15 @@ To detect a sound event like a wake-word or a dog bark:
 To fetch the available enrollable event validation models:
 
 ```shell
-./enroll_event -g \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID>
+./enroll_event <path to config.ini file> -g
 ```
 
 To create an enrolled event:
 
 ```shell
-./enroll_event \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -m <model name> -n <num occurrences> \
-    -u <user ID> \
-    -d "A description of the event enrollment" \
-    -L <language code>
+./enroll_event <path to config.ini file> -u <user ID> \
+    -m <model name> -n <num occurrences> -L <language code> \
+    -d "A description of the event enrollment"
 ```
 
 #### Enrolled Event Validation
@@ -223,20 +169,11 @@ To create an enrolled event:
 To fetch enrolled events belonging to a particular user:
 
 ```shell
-./validate_enrolled_event \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -u <user ID>
+./validate_enrolled_event <path to config.ini file> -u <user ID>
 ```
 
 To validate an enrolled event:
 
 ```shell
-./validate_enrolled_event \
-    -H <inference server URL> \
-    -P <inference server port> \
-    -T <tenant ID> \
-    -e <enrollment ID> \
-    -s LOW
+./validate_enrolled_event <path to config.ini file> -e <enrollment ID> -s LOW
 ```

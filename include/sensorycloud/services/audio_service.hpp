@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <utility>
 #include "sensorycloud/generated/v1/audio/audio.pb.h"
 #include "sensorycloud/generated/v1/audio/audio.grpc.pb.h"
@@ -67,8 +68,6 @@ inline ::sensory::api::v1::audio::AudioConfig* new_audio_config(
     return config;
 }
 
-// TODO: implement `referenceId` for CreateEnrollmentConfig?
-
 /// @brief Allocate a new configuration object for enrollment creation.
 ///
 /// @param modelName The name of the model to use to create the enrollment.
@@ -82,7 +81,9 @@ inline ::sensory::api::v1::audio::AudioConfig* new_audio_config(
 /// with liveness enabled.
 /// @param numUtterances The number of utterances that should be required
 /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
-///
+/// @param reference_id An optional reference ID allows clients to assign their
+/// own identifier to enrollments for various purposes such as tying an audio
+/// and video enrollment together.
 /// @returns A pointer to the `CreateEnrollmentConfig` object.
 ///
 /// @throws std::runtime_error if `numUtterances` and `enrollmentDuration`
@@ -104,7 +105,8 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* new_create_enrollment_
     const std::string& description,
     const bool& isLivenessEnabled,
     const float enrollmentDuration = 0.f,
-    const uint32_t numUtterances = 0
+    const uint32_t numUtterances = 0,
+    const std::string& reference_id = ""
 ) {
     // The number of utterances and the enrollment duration cannot both be
     // specified in the message, so check for sentinel "null" values and if
@@ -121,6 +123,7 @@ inline ::sensory::api::v1::audio::CreateEnrollmentConfig* new_create_enrollment_
         config->set_enrollmentduration(enrollmentDuration);
     else if (numUtterances > 0)  // number of utterances provided
         config->set_enrollmentnumutterances(numUtterances);
+    config->set_referenceid(reference_id);
     return config;
 }
 
@@ -176,8 +179,6 @@ inline ::sensory::api::v1::audio::ValidateEventConfig* new_validate_event_config
     return config;
 }
 
-// TODO: implement `referenceId` for CreateEnrollmentEventConfig?
-
 /// @brief Allocate a new configuration object for creating enrolled events.
 ///
 /// @param modelName The name of the model to use to create the enrollment.
@@ -188,6 +189,9 @@ inline ::sensory::api::v1::audio::ValidateEventConfig* new_validate_event_config
 /// with liveness enabled.
 /// @param numUtterances The number of utterances that should be required
 /// for text-dependent enrollments, defaults to \f$4\f$ if not specified.
+/// @param reference_id An optional reference ID allows clients to assign their
+/// own identifier to enrollments for various purposes such as tying an audio
+/// and video enrollment together.
 ///
 /// @returns A pointer to the `CreateEnrollmentEventConfig` object.
 ///
@@ -209,7 +213,8 @@ inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* new_create_enroll
     const std::string& userID,
     const std::string& description,
     const float enrollmentDuration = 0.f,
-    const uint32_t numUtterances = 0
+    const uint32_t numUtterances = 0,
+    const std::string& reference_id = ""
 ) {
     // The number of utterances and the enrollment duration cannot both be
     // specified in the message, so check for sentinel "null" values and if
@@ -225,6 +230,7 @@ inline ::sensory::api::v1::audio::CreateEnrollmentEventConfig* new_create_enroll
         config->set_enrollmentduration(enrollmentDuration);
     else if (numUtterances > 0)  // number of utterances provided
         config->set_enrollmentnumutterances(numUtterances);
+    config->set_referenceid(reference_id);
     return config;
 }
 
@@ -267,6 +273,98 @@ inline ::sensory::api::v1::audio::TranscribeConfig* new_transcribe_config(
     config->set_userid(userID);
     return config;
 }
+
+/// @brief Strip leading white spaces from a string.
+///
+/// @param s The string to strip the leading white spaces from
+/// @returns The input string with leading white spaces removed.
+///
+inline std::string lstrip(const std::string &s) {
+    size_t start = s.find_first_not_of(" ");
+    return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+/// @brief Strip trailing white spaces from a string.
+///
+/// @param s The string to strip the trailing white spaces from.
+/// @returns The input string with trailing white spaces removed.
+///
+inline std::string rstrip(const std::string &s) {
+    size_t end = s.find_last_not_of(" ");
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+/// @brief Strip leading & trailing white spaces from a string.
+///
+/// @param s The string to strip the leading & trailing white spaces from.
+/// @returns The input string with leading & trailing white spaces removed.
+///
+inline std::string strip(const std::string &s) { return rstrip(lstrip(s)); }
+
+/// @brief A structure that aggregates and stores transcription responses.
+/// @details
+/// This class can maintain the full transcript returned from the server's
+/// windows responses.
+class TranscriptAggregator {
+ private:
+    /// An internal buffer of the complete transcript from the server.
+    std::vector<::sensory::api::v1::audio::TranscribeWord> word_list;
+
+ public:
+    /// @brief Process a single sliding-window response from the server.
+    ///
+    /// @param response The current word list from the server.
+    ///
+    void process_response(const ::sensory::api::v1::audio::TranscribeWordResponse& response) {
+        if (response.words().empty()) return;
+        // Get the expected transcript size from the index of the last word.
+        const auto response_size = response.lastwordindex() + 1;
+        // Grow the word buffer if the incoming transcript is larger.
+        if (response_size > word_list.size())
+            word_list.resize(response_size);
+        // Loop through returned words and replace buffered words that changed.
+        for (const auto& word : response.words()) {
+            // Sanity check the word index to prevent the possibility of
+            // unexpected segmentation faults in favor of descriptive errors.
+            if (word.wordindex() >= word_list.size())
+                throw std::runtime_error(
+                    "Attempting to update word at index " +
+                    std::to_string(word.wordindex()) +
+                    " that exceeds the expected buffer size of " +
+                    std::to_string(word_list.size())
+                );
+            word_list[word.wordindex()] = word;
+        }
+        // Shrink the word list if the incoming transcript is smaller.
+        if (response_size < word_list.size())
+            word_list.erase(word_list.begin() + response_size, word_list.end());
+    }
+
+    /// @brief Return a constant reference to the complete transcript.
+    ///
+    /// @returns A vector with the transcribed words and associated metadata.
+    ///
+    inline const std::vector<::sensory::api::v1::audio::TranscribeWord>& get_word_list() const {
+        return word_list;
+    }
+
+    /// @brief Return the full transcript as computed from the current word list.
+    ///
+    /// @param delimiter An optional delimiter for controlling the separation
+    /// of individual words in the transcript.
+    /// @returns An imploded string representation of the underlying word list.
+    ///
+    std::string get_transcript(const std::string& delimiter=" ") const {
+        if (word_list.empty()) return "";
+        // Iterate over the words to accumulate the transcript.
+        std::string transcript = "";
+        for (const auto& word : word_list)
+            transcript += delimiter + strip(word.word());
+        // Remove the extra space at the front of the transcript.
+        transcript.erase(0, 1);
+        return transcript;
+    }
+};
 
 }  // namespace audio
 
