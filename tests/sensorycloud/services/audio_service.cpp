@@ -524,7 +524,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
         TranscriptAggregator aggregator;
         // Create mock words.
         TranscribeWord foo;
-        foo.set_word("foo ");
+        foo.set_word("foo");
         foo.set_wordindex(0);
         TranscribeWord bar;
         bar.set_word("bar");
@@ -538,7 +538,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
         aggregator.process_response(rsp0);
         WHEN("An update response is passed to the aggregator that adds a word") {
             TranscribeWord baz;
-            baz.set_word(" baz");
+            baz.set_word("baz");
             baz.set_wordindex(2);
             TranscribeWordResponse rsp1;
             rsp1.set_firstwordindex(0);
@@ -552,7 +552,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
         }
         WHEN("An update response is passed to the aggregator that replaces a word") {
             TranscribeWord food;
-            food.set_word("food ");
+            food.set_word("food");
             food.set_wordindex(0);
             TranscribeWordResponse rsp1;
             rsp1.set_firstwordindex(0);

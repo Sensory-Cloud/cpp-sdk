@@ -274,6 +274,20 @@ inline ::sensory::api::v1::audio::TranscribeConfig* new_transcribe_config(
     return config;
 }
 
+inline std::string lstrip(const std::string &s) {
+    size_t start = s.find_first_not_of(" ");
+    return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+inline std::string rstrip(const std::string &s) {
+    size_t end = s.find_last_not_of(" ");
+    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+inline std::string strip(const std::string &s) {
+    return rstrip(lstrip(s));
+}
+
 /// @brief A structure that aggregates and stores transcription responses.
 /// @details
 /// This class can maintain the full transcript returned from the server's
@@ -323,15 +337,18 @@ class TranscriptAggregator {
 
     /// @brief Return the full transcript as computed from the current word list.
     ///
+    /// @param delimiter An optional delimiter for controlling the separation
+    /// of individual words in the transcript.
     /// @returns An imploded string representation of the underlying word list.
     ///
-    std::string get_transcript() const {
+    std::string get_transcript(const std::string& delimiter=" ") const {
         if (word_list.empty()) return "";
-        // Iterate over the word responses to accumulate the transcript. If a
-        // language has a convention for word delimitters, that will be handled
-        // server-side and embedded into the individual word strings.
+        // Iterate over the words to accumulate the transcript.
         std::string transcript = "";
-        for (const auto& word : word_list) transcript += word.word();
+        for (const auto& word : word_list)
+            transcript += delimiter + strip(word.word());
+        // Remove the extra space at the front of the transcript.
+        transcript.erase(0, 1);
         return transcript;
     }
 };
