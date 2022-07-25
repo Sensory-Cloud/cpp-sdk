@@ -274,19 +274,32 @@ inline ::sensory::api::v1::audio::TranscribeConfig* new_transcribe_config(
     return config;
 }
 
+/// @brief Strip leading white spaces from a string.
+///
+/// @param s The string to strip the leading white spaces from
+/// @returns The input string with leading white spaces removed.
+///
 inline std::string lstrip(const std::string &s) {
     size_t start = s.find_first_not_of(" ");
     return (start == std::string::npos) ? "" : s.substr(start);
 }
 
+/// @brief Strip trailing white spaces from a string.
+///
+/// @param s The string to strip the trailing white spaces from.
+/// @returns The input string with trailing white spaces removed.
+///
 inline std::string rstrip(const std::string &s) {
     size_t end = s.find_last_not_of(" ");
     return (end == std::string::npos) ? "" : s.substr(0, end + 1);
 }
 
-inline std::string strip(const std::string &s) {
-    return rstrip(lstrip(s));
-}
+/// @brief Strip leading & trailing white spaces from a string.
+///
+/// @param s The string to strip the leading & trailing white spaces from.
+/// @returns The input string with leading & trailing white spaces removed.
+///
+inline std::string strip(const std::string &s) { return rstrip(lstrip(s)); }
 
 /// @brief A structure that aggregates and stores transcription responses.
 /// @details
@@ -331,7 +344,7 @@ class TranscriptAggregator {
     ///
     /// @returns A vector with the transcribed words and associated metadata.
     ///
-    const std::vector<::sensory::api::v1::audio::TranscribeWord>& get_word_list() const {
+    inline const std::vector<::sensory::api::v1::audio::TranscribeWord>& get_word_list() const {
         return word_list;
     }
 
