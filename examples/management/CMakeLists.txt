@@ -23,7 +23,7 @@ project(sensory-cloud-management-applications)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.1
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.2
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -37,3 +37,6 @@ target_link_libraries(management_callback PRIVATE sensorycloud)
 
 add_executable(management_async management_async.cpp)
 target_link_libraries(management_async PRIVATE sensorycloud)
+
+add_executable(apitool apitool.cpp)
+target_link_libraries(apitool PRIVATE sensorycloud)

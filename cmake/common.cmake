@@ -91,6 +91,11 @@ elseif(GRPC_FETCHCONTENT)
     else()
         set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
     endif()  # CMAKE_CROSSCOMPILING
+
+    # Setup the include directories for BoringSSL support.
+    include_directories(
+        ${grpc_SOURCE_DIR}/third_party/boringssl-with-bazel/src/include
+    )
 else()  # gRPC from system-wide installation
     # This branch assumes that gRPC and all its dependencies are already installed
     # on this system, so they can be located by find_package().

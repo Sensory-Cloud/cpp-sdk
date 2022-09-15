@@ -26,10 +26,8 @@
 #ifndef SENSORYCLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
 #define SENSORYCLOUD_TOKEN_MANAGER_SECURE_RANDOM_HPP_
 
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include "arc4random.hpp"
+#include <openssl/rand.h>
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -37,18 +35,27 @@ namespace sensory {
 /// @brief Modules for generating and storing secure credentials.
 namespace token_manager {
 
-/// @brief Generate a cryptographic-ally secure random number.
+/// @brief Generate a cryptographically secure random number.
 ///
 /// @tparam length The length of the alpha-numeric string to generate.
-/// @returns A cryptographic-ally secure random alpha-numeric string.
+/// @returns A cryptographically secure random alpha-numeric string.
 ///
 template<std::size_t length>
 std::string secure_random() {
     // Initialize an empty string of the specified length.
     std::string uuid(length, ' ');
-    // Iterate over the characters in the string to generate random characters.
+    // Randomly initialize the bytes of the string using OpenSSL rand bytes.
+    // Here we assume that std::string is backed by a contiguous buffer, which
+    // is a specification of C++00 and is true of all active std::string
+    // implementations that are currently known predating the C++00 standard.
+    // The reinterpret cast is necessary to coerce the char* to uint8_t* that
+    // RAND_bytes expects.
+    RAND_bytes(reinterpret_cast<uint8_t*>(&uuid[0]), uuid.size());
+    // Iterate over the bytes in the string to generate random characters.
+    // This is necessary because we want a specific subset of characters that
+    // are not contiguously spaced in the ASCII codec.
     for (std::size_t i = 0; i < length; i++)
-        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[arc4_getbyte() % (10 + 26 + 26)];
+        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[static_cast<uint8_t>(uuid[i]) % (10 + 26 + 26)];
     // Move the output string to the caller's container.
     return std::move(uuid);
 }

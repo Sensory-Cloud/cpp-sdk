@@ -58,8 +58,8 @@ int main(int argc, const char** argv) {
         .default_value("HIGH")
         .help("THRESHOLD The security threshold for conducting the liveness check.");
     parser.add_argument({ "-D", "--device" })
-        .default_value(0)
-        .help("DEVICE The ID of the OpenCV device to use.");
+        .default_value("0")
+        .help("DEVICE The ID of the OpenCV device to use or a path to an image / video file.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
         .help("VERBOSE Produce verbose output.");
@@ -78,7 +78,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = RecognitionThreshold::HIGH;
     else if (args.get<std::string>("threshold") == "HIGHEST")
         THRESHOLD = RecognitionThreshold::HIGHEST;
-    const auto DEVICE = args.get<int>("device");
+    const auto DEVICE = args.get<std::string>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
@@ -149,8 +149,9 @@ int main(int argc, const char** argv) {
 
     // Create an image capture object
     cv::VideoCapture capture;
-    if (!capture.open(DEVICE)) {
-        std::cout << "Capture from camera #" << DEVICE << " failed" << std::endl;
+    const bool IS_DEVICE_NUMERIC = !DEVICE.empty() && DEVICE.find_first_not_of("0123456789") == std::string::npos;
+    if (!(IS_DEVICE_NUMERIC ? capture.open(stoi(DEVICE)) : capture.open(DEVICE))) {
+        std::cout << "Capture from device " << DEVICE << " failed" << std::endl;
         return 1;
     }
 
@@ -187,6 +188,7 @@ int main(int argc, const char** argv) {
     std::thread event_thread([&stream, &queue, &is_live, &alignment_code, &frame, &frame_mutex, &VERBOSE](){
         void* tag(nullptr);
         bool ok(false);
+        bool is_running(true);
         while (queue.Next(&tag, &ok)) {
             if (!ok) continue;
             if (tag == stream) {
@@ -208,6 +210,11 @@ int main(int argc, const char** argv) {
                 std::vector<unsigned char> buffer;
                 {  // Lock the mutex and encode the frame with JPEG into a buffer.
                     std::lock_guard<std::mutex> lock(frame_mutex);
+                    // If the frame is empty, something went wrong, shutdown the loop.
+                    if (frame.empty()) {
+                        is_running = false;
+                        continue;
+                    }
                     cv::imencode(".jpg", frame, buffer);
                 }
                 // Create the request from the encoded image data.
@@ -223,6 +230,8 @@ int main(int argc, const char** argv) {
                     std::cout << "\tScore: "    << stream->getResponse().score() << std::endl;
                     std::cout << "\tIs Alive: " << stream->getResponse().isalive() << std::endl;
                 }
+                // If the write thread has encountered an error, stop reading and exit.
+                if (!is_running) break;
                 // Issue a new read request.
                 stream->getCall()->Read(&stream->getResponse(), (void*) Events::Read);
             } else if (tag == (void*) Events::Finish) break;

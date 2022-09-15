@@ -38,6 +38,10 @@ ENV TZ=US/Mountain
 # MARK: Dependencies
 # ----------------------------------------------------------------------------
 
+# Prepare the mirror list for the yum package manager.
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
 # Update CentOS software repositories.
 RUN yum -y update
 RUN yum -y upgrade
@@ -66,6 +70,7 @@ RUN printf "cmake_minimum_required(VERSION 3.11)\nproject(clone-grpc)\ninclude(c
 # Enable verbose output from `FetchContent` to monitor the cloning of gRPC,
 # which can be slow.
 RUN mkdir /cpp-sdk/build && cd /cpp-sdk/build && cmake -DGRPC_FETCHCONTENT=ON -DFETCHCONTENT_QUIET=OFF ..
+RUN cd /cpp-sdk/build && make -j`nproc`
 
 # ----------------------------------------------------------------------------
 # MARK: Source Files
@@ -77,3 +82,4 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
+ADD ./examples /cpp-sdk/examples

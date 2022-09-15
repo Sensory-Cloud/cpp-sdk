@@ -99,7 +99,8 @@ SDK.
     URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
     ```
 
-1.  Update documentation with doxygen.
+1.  Update the the `PROJECT_NUMBER` in [Doxyfile](Doxyfile) to reflect the
+    change in version. Regenerate documentation using:
 
     ```shell
     doxygen Doxyfile
