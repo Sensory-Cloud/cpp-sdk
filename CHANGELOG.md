@@ -72,8 +72,16 @@
 # 0.15.1
 
 -   Support for `v0.15.1` of the SensoryCloud API
-    -   New `sensory::services::audio::TranscribeAggregator` for aggregating
+    -   New `sensory::services::audio::TranscriptAggregator` for aggregating
         partial speech-to-text updates from the server into a final transcript.
     -   Audio transcription examples updated with
-        `sensory::services::audio::TranscribeAggregator` and optional
+        `sensory::services::audio::TranscriptAggregator` and optional
         closed-captioning mode for rendering partial transcripts.
+
+# 0.15.2
+
+-   Video service examples updated to support file IO (video and single images)
+-   Audio service examples updated to support file IO
+-   Implemented support for JSON web token (JWT) device enrollments
+-   Deprecated internal implementation of RC4 cryptography algorithm in favor
+    of `RAND_bytes` from required SSL dependency

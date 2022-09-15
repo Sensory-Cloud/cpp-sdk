@@ -1,19 +1,410 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 ---
-before_script:
-  - docker info
-build_image:
-  script:
-    - docker build -f Dockerfile.Ubuntu.20.04 -t sensory-cloud-cpp-sdk:Ubuntu20.04 .
-    - docker run sensory-cloud-cpp-sdk:Ubuntu20.04 bash -c 'cmake -DSENSORY_CLOUD_BUILD_TESTS=ON .. && make -j16 && for i in ./test_sensorycloud_*; do echo $$i && bash -c $$i; done'
+# ------------------------------------------------------------------------------
+# MARK: Global metadata
+# The following fields define the global structure and metadata of the pipeline.
+# ------------------------------------------------------------------------------
+
+variables:
+  # This variable ensures that the `proto` sub-module gets cloned for testing
+  GIT_SUBMODULE_STRATEGY: recursive
+
 stages:
-- test
-sast:
+  - image
+  - test
+  - demo
+  - prod
+
+# ------------------------------------------------------------------------------
+# MARK: Docker image generation
+# It's much more efficient to quarantine the static elements of the environment
+# in a Docker container that updates infrequently than it is to rebuild the
+# entire development environment from scratch with each build.
+# ------------------------------------------------------------------------------
+
+# This hidden job defines the shared metadata for Docker image generation jobs.
+.build_image:
+  timeout: 5h           # 5h is a long time; network latency is highly non-deterministic
+  interruptible: false  # Don't interrupt docker image generation; partial work is re-usable between pipelines
+  stage: image          # This is the imaging stage that must run before builds, tests, and demos
+  tags:
+    - shell
+  before_script:        # Sanity check that the Docker daemon is running
+    - docker info
+
+# Ubuntu
+
+image:ubuntu:22.04:
+  extends: .build_image
+  script: docker compose build ubuntu_22_04
+
+image:ubuntu:20.04:
+  extends: .build_image
+  script: docker compose build ubuntu_20_04
+
+image:ubuntu:18.04:
+  extends: .build_image
+  script: docker compose build ubuntu_18_04
+
+image:ubuntu:16.04:
+  extends: .build_image
+  script: docker compose build ubuntu_16_04
+
+# Debian
+
+image:debian:11:
+  extends: .build_image
+  script: docker compose build debian_11
+
+image:debian:10:
+  extends: .build_image
+  script: docker compose build debian_10
+
+image:debian:9:
+  extends: .build_image
+  script: docker compose build debian_9
+
+# RHEL
+
+image:rhel:9:
+  extends: .build_image
+  script: docker compose build rhel_9
+
+image:rhel:8:
+  extends: .build_image
+  script: docker compose build rhel_8
+
+# RHEL7 ships with gcc <4.9
+# image:rhel:7:
+#   extends: .build_image
+#   script: docker compose build rhel_7
+
+# CentOS
+
+image:centos:8:
+  extends: .build_image
+  script: docker compose build centos_8
+
+# CentOS7 ships with gcc <4.9
+# image:centos:7:
+#   extends: .build_image
+#   script: docker compose build centos_7
+
+# ------------------------------------------------------------------------------
+# MARK: Unit testing
+# ------------------------------------------------------------------------------
+
+# This hidden job contains the metadata and script for unit-testing.
+# System admin note: The make command automatically determines the number of
+# logical CPUs available on the host machine. On MacOS this is accomplished via
+# - sysctl -n hw.logicalcpu
+# but if the testing platform changes to linux one should use
+# - nproc --ignore=1
+# the `--ignore=1` will leave a single logical core unused for system tasks.
+.test:
+  timeout: 2h
+  interruptible: true
   stage: test
-include:
-- template: Security/SAST.gitlab-ci.yml
+  tags:
+    - shell
+  script: >
+    docker run --rm $IMAGE bash -c "
+      cd cpp-sdk && mkdir -p build && cd build &&
+      cmake -DFETCHCONTENT_QUIET=OFF -DSENSORY_CLOUD_GENERATE_PROTO=ON -DSENSORY_CLOUD_BUILD_TESTS=ON -DSENSORY_CLOUD_BUILD_EXAMPLES=OFF .. &&
+      make -j`sysctl -n hw.logicalcpu` &&
+      find . -name \"test_sensorycloud*\" -maxdepth 1 -type f -exec echo {} \; -exec {} \;
+    "
+
+# Ubuntu
+
+test:ubuntu:22.04:
+  extends: .test
+  needs: ['image:ubuntu:22.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
+
+test:ubuntu:20.04:
+  extends: .test
+  needs: ['image:ubuntu:20.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
+
+test:ubuntu:18.04:
+  extends: .test
+  needs: ['image:ubuntu:18.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
+
+test:ubuntu:16.04:
+  extends: .test
+  needs: ['image:ubuntu:16.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu16.04
+
+# Debian
+
+test:debian:11:
+  extends: .test
+  needs: ['image:debian:11']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian11
+
+test:debian:10:
+  extends: .test
+  needs: ['image:debian:10']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian10
+
+test:debian:9:
+  extends: .test
+  needs: ['image:debian:9']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian9
+
+# RHEL
+
+test:rhel:9:
+  extends: .test
+  needs: ['image:rhel:9']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:RHEL9
+
+test:rhel:8:
+  extends: .test
+  needs: ['image:rhel:8']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:RHEL8
+
+# test:rhel:7:
+#   extends: .test
+#   needs: ['image:rhel:7']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:RHEL7
+
+# CentOS
+
+test:centos:8:
+  extends: .test
+  needs: ['image:centos:8']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:CentOS8
+
+# test:centos:7:
+#   extends: .test
+#   needs: ['image:centos:7']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:CentOS7
+
+# MacOS
+
+test:macos:
+  stage: test
+  tags:
+    - macos
+  # before_script:
+  #   - brew install autoconf automake libtool shtool cmake git opencv
+  script:
+    - mkdir -p build && cd build
+    # Build test cases and run them.
+    - cmake -DFETCHCONTENT_QUIET=OFF -DSENSORY_CLOUD_GENERATE_PROTO=ON -DSENSORY_CLOUD_BUILD_TESTS=ON -DSENSORY_CLOUD_BUILD_EXAMPLES=ON ..
+    - make -j`sysctl -n hw.logicalcpu`
+    - find . -name "test_sensorycloud*" -maxdepth 1 -type f -exec echo {} \; -exec {} \;
+
+# ------------------------------------------------------------------------------
+# MARK: Demo application builds
+# ------------------------------------------------------------------------------
+
+# This hidden job contains the metadata and script for building example code.
+.demo:
+  timeout: 2h
+  interruptible: true
+  stage: demo
+  tags:
+    - shell
+  script: >
+    docker run --rm $IMAGE bash -c "TZ=US/Mountain DEBIAN_FRONTEND=noninteractive $DEPENDS &&
+      cd cpp-sdk && mkdir -p build && cd build &&
+      cmake -DFETCHCONTENT_QUIET=OFF -DSENSORY_CLOUD_GENERATE_PROTO=OFF -DSENSORY_CLOUD_BUILD_TESTS=OFF -DSENSORY_CLOUD_BUILD_EXAMPLES=ON .. &&
+      make -j`sysctl -n hw.logicalcpu`
+    "
+
+# Ubuntu
+
+demo:ubuntu:22.04:
+  extends: .demo
+  needs: ['test:ubuntu:22.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
+    DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+demo:ubuntu:20.04:
+  extends: .demo
+  needs: ['test:ubuntu:20.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
+    DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+demo:ubuntu:18.04:
+  extends: .demo
+  needs: ['test:ubuntu:18.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
+    DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+# demo:ubuntu:16.04:
+#   extends: .demo
+#   needs: ['test:ubuntu:16.04']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu16.04
+#     DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+# Debian
+
+demo:debian:11:
+  extends: .demo
+  needs: ['test:debian:11']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian11
+    DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+demo:debian:10:
+  extends: .demo
+  needs: ['test:debian:10']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian10
+    DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+# demo:debian:9:
+#   extends: .demo
+#   needs: ['test:debian:9']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Debian9
+#     DEPENDS: apt-get install -y libasound-dev libopencv-dev
+
+# RHEL
+
+# demo:rhel:9:
+#   extends: .demo
+#   needs: ['test:rhel:9']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:RHEL9
+#     DEPENDS: yum install -y alsa-lib
+
+# demo:rhel:8:
+#   extends: .demo
+#   needs: ['test:rhel:8']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:RHEL8
+#     DEPENDS: yum install -y alsa-lib
+
+# demo:rhel:7:
+#   extends: .demo
+#   needs: ['test:rhel:7']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:RHEL7
+#     DEPENDS: yum install -y alsa-lib
+
+# CentOS
+
+# demo:centos:8:
+#   extends: .demo
+#   needs: ['test:centos:8']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:CentOS8
+#     DEPENDS: yum install -y alsa-lib
+
+# demo:centos:7:
+#   extends: .demo
+#   needs: ['test:centos:7']
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:CentOS7
+#     DEPENDS: yum install -y alsa-lib
+
+# ------------------------------------------------------------------------------
+# MARK: Production builds
+# ------------------------------------------------------------------------------
+
+# This hidden job contains the metadata and script for building production code.
+.prod:
+  timeout: 2h
+  interruptible: true
+  stage: prod
+  tags:
+    - shell
+  script: >
+    docker run --rm $IMAGE bash -c "
+      cd cpp-sdk && mkdir -p build && cd build &&
+      cmake -DFETCHCONTENT_QUIET=OFF -DSENSORY_CLOUD_GENERATE_PROTO=OFF -DSENSORY_CLOUD_BUILD_TESTS=OFF -DSENSORY_CLOUD_BUILD_EXAMPLES=OFF .. &&
+      make -j`sysctl -n hw.logicalcpu`
+    "
+
+# # Ubuntu
+
+# ubuntu_22_04_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
+
+# # ubuntu_20_04_prod:
+# #   extends: .prod
+# #   variables:
+# #     IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
+
+# ubuntu_18_04_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
+
+# ubuntu_16_04_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu16.04
+
+# # Debian
+
+# # debian_11_prod:
+# #   extends: .prod
+# #   variables:
+# #     IMAGE: sensory-cloud-cpp-sdk:Debian11
+
+# debian_10_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Debian10
+
+# debian_9_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:Debian9
+
+# # RHEL
+
+# rhel_9_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:RHEL9
+
+# rhel_8_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:RHEL8
+
+# # rhel_7_prod:
+# #   extends: .prod
+# #   variables:
+# #     IMAGE: sensory-cloud-cpp-sdk:RHEL7
+
+# # CentOS
+
+# centos_8_prod:
+#   extends: .prod
+#   variables:
+#     IMAGE: sensory-cloud-cpp-sdk:CentOS8
+
+# # centos_7_prod:
+# #   extends: .prod
+# #   variables:
+# #     IMAGE: sensory-cloud-cpp-sdk:CentOS7
+
+# ------------------------------------------------------------------------------
+# MARK: GitHub builds
+# ------------------------------------------------------------------------------

@@ -48,10 +48,10 @@ RUN apt-get install -y build-essential autoconf libtool pkg-config git
 
 # Install the latest version of CMake. CMake does not officially support Debian
 # 9 anymore, so CMake must be compiled from source.
-RUN apt-get install -y wget
+RUN apt-get install -y wget libssl-dev
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz
 RUN tar -xvf cmake-3.22.1.tar.gz
-RUN cd /cmake-3.22.1 && ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF && make && make install
+RUN cd /cmake-3.22.1 && ./bootstrap && make && make install
 
 # ----------------------------------------------------------------------------
 # MARK: Protobuf and gRPC
@@ -66,6 +66,7 @@ RUN printf "cmake_minimum_required(VERSION 3.11)\nproject(clone-grpc)\ninclude(c
 # Enable verbose output from `FetchContent` to monitor the cloning of gRPC,
 # which can be slow.
 RUN mkdir /cpp-sdk/build && cd /cpp-sdk/build && cmake -DGRPC_FETCHCONTENT=ON -DFETCHCONTENT_QUIET=OFF ..
+RUN cd /cpp-sdk/build && make -j`nproc`
 
 # ----------------------------------------------------------------------------
 # MARK: Source Files
@@ -77,3 +78,4 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
+ADD ./examples /cpp-sdk/examples

@@ -17,18 +17,22 @@ must also have the following pieces of information:
 
 ## Requirements
 
-This project uses [CMake][cmake] as the primary build system and [gcc][gcc] as
-the primary compiler. To install the build tools, run the following
-installation command depending on your deployment target. The minimum
-requirements for installation of the SDK are:
+This project uses [CMake][cmake] as the primary build system and supports
+the [gcc][gcc], [clang][clang], and [MSVC][MSVC] compilers. To install the
+build tools, run the following installation command depending on your
+deployment target. The minimum requirements for installation of the SDK are:
 
-| Dependency       | Version   |
-|:-----------------|:----------|
-| [`gcc`][gcc]     | >= 4.9    |
-| [`cmake`][cmake] | >= 3.11   |
+| Dependency       | Version |
+|:-----------------|:--------|
+| [`cmake`][cmake] | >= 3.11 |
+| [`gcc`][gcc]     | >= 5.1  |
+| [`clang`][clang] | >= 4    |
+| [`MSVC`][MSVC]   | >= 2015 |
 
 [cmake]: https://cmake.org/
 [gcc]: https://gcc.gnu.org/
+[clang]: https://clang.llvm.org/get_started.html
+[MSVC]: https://visualstudio.microsoft.com/vs/features/cplusplus/
 
 ### Debian / Ubuntu
 
@@ -38,9 +42,9 @@ To install the build tools for Debian-based Linux:
 apt-get install -y build-essential autoconf libtool pkg-config cmake git
 ```
 
-### RedHat / CentOS
+### Fedora / RedHat / CentOS
 
-To install the build tools for RedHat-based Linux:
+To install the build tools for Fedora-based Linux:
 
 ```shell
 yum install -y autoconf libtool pkg-config gcc gcc-c++ cmake git
@@ -58,7 +62,7 @@ brew install autoconf automake libtool shtool cmake git
 Because MacOS is not strictly POSIX compliant, you will need to provide gRPC
 with a hint of where your SSL certificates are stored to properly connect to a
 secure server. This can typically be accomplished by exporting the following
-environment variable
+environment variable:
 
 ```shell
 export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
@@ -82,7 +86,7 @@ to your `CMakeLists.txt`.
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.1
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.2
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```

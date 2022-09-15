@@ -23,7 +23,7 @@ project(sensory-cloud-audio-file-transcription)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.1
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.2
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -35,3 +35,18 @@ target_link_libraries(transcribe PRIVATE sensorycloud)
 
 add_executable(synthesize_speech synthesize_speech.cpp)
 target_link_libraries(synthesize_speech PRIVATE sensorycloud)
+
+add_executable(authenticate authenticate.cpp)
+target_link_libraries(authenticate PRIVATE sensorycloud)
+
+add_executable(enroll enroll.cpp)
+target_link_libraries(enroll PRIVATE sensorycloud)
+
+add_executable(enroll_event enroll_event.cpp)
+target_link_libraries(enroll_event PRIVATE sensorycloud)
+
+add_executable(validate_enrolled_event validate_enrolled_event.cpp)
+target_link_libraries(validate_enrolled_event PRIVATE sensorycloud)
+
+add_executable(validate_event validate_event.cpp)
+target_link_libraries(validate_event PRIVATE sensorycloud)

@@ -96,6 +96,12 @@ class TokenManager {
         SecureCredentialStore& keychain_
     ) : service(service_), keychain(keychain_) { }
 
+    /// @brief Return a reference to the underlying OAuth service.
+    ::sensory::service::OAuthService& get_service() { return service; }
+
+    /// @brief Return a reference to the underlying credential store.
+    SecureCredentialStore& get_keychain() { return keychain; }
+
     /// @brief Generate a new set of OAuth credentials and store them in the
     /// keychain.
     ///

@@ -72,6 +72,8 @@ class OpenCVReactor :
     std::mutex frame_mutex;
     /// Whether to produce verbose output in the reactor
     bool verbose = false;
+    /// A flag determining whether the stream is actively running.
+    std::atomic<bool> is_running;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
@@ -80,7 +82,8 @@ class OpenCVReactor :
         is_enrolled(false),
         percent_complete(0),
         is_live(false),
-        verbose(verbose_) { }
+        verbose(verbose_),
+        is_running(true) { }
 
     /// @brief React to a _write done_ event.
     ///
@@ -96,6 +99,11 @@ class OpenCVReactor :
         std::vector<unsigned char> buffer;
         {  // Lock the mutex and encode the frame with JPEG into a buffer.
             std::lock_guard<std::mutex> lock(frame_mutex);
+            if (frame.empty()) {
+                is_running = false;
+                StartWritesDone();
+                return;
+            }
             cv::imencode(".jpg", frame, buffer);
         }
         // Create the request from the encoded image data.
@@ -128,12 +136,14 @@ class OpenCVReactor :
         percent_complete = response.percentcomplete() / 100.f;
         // Set the liveness status of the last frame.
         is_live = response.isalive();
-        if (!is_enrolled) {  // Start the next read request.
-            StartRead(&response);
-        } else {
-            std::cout << "Successfully enrolled with ID: "
-                << response.enrollmentid() << std::endl;
+        if (!is_running) {
+            OnDone({});
+            return;
         }
+        if (!is_enrolled)  // Start the next read request.
+            StartRead(&response);
+        else
+            std::cout << "Enrolled with ID: " << response.enrollmentid() << std::endl;
     }
 
     /// @brief Stream video from an OpenCV capture device.
@@ -213,8 +223,8 @@ int main(int argc, const char** argv) {
         .default_value("HIGH")
         .help("THRESHOLD The security threshold for conducting the liveness check.");
     parser.add_argument({ "-D", "--device" })
-        .default_value(0)
-        .help("DEVICE The ID of the OpenCV device to use.");
+        .default_value("0")
+        .help("DEVICE The ID of the OpenCV device to use or a path to an image / video file.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
         .help("VERBOSE Produce verbose output.");
@@ -235,7 +245,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = RecognitionThreshold::HIGH;
     else if (args.get<std::string>("threshold") == "HIGHEST")
         THRESHOLD = RecognitionThreshold::HIGHEST;
-    const auto DEVICE = args.get<int>("device");
+    const auto DEVICE = args.get<std::string>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create an insecure credential store for keeping OAuth credentials in.
@@ -295,8 +305,9 @@ int main(int argc, const char** argv) {
 
     // Create an image capture object
     cv::VideoCapture capture;
-    if (!capture.open(DEVICE)) {
-        std::cout << "Capture from camera #" << DEVICE << " failed" << std::endl;
+    const bool IS_DEVICE_NUMERIC = !DEVICE.empty() && DEVICE.find_first_not_of("0123456789") == std::string::npos;
+    if (!(IS_DEVICE_NUMERIC ? capture.open(stoi(DEVICE)) : capture.open(DEVICE))) {
+        std::cout << "Capture from device " << DEVICE << " failed" << std::endl;
         return 1;
     }
 

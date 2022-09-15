@@ -68,9 +68,15 @@ if(SENSORY_CLOUD_GENERATE_PROTO)
         string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
         string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_SRC ${GRPC_SRC})
         list(APPEND GRPC_SRCS ${GRPC_SRC})
+        # Create the gRPC definition file
+        if (SENSORY_CLOUD_BUILD_TESTS)
+            string(REPLACE ".proto" "_mock.grpc.pb.h" GRPC_MOCK ${PROTO})
+            string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_MOCK ${GRPC_MOCK})
+            list(APPEND GRPC_MOCKS ${GRPC_MOCK})
+        endif()
         # Create the command to generate the protobuf and gRPC code
         add_custom_command(
-            OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}"
+            OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}" "${GRPC_MOCKS}"
             COMMAND ${_PROTOBUF_PROTOC}
             ARGS --grpc_out "${GRPC_OUT}${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
                 --cpp_out "${PROJECT_SOURCE_DIR}/include/sensorycloud/generated"
@@ -84,8 +90,8 @@ if(SENSORY_CLOUD_GENERATE_PROTO)
 else()
     file(GLOB_RECURSE PROTO_HDRS CONFIGURE_DEPENDS include/*.pb.h)
     file(GLOB_RECURSE PROTO_SRCS CONFIGURE_DEPENDS include/*.pb.cc)
-    file(GLOB_RECURSE GRPC_HDRS CONFIGURE_DEPENDS include/*.grpc.h)
-    file(GLOB_RECURSE GRPC_SRCS CONFIGURE_DEPENDS include/*.grpc.cc)
+    file(GLOB_RECURSE GRPC_HDRS CONFIGURE_DEPENDS include/*.grpc.pb.h)
+    file(GLOB_RECURSE GRPC_SRCS CONFIGURE_DEPENDS include/*.grpc.pb.cc)
 endif()  # SENSORY_CLOUD_GENERATE_PROTO
 
 # --- Library ----------------------------------------------------------------
@@ -343,6 +349,9 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT)
 
     add_executable(examples_management_async examples/management/management_async.cpp)
     target_link_libraries(examples_management_async PRIVATE sensorycloud)
+
+    add_executable(apitool examples/management/apitool.cpp)
+    target_link_libraries(apitool PRIVATE sensorycloud)
 endif()
 
 if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_DR_WAV)
@@ -353,4 +362,19 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_DR_WAV)
 
     add_executable(examples_dr_wav_synthesize_speech examples/dr_wav/synthesize_speech.cpp)
     target_link_libraries(examples_dr_wav_synthesize_speech PRIVATE sensorycloud)
+
+    add_executable(examples_dr_wav_authenticate examples/dr_wav/authenticate.cpp)
+    target_link_libraries(examples_dr_wav_authenticate PRIVATE sensorycloud)
+
+    add_executable(examples_dr_wav_enroll examples/dr_wav/enroll.cpp)
+    target_link_libraries(examples_dr_wav_enroll PRIVATE sensorycloud)
+
+    add_executable(examples_dr_wav_enroll_event examples/dr_wav/enroll_event.cpp)
+    target_link_libraries(examples_dr_wav_enroll_event PRIVATE sensorycloud)
+
+    add_executable(examples_dr_wav_validate_enrolled_event examples/dr_wav/validate_enrolled_event.cpp)
+    target_link_libraries(examples_dr_wav_validate_enrolled_event PRIVATE sensorycloud)
+
+    add_executable(examples_dr_wav_validate_event examples/dr_wav/validate_event.cpp)
+    target_link_libraries(examples_dr_wav_validate_event PRIVATE sensorycloud)
 endif()

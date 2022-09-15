@@ -14,13 +14,6 @@ the [gRPC Tutorial][gRPC Tutorial] and [gRPC Documentation][gRPC Documentation]
 to familiarize yourself with some of the gRPC structures and patterns that are
 used in this SDK and tutorial.
 
-The examples in this tutorial are based on the SDK's synchronous blocking
-interface. For an asynchronous interface based on an event-loop pattern using
-`grpc::CompletionQueue`, please refer to
-[async_event_loop.md](async_event_loop.md). For an asynchronous interface based
-on callback and reactor patterns, refer to
-[async_callback.md](async_callback.md).
-
 ## Project Setup
 
 The recommended build system for projects based on this SDK is
@@ -85,8 +78,8 @@ cross-device trust. As such, each device will need to provide the following
 information when instantiating the SDK:
 
 1.  A name for the device for identifying it among the cluster of devices,
-1.  The type of device enrollment to use, e.g., `sharedSecret` if you fleet uses
-    "passphrase"-based authentication or `JWT` to use JavaScript web tokens, and
+1.  The type of device enrollment to use, e.g., `sharedSecret` if your fleet
+    uses "passphrase"-based authentication or `JWT` to use JSON web tokens, and
 1.  The value for the credential which varies depending on the device
     enrollment.
 
@@ -116,8 +109,8 @@ isSecure = 1
 
 ### Secure Credential Storage
 
-The last thing you will need to set up your application is a structure for
-storing secure credentials in a way that fits your security needs.
+The last thing you will need to set up for your application is a structure for
+storing credentials in a way that fits your security needs.
 `SecureCredentialStore` provides the interface for secure credential storage
 that must be implemented for your specific usage.
 

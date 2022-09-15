@@ -1,4 +1,4 @@
-# A docker file to build a CI image for CentOS 8.
+# A docker file to build a CI image for RedHat Enterprise Linux 8.
 #
 # Author: Christian Kauten (ckauten@sensoryinc.com)
 #
@@ -44,14 +44,6 @@ RUN yum -y upgrade
 # Install dependencies for the SDK.
 RUN yum install -y autoconf libtool pkg-config gcc gcc-c++ git cmake
 
-# Install the latest version of CMake. CMake does not officially support RHEL
-# 8 anymore, so CMake must be compiled from source.
-# RUN yum -y group install "Development Tools"
-# RUN yum install -y wget
-# RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz
-# RUN tar -xvf cmake-3.22.1.tar.gz
-# RUN cd /cmake-3.22.1 && ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF && make && make install
-
 # ----------------------------------------------------------------------------
 # MARK: Protobuf and gRPC
 # ----------------------------------------------------------------------------
@@ -65,6 +57,7 @@ RUN printf "cmake_minimum_required(VERSION 3.11)\nproject(clone-grpc)\ninclude(c
 # Enable verbose output from `FetchContent` to monitor the cloning of gRPC,
 # which can be slow.
 RUN mkdir /cpp-sdk/build && cd /cpp-sdk/build && cmake -DGRPC_FETCHCONTENT=ON -DFETCHCONTENT_QUIET=OFF ..
+RUN cd /cpp-sdk/build && make -j`nproc`
 
 # ----------------------------------------------------------------------------
 # MARK: Source Files
@@ -76,3 +69,4 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
+ADD ./examples /cpp-sdk/examples

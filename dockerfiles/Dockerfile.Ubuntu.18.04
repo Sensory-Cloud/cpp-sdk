@@ -67,6 +67,7 @@ RUN printf "cmake_minimum_required(VERSION 3.11)\nproject(clone-grpc)\ninclude(c
 # Enable verbose output from `FetchContent` to monitor the cloning of gRPC,
 # which can be slow.
 RUN mkdir /cpp-sdk/build && cd /cpp-sdk/build && cmake -DGRPC_FETCHCONTENT=ON -DFETCHCONTENT_QUIET=OFF ..
+RUN cd /cpp-sdk/build && make -j`nproc`
 
 # ----------------------------------------------------------------------------
 # MARK: Source Files
@@ -78,3 +79,4 @@ ADD ./proto /cpp-sdk/proto
 ADD ./include /cpp-sdk/include
 ADD ./src /cpp-sdk/src
 ADD ./tests /cpp-sdk/tests
+ADD ./examples /cpp-sdk/examples

@@ -81,6 +81,14 @@ int main(int argc, const char** argv) {
         std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
     }
 
+    // Initialize the client.
+    sensory::api::v1::management::DeviceResponse response;
+    status = cloud.initialize(&response);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to initialize (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
+    }
+
     // ------ Query the available audio models ---------------------------------
 
     if (GETMODELS) {

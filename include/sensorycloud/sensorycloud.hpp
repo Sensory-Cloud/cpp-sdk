@@ -35,6 +35,7 @@
 #include "./services/video_service.hpp"
 #include "./token_manager/token_manager.hpp"
 #include "./io/ini.hpp"
+#include "./util/jwt.h"
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -246,10 +247,21 @@ class SensoryCloud {
         if (token_manager.has_token()) return {};  // already registered.
         const auto device_credentials = token_manager.has_saved_credentials() ?
             token_manager.get_saved_credentials() : token_manager.generate_credentials();
-        // TODO: switch logic to support [none,sharedSecret,jwt]
+        // If we're using a JWT token, it needs to be signed.
+        auto credential = registration_credentials.credential;
+        if (registration_credentials.enrollment_type == EnrollmentType::JWT)
+            credential = jwt::create()
+                .set_issuer("sensorycloud-cpp-sdk")
+                .set_issued_at(std::chrono::system_clock::now())
+                // .set_expires_at(std::chrono::system_clock::now() + std::chrono::days{30})
+                .set_type("JWS")
+                .set_payload_claim("device_name", jwt::claim(registration_credentials.device_name))
+                .set_payload_claim("tenant_id", jwt::claim(token_manager.get_service().get_config().get_tenant_id()))
+                .set_payload_claim("client_id", jwt::claim(device_credentials.id))
+                .sign(jwt::algorithm::ed25519{registration_credentials.credential});
         return oauth.registerDevice(response,
             registration_credentials.device_name,
-            registration_credentials.credential,
+            credential,
             device_credentials.id,
             device_credentials.secret
         );

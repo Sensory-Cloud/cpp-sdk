@@ -102,5 +102,6 @@ RUN vagrant up
 # ADD ./include /cpp-sdk/include
 # ADD ./src /cpp-sdk/src
 # ADD ./tests /cpp-sdk/tests
+# ADD ./examples /cpp-sdk/examples
 # # Remove any generated protobuf and gRPC code.
 # RUN rm -rf /cpp-sdk/include/sensorycloud/generated/*
