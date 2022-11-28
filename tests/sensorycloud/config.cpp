@@ -1,6 +1,6 @@
 // Test cases for SDK configuration structures in the sensory namespace.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

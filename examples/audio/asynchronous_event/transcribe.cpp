@@ -1,6 +1,6 @@
 // An example of audio transcription using SensoryCloud with PortAudio.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -27,14 +27,15 @@
 #include <iostream>
 #include <thread>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::service::AudioService;
-using sensory::service::audio::TranscriptAggregator;
+using sensory::util::TranscriptAggregator;
 using sensory::api::v1::audio::WordState;
+using sensory::api::v1::audio::ThresholdSensitivity;
 
 /// @brief Print a description of a PortAudio error that occurred.
 ///
@@ -54,64 +55,113 @@ int main(int argc, const char** argv) {
         .prog("transcribe")
         .description("A tool for streaming audio files to SensoryCloud for audio transcription.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The name of the transcription model to use.");
+        .help("The name of the transcription model to use.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID for the transcription.");
+        .help("The name of the user ID for the transcription.");
+    parser.add_argument({ "-cp", "--capitalization-punctuation"}).action("store_true")
+        .help("Enable capitalization and punctuation.");
+    parser.add_argument({ "-S", "--single-utterance"}).action("store_true")
+        .help("Enable single utterance mode.");
+    parser.add_argument({ "-Vs", "--vad-sensitivity"})
+        .help("How sensitive the voice activity detector should be when single utterance mode is enabled.")
+        .default_value("LOW");
+    parser.add_argument({ "-Vd", "--vad-duration"})
+        .help("The number of seconds of silence to detect before automatically ending the stream when single utterance mode is enabled.")
+        .default_value(1.f);
+    parser.add_argument({ "-CV", "--custom-vocabulary"})
+        .help("An optional set of custom vocab words as a list of comma de-limited strings, e.g.,\n\t\t\t-CV \"<WORD 1>,<SOUNDS LIKE 1>,<SOUNDS LIKE 2>\" \"<WORD 2>,<SOUNDS LIKE 3>\"")
+        .nargs("+");
+    parser.add_argument({ "-CVs", "--custom-vocabulary-sensitivity"})
+        .help("How aggressive the word replacement should be when using a custom vocabulary.")
+        .default_value("MEDIUM");
+    parser.add_argument({ "-CVid", "--custom-vocabulary-id"})
+        .help("An optional ID of a server-side custom vocabulary list to use.");
     parser.add_argument({ "-L", "--language" })
-        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-cc", "--closedcaptioning" })
         .action("store_true")
-        .help("CLOSEDCAPTIONING Whether to render simplified closed captioning transcription outputs.");
+        .help("Whether to render simplified closed captioning transcription outputs.");
     // parser.add_argument({ "-C", "--chunksize" })
-    //     .help("CHUNKSIZE The number of audio samples per message (default 4096).")
+    //     .help("The number of audio samples per message (default 4096).")
     //     .default_value("4096");
     // parser.add_argument({ "-S", "--samplerate" })
-    //     .help("SAMPLERATE The audio sample rate of the input stream.")
+    //     .help("The audio sample rate of the input stream.")
     //     .choices({"9600", "11025", "12000", "16000", "22050", "24000", "32000", "44100", "48000", "88200", "96000", "192000"})
     //     .default_value("16000");
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
-        .help("VERBOSE Produce verbose output during transcription.");
+        .help("Produce verbose output during transcription.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
     const auto GETMODELS = args.get<bool>("getmodels");
     const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
+    const auto CAPITALIZATION_PUNCTUATION = args.get<bool>("capitalization-punctuation");
+    const auto SINGLE_UTTERANCE = args.get<bool>("single-utterance");
+    ThresholdSensitivity VAD_SENSITIVITY;
+    if (args.get<std::string>("vad-sensitivity") == "LOW")
+        VAD_SENSITIVITY = ThresholdSensitivity::LOW;
+    else if (args.get<std::string>("vad-sensitivity") == "MEDIUM")
+        VAD_SENSITIVITY = ThresholdSensitivity::MEDIUM;
+    else if (args.get<std::string>("vad-sensitivity") == "HIGH")
+        VAD_SENSITIVITY = ThresholdSensitivity::HIGH;
+    else if (args.get<std::string>("vad-sensitivity") == "HIGHEST")
+        VAD_SENSITIVITY = ThresholdSensitivity::HIGHEST;
+    const auto VAD_DURATION = args.get<float>("vad-duration");
+    const auto CUSTOM_VOCAB = args.get<std::vector<std::string>>("--custom-vocabulary");
+    ThresholdSensitivity CUSTOM_VOCAB_SENSITIVITY;
+    if (args.get<std::string>("custom-vocabulary-sensitivity") == "LOW")
+        CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::LOW;
+    else if (args.get<std::string>("custom-vocabulary-sensitivity") == "MEDIUM")
+        CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::MEDIUM;
+    else if (args.get<std::string>("custom-vocabulary-sensitivity") == "HIGH")
+        CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::HIGH;
+    else if (args.get<std::string>("custom-vocabulary-sensitivity") == "HIGHEST")
+        CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::HIGHEST;
+    const auto CUSTOM_VOCAB_ID = args.get<std::string>("custom-vocabulary-id");
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
     const auto CLOSEDCAPTIONING = args.get<bool>("closedcaptioning");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    sensory::api::common::ServerHealthResponse server_healthResponse;
-    auto status = cloud.health.getHealth(&server_healthResponse);
+    sensory::api::common::ServerHealthResponse server_health_response;
+    auto status = cloud.health.get_health(&server_health_response);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
         std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_healthResponse.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
+        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
+        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
+    }
+
+    // Initialize the client.
+    sensory::api::v1::management::DeviceResponse response;
+    status = cloud.initialize(&response);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to initialize (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Query the available audio models ---------------------------------
 
     if (GETMODELS) {
         int error_code = 0;
-        cloud.audio.getModels([&error_code](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
+        cloud.audio.get_models([&error_code](AudioService<FileSystemCredentialStore>::GetModelsCallbackData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to get audio models ("
                     << call->getStatus().error_code() << "): "
@@ -138,8 +188,7 @@ int main(int argc, const char** argv) {
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
     const auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
-    const auto BYTES_PER_BLOCK =
-        CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
+    const auto BYTES_PER_BLOCK = CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     /// Tagged events in the CompletionQueue handler.
     enum class Events {
@@ -153,18 +202,31 @@ int main(int argc, const char** argv) {
         Finish = 4
     };
 
-    // Start an asynchronous RPC to fetch the names of the available models. The
-    // RPC will use the grpc::CompletionQueue as an event loop.
+    // Create an audio config that describes the format of the audio stream.
+    auto audio_config = new sensory::api::v1::audio::AudioConfig;
+    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+    audio_config->set_sampleratehertz(SAMPLE_RATE);
+    audio_config->set_audiochannelcount(NUM_CHANNELS);
+    audio_config->set_languagecode(LANGUAGE);
+    // Create the transcribe config with the transcription parameters.
+    auto transcribe_config = new sensory::api::v1::audio::TranscribeConfig;
+    transcribe_config->set_modelname(MODEL);
+    transcribe_config->set_userid(USER_ID);
+    transcribe_config->set_enablepunctuationcapitalization(CAPITALIZATION_PUNCTUATION);
+    transcribe_config->set_dosingleutterance(SINGLE_UTTERANCE);
+    transcribe_config->set_vadsensitivity(VAD_SENSITIVITY);
+    transcribe_config->set_vadduration(VAD_DURATION);
+    if (not CUSTOM_VOCAB.empty()) {  // Custom vocab requires at least 1 word
+        auto custom_vocab = new sensory::api::v1::audio::CustomVocabularyWords;
+        for (const auto& alternative_pronunciation : CUSTOM_VOCAB)
+            custom_vocab->add_words(alternative_pronunciation);
+        transcribe_config->set_allocated_customwordlist(custom_vocab);
+    }
+    transcribe_config->set_customvocabrewardthreshold(CUSTOM_VOCAB_SENSITIVITY);
+    transcribe_config->set_customvocabularyid(CUSTOM_VOCAB_ID);
+    // Initialize the stream with the cloud.
     grpc::CompletionQueue queue;
-    auto stream = cloud.audio.transcribe(&queue,
-        sensory::service::audio::new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, NUM_CHANNELS, LANGUAGE
-        ),
-        sensory::service::audio::new_transcribe_config(MODEL, USER_ID),
-        nullptr,
-        (void*) Events::Finish
-    );
+    auto stream = cloud.audio.transcribe(&queue, audio_config, transcribe_config, nullptr, (void*) Events::Finish);
 
     // start the stream event thread in the background to handle events.
     std::thread audioThread([&stream, &queue, &CLOSEDCAPTIONING, &VERBOSE](){

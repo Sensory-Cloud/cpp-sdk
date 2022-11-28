@@ -202,10 +202,44 @@ struct EnrollmentTokenDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT EnrollmentTokenDefaultTypeInternal _EnrollmentToken_default_instance_;
+constexpr CreateKeyRequest::CreateKeyRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , value_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , expiration_(int64_t{0})
+  , keytype_(0)
+{}
+struct CreateKeyRequestDefaultTypeInternal {
+  constexpr CreateKeyRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~CreateKeyRequestDefaultTypeInternal() {}
+  union {
+    CreateKeyRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CreateKeyRequestDefaultTypeInternal _CreateKeyRequest_default_instance_;
+constexpr KeyResponse::KeyResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , tenantid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , expiration_(int64_t{0})
+  , keytype_(0)
+
+  , disabled_(false){}
+struct KeyResponseDefaultTypeInternal {
+  constexpr KeyResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~KeyResponseDefaultTypeInternal() {}
+  union {
+    KeyResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT KeyResponseDefaultTypeInternal _KeyResponse_default_instance_;
 }  // namespace common
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_common_2fcommon_2eproto[12];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_common_2fcommon_2eproto[14];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_common_2fcommon_2eproto[9];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_common_2fcommon_2eproto = nullptr;
 
@@ -331,6 +365,28 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_common_2fcommon_2eproto::offse
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::EnrollmentToken, token_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::common::EnrollmentToken, expiration_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::CreateKeyRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::CreateKeyRequest, name_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::CreateKeyRequest, keytype_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::CreateKeyRequest, value_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::CreateKeyRequest, expiration_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, id_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, name_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, keytype_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, expiration_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, tenantid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::common::KeyResponse, disabled_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::common::CompressionConfiguration)},
@@ -345,6 +401,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 89, -1, -1, sizeof(::sensory::api::common::PaginationOptions)},
   { 99, -1, -1, sizeof(::sensory::api::common::PaginationResponse)},
   { 113, -1, -1, sizeof(::sensory::api::common::EnrollmentToken)},
+  { 121, -1, -1, sizeof(::sensory::api::common::CreateKeyRequest)},
+  { 131, -1, -1, sizeof(::sensory::api::common::KeyResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -360,6 +418,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_PaginationOptions_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_PaginationResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_EnrollmentToken_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_CreateKeyRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::common::_KeyResponse_default_instance_),
 };
 
 const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -399,37 +459,45 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "alCount\030\004 \001(\003\022\020\n\010pageSize\030\005 \001(\005\022\025\n\rprevP"
   "ageIndex\030\006 \001(\005\022\030\n\020currentPageIndex\030\007 \001(\005"
   "\022\025\n\rnextPageIndex\030\010 \001(\005\"4\n\017EnrollmentTok"
-  "en\022\r\n\005token\030\001 \001(\014\022\022\n\nexpiration\030\002 \001(\003*\026\n"
-  "\004Void\022\016\n\nVOID_VALUE\020\000*Q\n\007KeyType\022\016\n\nPUBL"
-  "IC_KEY\020\000\022\026\n\022PUBLIC_KEY_ED25519\020\001\022\021\n\rSHAR"
-  "ED_SECRET\020\003\022\013\n\007AES_256\020\004*4\n\013FeatureFlag\022"
-  "\014\n\010TSSV_ALL\020\000\022\n\n\006TS_ALL\020\001\022\013\n\007TNL_ALL\020\002*\244"
-  "\004\n\tModelType\022\013\n\007UNKNOWN\020\000\022$\n VOICE_BIOME"
-  "TRIC_TEXT_INDEPENDENT\020\001\022\034\n\030VOICE_BIOMETR"
-  "IC_WAKEWORD\020\002\022\030\n\024VOICE_EVENT_WAKEWORD\020\003\022"
-  "\034\n\030VOICE_TRANSCRIBE_GRAMMAR\020\004\022\'\n#VOICE_T"
-  "RANSCRIBE_COMMAND_AND_SEARCH\020\005\022(\n$VOICE_"
-  "RECOGNITION_ACTIVITY_DETECTION\020\006\022\033\n\027VOIC"
-  "E_FEATURE_EXTRACTOR\020\007\022\"\n\036VOICE_BIOMETRIC"
-  "_LIVENESS_DIGIT\020\010\022\"\n\036VOICE_BIOMETRIC_TEX"
-  "T_DEPENDENT\020\t\022\023\n\017VOICE_SYNTHESIS\020\n\022\032\n\026SO"
-  "UND_EVENT_ENROLLABLE\020d\022\034\n\030SOUND_EVENT_RE"
-  "VALIDATION\020e\022\025\n\021SOUND_EVENT_FIXED\020f\022\025\n\021S"
-  "OUND_SCENE_FIXED\020g\022\023\n\016FACE_BIOMETRIC\020\311\001\022"
-  "\025\n\020FACE_RECOGNITION\020\312\001\022\027\n\022OBJECT_RECOGNI"
-  "TION\020\313\001\022\024\n\017IMAGE_TRANSFORM\020\314\001*J\n\016Technol"
-  "ogyType\022\013\n\007NOT_SET\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007"
-  "\n\003TNL\020\003\022\007\n\003STT\020\004\022\007\n\003TTS\020\005*&\n\017Compression"
-  "Type\022\023\n\017IMAGE_GRAYSCALE\020\000*[\n\nClientType\022"
-  "\010\n\004ROOT\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CLUSTER\020\002\022\010\n\004US"
-  "ER\020\003\022\016\n\nSUPER_USER\020\004\022\020\n\014BILLING_USER\020\005*g"
-  "\n\016UsageEventType\022\022\n\016AUTHENTICATION\020\000\022\017\n\013"
-  "RECOGNITION\020\001\022\016\n\nENROLLMENT\020\002\022\r\n\tSYNTHES"
-  "IS\020\003\022\021\n\rTRANSCRIPTION\020\004*\037\n\nServerType\022\t\n"
-  "\005TITAN\020\000\022\006\n\002IO\020\001Bo\n\032ai.sensorycloud.api."
-  "commonB\025SensoryApiCommonProtoP\001Z8gitlab."
-  "com/sensory-cloud/server/titan.git/pkg/a"
-  "pi/commonb\006proto3"
+  "en\022\r\n\005token\030\001 \001(\014\022\022\n\nexpiration\030\002 \001(\003\"\206\001"
+  "\n\020CreateKeyRequest\022\027\n\004name\030\001 \001(\tB\t\372B\006r\004\020"
+  "\001\030\177\0226\n\007keyType\030\002 \001(\0162\033.sensory.api.commo"
+  "n.KeyTypeB\010\372B\005\202\001\002\020\001\022\r\n\005value\030\003 \001(\t\022\022\n\nex"
+  "piration\030\004 \001(\003\"\215\001\n\013KeyResponse\022\n\n\002id\030\001 \001"
+  "(\t\022\014\n\004name\030\002 \001(\t\022,\n\007keyType\030\003 \001(\0162\033.sens"
+  "ory.api.common.KeyType\022\022\n\nexpiration\030\004 \001"
+  "(\003\022\020\n\010tenantId\030\005 \001(\t\022\020\n\010disabled\030\006 \001(\010*\026"
+  "\n\004Void\022\016\n\nVOID_VALUE\020\000*Q\n\007KeyType\022\016\n\nPUB"
+  "LIC_KEY\020\000\022\026\n\022PUBLIC_KEY_ED25519\020\001\022\021\n\rSHA"
+  "RED_SECRET\020\003\022\013\n\007AES_256\020\004*4\n\013FeatureFlag"
+  "\022\014\n\010TSSV_ALL\020\000\022\n\n\006TS_ALL\020\001\022\013\n\007TNL_ALL\020\002*"
+  "\244\004\n\tModelType\022\013\n\007UNKNOWN\020\000\022$\n VOICE_BIOM"
+  "ETRIC_TEXT_INDEPENDENT\020\001\022\034\n\030VOICE_BIOMET"
+  "RIC_WAKEWORD\020\002\022\030\n\024VOICE_EVENT_WAKEWORD\020\003"
+  "\022\034\n\030VOICE_TRANSCRIBE_GRAMMAR\020\004\022\'\n#VOICE_"
+  "TRANSCRIBE_COMMAND_AND_SEARCH\020\005\022(\n$VOICE"
+  "_RECOGNITION_ACTIVITY_DETECTION\020\006\022\033\n\027VOI"
+  "CE_FEATURE_EXTRACTOR\020\007\022\"\n\036VOICE_BIOMETRI"
+  "C_LIVENESS_DIGIT\020\010\022\"\n\036VOICE_BIOMETRIC_TE"
+  "XT_DEPENDENT\020\t\022\023\n\017VOICE_SYNTHESIS\020\n\022\032\n\026S"
+  "OUND_EVENT_ENROLLABLE\020d\022\034\n\030SOUND_EVENT_R"
+  "EVALIDATION\020e\022\025\n\021SOUND_EVENT_FIXED\020f\022\025\n\021"
+  "SOUND_SCENE_FIXED\020g\022\023\n\016FACE_BIOMETRIC\020\311\001"
+  "\022\025\n\020FACE_RECOGNITION\020\312\001\022\027\n\022OBJECT_RECOGN"
+  "ITION\020\313\001\022\024\n\017IMAGE_TRANSFORM\020\314\001*J\n\016Techno"
+  "logyType\022\013\n\007NOT_SET\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022"
+  "\007\n\003TNL\020\003\022\007\n\003STT\020\004\022\007\n\003TTS\020\005*&\n\017Compressio"
+  "nType\022\023\n\017IMAGE_GRAYSCALE\020\000*|\n\nClientType"
+  "\022\013\n\007INVALID\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CLUSTER\020\002\022\010"
+  "\n\004USER\020\003\022\016\n\nSUPER_USER\020\004\022\020\n\014BILLING_USER"
+  "\020\005\022\022\n\016READ_ONLY_USER\020\006\022\010\n\004ROOT\020d*g\n\016Usag"
+  "eEventType\022\022\n\016AUTHENTICATION\020\000\022\017\n\013RECOGN"
+  "ITION\020\001\022\016\n\nENROLLMENT\020\002\022\r\n\tSYNTHESIS\020\003\022\021"
+  "\n\rTRANSCRIPTION\020\004*\037\n\nServerType\022\t\n\005TITAN"
+  "\020\000\022\006\n\002IO\020\001Bo\n\032ai.sensorycloud.api.common"
+  "B\025SensoryApiCommonProtoP\001Z8gitlab.com/se"
+  "nsory-cloud/server/titan.git/pkg/api/com"
+  "monb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2fcommon_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
@@ -437,8 +505,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2fcommon_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2fcommon_2eproto = {
-  false, false, 2657, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
-  &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 2, 12,
+  false, false, 2971, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
+  &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 2, 14,
   schemas, file_default_instances, TableStruct_common_2fcommon_2eproto::offsets,
   file_level_metadata_common_2fcommon_2eproto, file_level_enum_descriptors_common_2fcommon_2eproto, file_level_service_descriptors_common_2fcommon_2eproto,
 };
@@ -569,6 +637,8 @@ bool ClientType_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
+    case 100:
       return true;
     default:
       return false;
@@ -4066,6 +4136,677 @@ void EnrollmentToken::InternalSwap(EnrollmentToken* other) {
       file_level_metadata_common_2fcommon_2eproto[11]);
 }
 
+// ===================================================================
+
+class CreateKeyRequest::_Internal {
+ public:
+};
+
+CreateKeyRequest::CreateKeyRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.common.CreateKeyRequest)
+}
+CreateKeyRequest::CreateKeyRequest(const CreateKeyRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_value().empty()) {
+    value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_value(), 
+      GetArenaForAllocation());
+  }
+  ::memcpy(&expiration_, &from.expiration_,
+    static_cast<size_t>(reinterpret_cast<char*>(&keytype_) -
+    reinterpret_cast<char*>(&expiration_)) + sizeof(keytype_));
+  // @@protoc_insertion_point(copy_constructor:sensory.api.common.CreateKeyRequest)
+}
+
+void CreateKeyRequest::SharedCtor() {
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+value_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&expiration_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&keytype_) -
+    reinterpret_cast<char*>(&expiration_)) + sizeof(keytype_));
+}
+
+CreateKeyRequest::~CreateKeyRequest() {
+  // @@protoc_insertion_point(destructor:sensory.api.common.CreateKeyRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void CreateKeyRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  value_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void CreateKeyRequest::ArenaDtor(void* object) {
+  CreateKeyRequest* _this = reinterpret_cast< CreateKeyRequest* >(object);
+  (void)_this;
+}
+void CreateKeyRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void CreateKeyRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void CreateKeyRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.common.CreateKeyRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  name_.ClearToEmpty();
+  value_.ClearToEmpty();
+  ::memset(&expiration_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&keytype_) -
+      reinterpret_cast<char*>(&expiration_)) + sizeof(keytype_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* CreateKeyRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string name = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.CreateKeyRequest.name"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.KeyType keyType = 2 [(.validate.rules) = {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_keytype(static_cast<::sensory::api::common::KeyType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // string value = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_value();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.CreateKeyRequest.value"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 expiration = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          expiration_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* CreateKeyRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.common.CreateKeyRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string name = 1 [(.validate.rules) = {
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.CreateKeyRequest.name");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_name(), target);
+  }
+
+  // .sensory.api.common.KeyType keyType = 2 [(.validate.rules) = {
+  if (this->_internal_keytype() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_keytype(), target);
+  }
+
+  // string value = 3;
+  if (!this->_internal_value().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_value().data(), static_cast<int>(this->_internal_value().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.CreateKeyRequest.value");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_value(), target);
+  }
+
+  // int64 expiration = 4;
+  if (this->_internal_expiration() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(4, this->_internal_expiration(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.common.CreateKeyRequest)
+  return target;
+}
+
+size_t CreateKeyRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.common.CreateKeyRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string name = 1 [(.validate.rules) = {
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  // string value = 3;
+  if (!this->_internal_value().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_value());
+  }
+
+  // int64 expiration = 4;
+  if (this->_internal_expiration() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_expiration());
+  }
+
+  // .sensory.api.common.KeyType keyType = 2 [(.validate.rules) = {
+  if (this->_internal_keytype() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_keytype());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CreateKeyRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    CreateKeyRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CreateKeyRequest::GetClassData() const { return &_class_data_; }
+
+void CreateKeyRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<CreateKeyRequest *>(to)->MergeFrom(
+      static_cast<const CreateKeyRequest &>(from));
+}
+
+
+void CreateKeyRequest::MergeFrom(const CreateKeyRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.common.CreateKeyRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
+  }
+  if (!from._internal_value().empty()) {
+    _internal_set_value(from._internal_value());
+  }
+  if (from._internal_expiration() != 0) {
+    _internal_set_expiration(from._internal_expiration());
+  }
+  if (from._internal_keytype() != 0) {
+    _internal_set_keytype(from._internal_keytype());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void CreateKeyRequest::CopyFrom(const CreateKeyRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.common.CreateKeyRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CreateKeyRequest::IsInitialized() const {
+  return true;
+}
+
+void CreateKeyRequest::InternalSwap(CreateKeyRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, lhs_arena,
+      &other->name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &value_, lhs_arena,
+      &other->value_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(CreateKeyRequest, keytype_)
+      + sizeof(CreateKeyRequest::keytype_)
+      - PROTOBUF_FIELD_OFFSET(CreateKeyRequest, expiration_)>(
+          reinterpret_cast<char*>(&expiration_),
+          reinterpret_cast<char*>(&other->expiration_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata CreateKeyRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_common_2fcommon_2eproto_getter, &descriptor_table_common_2fcommon_2eproto_once,
+      file_level_metadata_common_2fcommon_2eproto[12]);
+}
+
+// ===================================================================
+
+class KeyResponse::_Internal {
+ public:
+};
+
+KeyResponse::KeyResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.common.KeyResponse)
+}
+KeyResponse::KeyResponse(const KeyResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_id(), 
+      GetArenaForAllocation());
+  }
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_tenantid().empty()) {
+    tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_tenantid(), 
+      GetArenaForAllocation());
+  }
+  ::memcpy(&expiration_, &from.expiration_,
+    static_cast<size_t>(reinterpret_cast<char*>(&disabled_) -
+    reinterpret_cast<char*>(&expiration_)) + sizeof(disabled_));
+  // @@protoc_insertion_point(copy_constructor:sensory.api.common.KeyResponse)
+}
+
+void KeyResponse::SharedCtor() {
+id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&expiration_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&disabled_) -
+    reinterpret_cast<char*>(&expiration_)) + sizeof(disabled_));
+}
+
+KeyResponse::~KeyResponse() {
+  // @@protoc_insertion_point(destructor:sensory.api.common.KeyResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void KeyResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  tenantid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void KeyResponse::ArenaDtor(void* object) {
+  KeyResponse* _this = reinterpret_cast< KeyResponse* >(object);
+  (void)_this;
+}
+void KeyResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void KeyResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void KeyResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.common.KeyResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  id_.ClearToEmpty();
+  name_.ClearToEmpty();
+  tenantid_.ClearToEmpty();
+  ::memset(&expiration_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&disabled_) -
+      reinterpret_cast<char*>(&expiration_)) + sizeof(disabled_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* KeyResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.KeyResponse.id"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.KeyResponse.name"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.common.KeyType keyType = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_keytype(static_cast<::sensory::api::common::KeyType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 expiration = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          expiration_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string tenantId = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          auto str = _internal_mutable_tenantid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.common.KeyResponse.tenantId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool disabled = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+          disabled_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* KeyResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.common.KeyResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string id = 1;
+  if (!this->_internal_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.KeyResponse.id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_id(), target);
+  }
+
+  // string name = 2;
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.KeyResponse.name");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_name(), target);
+  }
+
+  // .sensory.api.common.KeyType keyType = 3;
+  if (this->_internal_keytype() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      3, this->_internal_keytype(), target);
+  }
+
+  // int64 expiration = 4;
+  if (this->_internal_expiration() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(4, this->_internal_expiration(), target);
+  }
+
+  // string tenantId = 5;
+  if (!this->_internal_tenantid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_tenantid().data(), static_cast<int>(this->_internal_tenantid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.common.KeyResponse.tenantId");
+    target = stream->WriteStringMaybeAliased(
+        5, this->_internal_tenantid(), target);
+  }
+
+  // bool disabled = 6;
+  if (this->_internal_disabled() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->_internal_disabled(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.common.KeyResponse)
+  return target;
+}
+
+size_t KeyResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.common.KeyResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string id = 1;
+  if (!this->_internal_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_id());
+  }
+
+  // string name = 2;
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  // string tenantId = 5;
+  if (!this->_internal_tenantid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_tenantid());
+  }
+
+  // int64 expiration = 4;
+  if (this->_internal_expiration() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_expiration());
+  }
+
+  // .sensory.api.common.KeyType keyType = 3;
+  if (this->_internal_keytype() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_keytype());
+  }
+
+  // bool disabled = 6;
+  if (this->_internal_disabled() != 0) {
+    total_size += 1 + 1;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData KeyResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    KeyResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*KeyResponse::GetClassData() const { return &_class_data_; }
+
+void KeyResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<KeyResponse *>(to)->MergeFrom(
+      static_cast<const KeyResponse &>(from));
+}
+
+
+void KeyResponse::MergeFrom(const KeyResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.common.KeyResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_id().empty()) {
+    _internal_set_id(from._internal_id());
+  }
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
+  }
+  if (!from._internal_tenantid().empty()) {
+    _internal_set_tenantid(from._internal_tenantid());
+  }
+  if (from._internal_expiration() != 0) {
+    _internal_set_expiration(from._internal_expiration());
+  }
+  if (from._internal_keytype() != 0) {
+    _internal_set_keytype(from._internal_keytype());
+  }
+  if (from._internal_disabled() != 0) {
+    _internal_set_disabled(from._internal_disabled());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void KeyResponse::CopyFrom(const KeyResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.common.KeyResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool KeyResponse::IsInitialized() const {
+  return true;
+}
+
+void KeyResponse::InternalSwap(KeyResponse* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &id_, lhs_arena,
+      &other->id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, lhs_arena,
+      &other->name_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &tenantid_, lhs_arena,
+      &other->tenantid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(KeyResponse, disabled_)
+      + sizeof(KeyResponse::disabled_)
+      - PROTOBUF_FIELD_OFFSET(KeyResponse, expiration_)>(
+          reinterpret_cast<char*>(&expiration_),
+          reinterpret_cast<char*>(&other->expiration_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata KeyResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_common_2fcommon_2eproto_getter, &descriptor_table_common_2fcommon_2eproto_once,
+      file_level_metadata_common_2fcommon_2eproto[13]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace common
 }  // namespace api
@@ -4106,6 +4847,12 @@ template<> PROTOBUF_NOINLINE ::sensory::api::common::PaginationResponse* Arena::
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::common::EnrollmentToken* Arena::CreateMaybeMessage< ::sensory::api::common::EnrollmentToken >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::common::EnrollmentToken >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::common::CreateKeyRequest* Arena::CreateMaybeMessage< ::sensory::api::common::CreateKeyRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::common::CreateKeyRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::common::KeyResponse* Arena::CreateMaybeMessage< ::sensory::api::common::KeyResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::common::KeyResponse >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

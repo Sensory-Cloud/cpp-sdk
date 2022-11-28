@@ -1,6 +1,6 @@
 // An example of audio event validation based on file inputs.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -26,22 +26,21 @@
 #include <iostream>
 #include <regex>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "dep/audio_buffer.hpp"
 #include "dep/argparse.hpp"
 #include "dep/tqdm.hpp"
 
 using sensory::SensoryCloud;
 using sensory::token_manager::TokenManager;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::service::AudioService;
 using sensory::api::v1::audio::ThresholdSensitivity;
 
-/// @brief A bi-directional stream reactor for biometric enrollments from audio
-/// stream data.
+/// @brief A bi-directional stream reactor for audio signal event validation.
 ///
 class AudioFileReactor :
-    public AudioService<InsecureCredentialStore>::ValidateEventBidiReactor {
+    public AudioService<FileSystemCredentialStore>::ValidateEventBidiReactor {
  private:
     /// The audio samples to send to the cloud.
     const std::vector<int16_t>& buffer;
@@ -75,7 +74,7 @@ class AudioFileReactor :
         uint32_t frames_per_block_ = 4096,
         const bool& verbose_ = false
     ) :
-        AudioService<InsecureCredentialStore>::ValidateEventBidiReactor(),
+        AudioService<FileSystemCredentialStore>::ValidateEventBidiReactor(),
         buffer(buffer_),
         num_channels(num_channels_),
         sample_rate(sample_rate_),
@@ -144,30 +143,30 @@ int main(int argc, const char** argv) {
         .prog("validate_event")
         .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-i", "--input" }).required(true)
-        .help("INPUT The input audio file to stream to Sensory Cloud.");
+        .help("The input audio file to stream to Sensory Cloud.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The name of the event validation model to use.");
+        .help("The name of the event validation model to use.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID for the event validation.");
+        .help("The name of the user ID for the event validation.");
     parser.add_argument({ "-t", "--threshold" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
-        .help("THRESHOLD The sensitivity threshold for detecting audio events.");
+        .help("The sensitivity threshold for detecting audio events.");
     parser.add_argument({ "-L", "--language" })
-        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
-        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+        .help("The number of audio samples per message; 0 to stream all samples in one message (default).")
         .default_value(0);
     parser.add_argument({ "-p", "--padding" })
-        .help("PADDING The number of milliseconds of padding to append to the audio buffer.")
+        .help("The number of milliseconds of padding to append to the audio buffer.")
         .default_value(300);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
-        .help("VERBOSE Produce verbose output during transcription.");
+        .help("Produce verbose output during transcription.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -189,24 +188,24 @@ int main(int argc, const char** argv) {
     const auto VERBOSE = args.get<bool>("verbose");
     const auto PADDING = args.get<float>("padding");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    sensory::token_manager::FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
 
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Check the server health.
-    sensory::api::common::ServerHealthResponse server_healthResponse;
-    auto status = cloud.health.getHealth(&server_healthResponse);
+    sensory::api::common::ServerHealthResponse server_health_response;
+    auto status = cloud.health.get_health(&server_health_response);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
         std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_healthResponse.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
+        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
+        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
     }
 
     // Initialize the client.
@@ -239,22 +238,28 @@ int main(int argc, const char** argv) {
     // Pad the file with silence.
     buffer.pad_back(PADDING);
 
-    // Create the gRPC reactor to respond to streaming events.
+    // Create an audio config that describes the format of the audio stream.
+    auto audio_config = new sensory::api::v1::audio::AudioConfig;
+    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+    audio_config->set_sampleratehertz(buffer.get_sample_rate());
+    audio_config->set_audiochannelcount(buffer.get_channels());
+    audio_config->set_languagecode(LANGUAGE);
+    // Create the config with the event validation parameters.
+    auto validate_event_config = new sensory::api::v1::audio::ValidateEventConfig;
+    validate_event_config->set_modelname(MODEL);
+    validate_event_config->set_userid(USER_ID);
+    validate_event_config->set_sensitivity(THRESHOLD);
+
+    // Initialize the stream with the cloud.
     AudioFileReactor reactor(buffer.get_samples(),
         buffer.get_channels(),
         buffer.get_sample_rate(),
         CHUNK_SIZE > 0 ? CHUNK_SIZE : buffer.get_num_samples(),
         VERBOSE
     );
-    // Initialize the stream with the reactor for handling callbacks.
-    cloud.audio.validateEvent(&reactor,
-        sensory::service::audio::new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            buffer.get_sample_rate(), 1, LANGUAGE
-        ),
-        sensory::service::audio::new_validate_event_config(MODEL, USER_ID, THRESHOLD)
-    );
+    cloud.audio.validate_event(&reactor, audio_config, validate_event_config);
     reactor.StartCall();
+
     // Wait for the call to terminate and check the final status.
     status = reactor.await();
     if (!status.ok()) {  // The call failed, print a descriptive message.

@@ -49,7 +49,7 @@ struct TableStruct_common_2fcommon_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[14]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -65,12 +65,18 @@ extern CompressionConfigurationDefaultTypeInternal _CompressionConfiguration_def
 class CpuSummary;
 struct CpuSummaryDefaultTypeInternal;
 extern CpuSummaryDefaultTypeInternal _CpuSummary_default_instance_;
+class CreateKeyRequest;
+struct CreateKeyRequestDefaultTypeInternal;
+extern CreateKeyRequestDefaultTypeInternal _CreateKeyRequest_default_instance_;
 class EnrollmentToken;
 struct EnrollmentTokenDefaultTypeInternal;
 extern EnrollmentTokenDefaultTypeInternal _EnrollmentToken_default_instance_;
 class GenericClient;
 struct GenericClientDefaultTypeInternal;
 extern GenericClientDefaultTypeInternal _GenericClient_default_instance_;
+class KeyResponse;
+struct KeyResponseDefaultTypeInternal;
+extern KeyResponseDefaultTypeInternal _KeyResponse_default_instance_;
 class MemorySummary;
 struct MemorySummaryDefaultTypeInternal;
 extern MemorySummaryDefaultTypeInternal _MemorySummary_default_instance_;
@@ -101,8 +107,10 @@ extern TokenResponseDefaultTypeInternal _TokenResponse_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::sensory::api::common::CompressionConfiguration* Arena::CreateMaybeMessage<::sensory::api::common::CompressionConfiguration>(Arena*);
 template<> ::sensory::api::common::CpuSummary* Arena::CreateMaybeMessage<::sensory::api::common::CpuSummary>(Arena*);
+template<> ::sensory::api::common::CreateKeyRequest* Arena::CreateMaybeMessage<::sensory::api::common::CreateKeyRequest>(Arena*);
 template<> ::sensory::api::common::EnrollmentToken* Arena::CreateMaybeMessage<::sensory::api::common::EnrollmentToken>(Arena*);
 template<> ::sensory::api::common::GenericClient* Arena::CreateMaybeMessage<::sensory::api::common::GenericClient>(Arena*);
+template<> ::sensory::api::common::KeyResponse* Arena::CreateMaybeMessage<::sensory::api::common::KeyResponse>(Arena*);
 template<> ::sensory::api::common::MemorySummary* Arena::CreateMaybeMessage<::sensory::api::common::MemorySummary>(Arena*);
 template<> ::sensory::api::common::PaginationOptions* Arena::CreateMaybeMessage<::sensory::api::common::PaginationOptions>(Arena*);
 template<> ::sensory::api::common::PaginationResponse* Arena::CreateMaybeMessage<::sensory::api::common::PaginationResponse>(Arena*);
@@ -289,18 +297,20 @@ inline bool CompressionType_Parse(
     CompressionType_descriptor(), name, value);
 }
 enum ClientType : int {
-  ROOT = 0,
+  INVALID = 0,
   DEVICE = 1,
   CLUSTER = 2,
   USER = 3,
   SUPER_USER = 4,
   BILLING_USER = 5,
+  READ_ONLY_USER = 6,
+  ROOT = 100,
   ClientType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ClientType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ClientType_IsValid(int value);
-constexpr ClientType ClientType_MIN = ROOT;
-constexpr ClientType ClientType_MAX = BILLING_USER;
+constexpr ClientType ClientType_MIN = INVALID;
+constexpr ClientType ClientType_MAX = ROOT;
 constexpr int ClientType_ARRAYSIZE = ClientType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ClientType_descriptor();
@@ -2632,6 +2642,405 @@ class EnrollmentToken final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_common_2fcommon_2eproto;
 };
+// -------------------------------------------------------------------
+
+class CreateKeyRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.CreateKeyRequest) */ {
+ public:
+  inline CreateKeyRequest() : CreateKeyRequest(nullptr) {}
+  ~CreateKeyRequest() override;
+  explicit constexpr CreateKeyRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CreateKeyRequest(const CreateKeyRequest& from);
+  CreateKeyRequest(CreateKeyRequest&& from) noexcept
+    : CreateKeyRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline CreateKeyRequest& operator=(const CreateKeyRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CreateKeyRequest& operator=(CreateKeyRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CreateKeyRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CreateKeyRequest* internal_default_instance() {
+    return reinterpret_cast<const CreateKeyRequest*>(
+               &_CreateKeyRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    12;
+
+  friend void swap(CreateKeyRequest& a, CreateKeyRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CreateKeyRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CreateKeyRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CreateKeyRequest* New() const final {
+    return new CreateKeyRequest();
+  }
+
+  CreateKeyRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<CreateKeyRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CreateKeyRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const CreateKeyRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CreateKeyRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.CreateKeyRequest";
+  }
+  protected:
+  explicit CreateKeyRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 1,
+    kValueFieldNumber = 3,
+    kExpirationFieldNumber = 4,
+    kKeyTypeFieldNumber = 2,
+  };
+  // string name = 1 [(.validate.rules) = {
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_MUST_USE_RESULT std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // string value = 3;
+  void clear_value();
+  const std::string& value() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_value(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_value();
+  PROTOBUF_MUST_USE_RESULT std::string* release_value();
+  void set_allocated_value(std::string* value);
+  private:
+  const std::string& _internal_value() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_value(const std::string& value);
+  std::string* _internal_mutable_value();
+  public:
+
+  // int64 expiration = 4;
+  void clear_expiration();
+  ::PROTOBUF_NAMESPACE_ID::int64 expiration() const;
+  void set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_expiration() const;
+  void _internal_set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // .sensory.api.common.KeyType keyType = 2 [(.validate.rules) = {
+  void clear_keytype();
+  ::sensory::api::common::KeyType keytype() const;
+  void set_keytype(::sensory::api::common::KeyType value);
+  private:
+  ::sensory::api::common::KeyType _internal_keytype() const;
+  void _internal_set_keytype(::sensory::api::common::KeyType value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.CreateKeyRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr value_;
+  ::PROTOBUF_NAMESPACE_ID::int64 expiration_;
+  int keytype_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
+// -------------------------------------------------------------------
+
+class KeyResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.common.KeyResponse) */ {
+ public:
+  inline KeyResponse() : KeyResponse(nullptr) {}
+  ~KeyResponse() override;
+  explicit constexpr KeyResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KeyResponse(const KeyResponse& from);
+  KeyResponse(KeyResponse&& from) noexcept
+    : KeyResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline KeyResponse& operator=(const KeyResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KeyResponse& operator=(KeyResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KeyResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KeyResponse* internal_default_instance() {
+    return reinterpret_cast<const KeyResponse*>(
+               &_KeyResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    13;
+
+  friend void swap(KeyResponse& a, KeyResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KeyResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KeyResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline KeyResponse* New() const final {
+    return new KeyResponse();
+  }
+
+  KeyResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<KeyResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KeyResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const KeyResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KeyResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.common.KeyResponse";
+  }
+  protected:
+  explicit KeyResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIdFieldNumber = 1,
+    kNameFieldNumber = 2,
+    kTenantIdFieldNumber = 5,
+    kExpirationFieldNumber = 4,
+    kKeyTypeFieldNumber = 3,
+    kDisabledFieldNumber = 6,
+  };
+  // string id = 1;
+  void clear_id();
+  const std::string& id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_id();
+  PROTOBUF_MUST_USE_RESULT std::string* release_id();
+  void set_allocated_id(std::string* id);
+  private:
+  const std::string& _internal_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
+  public:
+
+  // string name = 2;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_MUST_USE_RESULT std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // string tenantId = 5;
+  void clear_tenantid();
+  const std::string& tenantid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_tenantid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_tenantid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_tenantid();
+  void set_allocated_tenantid(std::string* tenantid);
+  private:
+  const std::string& _internal_tenantid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_tenantid(const std::string& value);
+  std::string* _internal_mutable_tenantid();
+  public:
+
+  // int64 expiration = 4;
+  void clear_expiration();
+  ::PROTOBUF_NAMESPACE_ID::int64 expiration() const;
+  void set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_expiration() const;
+  void _internal_set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
+  // .sensory.api.common.KeyType keyType = 3;
+  void clear_keytype();
+  ::sensory::api::common::KeyType keytype() const;
+  void set_keytype(::sensory::api::common::KeyType value);
+  private:
+  ::sensory::api::common::KeyType _internal_keytype() const;
+  void _internal_set_keytype(::sensory::api::common::KeyType value);
+  public:
+
+  // bool disabled = 6;
+  void clear_disabled();
+  bool disabled() const;
+  void set_disabled(bool value);
+  private:
+  bool _internal_disabled() const;
+  void _internal_set_disabled(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensory.api.common.KeyResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tenantid_;
+  ::PROTOBUF_NAMESPACE_ID::int64 expiration_;
+  int keytype_;
+  bool disabled_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_common_2fcommon_2eproto;
+};
 // ===================================================================
 
 
@@ -4401,9 +4810,351 @@ inline void EnrollmentToken::set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value
   // @@protoc_insertion_point(field_set:sensory.api.common.EnrollmentToken.expiration)
 }
 
+// -------------------------------------------------------------------
+
+// CreateKeyRequest
+
+// string name = 1 [(.validate.rules) = {
+inline void CreateKeyRequest::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& CreateKeyRequest::name() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.CreateKeyRequest.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CreateKeyRequest::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.CreateKeyRequest.name)
+}
+inline std::string* CreateKeyRequest::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.CreateKeyRequest.name)
+  return _s;
+}
+inline const std::string& CreateKeyRequest::_internal_name() const {
+  return name_.Get();
+}
+inline void CreateKeyRequest::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* CreateKeyRequest::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* CreateKeyRequest::release_name() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.CreateKeyRequest.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void CreateKeyRequest::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.CreateKeyRequest.name)
+}
+
+// .sensory.api.common.KeyType keyType = 2 [(.validate.rules) = {
+inline void CreateKeyRequest::clear_keytype() {
+  keytype_ = 0;
+}
+inline ::sensory::api::common::KeyType CreateKeyRequest::_internal_keytype() const {
+  return static_cast< ::sensory::api::common::KeyType >(keytype_);
+}
+inline ::sensory::api::common::KeyType CreateKeyRequest::keytype() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.CreateKeyRequest.keyType)
+  return _internal_keytype();
+}
+inline void CreateKeyRequest::_internal_set_keytype(::sensory::api::common::KeyType value) {
+  
+  keytype_ = value;
+}
+inline void CreateKeyRequest::set_keytype(::sensory::api::common::KeyType value) {
+  _internal_set_keytype(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.CreateKeyRequest.keyType)
+}
+
+// string value = 3;
+inline void CreateKeyRequest::clear_value() {
+  value_.ClearToEmpty();
+}
+inline const std::string& CreateKeyRequest::value() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.CreateKeyRequest.value)
+  return _internal_value();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CreateKeyRequest::set_value(ArgT0&& arg0, ArgT... args) {
+ 
+ value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.CreateKeyRequest.value)
+}
+inline std::string* CreateKeyRequest::mutable_value() {
+  std::string* _s = _internal_mutable_value();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.CreateKeyRequest.value)
+  return _s;
+}
+inline const std::string& CreateKeyRequest::_internal_value() const {
+  return value_.Get();
+}
+inline void CreateKeyRequest::_internal_set_value(const std::string& value) {
+  
+  value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* CreateKeyRequest::_internal_mutable_value() {
+  
+  return value_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* CreateKeyRequest::release_value() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.CreateKeyRequest.value)
+  return value_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void CreateKeyRequest::set_allocated_value(std::string* value) {
+  if (value != nullptr) {
+    
+  } else {
+    
+  }
+  value_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.CreateKeyRequest.value)
+}
+
+// int64 expiration = 4;
+inline void CreateKeyRequest::clear_expiration() {
+  expiration_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 CreateKeyRequest::_internal_expiration() const {
+  return expiration_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 CreateKeyRequest::expiration() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.CreateKeyRequest.expiration)
+  return _internal_expiration();
+}
+inline void CreateKeyRequest::_internal_set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  expiration_ = value;
+}
+inline void CreateKeyRequest::set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_expiration(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.CreateKeyRequest.expiration)
+}
+
+// -------------------------------------------------------------------
+
+// KeyResponse
+
+// string id = 1;
+inline void KeyResponse::clear_id() {
+  id_.ClearToEmpty();
+}
+inline const std::string& KeyResponse::id() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.KeyResponse.id)
+  return _internal_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KeyResponse::set_id(ArgT0&& arg0, ArgT... args) {
+ 
+ id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.KeyResponse.id)
+}
+inline std::string* KeyResponse::mutable_id() {
+  std::string* _s = _internal_mutable_id();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.KeyResponse.id)
+  return _s;
+}
+inline const std::string& KeyResponse::_internal_id() const {
+  return id_.Get();
+}
+inline void KeyResponse::_internal_set_id(const std::string& value) {
+  
+  id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* KeyResponse::_internal_mutable_id() {
+  
+  return id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* KeyResponse::release_id() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.KeyResponse.id)
+  return id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void KeyResponse::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.KeyResponse.id)
+}
+
+// string name = 2;
+inline void KeyResponse::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& KeyResponse::name() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.KeyResponse.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KeyResponse::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.KeyResponse.name)
+}
+inline std::string* KeyResponse::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.KeyResponse.name)
+  return _s;
+}
+inline const std::string& KeyResponse::_internal_name() const {
+  return name_.Get();
+}
+inline void KeyResponse::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* KeyResponse::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* KeyResponse::release_name() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.KeyResponse.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void KeyResponse::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.KeyResponse.name)
+}
+
+// .sensory.api.common.KeyType keyType = 3;
+inline void KeyResponse::clear_keytype() {
+  keytype_ = 0;
+}
+inline ::sensory::api::common::KeyType KeyResponse::_internal_keytype() const {
+  return static_cast< ::sensory::api::common::KeyType >(keytype_);
+}
+inline ::sensory::api::common::KeyType KeyResponse::keytype() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.KeyResponse.keyType)
+  return _internal_keytype();
+}
+inline void KeyResponse::_internal_set_keytype(::sensory::api::common::KeyType value) {
+  
+  keytype_ = value;
+}
+inline void KeyResponse::set_keytype(::sensory::api::common::KeyType value) {
+  _internal_set_keytype(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.KeyResponse.keyType)
+}
+
+// int64 expiration = 4;
+inline void KeyResponse::clear_expiration() {
+  expiration_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 KeyResponse::_internal_expiration() const {
+  return expiration_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 KeyResponse::expiration() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.KeyResponse.expiration)
+  return _internal_expiration();
+}
+inline void KeyResponse::_internal_set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  expiration_ = value;
+}
+inline void KeyResponse::set_expiration(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_expiration(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.KeyResponse.expiration)
+}
+
+// string tenantId = 5;
+inline void KeyResponse::clear_tenantid() {
+  tenantid_.ClearToEmpty();
+}
+inline const std::string& KeyResponse::tenantid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.KeyResponse.tenantId)
+  return _internal_tenantid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KeyResponse::set_tenantid(ArgT0&& arg0, ArgT... args) {
+ 
+ tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.common.KeyResponse.tenantId)
+}
+inline std::string* KeyResponse::mutable_tenantid() {
+  std::string* _s = _internal_mutable_tenantid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.common.KeyResponse.tenantId)
+  return _s;
+}
+inline const std::string& KeyResponse::_internal_tenantid() const {
+  return tenantid_.Get();
+}
+inline void KeyResponse::_internal_set_tenantid(const std::string& value) {
+  
+  tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* KeyResponse::_internal_mutable_tenantid() {
+  
+  return tenantid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* KeyResponse::release_tenantid() {
+  // @@protoc_insertion_point(field_release:sensory.api.common.KeyResponse.tenantId)
+  return tenantid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void KeyResponse::set_allocated_tenantid(std::string* tenantid) {
+  if (tenantid != nullptr) {
+    
+  } else {
+    
+  }
+  tenantid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tenantid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.common.KeyResponse.tenantId)
+}
+
+// bool disabled = 6;
+inline void KeyResponse::clear_disabled() {
+  disabled_ = false;
+}
+inline bool KeyResponse::_internal_disabled() const {
+  return disabled_;
+}
+inline bool KeyResponse::disabled() const {
+  // @@protoc_insertion_point(field_get:sensory.api.common.KeyResponse.disabled)
+  return _internal_disabled();
+}
+inline void KeyResponse::_internal_set_disabled(bool value) {
+  
+  disabled_ = value;
+}
+inline void KeyResponse::set_disabled(bool value) {
+  _internal_set_disabled(value);
+  // @@protoc_insertion_point(field_set:sensory.api.common.KeyResponse.disabled)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

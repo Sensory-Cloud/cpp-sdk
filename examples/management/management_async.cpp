@@ -1,6 +1,6 @@
 // The SensoryCloud C++ SDK Management service demo (event-loop interface).
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -27,11 +27,11 @@
 #include <regex>
 #include <google/protobuf/util/time_util.h>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::service::ManagementService;
 
 /// @brief Get the enrollments for the given user.
@@ -39,12 +39,12 @@ using sensory::service::ManagementService;
 /// @param service The management service for getting enrollments.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
-int getEnrollments(
-    ManagementService<InsecureCredentialStore>& service,
+int get_enrollments(
+    ManagementService<FileSystemCredentialStore>& service,
     const std::string& userID
 ) {
     ::grpc::CompletionQueue queue;
-    auto call = service.getEnrollments(&queue, userID);
+    auto call = service.get_enrollments(&queue, userID);
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
@@ -83,12 +83,12 @@ int getEnrollments(
 /// @param enrollmentID The UUID of the enrollment to delete.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
-int deleteEnrollment(
-    ManagementService<InsecureCredentialStore>& service,
+int delete_enrollment(
+    ManagementService<FileSystemCredentialStore>& service,
     const std::string& enrollmentID
 ) {
     ::grpc::CompletionQueue queue;
-    auto call = service.deleteEnrollment(&queue, enrollmentID);
+    auto call = service.delete_enrollment(&queue, enrollmentID);
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
@@ -108,12 +108,12 @@ int deleteEnrollment(
 /// @param service The management service for getting enrollments.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
-int getEnrollmentGroups(
-    ManagementService<InsecureCredentialStore>& service,
+int get_enrollment_groups(
+    ManagementService<FileSystemCredentialStore>& service,
     const std::string& userID
 ) {
     ::grpc::CompletionQueue queue;
-    auto call = service.getEnrollmentGroups(&queue, userID);
+    auto call = service.get_enrollment_groups(&queue, userID);
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
@@ -156,8 +156,8 @@ int getEnrollmentGroups(
 /// @param model The name of the model associated with the enrollment group.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
-int createEnrollmentGroup(
-    ManagementService<InsecureCredentialStore>& service,
+int create_enrollment_group(
+    ManagementService<FileSystemCredentialStore>& service,
     const std::string& userID,
     const std::string& groupID,
     const std::string& name,
@@ -166,7 +166,7 @@ int createEnrollmentGroup(
     const std::vector<std::string>& enrollmentIDs
 ) {
     ::grpc::CompletionQueue queue;
-    auto call = service.createEnrollmentGroup(
+    auto call = service.create_enrollment_group(
         &queue, userID, groupID, name, description, model, enrollmentIDs);
     void* tag(nullptr);
     bool ok(false);
@@ -189,13 +189,13 @@ int createEnrollmentGroup(
 /// @param enrollments the list of enrollments to append to the group
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
-int appendEnrollmentGroup(
-    ManagementService<InsecureCredentialStore>& service,
+int append_enrollment_group(
+    ManagementService<FileSystemCredentialStore>& service,
     const std::string& groupID,
     const std::vector<std::string>& enrollments
 ) {
     ::grpc::CompletionQueue queue;
-    auto call = service.appendEnrollmentGroup(&queue, groupID, enrollments);
+    auto call = service.append_enrollment_group(&queue, groupID, enrollments);
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
@@ -216,12 +216,12 @@ int appendEnrollmentGroup(
 /// @param groupID The UUID of the enrollment group to delete.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
-int deleteEnrollmentGroup(
-    ManagementService<InsecureCredentialStore>& service,
+int delete_enrollment_group(
+    ManagementService<FileSystemCredentialStore>& service,
     const std::string& groupID
 ) {
     ::grpc::CompletionQueue queue;
-    auto call = service.deleteEnrollmentGroup(&queue, groupID);
+    auto call = service.delete_enrollment_group(&queue, groupID);
     void* tag(nullptr);
     bool ok(false);
     queue.Next(&tag, &ok);
@@ -242,34 +242,34 @@ int main(int argc, const char** argv) {
         .prog("authenticate")
         .description("A tool for authenticating with face biometrics using SensoryCloud.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument("endpoint")
         .choices({
-            "getHealth",
-            "getEnrollments",
-            "deleteEnrollment",
-            "getEnrollmentGroups",
-            "createEnrollmentGroup",
-            "appendEnrollmentGroup",
-            "deleteEnrollmentGroup"
-        }).help("ENDPOINT The management endpoint to use.");
+            "get_health",
+            "get_enrollments",
+            "delete_enrollment",
+            "get_enrollment_groups",
+            "create_enrollment_group",
+            "append_enrollment_group",
+            "delete_enrollment_group"
+        }).help("The management endpoint to use.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The ID of the user initiating the request.");
+        .help("The ID of the user initiating the request.");
     parser.add_argument({ "-e", "--enrollmentid" })
-        .help("ENROLLMENTID The ID of the enrollment / enrollment group.");
+        .help("The ID of the enrollment / enrollment group.");
     parser.add_argument({ "-n", "--name" })
-        .help("NAME The name of the enrollment group to create.");
+        .help("The name of the enrollment group to create.");
     parser.add_argument({ "-d", "--description" })
-        .help("DESCRIPTION A description of the enrollment group to create.");
+        .help("A description of the enrollment group to create.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The model to create an enrollment group with.");
+        .help("The model to create an enrollment group with.");
     parser.add_argument({ "-E+", "--enrollmentids+" })
         .action("store")
         .nargs("+")
-        .help("ENROLLMENTIDS A collection of enrollment IDs to append to a group.");
+        .help("A collection of enrollment IDs to append to a group.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("Produce verbose output during authentication.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -282,20 +282,20 @@ int main(int argc, const char** argv) {
     const auto ENROLLMENT_IDS = args.get<std::vector<std::string>>("enrollmentids+");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
 
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
     sensory::api::common::ServerHealthResponse server_health;
-    auto status = cloud.health.getHealth(&server_health);
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
-    if (ENDPOINT == "getHealth") {
+    if (ENDPOINT == "get_health") {
         std::cout << "Server status:" << std::endl;
         std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
         std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
@@ -311,10 +311,10 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    if      (ENDPOINT == "getEnrollments")        return getEnrollments(cloud.management, USER_ID);
-    else if (ENDPOINT == "deleteEnrollment")      return deleteEnrollment(cloud.management, ENROLLMENT_ID);
-    else if (ENDPOINT == "getEnrollmentGroups")   return getEnrollmentGroups(cloud.management, USER_ID);
-    else if (ENDPOINT == "createEnrollmentGroup") return createEnrollmentGroup(cloud.management, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
-    else if (ENDPOINT == "appendEnrollmentGroup") return appendEnrollmentGroup(cloud.management, ENROLLMENT_ID, ENROLLMENT_IDS);
-    else if (ENDPOINT == "deleteEnrollmentGroup") return deleteEnrollmentGroup(cloud.management, ENROLLMENT_ID);
+    if      (ENDPOINT == "get_enrollments")        return get_enrollments(cloud.management, USER_ID);
+    else if (ENDPOINT == "delete_enrollment")      return delete_enrollment(cloud.management, ENROLLMENT_ID);
+    else if (ENDPOINT == "get_enrollment_groups")   return get_enrollment_groups(cloud.management, USER_ID);
+    else if (ENDPOINT == "create_enrollment_group") return create_enrollment_group(cloud.management, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
+    else if (ENDPOINT == "append_enrollment_group") return append_enrollment_group(cloud.management, ENROLLMENT_ID, ENROLLMENT_IDS);
+    else if (ENDPOINT == "delete_enrollment_group") return delete_enrollment_group(cloud.management, ENROLLMENT_ID);
 }

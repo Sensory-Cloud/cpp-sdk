@@ -107,44 +107,43 @@ deviceName = Server 1
 isSecure = 1
 ```
 
-### Secure Credential Storage
+### Credential Storage
 
 The last thing you will need to set up for your application is a structure for
-storing credentials in a way that fits your security needs.
-`SecureCredentialStore` provides the interface for secure credential storage
-that must be implemented for your specific usage.
+storing credentials in a way that fits your security needs. `CredentialStore`
+provides the interface for credential storage that should be implemented for
+your specific usage.
 
 ```c++
-/// @brief A keychain manager for interacting with the OS credential manager.
-struct SecureCredentialStore {
-    /// @brief Emplace or replace a key/value pair in the secure credential
-    /// store.
+/// @brief A key-value interface for storing credentials, tokens, etc.
+struct CredentialStore {
+    /// @brief Emplace or replace a key/value pair in the credential store.
     ///
     /// @param key the plain-text key of the value to store
-    /// @param value the secure value to store
+    /// @param value the value to store
     /// @details
     /// Unlike most key-value store abstractions in the STL, this
-    /// implementation of emplace will overwrite existing values in the
+    /// implementation of emplace should overwrite existing values in the
     /// key-value store.
     ///
     inline void emplace(const std::string& key, const std::string& value) const;
 
-    /// @brief Return true if the key exists in the secure credential store.
+    /// @brief Return true if the key exists in the credential store.
     ///
     /// @param key the plain-text key to check for the existence of
     ///
     inline bool contains(const std::string& key) const;
 
-    /// @brief Look-up a secret value in the secure credential store.
+    /// @brief Look-up a secret value in the credential store.
     ///
     /// @param key the plain-text key of the value to return
     /// @returns the secret value indexed by the given key
     ///
     inline std::string at(const std::string& key) const;
 
-    /// @brief Remove a secret key-value pair in the secure credential store.
+    /// @brief Remove a secret key-value pair in the credential store.
     ///
-    /// @param key the plain-text key of the pair to remove from the keychain
+    /// @param key the key of the pair to remove from the credential store
     ///
     inline void erase(const std::string& key) const;
 };
@@ -152,8 +151,8 @@ struct SecureCredentialStore {
 
 Included with the SDK are an in-memory credential store
 `sensory::token_manager::InMemoryCredentialStore`, and a file-system based
-credential store `sensory::token_manager::InsecureCredentialStore` that may be
-useful for low-security applications, demonstration purposes, or debugging.
+credential store `sensory::token_manager::FileSystemCredentialStore` that may
+be useful for low-security applications, demonstration purposes, or debugging.
 
 <!--
 Also included with the SDK are reference implementations for certain
@@ -198,18 +197,20 @@ The table below provides information about the implementations of
 
 With the data and structures from the previous steps, one can construct an
 instance of `sensory::SensoryCloud` that provides access to each cloud service.
+The following example uses `sensory::token_manager::FileSystemCredentialStore`
+as a credential store for demonstration purposes.
 
 ```c++
-// Create an insecure credential store for keeping OAuth credentials in.
-sensory::InsecureCredentialStore keychain(".", "com.company.cloud.debug");
-SensoryCloud<InsecureCredentialStore> cloud(config, credentials, keychain);
+FileSystemCredentialStore credential_store(".", "com.company.cloud.debug");
+SensoryCloud<FileSystemCredentialStore>
+    cloud(config, credentials, credential_store);
 ```
 
 As previously mentioned, config and registration credentials may optionally be
 stored in INI files and parsed on SDK initialization using the following:
 
 ```c++
-SensoryCloud<InsecureCredentialStore> cloud("config.ini", keychain);
+SensoryCloud<FileSystemCredentialStore> cloud("config.ini", ...);
 ```
 
 ## Checking The Server Health

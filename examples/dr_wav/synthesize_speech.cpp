@@ -1,6 +1,6 @@
 // An example of text-to-speech (TTS) to a WAV file using SensoryCloud.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -25,11 +25,11 @@
 
 #include <iostream>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
@@ -37,21 +37,21 @@ int main(int argc, const char** argv) {
         .prog("synthesize_speech")
         .description("A tool for synthesizing speech from phrases using SensoryCloud.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-o", "--output" })
-        .help("OUTPUT The output path to write the audio samples to.")
+        .help("The output path to write the audio samples to.")
         .default_value("speech.wav");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-l", "--language" })
-        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-V", "--voice" })
-        .help("VOICE The name of the voice to use.");
+        .help("The name of the voice to use.");
     parser.add_argument({ "-p", "--phrase" })
-        .help("PHRASE The phrase to synthesize into speech.");
+        .help("The phrase to synthesize into speech.");
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
-        .help("VERBOSE Produce verbose output during synthesis.");
+        .help("Produce verbose output during synthesis.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -62,23 +62,23 @@ int main(int argc, const char** argv) {
     const auto PHRASE = args.get<std::string>("phrase");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    sensory::api::common::ServerHealthResponse server_healthResponse;
-    auto status = cloud.health.getHealth(&server_healthResponse);
+    sensory::api::common::ServerHealthResponse server_health_response;
+    auto status = cloud.health.get_health(&server_health_response);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
         std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_healthResponse.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
+        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
+        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
     }
 
     // Initialize the client.
@@ -93,7 +93,7 @@ int main(int argc, const char** argv) {
 
     if (GETMODELS) {
         sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
-        status = cloud.audio.getModels(&audioModelsResponse);
+        status = cloud.audio.get_models(&audioModelsResponse);
         if (!status.ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to get synthesis models ("
                 << status.error_code() << "): "
@@ -108,15 +108,16 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
-    // Create the synthesis stream
+    // Create an audio config that describes the format of the audio stream.
+    auto audio_config = new sensory::api::v1::audio::AudioConfig;
+    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+    audio_config->set_sampleratehertz(22050);
+    audio_config->set_audiochannelcount(1);
+    audio_config->set_languagecode(LANGUAGE);
+
+    // Initialize the stream with the cloud.
     grpc::ClientContext context;
-    auto stream = cloud.audio.synthesize_speech(&context,
-        sensory::service::audio::new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            22050, 1, LANGUAGE
-        ),
-        VOICE, PHRASE
-    );
+    auto stream = cloud.audio.synthesize_speech(&context, audio_config, VOICE, PHRASE);
 
     // Open a binary file-stream to write the audio contents to.
     std::ofstream file(OUTPUT, std::ios::out | std::ios::binary);

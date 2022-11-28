@@ -1,6 +1,6 @@
 // Test cases for the management service.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -57,13 +57,13 @@ TEST_CASE("Should create ManagementService from Config and TokenManager") {
     Config config("hostname.com", 443, "tenant ID", "device ID");
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
-    OAuthService oauthService(config);
+    OAuthService oauth_service(config);
     // Create a credential store for keeping the clientID, clientSecret,
     // token, and expiration time.
     InMemoryCredentialStore keychain;
-    TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+    TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
     // Create the management service from the config and token manager.
-    ManagementService<InMemoryCredentialStore> service(config, tokenManager);
+    ManagementService<InMemoryCredentialStore> service(config, token_manager);
 }
 
 SCENARIO("A client requires a synchronous interface to the management service") {
@@ -72,15 +72,15 @@ SCENARIO("A client requires a synchronous interface to the management service") 
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
         // Create the OAuth service for requesting and managing OAuth tokens through
         // a token manager instance.
-        OAuthService oauthService(config);
+        OAuthService oauth_service(config);
         // Create a credential store for keeping the clientID, clientSecret,
         // token, and expiration time.
         InMemoryCredentialStore keychain;
-        TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+        TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
         // Create the management service from the config and token manager, but
         // use a GMock stub instead of the default constructor.
         auto stub = new ::sensory::api::v1::management::MockEnrollmentServiceStub;
-        ManagementService<InMemoryCredentialStore> service(config, tokenManager, stub);
+        ManagementService<InMemoryCredentialStore> service(config, token_manager, stub);
 
         // ----- GetEnrollments ------------------------------------------------
 
@@ -97,7 +97,7 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 }
             );
             GetEnrollmentsResponse response;
-            auto status = service.getEnrollments(&response, "foo user");
+            auto status = service.get_enrollments(&response, "foo user");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
@@ -119,22 +119,22 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 .Times(1)
                 .WillOnce([] (ClientContext*, const GetEnrollmentsRequest& request, GetEnrollmentGroupsResponse *response) {
                     REQUIRE(request.userid() == "foo user");
-                    auto enrollmentGroup = response->add_enrollmentgroups();
-                    enrollmentGroup->set_id("foo ID");
-                    enrollmentGroup->set_description("foo description");
+                    auto enrollment_group = response->add_enrollmentgroups();
+                    enrollment_group->set_id("foo ID");
+                    enrollment_group->set_description("foo description");
                     return Status::OK;
                 }
             );
             GetEnrollmentGroupsResponse response;
-            auto status = service.getEnrollmentGroups(&response, "foo user");
+            auto status = service.get_enrollment_groups(&response, "foo user");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
             THEN("the list of enrollments contains the enrollment group") {
                 REQUIRE(1 == response.enrollmentgroups_size());
-                auto& enrollmentGroup = response.enrollmentgroups(0);
-                REQUIRE("foo ID" == enrollmentGroup.id());
-                REQUIRE("foo description" == enrollmentGroup.description());
+                auto& enrollment_group = response.enrollmentgroups(0);
+                REQUIRE("foo ID" == enrollment_group.id());
+                REQUIRE("foo description" == enrollment_group.description());
             }
         }
 
@@ -157,7 +157,7 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 }
             );
             EnrollmentGroupResponse response;
-            auto status = service.createEnrollmentGroup(&response,
+            auto status = service.create_enrollment_group(&response,
                 "foo user",
                 "foo group",
                 "foo name",
@@ -188,7 +188,7 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 }
             );
             EnrollmentGroupResponse response;
-            auto status = service.createEnrollmentGroup(&response,
+            auto status = service.create_enrollment_group(&response,
                 "foo user", "", "foo name", "foo description", "foo model", {});
             THEN("The status is OK") {
                 REQUIRE(status.ok());
@@ -209,7 +209,7 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 }
             );
             EnrollmentGroupResponse response;
-            auto status = service.appendEnrollmentGroup(&response, "foo ID", {"ID0", "ID1"});
+            auto status = service.append_enrollment_group(&response, "foo ID", {"ID0", "ID1"});
         }
 
         // ----- DeleteEnrollment ----------------------------------------------
@@ -224,7 +224,7 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 }
             );
             EnrollmentResponse response;
-            auto status = service.deleteEnrollment(&response, "foo ID");
+            auto status = service.delete_enrollment(&response, "foo ID");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
@@ -245,7 +245,7 @@ SCENARIO("A client requires a synchronous interface to the management service") 
                 }
             );
             EnrollmentGroupResponse response;
-            auto status = service.deleteEnrollmentGroup(&response, "foo ID");
+            auto status = service.delete_enrollment_group(&response, "foo ID");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }

@@ -1,6 +1,6 @@
 // The video service for the SensoryCloud SDK.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -33,8 +33,8 @@
 #include "sensorycloud/generated/v1/video/video.grpc.pb.h"
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
-#include "sensorycloud/call_data.hpp"
-#include "sensorycloud/services/errors.hpp"
+#include "sensorycloud/calldata.hpp"
+#include "sensorycloud/error/stream_errors.hpp"
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -63,128 +63,32 @@ enum class FaceAlignment : int {
     NotVertical = 105
 };
 
-// TODO: implement `compression`?
-
-/// @brief Allocation a create enrollment config for initializing an
-/// enrollment creation stream.
-///
-/// @param modelName The name of the model to use to create the enrollment.
-/// Use `getModels()` to fetch a list of available models.
-/// @param userID The ID of the user performing the request.
-/// @param description The description of the enrollment.
-/// @param isLivenessEnabled `true` to perform a liveness check in addition
-/// to an enrollment, `false` to perform the enrollment without the liveness
-/// check.
-/// @param livenessThreshold The liveness threshold for the optional
-/// liveness check.
-/// @param numLivenessFramesRequired If isLivenessEnabled is true, this
-/// determines how many frames need to pass the liveness check before the
-/// enrollment can be successful. A value of 0 means that all enrollment frames
-/// must pass the liveness check.
-/// @returns A pointer to a new
-/// `sensory::api::v1::video::CreateEnrollmentConfig`.
-///
-inline ::sensory::api::v1::video::CreateEnrollmentConfig* new_create_enrollment_config(
-    const std::string& modelName,
-    const std::string& userID,
-    const std::string& description,
-    const bool& isLivenessEnabled,
-    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold,
-    const int32_t& numLivenessFramesRequired = 0,
-    const std::string& reference_id = ""
-) {
-    auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
-    config->set_modelname(modelName);
-    config->set_userid(userID);
-    config->set_description(description);
-    config->set_islivenessenabled(isLivenessEnabled);
-    config->set_livenessthreshold(livenessThreshold);
-    config->set_numlivenessframesrequired(numLivenessFramesRequired);
-    config->set_referenceid(reference_id);
-    return config;
-}
-
-// TODO: implement `compression`?
-// TODO: implement `doIncludeToken`?
-
-/// @brief Allocation an authentication config for initializing an
-/// authentication stream.
-///
-/// @param enrollmentID The enrollment ID to authenticate against. This can
-/// be either an enrollment ID or a group ID.
-/// @param isLivenessEnabled `true` to perform a liveness check before the
-/// authentication, `false` to only perform the authentication.
-/// @param livenessThreshold The liveness threshold for the optional
-/// liveness check.
-/// @param isEnrollmentGroup `true` if the enrollment ID references an
-/// enrollment group, `false` is the enrollment ID references a single
-/// enrollment.
-/// @returns A pointer to a new `sensory::api::v1::video::AuthenticateConfig`.
-///
-inline ::sensory::api::v1::video::AuthenticateConfig* new_authenticate_config(
-    const std::string& enrollmentID,
-    const bool& isLivenessEnabled,
-    const ::sensory::api::v1::video::RecognitionThreshold& livenessThreshold,
-    const bool& isEnrollmentGroup = false
-) {
-    auto config = new ::sensory::api::v1::video::AuthenticateConfig;
-    if (isEnrollmentGroup)
-        config->set_enrollmentgroupid(enrollmentID);
-    else
-        config->set_enrollmentid(enrollmentID);
-    config->set_islivenessenabled(isLivenessEnabled);
-    config->set_livenessthreshold(livenessThreshold);
-    return config;
-}
-
-/// @brief Allocation a recognition config for initializing a liveness
-/// validation stream.
-///
-/// @param modelName The name of the model to use. Use `getModels()` to
-/// fetch a list of available models.
-/// @param userID The ID of the user performing the request.
-/// @param threshold The threshold of how confident the model has to be to
-/// give a positive liveness result.
-/// @returns A pointer to a new
-/// `sensory::api::v1::video::ValidateRecognitionConfig`.
-///
-inline ::sensory::api::v1::video::ValidateRecognitionConfig* new_validate_recognition_config(
-    const std::string& modelName,
-    const std::string& userID,
-    const ::sensory::api::v1::video::RecognitionThreshold& threshold
-) {
-    auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
-    config->set_modelname(modelName);
-    config->set_userid(userID);
-    config->set_threshold(threshold);
-    return config;
-}
-
 }  // namespace video
 
 /// @brief A service for video data.
-/// @tparam SecureCredentialStore A secure key-value store for storing and
-/// fetching credentials and tokens.
-template<typename SecureCredentialStore>
+/// @tparam CredentialStore A key-value store for storing and fetching
+/// credentials and tokens.
+template<typename CredentialStore>
 class VideoService {
  private:
     /// the global configuration for the remote connection
     const ::sensory::Config& config;
     /// the token manager for securing gRPC requests to the server
-    ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
+    ::sensory::token_manager::TokenManager<CredentialStore>& token_manager;
     /// the gRPC stub for the video models service
-    std::unique_ptr<::sensory::api::v1::video::VideoModels::StubInterface> modelsStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoModels::StubInterface> models_stub;
     /// the gRPC stub for the video biometrics service
-    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::StubInterface> biometricsStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoBiometrics::StubInterface> biometrics_stub;
     /// the gRPC stub for the video recognition service
-    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::StubInterface> recognitionStub;
+    std::unique_ptr<::sensory::api::v1::video::VideoRecognition::StubInterface> recognition_stub;
 
     /// @brief Create a copy of this object.
     ///
     /// @param other the other instance to copy data from
     ///
     /// @details
-    /// This copy constructor is private to prevent the copying of this object
+    /// This copy constructor is private to prevent the copying of this object.
+    ///
     VideoService(const VideoService& other) = delete;
 
     /// @brief Assign to this object using the `=` operator.
@@ -200,39 +104,39 @@ class VideoService {
     /// @brief Initialize a new video service.
     ///
     /// @param config_ The global configuration for the remote connection.
-    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param token_manager_ The token manager for requesting Bearer tokens.
     ///
     VideoService(
         const ::sensory::Config& config_,
-        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
+        ::sensory::token_manager::TokenManager<CredentialStore>& token_manager_
     ) : config(config_),
-        tokenManager(tokenManager_),
-        modelsStub(::sensory::api::v1::video::VideoModels::NewStub(config.get_channel())),
-        biometricsStub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.get_channel())),
-        recognitionStub(::sensory::api::v1::video::VideoRecognition::NewStub(config.get_channel())) { }
+        token_manager(token_manager_),
+        models_stub(::sensory::api::v1::video::VideoModels::NewStub(config.get_channel())),
+        biometrics_stub(::sensory::api::v1::video::VideoBiometrics::NewStub(config.get_channel())),
+        recognition_stub(::sensory::api::v1::video::VideoRecognition::NewStub(config.get_channel())) { }
 
     /// @brief Initialize a new video service.
     ///
     /// @param config_ The global configuration for the remote connection.
-    /// @param tokenManager_ The token manager for requesting Bearer tokens.
-    /// @param modelsStub_ The models service stub to initialize the service
+    /// @param token_manager_ The token manager for requesting Bearer tokens.
+    /// @param models_stub_ The models service stub to initialize the service
     /// with.
-    /// @param biometricsStub_ The biometrics service stub to initialize the
+    /// @param biometrics_stub_ The biometrics service stub to initialize the
     /// service with.
-    /// @param recognitionStub The recognition service stub to initialize the
+    /// @param recognition_stub The recognition service stub to initialize the
     /// service with.
     ///
     VideoService(
         const ::sensory::Config& config_,
-        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
-        ::sensory::api::v1::video::VideoModels::StubInterface* modelsStub_,
-        ::sensory::api::v1::video::VideoBiometrics::StubInterface* biometricsStub_,
-        ::sensory::api::v1::video::VideoRecognition::StubInterface* recognitionStub_
+        ::sensory::token_manager::TokenManager<CredentialStore>& token_manager_,
+        ::sensory::api::v1::video::VideoModels::StubInterface* models_stub_,
+        ::sensory::api::v1::video::VideoBiometrics::StubInterface* biometrics_stub_,
+        ::sensory::api::v1::video::VideoRecognition::StubInterface* recognition_stub_
     ) : config(config_),
-        tokenManager(tokenManager_),
-        modelsStub(modelsStub_),
-        biometricsStub(biometricsStub_),
-        recognitionStub(recognitionStub_) { }
+        token_manager(token_manager_),
+        models_stub(models_stub_),
+        biometrics_stub(biometrics_stub_),
+        recognition_stub(recognition_stub_) { }
 
     /// @brief Return the cloud configuration associated with this service.
     ///
@@ -247,20 +151,20 @@ class VideoService {
     /// @param response The response to populate from the RPC.
     /// @returns The status of the synchronous RPC.
     ///
-    inline ::grpc::Status getModels(
+    inline ::grpc::Status get_models(
         ::sensory::api::v1::video::GetModelsResponse* response
     ) const {
         // Create a context for the client for a unary call.
         ::grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Execute the RPC synchronously and return the status
-        return modelsStub->GetModels(&context, {}, response);
+        return models_stub->GetModels(&context, {}, response);
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::GetModelsRequest,
         ::sensory::api::v1::video::GetModelsResponse
     > GetModelsAsyncCall;
@@ -274,15 +178,15 @@ class VideoService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline GetModelsAsyncCall* getModels(::grpc::CompletionQueue* queue) const {
+    inline GetModelsAsyncCall* get_models(::grpc::CompletionQueue* queue) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new GetModelsAsyncCall);
         // Set the client context for a unary call.
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
-        call->rpc = modelsStub->AsyncGetModels(&call->context, call->request, queue);
+        call->rpc = models_stub->AsyncGetModels(&call->context, call->request, queue);
         // Finish the RPC to tell it where the response and status buffers are
         // located within the call object. Use the address of the call as the
         // tag for identifying the call in the event-loop.
@@ -296,21 +200,21 @@ class VideoService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on callback/reactor patterns.
-    typedef ::sensory::CallData<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::GetModelsRequest,
         ::sensory::api::v1::video::GetModelsResponse
-    > GetModelsCallData;
+    > GetModelsCallbackData;
 
     /// @brief Fetch a list of the vision models supported by the cloud host.
     ///
     /// @tparam Callback the type of the callback function. The callback should
-    /// accept a single pointer of type `GetModelsCallData*`.
+    /// accept a single pointer of type `GetModelsCallbackData*`.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetModelsCallData> getModels(
+    inline std::shared_ptr<GetModelsCallbackData> get_models(
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -319,11 +223,11 @@ class VideoService {
         // in order to reference count between the parent and child context.
         // This also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<GetModelsCallData> call(new GetModelsCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<GetModelsCallbackData> call(new GetModelsCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
-        modelsStub->async()->GetModels(
+        models_stub->async()->GetModels(
             &call->context,
             &call->request,
             &call->response,
@@ -353,8 +257,7 @@ class VideoService {
     /// creating a video enrollment.
     ///
     /// @param context the gRPC context for the stream
-    /// @param enrollmentConfig The enrollment configuration for the stream.
-    /// Use `new_create_enrollment_config` to create a new enrollment config.
+    /// @param enrollment_config The enrollment configuration for the stream.
     /// _Ownership of the dynamically allocated configuration is implicitly
     /// transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send video data to
@@ -364,31 +267,31 @@ class VideoService {
     /// This call will automatically send the `CreateEnrollmentConfig` message
     /// to the server.
     ///
-    inline CreateEnrollmentStream createEnrollment(
+    inline CreateEnrollmentStream create_enrollment(
         ::grpc::ClientContext* context,
-        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig
+        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollment_config
     ) const {
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(*context);
+        token_manager.setup_bidi_client_context(*context);
         // Create the request with the pointer to the allocated config.
-        enrollmentConfig->set_deviceid(config.get_device_id());
+        enrollment_config->set_deviceid(config.get_device_id());
         ::sensory::api::v1::video::CreateEnrollmentRequest request;
-        request.set_allocated_config(enrollmentConfig);
+        request.set_allocated_config(enrollment_config);
         // Create the stream and write the initial configuration request.
-        auto stream = biometricsStub->CreateEnrollment(context);
+        auto stream = biometrics_stub->CreateEnrollment(context);
         if (stream == nullptr)  // Failed to create stream.
-            throw NullStreamError("Failed to start CreateEnrollment stream (null pointer).");
+            throw ::sensory::error::NullStreamError("Failed to start CreateEnrollment stream (null pointer).");
         if (!stream->Write(request))  // Failed to write video config.
-            throw WriteStreamError("Failed to write video configuration to CreateEnrollment stream.");
+            throw ::sensory::error::WriteStreamError("Failed to write video configuration to CreateEnrollment stream.");
         // Successfully created stream, implicitly cast it to a unique pointer.
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `CreateEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncReaderWriterCall<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncReaderWriterCall<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::CreateEnrollmentRequest,
         ::sensory::api::v1::video::CreateEnrollmentResponse
     > CreateEnrollmentAsyncStream;
@@ -398,13 +301,12 @@ class VideoService {
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
-    /// @param enrollmentConfig The enrollment configuration for the stream.
-    /// Use `new_create_enrollment_config` to create a new enrollment config.
+    /// @param enrollment_config The enrollment configuration for the stream.
     /// _Ownership of the dynamically allocated configuration is implicitly
     /// transferred to the stream_.
-    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// @param init_tag The tag to initialize the stream with. Use `nullptr` to
     /// use the pointer as the tag.
-    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// @param finish_tag The tag to finish the stream with. Use `nullptr` to
     /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
@@ -417,11 +319,11 @@ class VideoService {
     /// message to the server, but will buffer it in the message for later
     /// transmission.
     ///
-    inline CreateEnrollmentAsyncStream* createEnrollment(
+    inline CreateEnrollmentAsyncStream* create_enrollment(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig,
-        void* initTag = nullptr,
-        void* finishTag = nullptr
+        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollment_config,
+        void* init_tag = nullptr,
+        void* finish_tag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -429,25 +331,25 @@ class VideoService {
         auto call(new CreateEnrollmentAsyncStream);
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(call->context);
+        token_manager.setup_bidi_client_context(call->context);
         // Update the request with the pointer to the allocated config.
-        enrollmentConfig->set_deviceid(config.get_device_id());
-        call->request.set_allocated_config(enrollmentConfig);
+        enrollment_config->set_deviceid(config.get_device_id());
+        call->request.set_allocated_config(enrollment_config);
         // Start the asynchronous RPC with the call's context and queue. If the
         // initial tag is a nullptr, assign it to the call pointer.
-        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
-        call->rpc = biometricsStub->AsyncCreateEnrollment(&call->context, queue, initTag);
+        init_tag = init_tag == nullptr ? static_cast<void*>(call) : init_tag;
+        call->rpc = biometrics_stub->AsyncCreateEnrollment(&call->context, queue, init_tag);
         // Finish the call to set the output status. If the finish tag is a
         // nullptr, assign it to the call pointer.
-        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
-        call->rpc->Finish(&call->status, finishTag);
+        finish_tag = finish_tag == nullptr ? static_cast<void*>(call) : finish_tag;
+        call->rpc->Finish(&call->status, finish_tag);
         return call;
     }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollment` calls.
-    typedef ::sensory::AwaitableBidiReactor<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AwaitableBidiReactor<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::CreateEnrollmentRequest,
         ::sensory::api::v1::video::CreateEnrollmentResponse
     > CreateEnrollmentBidiReactor;
@@ -458,8 +360,7 @@ class VideoService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
-    /// @param enrollmentConfig The enrollment configuration for the stream.
-    /// Use `new_create_enrollment_config` to create a new enrollment config.
+    /// @param enrollment_config The enrollment configuration for the stream.
     /// _Ownership of the dynamically allocated configuration is implicitly
     /// transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send video data to
@@ -470,18 +371,18 @@ class VideoService {
     /// to the server.
     ///
     template<typename Reactor>
-    inline void createEnrollment(Reactor* reactor,
-        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollmentConfig
+    inline void create_enrollment(Reactor* reactor,
+        ::sensory::api::v1::video::CreateEnrollmentConfig* enrollment_config
     ) const {
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(reactor->context);
+        token_manager.setup_bidi_client_context(reactor->context);
         // Update the request with the pointer to the allocated config.
-        enrollmentConfig->set_deviceid(config.get_device_id());
-        reactor->request.set_allocated_config(enrollmentConfig);
+        enrollment_config->set_deviceid(config.get_device_id());
+        reactor->request.set_allocated_config(enrollment_config);
         // Start the stream with the context in the reactor and a pointer to
         // reactor for callbacks.
-        biometricsStub->async()->CreateEnrollment(&reactor->context, reactor);
+        biometrics_stub->async()->CreateEnrollment(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
         reactor->StartRead(&reactor->response);
     }
@@ -500,9 +401,8 @@ class VideoService {
     /// video authentication.
     ///
     /// @param context the gRPC context for the stream
-    /// @param authenticateConfig The authentication configuration for the
-    /// stream. Use `new_authenticate_config` to create a new authentication
-    /// config. _Ownership of the dynamically allocated configuration is
+    /// @param authenticate_config The authentication configuration for the
+    /// stream. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send video data to
     /// the server.
@@ -513,27 +413,27 @@ class VideoService {
     ///
     inline AuthenticateStream authenticate(
         ::grpc::ClientContext* context,
-        ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig
+        ::sensory::api::v1::video::AuthenticateConfig* authenticate_config
     ) const {
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(*context);
+        token_manager.setup_bidi_client_context(*context);
         // Create the request with the pointer to the allocated config.
         ::sensory::api::v1::video::AuthenticateRequest request;
-        request.set_allocated_config(authenticateConfig);
+        request.set_allocated_config(authenticate_config);
         // Create the stream and write the initial configuration request.
-        auto stream = biometricsStub->Authenticate(context);
+        auto stream = biometrics_stub->Authenticate(context);
         if (stream == nullptr)
-            throw NullStreamError("Authenticate stream returned null pointer!");
+            throw ::sensory::error::NullStreamError("Authenticate stream returned null pointer!");
         if (!stream->Write(request))  // Failed to write video config.
-            throw WriteStreamError("Failed to write video configuration to Authenticate stream.");
+            throw ::sensory::error::WriteStreamError("Failed to write video configuration to Authenticate stream.");
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `Authenticate`
     /// calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncReaderWriterCall<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncReaderWriterCall<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::AuthenticateRequest,
         ::sensory::api::v1::video::AuthenticateResponse
     > AuthenticateAsyncStream;
@@ -543,13 +443,12 @@ class VideoService {
     ///
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
-    /// @param authenticateConfig The authentication configuration for the
-    /// stream. Use `new_authenticate_config` to create a new authentication
-    /// config. _Ownership of the dynamically allocated configuration is
+    /// @param authenticate_config The authentication configuration for the
+    /// stream. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
-    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// @param init_tag The tag to initialize the stream with. Use `nullptr` to
     /// use the pointer as the tag.
-    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// @param finish_tag The tag to finish the stream with. Use `nullptr` to
     /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
@@ -564,9 +463,9 @@ class VideoService {
     ///
     inline AuthenticateAsyncStream* authenticate(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig,
-        void* initTag = nullptr,
-        void* finishTag = nullptr
+        ::sensory::api::v1::video::AuthenticateConfig* authenticate_config,
+        void* init_tag = nullptr,
+        void* finish_tag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -574,24 +473,24 @@ class VideoService {
         auto call(new AuthenticateAsyncStream);
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(call->context);
+        token_manager.setup_bidi_client_context(call->context);
         // Update the request with the pointer to the allocated config.
-        call->request.set_allocated_config(authenticateConfig);
+        call->request.set_allocated_config(authenticate_config);
         // Start the asynchronous RPC with the call's context and queue. If the
         // initial tag is a nullptr, assign it to the call pointer.
-        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
-        call->rpc = biometricsStub->AsyncAuthenticate(&call->context, queue, initTag);
+        init_tag = init_tag == nullptr ? static_cast<void*>(call) : init_tag;
+        call->rpc = biometrics_stub->AsyncAuthenticate(&call->context, queue, init_tag);
         // Finish the call to set the output status. If the finish tag is a
         // nullptr, assign it to the call pointer.
-        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
-        call->rpc->Finish(&call->status, finishTag);
+        finish_tag = finish_tag == nullptr ? static_cast<void*>(call) : finish_tag;
+        call->rpc->Finish(&call->status, finish_tag);
         return call;
     }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `Authenticate` calls.
-    typedef ::sensory::AwaitableBidiReactor<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AwaitableBidiReactor<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::AuthenticateRequest,
         ::sensory::api::v1::video::AuthenticateResponse
     > AuthenticateBidiReactor;
@@ -602,9 +501,8 @@ class VideoService {
     /// @tparam Reactor The type of the reactor for handling callbacks.
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
-    /// @param authenticateConfig The authentication configuration for the
-    /// stream. Use `new_authenticate_config` to create a new authentication
-    /// config. _Ownership of the dynamically allocated configuration is
+    /// @param authenticate_config The authentication configuration for the
+    /// stream. _Ownership of the dynamically allocated configuration is
     /// implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send video data to
     /// the server.
@@ -615,16 +513,16 @@ class VideoService {
     ///
     template<typename Reactor>
     inline void authenticate(Reactor* reactor,
-        ::sensory::api::v1::video::AuthenticateConfig* authenticateConfig
+        ::sensory::api::v1::video::AuthenticateConfig* authenticate_config
     ) const {
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(reactor->context);
+        token_manager.setup_bidi_client_context(reactor->context);
         // Update the request with the pointer to the allocated config.
-        reactor->request.set_allocated_config(authenticateConfig);
+        reactor->request.set_allocated_config(authenticate_config);
         // Start the stream with the context in the reactor and a pointer to
         // reactor for callbacks.
-        biometricsStub->async()->Authenticate(&reactor->context, reactor);
+        biometrics_stub->async()->Authenticate(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
         reactor->StartRead(&reactor->response);
     }
@@ -644,10 +542,8 @@ class VideoService {
     ///
     /// @param context the gRPC context for the stream
     /// @param validateRecognitionConfig The recognition validation
-    /// configuration for the stream. Use `new_validate_recognition_config` to
-    /// create a new recognition validation config. _Ownership of the
-    /// dynamically allocated configuration is implicitly transferred to the
-    /// stream_.
+    /// configuration for the stream. _Ownership of the dynamically allocated
+    /// configuration is implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send video data to
     /// the server.
     ///
@@ -655,29 +551,29 @@ class VideoService {
     /// This call will automatically send the `ValidateRecognitionConfig`
     /// message to the server.
     ///
-    inline ValidateLivenessStream validateLiveness(
+    inline ValidateLivenessStream validate_liveness(
         ::grpc::ClientContext* context,
-        ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig
+        ::sensory::api::v1::video::ValidateRecognitionConfig* recognition_config
     ) const {
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(*context);
+        token_manager.setup_bidi_client_context(*context);
         // Create the request with the pointer to the allocated config.
         ::sensory::api::v1::video::ValidateRecognitionRequest request;
-        request.set_allocated_config(recognitionConfig);
+        request.set_allocated_config(recognition_config);
         // Create the stream and write the initial configuration request.
-        auto stream = recognitionStub->ValidateLiveness(context);
+        auto stream = recognition_stub->ValidateLiveness(context);
         if (stream == nullptr)
-            throw NullStreamError("Authenticate stream returned null pointer!");
+            throw ::sensory::error::NullStreamError("Authenticate stream returned null pointer!");
         if (!stream->Write(request))  // Failed to write video config.
-            throw WriteStreamError("Failed to write video configuration to ValidateLiveness stream.");
+            throw ::sensory::error::WriteStreamError("Failed to write video configuration to ValidateLiveness stream.");
         return stream;
     }
 
     /// @brief A type for encapsulating data for asynchronous `ValidateLiveness`
     /// calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncReaderWriterCall<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncReaderWriterCall<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::ValidateRecognitionRequest,
         ::sensory::api::v1::video::LivenessRecognitionResponse
     > ValidateLivenessAsyncStream;
@@ -688,13 +584,11 @@ class VideoService {
     /// @param queue The `::grpc::CompletionQueue` instance for handling
     /// asynchronous callbacks.
     /// @param validateRecognitionConfig The recognition validation
-    /// configuration for the stream. Use `new_validate_recognition_config` to
-    /// create a new recognition validation config. _Ownership of the
-    /// dynamically allocated configuration is implicitly transferred to the
-    /// stream_.
-    /// @param initTag The tag to initialize the stream with. Use `nullptr` to
+    /// configuration for the stream. _Ownership of the dynamically allocated
+    /// configuration is implicitly transferred to the stream_.
+    /// @param init_tag The tag to initialize the stream with. Use `nullptr` to
     /// use the pointer as the tag.
-    /// @param finishTag The tag to finish the stream with. Use `nullptr` to
+    /// @param finish_tag The tag to finish the stream with. Use `nullptr` to
     /// use the pointer as the tag.
     /// @returns A pointer to the call data associated with this asynchronous
     /// call. This pointer can be used to identify the call in the event-loop
@@ -707,11 +601,11 @@ class VideoService {
     /// `ValidateRecognitionConfig` message to the server, but will buffer it
     /// in the message for later transmission.
     ///
-    inline ValidateLivenessAsyncStream* validateLiveness(
+    inline ValidateLivenessAsyncStream* validate_liveness(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig,
-        void* initTag = nullptr,
-        void* finishTag = nullptr
+        ::sensory::api::v1::video::ValidateRecognitionConfig* recognition_config,
+        void* init_tag = nullptr,
+        void* finish_tag = nullptr
     ) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
@@ -719,24 +613,24 @@ class VideoService {
         auto call(new ValidateLivenessAsyncStream);
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(call->context);
+        token_manager.setup_bidi_client_context(call->context);
         // Update the request with the pointer to the allocated config.
-        call->request.set_allocated_config(recognitionConfig);
+        call->request.set_allocated_config(recognition_config);
         // Start the asynchronous RPC with the call's context and queue. If the
         // initial tag is a nullptr, assign it to the call pointer.
-        initTag = initTag == nullptr ? static_cast<void*>(call) : initTag;
-        call->rpc = recognitionStub->AsyncValidateLiveness(&call->context, queue, initTag);
+        init_tag = init_tag == nullptr ? static_cast<void*>(call) : init_tag;
+        call->rpc = recognition_stub->AsyncValidateLiveness(&call->context, queue, init_tag);
         // Finish the call to set the output status. If the finish tag is a
         // nullptr, assign it to the call pointer.
-        finishTag = finishTag == nullptr ? static_cast<void*>(call) : finishTag;
-        call->rpc->Finish(&call->status, finishTag);
+        finish_tag = finish_tag == nullptr ? static_cast<void*>(call) : finish_tag;
+        call->rpc->Finish(&call->status, finish_tag);
         return call;
     }
 
     /// @brief A type for encapsulating data for asynchronous
     /// `ValidateLiveness` calls.
-    typedef ::sensory::AwaitableBidiReactor<
-        VideoService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AwaitableBidiReactor<
+        VideoService<CredentialStore>,
         ::sensory::api::v1::video::ValidateRecognitionRequest,
         ::sensory::api::v1::video::LivenessRecognitionResponse
     > ValidateLivenessBidiReactor;
@@ -748,10 +642,8 @@ class VideoService {
     /// @param reactor The reactor for receiving callbacks and managing the
     /// context of the stream.
     /// @param validateRecognitionConfig The recognition validation
-    /// configuration for the stream. Use `new_validate_recognition_config` to
-    /// create a new recognition validation config. _Ownership of the
-    /// dynamically allocated configuration is implicitly transferred to the
-    /// stream_.
+    /// configuration for the stream. _Ownership of the dynamically allocated
+    /// configuration is implicitly transferred to the stream_.
     /// @returns A bidirectional stream that can be used to send video data to
     /// the server.
     ///
@@ -760,17 +652,17 @@ class VideoService {
     /// message to the server.
     ///
     template<typename Reactor>
-    inline void validateLiveness(Reactor* reactor,
-        ::sensory::api::v1::video::ValidateRecognitionConfig* recognitionConfig
+    inline void validate_liveness(Reactor* reactor,
+        ::sensory::api::v1::video::ValidateRecognitionConfig* recognition_config
     ) const {
         // Setup the context of the call for a bidirectional stream. This
         // will add the Bearer token to the header of the RPC.
-        tokenManager.setup_bidi_client_context(reactor->context);
+        token_manager.setup_bidi_client_context(reactor->context);
         // Update the request with the pointer to the allocated config.
-        reactor->request.set_allocated_config(recognitionConfig);
+        reactor->request.set_allocated_config(recognition_config);
         // Start the stream with the context in the reactor and a pointer to
         // reactor for callbacks.
-        recognitionStub->async()->ValidateLiveness(&reactor->context, reactor);
+        recognition_stub->async()->ValidateLiveness(&reactor->context, reactor);
         reactor->StartWrite(&reactor->request);
         reactor->StartRead(&reactor->response);
     }

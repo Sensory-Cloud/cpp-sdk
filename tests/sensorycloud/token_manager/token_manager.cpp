@@ -1,6 +1,6 @@
-// Test cases for the TokenManager in the sensory::token_manager namespace.
+// Test cases for the sensory::token_manager::TokenManager class.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -29,42 +29,21 @@
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/token_manager/in_memory_credential_store.hpp"
 
 using sensory::Config;
 using sensory::service::OAuthService;
 using sensory::token_manager::TokenManager;
 using sensory::token_manager::TAGS;
-
-/// @brief A mock secure credential store for testing the TokenManager.
-struct SecureCredentialStore : public std::unordered_map<std::string, std::string> {
-#if (__cplusplus <= 202002L)  // C++ 2020 and later defines contains for STL maps
-    /// @brief Return true if the key exists in the key-value store.
-    ///
-    /// @returns `true` if the key exists, `false` otherwise.
-    ///
-    inline bool contains(const std::string& key) const {
-        return find(key) != end();
-    }
-#endif
-
-    /// @brief Emplace or replace a key/value pair in the key-chain.
-    ///
-    /// @param key the plain-text key of the value to store
-    /// @param value the secure value to store
-    ///
-    inline void emplace(const std::string& key, const std::string& value) {
-        if (contains(key)) erase(key);
-        std::unordered_map<std::string, std::string>::emplace(key, value);
-    }
-};
+using sensory::token_manager::InMemoryCredentialStore;
 
 SCENARIO("a user wants to create a TokenManager based on an STL key-store") {
     GIVEN("an initialized STL key-value store object and an OAuthService") {
         Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
-        SecureCredentialStore keychain;
+        InMemoryCredentialStore keychain;
         WHEN("a TokenManager is initialized with an empty key-value store") {
-            TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+            TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
             THEN("the token manager has no credentials stored") {
                 REQUIRE_FALSE(token_manager.has_saved_credentials());
             }
@@ -78,7 +57,7 @@ SCENARIO("a user wants to create a TokenManager based on an STL key-store") {
         WHEN("a TokenManager is initialized with credentials in the key-value store") {
             keychain.emplace(TAGS.ClientID, "foo");
             keychain.emplace(TAGS.ClientSecret, "bar");
-            TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+            TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
             THEN("the token manager has credentials stored") {
                 REQUIRE(token_manager.has_saved_credentials());
             }
@@ -94,7 +73,7 @@ SCENARIO("a user wants to create a TokenManager based on an STL key-store") {
         WHEN("a TokenManager is initialized with a token in the key-value store") {
             keychain.emplace(TAGS.AccessToken, "foo");
             keychain.emplace(TAGS.Expiration, "bar");
-            TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+            TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
             THEN("the token manager has no credentials stored") {
                 REQUIRE_FALSE(token_manager.has_saved_credentials());
             }
@@ -112,8 +91,8 @@ SCENARIO("a user wants to generate credentials in an empty secure store") {
     GIVEN("an initialized TokenManager") {
         Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
-        SecureCredentialStore keychain;
-        TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+        InMemoryCredentialStore keychain;
+        TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
         WHEN("credentials are generated") {
             const auto credentials = token_manager.generate_credentials();
             THEN("The returned credentials should be in the key-value store") {
@@ -134,10 +113,10 @@ SCENARIO("a user wants to overwrite credentials in a secure store") {
     GIVEN("an initialized TokenManager with existing client ID and secret") {
         Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
-        SecureCredentialStore keychain;
+        InMemoryCredentialStore keychain;
         keychain.emplace(TAGS.ClientID, "foo");
         keychain.emplace(TAGS.ClientSecret, "bar");
-        TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+        TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
         WHEN("new credentials are generated") {
             const auto credentials = token_manager.generate_credentials();
             THEN("The returned credentials should be in the key-value store") {
@@ -158,7 +137,7 @@ SCENARIO("a user wants to erase credentials in a secure store") {
     GIVEN("an initialized TokenManager with existing all keys") {
         Config config("localhost", 50051, "tenantID", "deviceID");
         OAuthService oauth_service(config);
-        SecureCredentialStore keychain;
+        InMemoryCredentialStore keychain;
         keychain.emplace(TAGS.ClientID, "foo");
         keychain.emplace(TAGS.ClientSecret, "bar");
         keychain.emplace(TAGS.AccessToken, "baz");
@@ -166,7 +145,7 @@ SCENARIO("a user wants to erase credentials in a secure store") {
         const std::string ARB_KEY = "arb";
         const std::string ARB_VALUE = "asdf";
         keychain.emplace(ARB_KEY, ARB_VALUE);
-        TokenManager<SecureCredentialStore> token_manager(oauth_service, keychain);
+        TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
         WHEN("credentials are erased") {
             token_manager.delete_credentials();
             THEN("The keychain is cleared of the values") {

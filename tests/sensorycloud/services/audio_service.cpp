@@ -1,6 +1,6 @@
 // Test cases for the audio service.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -43,6 +43,9 @@ using ::sensory::token_manager::InMemoryCredentialStore;
 using ::sensory::token_manager::TokenManager;
 using ::sensory::service::OAuthService;
 using ::sensory::service::AudioService;
+using ::sensory::error::WriteStreamError;
+using ::sensory::error::NullStreamError;
+using ::sensory::error::ReadStreamError;
 
 using ::sensory::api::v1::audio::AudioModel;
 using ::sensory::api::v1::audio::AuthenticateRequest;
@@ -63,536 +66,7 @@ using ::sensory::api::v1::audio::ValidateEventResponse;
 using ::sensory::api::v1::audio::TranscribeWordResponse;
 using ::sensory::api::v1::audio::TranscribeWord;
 
-using ::sensory::service::audio::new_audio_config;
-using ::sensory::service::audio::new_create_enrollment_config;
-using ::sensory::service::audio::new_authenticate_config;
-using ::sensory::service::audio::new_validate_event_config;
-using ::sensory::service::audio::new_create_enrollment_event_config;
-using ::sensory::service::audio::new_validate_enrolled_event_config;
-using ::sensory::service::audio::new_transcribe_config;
-using ::sensory::service::audio::TranscriptAggregator;
-
 using testing::_;
-
-// ---------------------------------------------------------------------------
-// MARK: new_audio_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create an AudioConfig") {
-    GIVEN("parameters for an audio config that describe the input stream") {
-        const sensory::api::v1::audio::AudioConfig_AudioEncoding& encoding =
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16;
-        const float sample_rate_hertz = 16000;
-        const uint32_t audio_channel_count = 1;
-        const std::string language_code = "en-US";
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_audio_config(
-                encoding,
-                sample_rate_hertz,
-                audio_channel_count,
-                language_code
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->encoding() == encoding);
-                REQUIRE(config->sampleratehertz() == sample_rate_hertz);
-                REQUIRE(config->audiochannelcount() == audio_channel_count);
-                REQUIRE(config->languagecode() == language_code);
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_create_enrollment_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create a CreateEnrollmentConfig") {
-    GIVEN("parameters for the enrollment based on a text-independent model") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const bool& isLivenessEnabled = true;
-        const float enrollmentDuration = 10.f;
-        const int32_t numUtterances = 0;
-        WHEN("the config is allocated from the parameters") {
-            auto config = new_create_enrollment_config(
-                modelName,
-                userID,
-                description,
-                isLivenessEnabled,
-                enrollmentDuration,
-                numUtterances
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->enrollmentduration() == enrollmentDuration);
-                REQUIRE(config->enrollmentnumutterances() == numUtterances);
-                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-    GIVEN("parameters for the enrollment based on a text-independent model") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const bool& isLivenessEnabled = true;
-        const float enrollmentDuration = 0.f;
-        const int32_t numUtterances = 4;
-        WHEN("the config is allocated from the parameters") {
-            auto config = new_create_enrollment_config(
-                modelName,
-                userID,
-                description,
-                isLivenessEnabled,
-                enrollmentDuration,
-                numUtterances
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->enrollmentduration() == enrollmentDuration);
-                REQUIRE(config->enrollmentnumutterances() == numUtterances);
-                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-    GIVEN("both enrollmentDuration and numUtterances provided") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const bool& isLivenessEnabled = true;
-        const float enrollmentDuration = 10.f;
-        const int32_t numUtterances = 4;
-        WHEN("the config is allocated from the parameters") {
-            THEN("an error is thrown") {
-                REQUIRE_THROWS(new_create_enrollment_config(
-                    modelName,
-                    userID,
-                    description,
-                    isLivenessEnabled,
-                    enrollmentDuration,
-                    numUtterances
-                ));
-            }
-        }
-    }
-    GIVEN("parameters for the enrollment with a reference ID") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const bool& isLivenessEnabled = true;
-        const float enrollmentDuration = 0.f;
-        const int32_t numUtterances = 0;
-        const std::string reference_id = "reference_id";
-        WHEN("the config is allocated from the parameters") {
-            auto config = new_create_enrollment_config(
-                modelName,
-                userID,
-                description,
-                isLivenessEnabled,
-                enrollmentDuration,
-                numUtterances,
-                reference_id
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->enrollmentduration() == enrollmentDuration);
-                REQUIRE(config->enrollmentnumutterances() == numUtterances);
-                REQUIRE_THAT(reference_id, Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_authenticate_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create an AuthenticateConfig") {
-    GIVEN("parameters for an authentication stream") {
-        const std::string enrollmentID = "enrollmentID";
-        const bool isLivenessEnabled = true;
-        const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
-            sensory::api::v1::audio::ThresholdSensitivity::LOW;
-        const sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity security =
-            sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW;
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_authenticate_config(
-                enrollmentID,
-                isLivenessEnabled,
-                sensitivity,
-                security
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->enrollmentid() == enrollmentID);
-                REQUIRE(config->enrollmentgroupid() == "");
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->sensitivity() == sensitivity);
-                REQUIRE(config->security() == security);
-            }
-            delete config;
-        }
-        WHEN("the config is dynamically allocated as an enrollment group") {
-            auto config = new_authenticate_config(
-                enrollmentID,
-                isLivenessEnabled,
-                sensitivity,
-                security,
-                true
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->enrollmentid() == "");
-                REQUIRE(config->enrollmentgroupid() == enrollmentID);
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->sensitivity() == sensitivity);
-                REQUIRE(config->security() == security);
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_validate_event_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create a ValidateEventConfig") {
-    GIVEN("parameters for an event validation stream") {
-        const std::string modelName = "modelName";
-        const std::string userID = "userID";
-        const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
-            sensory::api::v1::audio::ThresholdSensitivity::LOW;
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_validate_event_config(
-                modelName,
-                userID,
-                sensitivity
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->sensitivity() == sensitivity);
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_create_enrollment_event_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create a CreateEnrollmentEventConfig") {
-    GIVEN("parameters for the enrollment based on a text-independent model") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const float enrollmentDuration = 10.f;
-        const int32_t numUtterances = 0;
-        WHEN("the config is allocated from the parameters") {
-            auto config = new_create_enrollment_event_config(
-                modelName,
-                userID,
-                description,
-                enrollmentDuration,
-                numUtterances
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->enrollmentduration() == enrollmentDuration);
-                REQUIRE(config->enrollmentnumutterances() == numUtterances);
-                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-    GIVEN("parameters for the enrollment based on a text-independent model") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const float enrollmentDuration = 0.f;
-        const int32_t numUtterances = 4;
-        WHEN("the config is allocated from the parameters") {
-            auto config = new_create_enrollment_event_config(
-                modelName,
-                userID,
-                description,
-                enrollmentDuration,
-                numUtterances
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->enrollmentduration() == enrollmentDuration);
-                REQUIRE(config->enrollmentnumutterances() == numUtterances);
-                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-    GIVEN("both enrollmentDuration and numUtterances provided") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const float enrollmentDuration = 10.f;
-        const int32_t numUtterances = 4;
-        WHEN("the config is allocated from the parameters") {
-            THEN("an error is thrown") {
-                REQUIRE_THROWS(new_create_enrollment_event_config(
-                    modelName,
-                    userID,
-                    description,
-                    enrollmentDuration,
-                    numUtterances
-                ));
-            }
-        }
-    }
-    GIVEN("parameters for the enrollment with a reference ID") {
-        const std::string& modelName = "modelName";
-        const std::string& userID = "userID";
-        const std::string& description = "Description";
-        const float enrollmentDuration = 0.f;
-        const int32_t numUtterances = 0;
-        const std::string reference_id = "reference_id";
-        WHEN("the config is allocated from the parameters") {
-            auto config = new_create_enrollment_event_config(
-                modelName,
-                userID,
-                description,
-                enrollmentDuration,
-                numUtterances,
-                reference_id
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->enrollmentduration() == enrollmentDuration);
-                REQUIRE(config->enrollmentnumutterances() == numUtterances);
-                REQUIRE_THAT(reference_id, Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_validate_enrolled_event_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create an ValidateEnrolledEventConfig") {
-    GIVEN("parameters for an authentication stream") {
-        const std::string enrollmentID = "enrollmentID";
-        const sensory::api::v1::audio::ThresholdSensitivity sensitivity =
-            sensory::api::v1::audio::ThresholdSensitivity::LOW;
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_validate_enrolled_event_config(
-                enrollmentID,
-                sensitivity
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->enrollmentid() == enrollmentID);
-                REQUIRE(config->enrollmentgroupid() == "");
-                REQUIRE(config->sensitivity() == sensitivity);
-            }
-            delete config;
-        }
-        WHEN("the config is dynamically allocated for group enrollment") {
-            auto config = new_validate_enrolled_event_config(
-                enrollmentID,
-                sensitivity,
-                true
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->enrollmentid() == "");
-                REQUIRE(config->enrollmentgroupid() == enrollmentID);
-                REQUIRE(config->sensitivity() == sensitivity);
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_transcribe_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create a TranscribeConfig") {
-    GIVEN("parameters for an audio transcription stream") {
-        const std::string modelName = "modelName";
-        const std::string userID = "userID";
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_transcribe_config(modelName, userID);
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: TranscriptAggregator
-// ---------------------------------------------------------------------------
-
-SCENARIO("A client needs to track a full transcript using the STT engine") {
-    WHEN("A transcript aggregator is initialized") {
-        TranscriptAggregator aggregator;
-        THEN("The transcript aggregator embodies a null state") {
-            REQUIRE(aggregator.get_word_list().empty());
-            REQUIRE(aggregator.get_transcript().empty());
-        }
-    }
-    GIVEN("An empty transcript aggregator") {
-        TranscriptAggregator aggregator;
-        WHEN("An empty response is passed to the aggregator") {
-            aggregator.process_response({});
-            THEN("The initial state of the aggregator does not change") {
-                REQUIRE(aggregator.get_word_list().empty());
-                REQUIRE(aggregator.get_transcript().empty());
-            }
-        }
-        WHEN("A single word response is passed to the aggregator") {
-            // Create a mock word at index 0.
-            TranscribeWord foo;
-            foo.set_word("foo");
-            foo.set_wordindex(0);
-            // Create the transcription response with the word update.
-            TranscribeWordResponse rsp;
-            rsp.set_firstwordindex(0);
-            rsp.set_lastwordindex(0);
-            (*rsp.mutable_words()->Add()) = foo;
-            // Update the structure with the single word transcript.
-            aggregator.process_response(rsp);
-            THEN("The aggregator is updated with the transcript state") {
-                REQUIRE(1 == aggregator.get_word_list().size());
-                REQUIRE_THAT("foo", Catch::Equals(aggregator.get_transcript()));
-            }
-        }
-        WHEN("A multi-word response is passed to the aggregator") {
-            // Create a mock word at index 0.
-            TranscribeWord foo;
-            foo.set_word("foo ");
-            foo.set_wordindex(0);
-            TranscribeWord bar;
-            bar.set_word("bar");
-            bar.set_wordindex(1);
-            // Create the transcription response with the word update.
-            TranscribeWordResponse rsp;
-            rsp.set_firstwordindex(0);
-            rsp.set_lastwordindex(1);
-            (*rsp.mutable_words()->Add()) = foo;
-            (*rsp.mutable_words()->Add()) = bar;
-            aggregator.process_response(rsp);
-            THEN("The aggregator is updated with the transcript state") {
-                REQUIRE(2 == aggregator.get_word_list().size());
-                REQUIRE_THAT("foo bar", Catch::Equals(aggregator.get_transcript()));
-            }
-        }
-    }
-    GIVEN("A transcript aggregator with existing state") {
-        TranscriptAggregator aggregator;
-        // Create mock words.
-        TranscribeWord foo;
-        foo.set_word("foo");
-        foo.set_wordindex(0);
-        TranscribeWord bar;
-        bar.set_word("bar");
-        bar.set_wordindex(1);
-        // Create the transcription response with the word update.
-        TranscribeWordResponse rsp0;
-        rsp0.set_firstwordindex(0);
-        rsp0.set_lastwordindex(1);
-        (*rsp0.mutable_words()->Add()) = foo;
-        (*rsp0.mutable_words()->Add()) = bar;
-        aggregator.process_response(rsp0);
-        WHEN("An update response is passed to the aggregator that adds a word") {
-            TranscribeWord baz;
-            baz.set_word("baz");
-            baz.set_wordindex(2);
-            TranscribeWordResponse rsp1;
-            rsp1.set_firstwordindex(0);
-            rsp1.set_lastwordindex(2);
-            (*rsp1.mutable_words()->Add()) = baz;
-            aggregator.process_response(rsp1);
-            THEN("The aggregator is updated with the new word") {
-                REQUIRE(3 == aggregator.get_word_list().size());
-                REQUIRE_THAT("foo bar baz", Catch::Equals(aggregator.get_transcript()));
-            }
-        }
-        WHEN("An update response is passed to the aggregator that replaces a word") {
-            TranscribeWord food;
-            food.set_word("food");
-            food.set_wordindex(0);
-            TranscribeWordResponse rsp1;
-            rsp1.set_firstwordindex(0);
-            rsp1.set_lastwordindex(1);
-            (*rsp1.mutable_words()->Add()) = food;
-            aggregator.process_response(rsp1);
-            THEN("The aggregator is updated with the replacement word") {
-                REQUIRE(2 == aggregator.get_word_list().size());
-                REQUIRE_THAT("food bar", Catch::Equals(aggregator.get_transcript()));
-            }
-        }
-        WHEN("An update response is passed to the aggregator that replaces a sub-string") {
-            TranscribeWord word;
-            word.set_word("foobar");
-            word.set_wordindex(0);
-            TranscribeWordResponse rsp1;
-            rsp1.set_firstwordindex(0);
-            rsp1.set_lastwordindex(0);
-            (*rsp1.mutable_words()->Add()) = word;
-            aggregator.process_response(rsp1);
-            THEN("The aggregator is updated with the sub-string replacement") {
-                REQUIRE(1 == aggregator.get_word_list().size());
-                REQUIRE_THAT("foobar", Catch::Equals(aggregator.get_transcript()));
-            }
-        }
-    }
-    WHEN("A transcript aggregator is passed an invalid index") {
-        TranscriptAggregator aggregator;
-        TranscribeWord word;
-        word.set_word("foobar");
-        word.set_wordindex(1);
-        TranscribeWordResponse rsp;
-        rsp.set_firstwordindex(0);
-        rsp.set_lastwordindex(0);
-        (*rsp.mutable_words()->Add()) = word;
-        THEN("An expected runtime error is raised") {
-            REQUIRE_THROWS(aggregator.process_response(rsp));
-        }
-    }
-}
 
 // ---------------------------------------------------------------------------
 // MARK: AudioService
@@ -603,13 +77,13 @@ TEST_CASE("Should create AudioService from Config and TokenManager") {
     Config config("hostname.com", 443, "tenant ID", "device ID");
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
-    OAuthService oauthService(config);
+    OAuthService oauth_service(config);
     // Create a credential store for keeping the clientID, clientSecret,
     // token, and expiration time.
     InMemoryCredentialStore keychain;
-    TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+    TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
     // Create the actual audio service from the config and token manager.
-    AudioService<InMemoryCredentialStore> service(config, tokenManager);
+    AudioService<InMemoryCredentialStore> service(config, token_manager);
 }
 
 SCENARIO("A client requires a synchronous interface to the audio service") {
@@ -618,11 +92,11 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
         // Create the OAuth service for requesting and managing OAuth tokens through
         // a token manager instance.
-        OAuthService oauthService(config);
+        OAuthService oauth_service(config);
         // Create a credential store for keeping the clientID, clientSecret,
         // token, and expiration time.
         InMemoryCredentialStore keychain;
-        TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+        TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
         // Create the actual audio service from the config and token manager.
         auto models_stub = new ::sensory::api::v1::audio::MockAudioModelsStub;
         auto biometrics_stub = new ::sensory::api::v1::audio::MockAudioBiometricsStub;
@@ -630,7 +104,7 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
         auto transcription_stub = new ::sensory::api::v1::audio::MockAudioTranscriptionsStub;
         auto synthesis_stub = new ::sensory::api::v1::audio::MockAudioSynthesisStub;
         AudioService<InMemoryCredentialStore> service(config,
-            tokenManager,
+            token_manager,
             models_stub,
             biometrics_stub,
             events_stub,
@@ -638,12 +112,11 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             synthesis_stub
         );
 
-        auto audioConfig = new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            16000,
-            1,
-            "en-US"
-        );
+        auto audio_config = new ::sensory::api::v1::audio::AudioConfig;
+        audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+        audio_config->set_sampleratehertz(16000);
+        audio_config->set_audiochannelcount(1);
+        audio_config->set_languagecode("en-US");
 
         // ----- GetModels -----------------------------------------------------
 
@@ -657,7 +130,7 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             GetModelsResponse response;
-            auto status = service.getModels(&response);
+            auto status = service.get_models(&response);
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
@@ -675,14 +148,13 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.createEnrollment(&context, audioConfig, new_create_enrollment_config(
-                    "modelName",
-                    "userID",
-                    "description",
-                    true,
-                    10.f,
-                    0
-                )), sensory::service::NullStreamError);
+                auto config = new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+                config->set_modelname("modelName");
+                config->set_userid("userID");
+                config->set_description("description");
+                config->set_islivenessenabled(true);
+                config->set_enrollmentduration(10.f);
+                REQUIRE_THROWS_AS(service.create_enrollment(&context, audio_config, config), NullStreamError);
             }
         }
 
@@ -696,14 +168,13 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.createEnrollment(&context, audioConfig, new_create_enrollment_config(
-                    "modelName",
-                    "userID",
-                    "description",
-                    true,
-                    10.f,
-                    0
-                )), sensory::service::WriteStreamError);
+                auto config = new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+                config->set_modelname("modelName");
+                config->set_userid("userID");
+                config->set_description("description");
+                config->set_islivenessenabled(true);
+                config->set_enrollmentduration(10.f);
+                REQUIRE_THROWS_AS(service.create_enrollment(&context, audio_config, config), WriteStreamError);
             }
         }
 
@@ -731,20 +202,18 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             ClientContext context;
-            auto audioConfig = new_audio_config(
-                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-                16000,
-                1,
-                "en-US"
-            );
-            auto stream = service.createEnrollment(&context, audioConfig, new_create_enrollment_config(
-                "modelName",
-                "userID",
-                "description",
-                true,
-                10.f,
-                0
-            ));
+            auto audio_config = new ::sensory::api::v1::audio::AudioConfig;
+            audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+            audio_config->set_sampleratehertz(16000);
+            audio_config->set_audiochannelcount(1);
+            audio_config->set_languagecode("en-US");
+            auto config = new ::sensory::api::v1::audio::CreateEnrollmentConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_islivenessenabled(true);
+            config->set_enrollmentduration(10.f);
+            auto stream = service.create_enrollment(&context, audio_config, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -757,13 +226,13 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*biometrics_stub, AuthenticateRaw(_))
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
+            auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_islivenessenabled(true);
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+            config->set_security(sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW);
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.authenticate(&context, audioConfig, new_authenticate_config(
-                    "enrollmentID",
-                    true,
-                    sensory::api::v1::audio::ThresholdSensitivity::LOW,
-                    sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
-                )), sensory::service::NullStreamError);
+                REQUIRE_THROWS_AS(service.authenticate(&context, audio_config, config), NullStreamError);
             }
         }
 
@@ -776,13 +245,13 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
+            auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_islivenessenabled(true);
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+            config->set_security(sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW);
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.authenticate(&context, audioConfig, new_authenticate_config(
-                    "enrollmentID",
-                    true,
-                    sensory::api::v1::audio::ThresholdSensitivity::LOW,
-                    sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
-                )), sensory::service::WriteStreamError);
+                REQUIRE_THROWS_AS(service.authenticate(&context, audio_config, config), WriteStreamError);
             }
         }
 
@@ -807,18 +276,17 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             ClientContext context;
-            auto audioConfig = new_audio_config(
-                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-                16000,
-                1,
-                "en-US"
-            );
-            auto stream = service.authenticate(&context, audioConfig, new_authenticate_config(
-                "enrollmentID",
-                true,
-                sensory::api::v1::audio::ThresholdSensitivity::LOW,
-                sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW
-            ));
+            auto audio_config = new ::sensory::api::v1::audio::AudioConfig;
+            audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+            audio_config->set_sampleratehertz(16000);
+            audio_config->set_audiochannelcount(1);
+            audio_config->set_languagecode("en-US");
+            auto config = new ::sensory::api::v1::audio::AuthenticateConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_islivenessenabled(true);
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+            config->set_security(sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_LOW);
+            auto stream = service.authenticate(&context, audio_config, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -832,11 +300,11 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.validateEvent(&context, audioConfig, new_validate_event_config(
-                    "modelName",
-                    "userID",
-                    sensory::api::v1::audio::ThresholdSensitivity::LOW
-                )), sensory::service::NullStreamError);
+                auto config = new ::sensory::api::v1::audio::ValidateEventConfig;
+                config->set_modelname("modelName");
+                config->set_userid("userID");
+                config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+                REQUIRE_THROWS_AS(service.validate_event(&context, audio_config, config), NullStreamError);
             }
         }
 
@@ -850,11 +318,11 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.validateEvent(&context, audioConfig, new_validate_event_config(
-                    "modelName",
-                    "userID",
-                    sensory::api::v1::audio::ThresholdSensitivity::LOW
-                )), sensory::service::WriteStreamError);
+                auto config = new ::sensory::api::v1::audio::ValidateEventConfig;
+                config->set_modelname("modelName");
+                config->set_userid("userID");
+                config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+                REQUIRE_THROWS_AS(service.validate_event(&context, audio_config, config), WriteStreamError);
             }
         }
 
@@ -878,17 +346,16 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             ClientContext context;
-            auto audioConfig = new_audio_config(
-                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-                16000,
-                1,
-                "en-US"
-            );
-            auto stream = service.validateEvent(&context, audioConfig, new_validate_event_config(
-                "modelName",
-                "userID",
-                sensory::api::v1::audio::ThresholdSensitivity::LOW
-            ));
+            auto audio_config = new ::sensory::api::v1::audio::AudioConfig;
+            audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+            audio_config->set_sampleratehertz(16000);
+            audio_config->set_audiochannelcount(1);
+            audio_config->set_languagecode("en-US");
+            auto config = new ::sensory::api::v1::audio::ValidateEventConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+            auto stream = service.validate_event(&context, audio_config, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -901,14 +368,13 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*events_stub, CreateEnrolledEventRaw(_))
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
+            auto config = new ::sensory::api::v1::audio::CreateEnrollmentEventConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_enrollmentduration(10.f);
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.createEventEnrollment(&context, audioConfig, new_create_enrollment_event_config(
-                    "modelName",
-                    "userID",
-                    "Description",
-                    10.f,
-                    0
-                )), sensory::service::NullStreamError);
+                REQUIRE_THROWS_AS(service.create_event_enrollment(&context, audio_config, config), NullStreamError);
             }
         }
 
@@ -921,14 +387,13 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
+            auto config = new ::sensory::api::v1::audio::CreateEnrollmentEventConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_enrollmentduration(10.f);
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.createEventEnrollment(&context, audioConfig, new_create_enrollment_event_config(
-                    "modelName",
-                    "userID",
-                    "Description",
-                    10.f,
-                    0
-                )), sensory::service::WriteStreamError);
+                REQUIRE_THROWS_AS(service.create_event_enrollment(&context, audio_config, config), WriteStreamError);
             }
         }
 
@@ -954,19 +419,17 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             ClientContext context;
-            auto audioConfig = new_audio_config(
-                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-                16000,
-                1,
-                "en-US"
-            );
-            auto stream = service.createEventEnrollment(&context, audioConfig, new_create_enrollment_event_config(
-                "modelName",
-                "userID",
-                "description",
-                10.f,
-                0
-            ));
+            auto audio_config = new ::sensory::api::v1::audio::AudioConfig;
+            audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+            audio_config->set_sampleratehertz(16000);
+            audio_config->set_audiochannelcount(1);
+            audio_config->set_languagecode("en-US");
+            auto config = new ::sensory::api::v1::audio::CreateEnrollmentEventConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_enrollmentduration(10.f);
+            auto stream = service.create_event_enrollment(&context, audio_config, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -979,11 +442,11 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*events_stub, ValidateEnrolledEventRaw(_))
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
+            auto config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.validateEnrolledEvent(&context, audioConfig, new_validate_enrolled_event_config(
-                    "enrollmentID",
-                    sensory::api::v1::audio::ThresholdSensitivity::LOW
-                )), sensory::service::NullStreamError);
+                REQUIRE_THROWS_AS(service.validate_enrolled_event(&context, audio_config, config), NullStreamError);
             }
         }
 
@@ -996,11 +459,11 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
+            auto config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.validateEnrolledEvent(&context, audioConfig, new_validate_enrolled_event_config(
-                    "enrollmentID",
-                    sensory::api::v1::audio::ThresholdSensitivity::LOW
-                )), sensory::service::WriteStreamError);
+                REQUIRE_THROWS_AS(service.validate_enrolled_event(&context, audio_config, config), WriteStreamError);
             }
         }
 
@@ -1023,16 +486,15 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             ClientContext context;
-            auto audioConfig = new_audio_config(
-                sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-                16000,
-                1,
-                "en-US"
-            );
-            auto stream = service.validateEnrolledEvent(&context, audioConfig, new_validate_enrolled_event_config(
-                "enrollmentID",
-                sensory::api::v1::audio::ThresholdSensitivity::LOW
-            ));
+            auto audio_config = new ::sensory::api::v1::audio::AudioConfig;
+            audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+            audio_config->set_sampleratehertz(16000);
+            audio_config->set_audiochannelcount(1);
+            audio_config->set_languagecode("en-US");
+            auto config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_sensitivity(sensory::api::v1::audio::ThresholdSensitivity::LOW);
+            auto stream = service.validate_enrolled_event(&context, audio_config, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -1046,10 +508,10 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.transcribe(&context, audioConfig, new_transcribe_config(
-                    "modelName",
-                    "userID"
-                )), sensory::service::NullStreamError);
+                auto config = new ::sensory::api::v1::audio::TranscribeConfig;
+                config->set_modelname("modelName");
+                config->set_userid("userID");
+                REQUIRE_THROWS_AS(service.transcribe(&context, audio_config, config), NullStreamError);
             }
         }
 
@@ -1063,10 +525,10 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.transcribe(&context, audioConfig, new_transcribe_config(
-                    "modelName",
-                    "userID"
-                )), sensory::service::WriteStreamError);
+                auto config = new ::sensory::api::v1::audio::TranscribeConfig;
+                config->set_modelname("modelName");
+                config->set_userid("userID");
+                REQUIRE_THROWS_AS(service.transcribe(&context, audio_config, config), WriteStreamError);
             }
         }
 
@@ -1089,10 +551,10 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
                 }
             );
             ClientContext context;
-            auto stream = service.transcribe(&context, audioConfig, new_transcribe_config(
-                "modelName",
-                "userID"
-            ));
+            auto config = new ::sensory::api::v1::audio::TranscribeConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            auto stream = service.transcribe(&context, audio_config, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -1107,10 +569,10 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             THEN("the function catches the null stream and throws an error") {
                 REQUIRE_THROWS_AS(service.synthesize_speech(
                     &context,
-                    audioConfig,
+                    audio_config,
                     "craig",
                     "Hello, World!"
-                ), sensory::service::NullStreamError);
+                ), NullStreamError);
             }
         }
 
@@ -1119,7 +581,7 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*synthesis_stub, SynthesizeSpeechRaw(_, _))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             ClientContext context;
-            auto stream = service.synthesize_speech(&context, audioConfig, "craig", "Hello, World!");
+            auto stream = service.synthesize_speech(&context, audio_config, "craig", "Hello, World!");
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }

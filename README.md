@@ -86,7 +86,7 @@ to your `CMakeLists.txt`.
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.2
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.2
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```
@@ -110,4 +110,5 @@ application.
 
 The [CONTRIBUTING.md](CONTRIBUTING.md) document describes how to setup the
 development environment for the SDK, compile the code outside of the context of
-an application, run unit tests, and release new versions of the SDK.
+an application, run unit tests, and release new versions of the SDK. Please
+refer to the [CHANGELOG.md](CHANGELOG.md) for the latest features and bug fixes.

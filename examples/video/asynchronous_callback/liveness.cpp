@@ -1,6 +1,6 @@
 // An example of face liveness validation based on OpenCV camera streams.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -28,7 +28,7 @@
 #include <mutex>
 #include <google/protobuf/util/time_util.h>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
@@ -36,7 +36,7 @@
 
 using sensory::SensoryCloud;
 using sensory::service::VideoService;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::api::v1::video::RecognitionThreshold;
 using sensory::service::video::FaceAlignment;
 
@@ -47,7 +47,7 @@ using sensory::service::video::FaceAlignment;
 /// Input data for the stream is provided by an OpenCV capture device.
 ///
 class OpenCVReactor :
-    public VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor {
+    public VideoService<FileSystemCredentialStore>::ValidateLivenessBidiReactor {
  private:
     /// A flag determining whether the last sent frame was detected as live.
     std::atomic<bool> is_live;
@@ -66,7 +66,7 @@ class OpenCVReactor :
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
     OpenCVReactor(const bool& verbose_ = false) :
-        VideoService<InsecureCredentialStore>::ValidateLivenessBidiReactor(),
+        VideoService<FileSystemCredentialStore>::ValidateLivenessBidiReactor(),
         is_live(false),
         alignment_code(FaceAlignment::Valid),
         verbose(verbose_),
@@ -188,24 +188,24 @@ int main(int argc, const char** argv) {
         .prog("liveness")
         .description("A tool for validating face liveness using SensoryCloud.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The model to use for the enrollment.");
+        .help("The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID to query the enrollments for.");
+        .help("The name of the user ID to query the enrollments for.");
     parser.add_argument({ "-t", "--threshold" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
-        .help("THRESHOLD The security threshold for conducting the liveness check.");
+        .help("The security threshold for conducting the liveness check.");
     parser.add_argument({ "-D", "--device" })
         .default_value("0")
-        .help("DEVICE The ID of the OpenCV device to use or a path to an image / video file.");
+        .help("The ID of the OpenCV device to use or a path to an image / video file.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output.");
+        .help("Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -224,15 +224,15 @@ int main(int argc, const char** argv) {
     const auto DEVICE = args.get<std::string>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
 
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
     sensory::api::common::ServerHealthResponse server_health;
-    auto status = cloud.health.getHealth(&server_health);
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health ("
             << status.error_code() << "): "
@@ -260,7 +260,7 @@ int main(int argc, const char** argv) {
 
     if (GETMODELS) {
         int error_code = 0;
-        cloud.video.getModels([&error_code](VideoService<InsecureCredentialStore>::GetModelsCallData* call) {
+        cloud.video.get_models([&error_code](VideoService<FileSystemCredentialStore>::GetModelsCallbackData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to get video models ("
                     << call->getStatus().error_code() << "): "
@@ -287,11 +287,14 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    // Create the stream.
+    // Create the config with the recognition parameters.
+    auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
+    config->set_modelname(MODEL);
+    config->set_userid(USER_ID);
+    config->set_threshold(THRESHOLD);
+    // Initialize the stream with the cloud.
     OpenCVReactor reactor(VERBOSE);
-    cloud.video.validateLiveness(&reactor,
-        sensory::service::video::new_validate_recognition_config(MODEL, USER_ID, THRESHOLD)
-    );
+    cloud.video.validate_liveness(&reactor, config);
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd
