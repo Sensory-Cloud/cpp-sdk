@@ -1,6 +1,6 @@
 // An example of biometric voice authentication using SensoryCloud with PortAudio.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -27,11 +27,11 @@
 #include <google/protobuf/util/time_util.h>
 #include <iostream>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::api::v1::audio::ThresholdSensitivity;
 
 /// @brief Print a description of a PortAudio error that occurred.
@@ -52,39 +52,39 @@ int main(int argc, const char** argv) {
         .prog("authenticate")
         .description("A tool for authenticating with voice biometrics using SensoryCloud.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The model to use for the enrollment.");
+        .help("The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID to query the enrollments for.");
+        .help("The name of the user ID to query the enrollments for.");
     parser.add_argument({ "-e", "--enrollmentid" })
-        .help("ENROLLMENTID The ID of the enrollment to authenticate against.");
+        .help("The ID of the enrollment to authenticate against.");
     parser.add_argument({ "-l", "--liveness" })
         .action("store_true")
-        .help("LIVENESS Whether to conduct a liveness check in addition to the enrollment.");
+        .help("Whether to conduct a liveness check in addition to the enrollment.");
     parser.add_argument({ "-s", "--sensitivity" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
-        .help("SENSITIVITY The audio sensitivity level of the model.");
+        .help("The audio sensitivity level of the model.");
     parser.add_argument({ "-t", "--threshold" })
         .choices(std::vector<std::string>{"LOW", "HIGH"})
         .default_value("HIGH")
-        .help("THRESHOLD The security threshold for the authentication.");
+        .help("The security threshold for the authentication.");
     parser.add_argument({ "-g", "--group" })
         .action("store_true")
-        .help("GROUP A flag determining whether the enrollment ID is for an enrollment group.");
+        .help("A flag determining whether the enrollment ID is for an enrollment group.");
     parser.add_argument({ "-L", "--language" })
-        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
-    //     .help("CHUNKSIZE The number of audio samples per message (default 4096).")
+    //     .help("The number of audio samples per message (default 4096).")
     //     .default_value("4096");
     // parser.add_argument({ "-S", "--samplerate" })
-    //     .help("SAMPLERATE The audio sample rate of the input stream.")
+    //     .help("The audio sample rate of the input stream.")
     //     .choices({"9600", "11025", "12000", "16000", "22050", "24000", "32000", "44100", "48000", "88200", "96000", "192000"})
     //     .default_value("16000");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output during authentication.");
+        .help("Produce verbose output during authentication.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -112,14 +112,14 @@ int main(int argc, const char** argv) {
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
     sensory::api::common::ServerHealthResponse server_health;
-    auto status = cloud.health.getHealth(&server_health);
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health ("
             << status.error_code() << "): "
@@ -133,11 +133,19 @@ int main(int argc, const char** argv) {
         std::cout << "\tid: " << server_health.id() << std::endl;
     }
 
+    // Initialize the client.
+    sensory::api::v1::management::DeviceResponse response;
+    status = cloud.initialize(&response);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to initialize (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
+    }
+
     // ------ Fetch enrollments for the user -----------------------------------
 
     if (USER_ID != "") {
         sensory::api::v1::management::GetEnrollmentsResponse enrollment_response;
-        status = cloud.management.getEnrollments(&enrollment_response, USER_ID);
+        status = cloud.management.get_enrollments(&enrollment_response, USER_ID);
         if (!status.ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to get enrollments ("
                 << status.error_code() << "): "
@@ -162,7 +170,8 @@ int main(int argc, const char** argv) {
             std::cout << "\tUpdated:       "
                 << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
                 << std::endl;
-            std::cout << "\tID:            " << enrollment.id()    << std::endl;
+            std::cout << "\tID:            " << enrollment.id()           << std::endl;
+            std::cout << "\tReference ID:  " << enrollment.referenceid()  << std::endl;
         }
         return 0;
     }
@@ -175,8 +184,7 @@ int main(int argc, const char** argv) {
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
     const auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
-    const auto BYTES_PER_BLOCK =
-        CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
+    const auto BYTES_PER_BLOCK = CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     /// Tagged events in the CompletionQueue handler.
     enum class Events {
@@ -190,20 +198,24 @@ int main(int argc, const char** argv) {
         Finish = 4
     };
 
-    // Start an asynchronous RPC to fetch the names of the available models. The
-    // RPC will use the grpc::CompletionQueue as an event loop.
+    // Create an audio config that describes the format of the audio stream.
+    auto audio_config = new sensory::api::v1::audio::AudioConfig;
+    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+    audio_config->set_sampleratehertz(SAMPLE_RATE);
+    audio_config->set_audiochannelcount(NUM_CHANNELS);
+    audio_config->set_languagecode(LANGUAGE);
+    // Create the transcribe config with the authentication parameters.
+    auto authenticate_config = new ::sensory::api::v1::audio::AuthenticateConfig;
+    if (GROUP)
+        authenticate_config->set_enrollmentgroupid(ENROLLMENT_ID);
+    else
+        authenticate_config->set_enrollmentid(ENROLLMENT_ID);
+    authenticate_config->set_islivenessenabled(LIVENESS);
+    authenticate_config->set_sensitivity(SENSITIVITY);
+    authenticate_config->set_security(THRESHOLD);
+    // Initialize the stream with the cloud.
     grpc::CompletionQueue queue;
-    auto stream = cloud.audio.authenticate(&queue,
-        sensory::service::audio::new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, LANGUAGE
-        ),
-        sensory::service::audio::new_authenticate_config(
-            ENROLLMENT_ID, LIVENESS, SENSITIVITY, THRESHOLD, GROUP
-        ),
-        nullptr,
-        (void*) Events::Finish
-    );
+    auto stream = cloud.audio.authenticate(&queue, audio_config, authenticate_config, nullptr, (void*) Events::Finish);
 
     // start the stream event thread in the background to handle events.
     std::thread audioThread([&stream, &queue, &VERBOSE](){

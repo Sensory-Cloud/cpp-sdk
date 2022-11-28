@@ -1,6 +1,6 @@
 // An example of biometric face authentication using SensoryCloud with OpenCV.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -28,14 +28,14 @@
 #include <mutex>
 #include <google/protobuf/util/time_util.h>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::api::v1::video::RecognitionThreshold;
 using sensory::service::VideoService;
 
@@ -46,7 +46,7 @@ using sensory::service::VideoService;
 /// Input data for the stream is provided by an OpenCV capture device.
 ///
 class OpenCVReactor :
-    public VideoService<InsecureCredentialStore>::AuthenticateBidiReactor {
+    public VideoService<FileSystemCredentialStore>::AuthenticateBidiReactor {
  private:
     /// A flag determining whether the last sent frame was enrolled. This flag
     /// is atomic to support thread safe reads and writes.
@@ -77,7 +77,7 @@ class OpenCVReactor :
         const bool& is_livenessEnabled_ = false,
         const bool& verbose_ = false
     ) :
-        VideoService<InsecureCredentialStore>::AuthenticateBidiReactor(),
+        VideoService<FileSystemCredentialStore>::AuthenticateBidiReactor(),
         is_authenticated(false),
         score(100),
         is_live(false),
@@ -189,27 +189,27 @@ int main(int argc, const char** argv) {
         .prog("authenticate")
         .description("A tool for authenticating with face biometrics using SensoryCloud.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID to query the enrollments for.");
+        .help("The name of the user ID to query the enrollments for.");
     parser.add_argument({ "-e", "--enrollmentid" })
-        .help("ENROLLMENTID The ID of the enrollment to authenticate against.");
+        .help("The ID of the enrollment to authenticate against.");
     parser.add_argument({ "-l", "--liveness" })
         .action("store_true")
-        .help("LIVENESS Whether to conduct a liveness check in addition to the enrollment.");
+        .help("Whether to conduct a liveness check in addition to the enrollment.");
     parser.add_argument({ "-t", "--threshold" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
-        .help("THRESHOLD The security threshold for conducting the liveness check.");
+        .help("The security threshold for conducting the liveness check.");
     parser.add_argument({ "-g", "--group" })
         .action("store_true")
-        .help("GROUP A flag determining whether the enrollment ID is for an enrollment group.");
+        .help("A flag determining whether the enrollment ID is for an enrollment group.");
     parser.add_argument({ "-D", "--device" })
         .default_value("0")
-        .help("DEVICE The ID of the OpenCV device to use or a path to an image / video file.");
+        .help("The ID of the OpenCV device to use or a path to an image / video file.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output.");
+        .help("Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -229,17 +229,17 @@ int main(int argc, const char** argv) {
     const auto DEVICE = args.get<std::string>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
 
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // ------ Check server health ----------------------------------------------
 
     // Query the health of the remote service.
     sensory::api::common::ServerHealthResponse server_health;
-    auto status = cloud.health.getHealth(&server_health);
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health ("
             << status.error_code() << "): "
@@ -267,7 +267,7 @@ int main(int argc, const char** argv) {
 
     if (USER_ID != "") {
         sensory::api::v1::management::GetEnrollmentsResponse enrollment_response;
-        auto status = cloud.management.getEnrollments(&enrollment_response, USER_ID);
+        auto status = cloud.management.get_enrollments(&enrollment_response, USER_ID);
         if (!status.ok()) {  // the call failed, print a descriptive message
             std::cout << "Failed to get enrollments ("
                 << status.error_code() << "): "
@@ -289,7 +289,8 @@ int main(int argc, const char** argv) {
             std::cout << "\tUpdated:       "
                 << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
                 << std::endl;
-            std::cout << "\tID:            " << enrollment.id()    << std::endl;
+            std::cout << "\tID:            " << enrollment.id()           << std::endl;
+            std::cout << "\tReference ID:  " << enrollment.referenceid()  << std::endl;
         }
     }
 
@@ -301,10 +302,17 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    // Create the stream.
+    // Create the config with the authentication parameters.
+    auto config = new ::sensory::api::v1::video::AuthenticateConfig;
+    if (GROUP)
+        config->set_enrollmentgroupid(ENROLLMENT_ID);
+    else
+        config->set_enrollmentid(ENROLLMENT_ID);
+    config->set_islivenessenabled(LIVENESS);
+    config->set_livenessthreshold(THRESHOLD);
+    // Initialize the stream with the cloud.
     OpenCVReactor reactor(LIVENESS, VERBOSE);
-    cloud.video.authenticate(&reactor,
-        sensory::service::video::new_authenticate_config(ENROLLMENT_ID, LIVENESS, THRESHOLD, GROUP));
+    cloud.video.authenticate(&reactor, config);
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned
     // up. If the stream is destroyed before the final `onDone` callback, odd

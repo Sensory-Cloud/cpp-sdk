@@ -1,6 +1,6 @@
 // Test cases for the health service.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -65,7 +65,7 @@ SCENARIO("A client requires a synchronous interface to the health service") {
                 }
             );
             ServerHealthResponse response;
-            auto status = service.getHealth(&response);
+            auto status = service.get_health(&response);
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }

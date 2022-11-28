@@ -1,6 +1,6 @@
 // An example of audio enrollment based on file inputs.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -26,23 +26,22 @@
 #include <iostream>
 #include <regex>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "dep/audio_buffer.hpp"
 #include "dep/argparse.hpp"
 #include "dep/tqdm.hpp"
 
 using sensory::SensoryCloud;
 using sensory::token_manager::TokenManager;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::service::HealthService;
 using sensory::service::AudioService;
 using sensory::service::OAuthService;
 
-/// @brief A bidirection stream reactor for biometric enrollments from audio
-/// stream data.
+/// @brief A bi-directional stream reactor for audio signal enrollment.
 ///
 class AudioFileReactor :
-    public AudioService<InsecureCredentialStore>::CreateEnrollmentBidiReactor {
+    public AudioService<FileSystemCredentialStore>::CreateEnrollmentBidiReactor {
  private:
     /// The audio samples to send to the cloud.
     const std::vector<int16_t>& buffer;
@@ -76,7 +75,7 @@ class AudioFileReactor :
         uint32_t frames_per_block_ = 4096,
         const bool& verbose_ = false
     ) :
-        AudioService<InsecureCredentialStore>::CreateEnrollmentBidiReactor(),
+        AudioService<FileSystemCredentialStore>::CreateEnrollmentBidiReactor(),
         buffer(buffer_),
         num_channels(num_channels_),
         sample_rate(sample_rate_),
@@ -171,37 +170,39 @@ int main(int argc, const char** argv) {
         .prog("enroll")
         .description("A tool for streaming audio files to Sensory Cloud for audio transcription.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-i", "--input" }).required(true)
-        .help("INPUT The input audio file to stream to Sensory Cloud.");
+        .help("The input audio file to stream to Sensory Cloud.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The model to use for the enrollment.");
+        .help("The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID to create the enrollment for.");
+        .help("The name of the user ID to create the enrollment for.");
     parser.add_argument({ "-d", "--description" })
-        .help("DESCRIPTION A text description of the enrollment.");
+        .help("A text description of the enrollment.");
     parser.add_argument({ "-l", "--liveness" })
         .action("store_true")
-        .help("LIVENESS Whether to conduct a liveness check in addition to the enrollment.");
+        .help("Whether to conduct a liveness check in addition to the enrollment.");
     parser.add_argument({ "-n", "--numutterances" })
         .default_value(0)
-        .help("NUMUTTERANCES The number of utterances for a text independent enrollment.");
+        .help("The number of utterances for a text independent enrollment.");
     parser.add_argument({ "-D", "--duration" })
         .default_value(0)
-        .help("DURATION The duration of a text-dependent enrollment.");
+        .help("The duration of a text-dependent enrollment.");
+    parser.add_argument({ "-r", "--reference-id" })
+        .help("An optional reference ID for tagging the enrollment.");
     parser.add_argument({ "-L", "--language" })
-        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
-        .help("CHUNKSIZE The number of audio samples per message; 0 to stream all samples in one message (default).")
+        .help("The number of audio samples per message; 0 to stream all samples in one message (default).")
         .default_value(0);
     parser.add_argument({ "-p", "--padding" })
-        .help("PADDING The number of milliseconds of padding to append to the audio buffer.")
+        .help("The number of milliseconds of padding to append to the audio buffer.")
         .default_value(300);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
-        .help("VERBOSE Produce verbose output during transcription.");
+        .help("Produce verbose output during transcription.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -213,29 +214,30 @@ int main(int argc, const char** argv) {
     const auto LIVENESS = args.get<bool>("liveness");
     const auto NUM_UTTERANCES = args.get<uint32_t>("numutterances");
     const auto DURATION = args.get<float>("duration");
+    const auto REFERENCE_ID = args.get<std::string>("reference-id");
     const auto LANGUAGE = args.get<std::string>("language");
     const auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
     const auto PADDING = args.get<float>("padding");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    sensory::token_manager::FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
 
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Check the server health.
-    sensory::api::common::ServerHealthResponse server_healthResponse;
-    auto status = cloud.health.getHealth(&server_healthResponse);
+    sensory::api::common::ServerHealthResponse server_health_response;
+    auto status = cloud.health.get_health(&server_health_response);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
         std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_healthResponse.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
+        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
+        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
     }
 
     // Initialize the client.
@@ -250,7 +252,7 @@ int main(int argc, const char** argv) {
 
     if (GETMODELS) {
         int error_code = 0;
-        cloud.audio.getModels([&error_code](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
+        cloud.audio.get_models([&error_code](AudioService<FileSystemCredentialStore>::GetModelsCallbackData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to get audio models with\n\t" <<
                     call->getStatus().error_code() << ": " <<
@@ -292,29 +294,33 @@ int main(int argc, const char** argv) {
     // Pad the file with silence.
     buffer.pad_back(PADDING);
 
-    // Create the gRPC reactor to respond to streaming events.
+    // Create an audio config that describes the format of the audio stream.
+    auto audio_config = new sensory::api::v1::audio::AudioConfig;
+    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+    audio_config->set_sampleratehertz(buffer.get_sample_rate());
+    audio_config->set_audiochannelcount(buffer.get_channels());
+    audio_config->set_languagecode(LANGUAGE);
+    // Create the config with the enrollment parameters.
+    auto create_enrollment_config = new sensory::api::v1::audio::CreateEnrollmentConfig;
+    create_enrollment_config->set_modelname(MODEL);
+    create_enrollment_config->set_userid(USER_ID);
+    create_enrollment_config->set_description(DESCRIPTION);
+    create_enrollment_config->set_islivenessenabled(LIVENESS);
+    if (DURATION > 0)
+        create_enrollment_config->set_enrollmentduration(DURATION);
+    if (NUM_UTTERANCES > 0)
+        create_enrollment_config->set_enrollmentnumutterances(NUM_UTTERANCES);
+    create_enrollment_config->set_referenceid(REFERENCE_ID);
+    // Initialize the stream with the cloud.
     AudioFileReactor reactor(buffer.get_samples(),
         buffer.get_channels(),
         buffer.get_sample_rate(),
         CHUNK_SIZE > 0 ? CHUNK_SIZE : buffer.get_num_samples(),
         VERBOSE
     );
-    // Initialize the stream with the reactor for handling callbacks.
-    cloud.audio.createEnrollment(&reactor,
-        sensory::service::audio::new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            buffer.get_sample_rate(), 1, LANGUAGE
-        ),
-        sensory::service::audio::new_create_enrollment_config(
-            MODEL,
-            USER_ID,
-            DESCRIPTION,
-            LIVENESS,
-            DURATION,
-            NUM_UTTERANCES
-        )
-    );
+    cloud.audio.create_enrollment(&reactor, audio_config, create_enrollment_config);
     reactor.StartCall();
+
     // Wait for the call to terminate and check the final status.
     status = reactor.await();
     if (!status.ok()) {  // The call failed, print a descriptive message.

@@ -1,6 +1,6 @@
 // Management service for the SensoryCloud SDK.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -34,7 +34,7 @@
 #include "sensorycloud/generated/v1/management/enrollment.grpc.pb.h"
 #include "sensorycloud/config.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
-#include "sensorycloud/call_data.hpp"
+#include "sensorycloud/calldata.hpp"
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -43,15 +43,15 @@ namespace sensory {
 namespace service {
 
 /// @brief A service for managing enrollments and enrollment groups.
-/// @tparam SecureCredentialStore A secure key-value store for storing and
-/// fetching credentials and tokens.
-template<typename SecureCredentialStore>
+/// @tparam CredentialStore A key-value store for storing and fetching
+/// credentials and tokens.
+template<typename CredentialStore>
 class ManagementService {
  private:
     /// the global configuration for the remote connection
     const ::sensory::Config& config;
     /// the token manager for securing gRPC requests to the server
-    ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager;
+    ::sensory::token_manager::TokenManager<CredentialStore>& token_manager;
     /// The gRPC stub for the enrollment service
     std::unique_ptr<::sensory::api::v1::management::EnrollmentService::StubInterface> stub;
 
@@ -76,26 +76,26 @@ class ManagementService {
     /// @brief Initialize a new management service.
     ///
     /// @param config_ The global configuration for the remote connection.
-    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param token_manager_ The token manager for requesting Bearer tokens.
     ///
     ManagementService(
         const ::sensory::Config& config_,
-        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_
+        ::sensory::token_manager::TokenManager<CredentialStore>& token_manager_
     ) : config(config_),
-        tokenManager(tokenManager_),
+        token_manager(token_manager_),
         stub(::sensory::api::v1::management::EnrollmentService::NewStub(config.get_channel())) { }
 
     /// @brief Initialize a new management service.
     ///
     /// @param config_ The global configuration for the remote connection.
-    /// @param tokenManager_ The token manager for requesting Bearer tokens.
+    /// @param token_manager_ The token manager for requesting Bearer tokens.
     /// @param stub_ The enrollment stub to initialize the service with.
     ///
     ManagementService(
         const ::sensory::Config& config_,
-        ::sensory::token_manager::TokenManager<SecureCredentialStore>& tokenManager_,
+        ::sensory::token_manager::TokenManager<CredentialStore>& token_manager_,
         ::sensory::api::v1::management::EnrollmentService::StubInterface* stub_
-    ) : config(config_), tokenManager(tokenManager_), stub(stub_) { }
+    ) : config(config_), token_manager(token_manager_), stub(stub_) { }
 
     /// @brief Return the cloud configuration associated with this service.
     ///
@@ -111,13 +111,13 @@ class ManagementService {
     /// @param userID The ID of the user to fetch enrollments for.
     /// @returns A gRPC status object indicating whether the call succeeded.
     ///
-    inline ::grpc::Status getEnrollments(
+    inline ::grpc::Status get_enrollments(
         ::sensory::api::v1::management::GetEnrollmentsResponse* response,
         const std::string& userID
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
@@ -127,8 +127,8 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentsResponse
     > GetEnrollmentsAsyncCall;
@@ -143,7 +143,7 @@ class ManagementService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline GetEnrollmentsAsyncCall* getEnrollments(
+    inline GetEnrollmentsAsyncCall* get_enrollments(
         ::grpc::CompletionQueue* queue,
         const std::string& userID
     ) const {
@@ -151,7 +151,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new GetEnrollmentsAsyncCall);
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_userid(userID);
         call->rpc = stub->AsyncGetEnrollments(&call->context, call->request, queue);
@@ -168,22 +168,22 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `GetEnrollments`
     /// calls.
-    typedef ::sensory::CallData<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentsResponse
-    > GetEnrollmentsCallData;
+    > GetEnrollmentsCallbackData;
 
     /// @brief Fetch a list of the current enrollments for the given userID
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `GetEnrollmentsCallData*`.
+    /// accept a single pointer of type `GetEnrollmentsCallbackData*`.
     /// @param userID The ID of the user to fetch enrollments for.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetEnrollmentsCallData> getEnrollments(
+    inline std::shared_ptr<GetEnrollmentsCallbackData> get_enrollments(
         const std::string& userID,
         const Callback& callback
     ) const {
@@ -192,9 +192,9 @@ class ManagementService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<GetEnrollmentsCallData>
-            call(new GetEnrollmentsCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<GetEnrollmentsCallbackData>
+            call(new GetEnrollmentsCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         call->request.set_userid(userID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -225,13 +225,13 @@ class ManagementService {
     /// @details
     /// The server will prevent users from deleting their last enrollment.
     ///
-    inline ::grpc::Status deleteEnrollment(
+    inline ::grpc::Status delete_enrollment(
         ::sensory::api::v1::management::EnrollmentResponse* response,
         const std::string& enrollmentID
     ) const {
         // Create a context for the client.
         grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentRequest request;
         request.set_id(enrollmentID);
@@ -241,8 +241,8 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous `DeleteEnrollment`
     /// calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentRequest,
         ::sensory::api::v1::management::EnrollmentResponse
     > DeleteEnrollmentAsyncCall;
@@ -257,7 +257,7 @@ class ManagementService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline DeleteEnrollmentAsyncCall* deleteEnrollment(
+    inline DeleteEnrollmentAsyncCall* delete_enrollment(
         ::grpc::CompletionQueue* queue,
         const std::string& enrollmentID
     ) const {
@@ -265,7 +265,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new DeleteEnrollmentAsyncCall);
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_id(enrollmentID);
         call->rpc = stub->AsyncDeleteEnrollment(&call->context, call->request, queue);
@@ -282,16 +282,16 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollment` calls.
-    typedef ::sensory::CallData<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentRequest,
         ::sensory::api::v1::management::EnrollmentResponse
-    > DeleteEnrollmentCallData;
+    > DeleteEnrollmentCallbackData;
 
     /// @brief Request the deletion of an enrollment.
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `DeleteEnrollmentCallData*`.
+    /// accept a single pointer of type `DeleteEnrollmentCallbackData*`.
     /// @param enrollmentID The ID of the enrollment to delete.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
@@ -300,7 +300,7 @@ class ManagementService {
     /// The server will prevent users from deleting their last enrollment.
     ///
     template<typename Callback>
-    inline std::shared_ptr<DeleteEnrollmentCallData> deleteEnrollment(
+    inline std::shared_ptr<DeleteEnrollmentCallbackData> delete_enrollment(
         const std::string& enrollmentID,
         const Callback& callback
     ) const {
@@ -309,9 +309,9 @@ class ManagementService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<DeleteEnrollmentCallData>
-            call(new DeleteEnrollmentCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<DeleteEnrollmentCallbackData>
+            call(new DeleteEnrollmentCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         call->request.set_id(enrollmentID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -340,13 +340,13 @@ class ManagementService {
     /// @param userID The ID of the user to fetch enrollment groups for.
     /// @returns A gRPC status object indicating whether the call succeeded.
     ///
-    inline ::grpc::Status getEnrollmentGroups(
+    inline ::grpc::Status get_enrollment_groups(
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse* response,
         const std::string& userID
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::GetEnrollmentsRequest request;
         request.set_userid(userID);
@@ -356,8 +356,8 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse
     > GetEnrollmentGroupsAsyncCall;
@@ -373,7 +373,7 @@ class ManagementService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline GetEnrollmentGroupsAsyncCall* getEnrollmentGroups(
+    inline GetEnrollmentGroupsAsyncCall* get_enrollment_groups(
         ::grpc::CompletionQueue* queue,
         const std::string& userID
     ) const {
@@ -381,7 +381,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new GetEnrollmentGroupsAsyncCall);
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_userid(userID);
         call->rpc = stub->AsyncGetEnrollmentGroups(&call->context, call->request, queue);
@@ -398,23 +398,23 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `GetEnrollmentGroups` calls.
-    typedef ::sensory::CallData<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::GetEnrollmentsRequest,
         ::sensory::api::v1::management::GetEnrollmentGroupsResponse
-    > GetEnrollmentGroupsCallData;
+    > GetEnrollmentGroupsCallbackData;
 
     /// @brief Fetch a list of the current enrollment groups owned by a given
     /// userID.
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `GetEnrollmentGroupsCallData*`.
+    /// accept a single pointer of type `GetEnrollmentGroupsCallbackData*`.
     /// @param userID The ID of the user to fetch enrollments for.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetEnrollmentGroupsCallData> getEnrollmentGroups(
+    inline std::shared_ptr<GetEnrollmentGroupsCallbackData> get_enrollment_groups(
         const std::string& userID,
         const Callback& callback
     ) const {
@@ -423,9 +423,9 @@ class ManagementService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<GetEnrollmentGroupsCallData>
-            call(new GetEnrollmentGroupsCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<GetEnrollmentGroupsCallbackData>
+            call(new GetEnrollmentGroupsCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         call->request.set_userid(userID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
@@ -464,10 +464,10 @@ class ManagementService {
     ///
     /// @details
     /// Enrollment groups are initially created without any associated
-    /// enrollments `appendEnrollmentGroup()` may be used to add enrollments
+    /// enrollments `append_enrollment_group()` may be used to add enrollments
     /// to an enrollment group.
     ///
-    inline ::grpc::Status createEnrollmentGroup(
+    inline ::grpc::Status create_enrollment_group(
         ::sensory::api::v1::management::EnrollmentGroupResponse* response,
         const std::string& userID,
         const std::string& groupID,
@@ -478,12 +478,12 @@ class ManagementService {
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest request;
         request.set_userid(userID);
         request.set_id(
-            groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
+            groupID.empty() ? ::sensory::util::uuid_v4() : groupID
         );
         request.set_name(groupName);
         request.set_description(description);
@@ -496,8 +496,8 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
     > CreateEnrollmentGroupAsyncCall;
@@ -521,7 +521,7 @@ class ManagementService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline CreateEnrollmentGroupAsyncCall* createEnrollmentGroup(
+    inline CreateEnrollmentGroupAsyncCall* create_enrollment_group(
         ::grpc::CompletionQueue* queue,
         const std::string& userID,
         const std::string& groupID,
@@ -534,11 +534,11 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new CreateEnrollmentGroupAsyncCall);
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_userid(userID);
         call->request.set_id(
-            groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
+            groupID.empty() ? ::sensory::util::uuid_v4() : groupID
         );
         call->request.set_name(groupName);
         call->request.set_description(description);
@@ -559,17 +559,17 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `CreateEnrollmentGroup` calls.
-    typedef ::sensory::CallData<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::CreateEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
-    > CreateEnrollmentGroupCallData;
+    > CreateEnrollmentGroupCallbackData;
 
     /// @brief Create a new group of enrollments that can be used for group
     /// authentication.
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `CreateEnrollmentGroupCallData*`.
+    /// accept a single pointer of type `CreateEnrollmentGroupCallbackData*`.
     /// @param userID The ID of the user that owns the enrollment group.
     /// @param groupID A unique group identifier for the enrollment group. If
     /// empty, an ID will be automatically generated.
@@ -583,7 +583,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<CreateEnrollmentGroupCallData> createEnrollmentGroup(
+    inline std::shared_ptr<CreateEnrollmentGroupCallbackData> create_enrollment_group(
         const std::string& userID,
         const std::string& groupID,
         const std::string& groupName,
@@ -597,12 +597,12 @@ class ManagementService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<CreateEnrollmentGroupCallData>
-            call(new CreateEnrollmentGroupCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<CreateEnrollmentGroupCallbackData>
+            call(new CreateEnrollmentGroupCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         call->request.set_userid(userID);
         call->request.set_id(
-            groupID.empty() ? ::sensory::token_manager::uuid_v4() : groupID
+            groupID.empty() ? ::sensory::util::uuid_v4() : groupID
         );
         call->request.set_name(groupName);
         call->request.set_description(description);
@@ -637,14 +637,14 @@ class ManagementService {
     /// group.
     /// @returns A gRPC status object indicating whether the call succeeded.
     ///
-    inline ::grpc::Status appendEnrollmentGroup(
+    inline ::grpc::Status append_enrollment_group(
         ::sensory::api::v1::management::EnrollmentGroupResponse* response,
         const std::string& groupID,
         const std::vector<std::string>& enrollments
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest request;
         request.set_groupid(groupID);
@@ -656,8 +656,8 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
     > AppendEnrollmentGroupAsyncCall;
@@ -674,7 +674,7 @@ class ManagementService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline AppendEnrollmentGroupAsyncCall* appendEnrollmentGroup(
+    inline AppendEnrollmentGroupAsyncCall* append_enrollment_group(
         ::grpc::CompletionQueue* queue,
         const std::string& groupID,
         const std::vector<std::string>& enrollments
@@ -683,7 +683,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new AppendEnrollmentGroupAsyncCall);
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_groupid(groupID);
         for (auto& enrollment: enrollments)
@@ -702,16 +702,16 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `AppendEnrollmentGroup` calls.
-    typedef ::sensory::CallData<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::AppendEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
-    > AppendEnrollmentGroupCallData;
+    > AppendEnrollmentGroupCallbackData;
 
     /// @brief Append enrollments to an existing enrollment group.
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `AppendEnrollmentGroupCallData*`.
+    /// accept a single pointer of type `AppendEnrollmentGroupCallbackData*`.
     /// @param groupID The ID of the enrollment group to append enrollments to.
     /// @param enrollments A list of enrollment IDs to append to the enrollment
     /// group.
@@ -719,7 +719,7 @@ class ManagementService {
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<AppendEnrollmentGroupCallData> appendEnrollmentGroup(
+    inline std::shared_ptr<AppendEnrollmentGroupCallbackData> append_enrollment_group(
         const std::string& groupID,
         const std::vector<std::string>& enrollments,
         const Callback& callback
@@ -729,9 +729,9 @@ class ManagementService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<AppendEnrollmentGroupCallData>
-            call(new AppendEnrollmentGroupCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<AppendEnrollmentGroupCallbackData>
+            call(new AppendEnrollmentGroupCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         call->request.set_groupid(groupID);
         for (auto& enrollment: enrollments)
             call->request.add_enrollmentids(enrollment);
@@ -761,13 +761,13 @@ class ManagementService {
     /// @param groupID The ID of the group to delete.
     /// @returns A gRPC status object indicating whether the call succeeded.
     ///
-    inline ::grpc::Status deleteEnrollmentGroup(
+    inline ::grpc::Status delete_enrollment_group(
         ::sensory::api::v1::management::EnrollmentGroupResponse* response,
         const std::string& groupID
     ) const {
         // Create a context for the client.
         ::grpc::ClientContext context;
-        tokenManager.setup_unary_client_context(context);
+        token_manager.setup_unary_client_context(context);
         // Create the request
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest request;
         request.set_id(groupID);
@@ -777,8 +777,8 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroup` calls based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
     > DeleteEnrollmentGroupAsyncCall;
@@ -793,7 +793,7 @@ class ManagementService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline DeleteEnrollmentGroupAsyncCall* deleteEnrollmentGroup(
+    inline DeleteEnrollmentGroupAsyncCall* delete_enrollment_group(
         ::grpc::CompletionQueue* queue,
         const std::string& groupID
     ) const {
@@ -801,7 +801,7 @@ class ManagementService {
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
         auto call(new DeleteEnrollmentGroupAsyncCall);
-        tokenManager.setup_unary_client_context(call->context);
+        token_manager.setup_unary_client_context(call->context);
         // Start the asynchronous RPC with the call's context and queue.
         call->request.set_id(groupID);
         call->rpc = stub->AsyncDeleteEnrollmentGroup(&call->context, call->request, queue);
@@ -818,22 +818,22 @@ class ManagementService {
 
     /// @brief A type for encapsulating data for asynchronous
     /// `DeleteEnrollmentGroupRequest` calls.
-    typedef ::sensory::CallData<
-        ManagementService<SecureCredentialStore>,
+    typedef ::sensory::calldata::CallbackData<
+        ManagementService<CredentialStore>,
         ::sensory::api::v1::management::DeleteEnrollmentGroupRequest,
         ::sensory::api::v1::management::EnrollmentGroupResponse
-    > DeleteEnrollmentGroupCallData;
+    > DeleteEnrollmentGroupCallbackData;
 
     /// @brief Request the deletion of enrollment groups.
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `DeleteEnrollmentGroupCallData*`.
+    /// accept a single pointer of type `DeleteEnrollmentGroupCallbackData*`.
     /// @param groupID The ID of the group to delete.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<DeleteEnrollmentGroupCallData> deleteEnrollmentGroup(
+    inline std::shared_ptr<DeleteEnrollmentGroupCallbackData> delete_enrollment_group(
         const std::string& groupID,
         const Callback& callback
     ) const {
@@ -842,9 +842,9 @@ class ManagementService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<DeleteEnrollmentGroupCallData>
-            call(new DeleteEnrollmentGroupCallData);
-        tokenManager.setup_unary_client_context(call->context);
+        std::shared_ptr<DeleteEnrollmentGroupCallbackData>
+            call(new DeleteEnrollmentGroupCallbackData);
+        token_manager.setup_unary_client_context(call->context);
         call->request.set_id(groupID);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.

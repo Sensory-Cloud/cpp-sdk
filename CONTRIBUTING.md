@@ -1,4 +1,4 @@
-# Development
+# Contributing
 
 The following passages articulate the setup of the development environment and
 describe how to generate new protobuf & gRPC code, run unit tests, etc.

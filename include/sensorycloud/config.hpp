@@ -38,79 +38,10 @@
 #include <limits>
 #include <string>
 #include <sstream>
+#include "sensorycloud/error/config_error.hpp"
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
-
-/// @brief A config error type thrown when configuration parameters are invalid.
-struct ConfigError : public std::runtime_error {
- public:
-    /// @brief Reasons for configuration errors to occur.
-    enum class Code {
-        /// The fully qualified domain name is not valid.
-        InvalidFQDN = 0,
-        /// The host name is not valid.
-        InvalidHost,
-        /// The port number is not valid.
-        InvalidPort,
-        /// The tenant ID is not valid.
-        InvalidTenantID,
-        /// The device ID is not valid.
-        InvalidDeviceID,
-    };
-
-    /// @brief Return a message for the given error code.
-    ///
-    /// @param code The code to get the error message for.
-    /// @returns A text error message associated with the given error code.
-    ///
-    static inline const std::string get_message(const Code& code) {
-        switch (code) {  // switch over the possible code type cases
-        case Code::InvalidFQDN:
-            return "The fully qualified domain name is not valid";
-        case Code::InvalidHost:
-            return "The host name is not valid";
-        case Code::InvalidPort:
-            return "The port number is not valid";
-        case Code::InvalidTenantID:
-            return "The tenant ID is not valid";
-        case Code::InvalidDeviceID:
-            return "The device ID is not valid";
-        default:
-            return "Unrecognized error code";
-        }
-    }
-
-    /// @brief Initialize a new configuration error.
-    ///
-    /// @param code The reason for the configuration error.
-    ///
-    explicit ConfigError(const Code& code) :
-        std::runtime_error(get_message(code)),
-        err_code(code) { }
-
-    /// @brief Initialize a new configuration error.
-    ///
-    /// @param code The reason for the configuration error.
-    /// @param message The message to provide through the `what()` call.
-    ///
-    explicit ConfigError(const Code& code, const std::string& message) :
-        std::runtime_error(message),
-        err_code(code) { }
-
-    /// Destroy an instance of a configuration error.
-    ~ConfigError() throw() {}
-
-    /// @brief Return the reason the exception occurred.
-    ///
-    /// @returns The reason for the configuration error.
-    ///
-    inline const Code& code() const throw() { return err_code; }
-
- private:
-    /// the reason the configuration error occurred
-    Code err_code;
-};
 
 /// @brief Configuration for a cloud endpoint.
 class Config {
@@ -155,18 +86,18 @@ class Config {
         // Check that the FQDN is properly formatted in `host:port` format.
         const auto idx = fqdn.find(':');
         if (fqdn.empty() || idx == 0 || idx >= fqdn.length() - 1)
-            throw ConfigError(ConfigError::Code::InvalidFQDN);
+            throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidFQDN);
         // Parse the port as a 32-bit signed integer and ensure that the value
         // is a valid 16-bit unsigned integer.
         const auto port = std::stoi(fqdn.substr(idx + 1));
         if (port < std::numeric_limits<uint16_t>::min() ||
             port > std::numeric_limits<uint16_t>::max())
-            throw ConfigError(ConfigError::Code::InvalidPort);
+            throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidPort);
         // Ensure the tenant ID and device ID are not empty.
         if (tenant_id.empty())  // the tenant ID is not valid
-            throw ConfigError(ConfigError::Code::InvalidTenantID);
+            throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidTenantID);
         if (device_id.empty())  // the device ID is not valid
-            throw ConfigError(ConfigError::Code::InvalidDeviceID);
+            throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidDeviceID);
         // Create the credentials for the channel based on the security setting.
         // Use TLS (SSL) if `is_secure` is true, otherwise default to insecure
         // channel credentials.

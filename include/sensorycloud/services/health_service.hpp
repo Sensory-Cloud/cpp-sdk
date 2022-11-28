@@ -1,6 +1,6 @@
 // The health service for the SensoryCloud SDK.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -32,7 +32,7 @@
 #include "sensorycloud/generated/health/health.pb.h"
 #include "sensorycloud/generated/health/health.grpc.pb.h"
 #include "sensorycloud/config.hpp"
-#include "sensorycloud/call_data.hpp"
+#include "sensorycloud/calldata.hpp"
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -95,7 +95,7 @@ class HealthService {
     /// @param response The response object to store the result of the RPC into.
     /// @returns A gRPC status object indicating whether the call succeeded.
     ///
-    inline ::grpc::Status getHealth(
+    inline ::grpc::Status get_health(
         ::sensory::api::common::ServerHealthResponse* response
     ) const {
         // Create a client context to query the health service. This request
@@ -107,7 +107,7 @@ class HealthService {
 
     /// @brief A type for encapsulating data for asynchronous `GetModels` calls
     /// based on CompletionQueue event loops.
-    typedef ::sensory::AsyncResponseReaderCall<
+    typedef ::sensory::calldata::AsyncResponseReaderCall<
         HealthService,
         ::sensory::api::health::HealthRequest,
         ::sensory::api::common::ServerHealthResponse
@@ -122,7 +122,7 @@ class HealthService {
     /// caller and the caller should `delete` the pointer after it appears in
     /// a completion queue loop.
     ///
-    inline GetHealthAsyncCall* getHealth(::grpc::CompletionQueue* queue) const {
+    inline GetHealthAsyncCall* get_health(::grpc::CompletionQueue* queue) const {
         // Create a call data object to store the client context, the response,
         // the status of the call, and the response reader. The ownership of
         // this object is passed to the caller.
@@ -141,21 +141,21 @@ class HealthService {
     }
 
     /// @brief A type for encapsulating data for asynchronous `GetHealth` calls.
-    typedef ::sensory::CallData<
+    typedef ::sensory::calldata::CallbackData<
         HealthService,
         ::sensory::api::health::HealthRequest,
         ::sensory::api::common::ServerHealthResponse
-    > GetHealthCallData;
+    > GetHealthCallbackData;
 
     /// @brief Get the health status of the remote server.
     ///
     /// @tparam Callback The type of the callback function. The callback should
-    /// accept a single pointer of type `GetHealthCallData*`.
+    /// accept a single pointer of type `GetHealthCallbackData*`.
     /// @param callback The callback to execute when the response arrives.
     /// @returns A pointer to the asynchronous call spawned by this call.
     ///
     template<typename Callback>
-    inline std::shared_ptr<GetHealthCallData> getHealth(
+    inline std::shared_ptr<GetHealthCallbackData> get_health(
         const Callback& callback
     ) const {
         // Create a call to encapsulate data that needs to exist throughout the
@@ -163,7 +163,7 @@ class HealthService {
         // order to reference count between the parent and child context. This
         // also allows the caller to safely use `await()` without the
         // possibility of a race condition.
-        std::shared_ptr<GetHealthCallData> call(new GetHealthCallData);
+        std::shared_ptr<GetHealthCallbackData> call(new GetHealthCallbackData);
         // Start the asynchronous call with the data from the request and
         // forward the input callback into the reactor callback.
         stub->async()->GetHealth(

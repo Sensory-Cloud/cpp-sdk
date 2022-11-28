@@ -1,8 +1,10 @@
-# 0.6.0
+# Change Log
+
+## 0.6.0
 
 -   Initial release
 
-# 0.6.1
+## 0.6.1
 
 -   Fixed cryptographic-ally secure random string generation to produce
     alpha-numeric values with 62^24 possible combinations.
@@ -14,7 +16,7 @@
 -   Updated examples to not regenerate client ID and secret when attempting to
     register a device that has credentials but no OAuth token.
 
-# 0.8.0
+## 0.8.0
 
 -   Updated to support features in SensoryCloud version 0.8.0
     -   Implemented `RenewDeviceCredential` end-points in the `OAuthService`
@@ -27,17 +29,17 @@
 -   Implemented a constructor in each service for building from pointers to
     each of the necessary stubs
 
-# 0.11.4
+## 0.11.4
 
 -   Support for `v0.11.4` of the SensoryCloud API
 
-# 0.12.4
+## 0.12.4
 
 -   Support for `v0.12.4` of the SensoryCloud API
 -   Updated speech-to-text (STT) example to use new `FINAL` post-processing
     action to indicate the end of a finite audio stream.
 
-# 0.12.10
+## 0.12.10
 
 -   Support for `v0.12.10` of the SensoryCloud API
 -   Re-organize example code according to programming model.
@@ -65,11 +67,11 @@
             moved from `::sensory::Config` to
             `::sensory::token_manager::TokenManager`
 
-# 0.12.1
+## 0.12.1
 
 -   Support for `SynthesizeSpeech` (text-to-speech) endpoints
 
-# 0.15.1
+## 0.15.1
 
 -   Support for `v0.15.1` of the SensoryCloud API
     -   New `sensory::services::audio::TranscriptAggregator` for aggregating
@@ -78,10 +80,51 @@
         `sensory::services::audio::TranscriptAggregator` and optional
         closed-captioning mode for rendering partial transcripts.
 
-# 0.15.2
+## 0.15.2
 
 -   Video service examples updated to support file IO (video and single images)
 -   Audio service examples updated to support file IO
 -   Implemented support for JSON web token (JWT) device enrollments
 -   Deprecated internal implementation of RC4 cryptography algorithm in favor
     of `RAND_bytes` from required SSL dependency
+
+## 0.17.2
+
+-   Bug fixes
+    -   Add missing logic to query user enrollments to
+        [examples/dr_wav/validate_enrolled_event.cpp](examples/dr_wav/validate_enrolled_event.cpp)
+    -   Add missing `cloud.initialize` calls to example code
+-   New features
+    -   Support for capitalization and punctuation in transcription examples
+    -   Support for single utterance mode in transcription examples
+    -   Support for custom vocabulary in transcription examples
+    -   Support for specifying reference IDs to audio and video enrollments
+    -   Support for the minimum number of live frames for video enrollment
+-   Removals
+    -   Remove support for convenience initializers of gRPC stream configuration
+        objects in favor of explicitly instantiating gRPC structures.
+-   Namespace/symbolic changes
+    -   Internal code style standardized to snake-case
+    -   `sensory::service::audio::TranscriptAggregator` moved to
+        `sensory::util::TranscriptAggregator`
+    -   `sensory::service::audio::(l|r)?strip` moved to
+        `sensory::util::(l|r)?strip`
+    -   `sensory::token_manager::InsecureCredentialStore` renamed to
+        `sensory::token_manager::FileSystemCredentialStore`
+    -   Error structures moved from their respective namespaces to a new
+        `sensory::error` namespace to contain all error structures.
+        -   `sensory::service::NullStreamError` ->
+            `sensory::error::NullStreamError`
+        -   `sensory::service::WriteStreamError` ->
+            `sensory::error::WriteStreamError`
+        -   `sensory::service::ReadStreamError` ->
+            `sensory::error::ReadStreamError`
+        -   `sensory::ConfigError` -> `sensory::error::ConfigError`
+    -   RPC data structures moved from global namespace to new `calldata`
+        namespace. This includes:
+        -   `sensory::calldata::AwaitableBidiReactor`
+        -   `sensory::calldata::AwaitableReadReactor`
+        -   `sensory::calldata::AwaitableWriteReactor`
+        -   `sensory::CallData` -> `sensory::calldata::CallbackData`
+        -   `sensory::calldata::AsyncReaderWriterCall`
+        -   `sensory::calldata::AsyncResponseReaderCall`

@@ -1,6 +1,6 @@
 // Test cases for the video service.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -41,6 +41,9 @@ using ::sensory::token_manager::InMemoryCredentialStore;
 using ::sensory::token_manager::TokenManager;
 using ::sensory::service::OAuthService;
 using ::sensory::service::VideoService;
+using ::sensory::error::WriteStreamError;
+using ::sensory::error::NullStreamError;
+using ::sensory::error::ReadStreamError;
 
 using ::sensory::api::v1::video::AuthenticateRequest;
 using ::sensory::api::v1::video::AuthenticateResponse;
@@ -52,145 +55,7 @@ using ::sensory::api::v1::video::LivenessRecognitionResponse;
 using ::sensory::api::v1::video::RecognitionThreshold;
 using ::sensory::api::v1::video::ValidateRecognitionRequest;
 
-using ::sensory::service::video::new_create_enrollment_config;
-using ::sensory::service::video::new_authenticate_config;
-using ::sensory::service::video::new_validate_recognition_config;
-
 using testing::_;
-
-// ---------------------------------------------------------------------------
-// MARK: new_create_enrollment_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create a CreateEnrollmentConfig") {
-    GIVEN("parameters for an enrollment creation stream") {
-        const std::string modelName = "modelName";
-        const std::string userID = "userID";
-        const std::string description = "description";
-        const bool isLivenessEnabled = true;
-        const auto livenessThreshold = RecognitionThreshold::LOW;
-        const int32_t numLivenessFramesRequired = 7;
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_create_enrollment_config(
-                modelName,
-                userID,
-                description,
-                isLivenessEnabled,
-                livenessThreshold,
-                numLivenessFramesRequired
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->livenessthreshold() == livenessThreshold);
-                REQUIRE(config->numlivenessframesrequired() == numLivenessFramesRequired);
-                REQUIRE_THAT("", Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-    GIVEN("parameters for an enrollment creation stream with a reference ID") {
-        const std::string modelName = "modelName";
-        const std::string userID = "userID";
-        const std::string description = "description";
-        const bool isLivenessEnabled = true;
-        const auto livenessThreshold = RecognitionThreshold::LOW;
-        const int32_t numLivenessFramesRequired = 7;
-        const std::string reference_id = "reference_id";
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_create_enrollment_config(
-                modelName,
-                userID,
-                description,
-                isLivenessEnabled,
-                livenessThreshold,
-                numLivenessFramesRequired,
-                reference_id
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->description() == description);
-                REQUIRE(config->livenessthreshold() == livenessThreshold);
-                REQUIRE(config->numlivenessframesrequired() == numLivenessFramesRequired);
-                REQUIRE_THAT(reference_id, Catch::Equals(config->referenceid()));
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_authenticate_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create an AuthenticateConfig") {
-    GIVEN("parameters for an authentication stream") {
-        const std::string enrollmentID = "enrollmentID";
-        const bool isLivenessEnabled = true;
-        const auto livenessThreshold = RecognitionThreshold::LOW;
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_authenticate_config(
-                enrollmentID,
-                isLivenessEnabled,
-                livenessThreshold
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->enrollmentid() == enrollmentID);
-                REQUIRE(config->enrollmentgroupid() == "");
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->livenessthreshold() == livenessThreshold);
-            }
-            delete config;
-        }
-        WHEN("the config is dynamically allocated as an enrollment group") {
-            auto config = new_authenticate_config(
-                enrollmentID,
-                isLivenessEnabled,
-                livenessThreshold,
-                true
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->enrollmentid() == "");
-                REQUIRE(config->enrollmentgroupid() == enrollmentID);
-                REQUIRE(config->islivenessenabled() == isLivenessEnabled);
-                REQUIRE(config->livenessthreshold() == livenessThreshold);
-            }
-            delete config;
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// MARK: new_validate_recognition_config
-// ---------------------------------------------------------------------------
-
-SCENARIO("A user needs to create a ValidateRecognitionConfig") {
-    GIVEN("parameters for a recognition validation stream") {
-        const std::string modelName = "modelName";
-        const std::string userID = "userID";
-        const auto threshold = RecognitionThreshold::LOW;
-        WHEN("the config is dynamically allocated from the parameters") {
-            auto config = new_validate_recognition_config(
-                modelName,
-                userID,
-                threshold
-            );
-            THEN("a pointer is returned with the variables set") {
-                REQUIRE(config != nullptr);
-                REQUIRE(config->modelname() == modelName);
-                REQUIRE(config->userid() == userID);
-                REQUIRE(config->threshold() == threshold);
-            }
-            delete config;
-        }
-    }
-}
 
 // ---------------------------------------------------------------------------
 // MARK: VideoService
@@ -201,13 +66,13 @@ TEST_CASE("Should create VideoService from Config and TokenManager") {
     Config config("hostname.com", 443, "tenant ID", "device ID");
     // Create the OAuth service for requesting and managing OAuth tokens through
     // a token manager instance.
-    OAuthService oauthService(config);
+    OAuthService oauth_service(config);
     // Create a credential store for keeping the clientID, clientSecret,
     // token, and expiration time.
     InMemoryCredentialStore keychain;
-    TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+    TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
     // Create the actual video service from the config and token manager.
-    VideoService<InMemoryCredentialStore> service(config, tokenManager);
+    VideoService<InMemoryCredentialStore> service(config, token_manager);
 }
 
 SCENARIO("A client requires a synchronous interface to the video service") {
@@ -216,22 +81,22 @@ SCENARIO("A client requires a synchronous interface to the video service") {
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
         // Create the OAuth service for requesting and managing OAuth tokens through
         // a token manager instance.
-        OAuthService oauthService(config);
+        OAuthService oauth_service(config);
         // Create a credential store for keeping the clientID, clientSecret,
         // token, and expiration time.
         InMemoryCredentialStore keychain;
-        TokenManager<InMemoryCredentialStore> tokenManager(oauthService, keychain);
+        TokenManager<InMemoryCredentialStore> token_manager(oauth_service, keychain);
         // Create the actual video service from the config and token manager.
-        auto modelsStub = new ::sensory::api::v1::video::MockVideoModelsStub;
-        auto biometricsStub = new ::sensory::api::v1::video::MockVideoBiometricsStub;
-        auto recognitionStub = new ::sensory::api::v1::video::MockVideoRecognitionStub;
+        auto models_stub = new ::sensory::api::v1::video::MockVideoModelsStub;
+        auto biometrics_stub = new ::sensory::api::v1::video::MockVideoBiometricsStub;
+        auto recognition_stub = new ::sensory::api::v1::video::MockVideoRecognitionStub;
         VideoService<InMemoryCredentialStore>
-            service(config, tokenManager, modelsStub, biometricsStub, recognitionStub);
+            service(config, token_manager, models_stub, biometrics_stub, recognition_stub);
 
         // ----- GetModels -----------------------------------------------------
 
         WHEN("GetModels is called") {
-            EXPECT_CALL(*modelsStub, GetModels(_, _, _))
+            EXPECT_CALL(*models_stub, GetModels(_, _, _))
                 .Times(1)
                 .WillOnce([] (ClientContext*, const GetModelsRequest& request, GetModelsResponse *response) {
                     auto model = response->add_models();
@@ -240,7 +105,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             GetModelsResponse response;
-            auto status = service.getModels(&response);
+            auto status = service.get_models(&response);
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
@@ -254,44 +119,48 @@ SCENARIO("A client requires a synchronous interface to the video service") {
 
         WHEN("CreateEnrollment is called without a valid connection") {
             // Expect the call and return a null pointer for the stream.
-            EXPECT_CALL(*biometricsStub, CreateEnrollmentRaw(_))
+            EXPECT_CALL(*biometrics_stub, CreateEnrollmentRaw(_))
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
+            auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_islivenessenabled(true);
+            config->set_livenessthreshold(RecognitionThreshold::LOW);
+            config->set_numlivenessframesrequired(0);
+            config->set_referenceid("referenceId");
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.createEnrollment(&context, new_create_enrollment_config(
-                    "modelName",
-                    "userID",
-                    "description",
-                    true,
-                    RecognitionThreshold::LOW
-                )), sensory::service::NullStreamError);
+                REQUIRE_THROWS_AS(service.create_enrollment(&context, config), NullStreamError);
             }
         }
 
         WHEN("CreateEnrollment is called and the first Write fails") {
             // Expect the call and return a mock stream.
             auto mock_stream = new MockClientReaderWriter<CreateEnrollmentRequest, CreateEnrollmentResponse>();
-            EXPECT_CALL(*biometricsStub, CreateEnrollmentRaw(_))
+            EXPECT_CALL(*biometrics_stub, CreateEnrollmentRaw(_))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             // Expect the SDK to call the first write to send the video config.
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
+            auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_islivenessenabled(true);
+            config->set_livenessthreshold(RecognitionThreshold::LOW);
+            config->set_numlivenessframesrequired(0);
+            config->set_referenceid("referenceId");
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.createEnrollment(&context, new_create_enrollment_config(
-                    "modelName",
-                    "userID",
-                    "description",
-                    true,
-                    RecognitionThreshold::LOW
-                )), sensory::service::WriteStreamError);
+                REQUIRE_THROWS_AS(service.create_enrollment(&context, config), WriteStreamError);
             }
         }
 
         WHEN("CreateEnrollment is called with a valid connection") {
             // Expect the call and return a mock stream.
             auto mock_stream = new MockClientReaderWriter<CreateEnrollmentRequest, CreateEnrollmentResponse>();
-            EXPECT_CALL(*biometricsStub, CreateEnrollmentRaw(_))
+            EXPECT_CALL(*biometrics_stub, CreateEnrollmentRaw(_))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             // Expect the SDK to call the first write to send the video config.
             // Check that the config is properly set with the parameters.
@@ -307,13 +176,15 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             ClientContext context;
-            auto stream = service.createEnrollment(&context, new_create_enrollment_config(
-                "modelName",
-                "userID",
-                "description",
-                true,
-                RecognitionThreshold::LOW
-            ));
+            auto config = new ::sensory::api::v1::video::CreateEnrollmentConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_description("description");
+            config->set_islivenessenabled(true);
+            config->set_livenessthreshold(RecognitionThreshold::LOW);
+            config->set_numlivenessframesrequired(0);
+            config->set_referenceid("referenceId");
+            auto stream = service.create_enrollment(&context, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -323,40 +194,40 @@ SCENARIO("A client requires a synchronous interface to the video service") {
 
         WHEN("Authenticate is called without a valid connection") {
             // Expect the call and return a null pointer for the stream.
-            EXPECT_CALL(*biometricsStub, AuthenticateRaw(_))
+            EXPECT_CALL(*biometrics_stub, AuthenticateRaw(_))
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
+            auto config = new ::sensory::api::v1::video::AuthenticateConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_islivenessenabled(true);
+            config->set_livenessthreshold(RecognitionThreshold::LOW);
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.authenticate(&context, new_authenticate_config(
-                    "enrollmentID",
-                    true,
-                    RecognitionThreshold::LOW
-                )), sensory::service::NullStreamError);
+                REQUIRE_THROWS_AS(service.authenticate(&context, config), NullStreamError);
             }
         }
 
         WHEN("Authenticate is called and the first Write fails") {
             // Expect the call and return a mock stream.
             auto mock_stream = new MockClientReaderWriter<AuthenticateRequest, AuthenticateResponse>();
-            EXPECT_CALL(*biometricsStub, AuthenticateRaw(_))
+            EXPECT_CALL(*biometrics_stub, AuthenticateRaw(_))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             // Expect the SDK to call the first write to send the video config.
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
+            auto config = new ::sensory::api::v1::video::AuthenticateConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_islivenessenabled(true);
+            config->set_livenessthreshold(RecognitionThreshold::LOW);
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.authenticate(&context, new_authenticate_config(
-                    "enrollmentID",
-                    true,
-                    RecognitionThreshold::LOW
-                )), sensory::service::WriteStreamError);
+                REQUIRE_THROWS_AS(service.authenticate(&context, config), WriteStreamError);
             }
         }
 
         WHEN("Authenticate is called with a valid connection") {
             // Expect the call and return a mock stream.
             auto mock_stream = new MockClientReaderWriter<AuthenticateRequest, AuthenticateResponse>();
-            EXPECT_CALL(*biometricsStub, AuthenticateRaw(_))
+            EXPECT_CALL(*biometrics_stub, AuthenticateRaw(_))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             // Expect the SDK to call the first write to send the video config.
             // Check that the config is properly set with the parameters.
@@ -369,11 +240,11 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             ClientContext context;
-            auto stream = service.authenticate(&context, new_authenticate_config(
-                "enrollmentID",
-                true,
-                RecognitionThreshold::LOW
-            ));
+            auto config = new ::sensory::api::v1::video::AuthenticateConfig;
+            config->set_enrollmentid("enrollmentID");
+            config->set_islivenessenabled(true);
+            config->set_livenessthreshold(RecognitionThreshold::LOW);
+            auto stream = service.authenticate(&context, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }
@@ -383,40 +254,40 @@ SCENARIO("A client requires a synchronous interface to the video service") {
 
         WHEN("ValidateRecognition is called without a valid connection") {
             // Expect the call and return a null pointer for the stream.
-            EXPECT_CALL(*recognitionStub, ValidateLivenessRaw(_))
+            EXPECT_CALL(*recognition_stub, ValidateLivenessRaw(_))
                 .Times(1).WillOnce(testing::Return(nullptr));
             ClientContext context;
+            auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_threshold(RecognitionThreshold::LOW);
             THEN("the function catches the null stream and throws an error") {
-                REQUIRE_THROWS_AS(service.validateLiveness(&context, new_validate_recognition_config(
-                    "modelName",
-                    "userID",
-                    RecognitionThreshold::LOW
-                )), sensory::service::NullStreamError);
+                REQUIRE_THROWS_AS(service.validate_liveness(&context, config), NullStreamError);
             }
         }
 
         WHEN("ValidateRecognition is called and the first Write fails") {
             // Expect the call and return a mock stream.
             auto mock_stream = new MockClientReaderWriter<ValidateRecognitionRequest, LivenessRecognitionResponse>();
-            EXPECT_CALL(*recognitionStub, ValidateLivenessRaw(_))
+            EXPECT_CALL(*recognition_stub, ValidateLivenessRaw(_))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             // Expect the SDK to call the first write to send the video config.
             EXPECT_CALL(*mock_stream, Write(_, _))
                 .Times(1).WillOnce(testing::Return(false));
             ClientContext context;
+            auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_threshold(RecognitionThreshold::LOW);
             THEN("the function catches the write failure and throws an error") {
-                REQUIRE_THROWS_AS(service.validateLiveness(&context, new_validate_recognition_config(
-                    "modelName",
-                    "userID",
-                    RecognitionThreshold::LOW
-                )), sensory::service::WriteStreamError);
+                REQUIRE_THROWS_AS(service.validate_liveness(&context, config), WriteStreamError);
             }
         }
 
         WHEN("ValidateRecognition is called with a valid connection") {
             // Expect the call and return a mock stream.
             auto mock_stream = new MockClientReaderWriter<ValidateRecognitionRequest, LivenessRecognitionResponse>();
-            EXPECT_CALL(*recognitionStub, ValidateLivenessRaw(_))
+            EXPECT_CALL(*recognition_stub, ValidateLivenessRaw(_))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             // Expect the SDK to call the first write to send the video config.
             // Check that the config is properly set with the parameters.
@@ -429,11 +300,11 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             ClientContext context;
-            auto stream = service.validateLiveness(&context, new_validate_recognition_config(
-                "modelName",
-                "userID",
-                RecognitionThreshold::LOW
-            ));
+            auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
+            config->set_modelname("modelName");
+            config->set_userid("userID");
+            config->set_threshold(RecognitionThreshold::LOW);
+            auto stream = service.validate_liveness(&context, config);
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }

@@ -1,6 +1,6 @@
 // An example of face liveness validation based on OpenCV camera streams.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -28,14 +28,14 @@
 #include <mutex>
 #include <google/protobuf/util/time_util.h>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::api::v1::video::RecognitionThreshold;
 using sensory::service::video::FaceAlignment;
 
@@ -45,24 +45,24 @@ int main(int argc, const char** argv) {
         .prog("liveness")
         .description("A tool for validating face liveness using SensoryCloud.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The model to use for the enrollment.");
+        .help("The model to use for the enrollment.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID to query the enrollments for.");
+        .help("The name of the user ID to query the enrollments for.");
     parser.add_argument({ "-t", "--threshold" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
-        .help("THRESHOLD The security threshold for conducting the liveness check.");
+        .help("The security threshold for conducting the liveness check.");
     parser.add_argument({ "-D", "--device" })
         .default_value("0")
-        .help("DEVICE The ID of the OpenCV device to use or a path to an image / video file.");
+        .help("The ID of the OpenCV device to use or a path to an image / video file.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
-        .help("VERBOSE Produce verbose output.");
+        .help("Produce verbose output.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -81,15 +81,15 @@ int main(int argc, const char** argv) {
     const auto DEVICE = args.get<std::string>("device");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    sensory::token_manager::InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    sensory::token_manager::FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
 
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
     sensory::api::common::ServerHealthResponse server_health;
-    auto status = cloud.health.getHealth(&server_health);
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health ("
             << status.error_code() << "): "
@@ -120,7 +120,7 @@ int main(int argc, const char** argv) {
     grpc::CompletionQueue queue;
 
     if (GETMODELS) {
-        auto get_models_rpc = cloud.video.getModels(&queue);
+        auto get_models_rpc = cloud.video.get_models(&queue);
         // Execute the asynchronous RPC in this thread (which will block like a
         // synchronous call).
         void* tag(nullptr);
@@ -177,12 +177,13 @@ int main(int argc, const char** argv) {
         Finish = 4
     };
 
-    // Create the enrollment stream.
-    auto stream = cloud.video.validateLiveness(&queue,
-        sensory::service::video::new_validate_recognition_config(MODEL, USER_ID, THRESHOLD),
-        nullptr,
-        (void*) Events::Finish
-    );
+    // Create the config with the recognition parameters.
+    auto config = new ::sensory::api::v1::video::ValidateRecognitionConfig;
+    config->set_modelname(MODEL);
+    config->set_userid(USER_ID);
+    config->set_threshold(THRESHOLD);
+    // Initialize the stream with the cloud.
+    auto stream = cloud.video.validate_liveness(&queue, config, nullptr, (void*) Events::Finish);
 
     // start the stream event thread in the background to handle events.
     std::thread event_thread([&stream, &queue, &is_live, &alignment_code, &frame, &frame_mutex, &VERBOSE](){

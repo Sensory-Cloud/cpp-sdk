@@ -1,6 +1,6 @@
 // An example of audio event validation using SensoryCloud with PortAudio.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -26,11 +26,11 @@
 #include <portaudio.h>
 #include <iostream>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
-using sensory::token_manager::InsecureCredentialStore;
+using sensory::token_manager::FileSystemCredentialStore;
 using sensory::service::AudioService;
 using sensory::api::v1::audio::ThresholdSensitivity;
 
@@ -46,14 +46,10 @@ inline int describe_pa_error(const PaError& err) {
     return 1;
 }
 
-/// @brief A bidirection stream reactor for biometric enrollments from audio
-/// stream data.
-///
-/// @details
-/// Input data for the stream is provided by a PortAudio capture device.
+/// @brief A bi-directional stream reactor for audio signal event validation.
 ///
 class PortAudioReactor :
-    public AudioService<InsecureCredentialStore>::ValidateEventBidiReactor {
+    public AudioService<FileSystemCredentialStore>::ValidateEventBidiReactor {
  private:
     /// The capture device that input audio is streaming in from.
     PaStream* capture;
@@ -92,7 +88,7 @@ class PortAudioReactor :
         float duration_ = 60,
         const bool& verbose_ = false
     ) :
-        AudioService<InsecureCredentialStore>::ValidateEventBidiReactor(),
+        AudioService<FileSystemCredentialStore>::ValidateEventBidiReactor(),
         capture(capture_),
         num_channels(num_channels_),
         sample_size(sample_size_),
@@ -158,29 +154,29 @@ int main(int argc, const char** argv) {
         .prog("validate_event")
         .description("A tool for streaming audio files to SensoryCloud for audio event validation.");
     parser.add_argument({ "path" })
-        .help("PATH The path to an INI file containing server metadata.");
+        .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
-        .help("GETMODELS Whether to query for a list of available models.");
+        .help("Whether to query for a list of available models.");
     parser.add_argument({ "-m", "--model" })
-        .help("MODEL The name of the event validation model to use.");
+        .help("The name of the event validation model to use.");
     parser.add_argument({ "-u", "--userid" })
-        .help("USERID The name of the user ID for the event validation.");
+        .help("The name of the user ID for the event validation.");
     parser.add_argument({ "-t", "--threshold" })
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
-        .help("THRESHOLD The sensitivity threshold for detecting audio events.");
+        .help("The sensitivity threshold for detecting audio events.");
     parser.add_argument({ "-L", "--language" })
-        .help("LANGUAGE The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
-    //     .help("CHUNKSIZE The number of audio samples per message (default 4096).")
+    //     .help("The number of audio samples per message (default 4096).")
     //     .default_value("4096");
     // parser.add_argument({ "-S", "--samplerate" })
-    //     .help("SAMPLERATE The audio sample rate of the input stream.")
+    //     .help("The audio sample rate of the input stream.")
     //     .choices({"9600", "11025", "12000", "16000", "22050", "24000", "32000", "44100", "48000", "88200", "96000", "192000"})
     //     .default_value("16000");
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
-        .help("VERBOSE Produce verbose output during event validation.");
+        .help("Produce verbose output during event validation.");
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
@@ -201,14 +197,14 @@ int main(int argc, const char** argv) {
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
     const auto VERBOSE = args.get<bool>("verbose");
 
-    // Create an insecure credential store for keeping OAuth credentials in.
-    InsecureCredentialStore keychain(".", "com.sensory.cloud.examples");
+    // Create a credential store for keeping OAuth credentials in.
+    FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
     // Create the cloud services handle.
-    SensoryCloud<InsecureCredentialStore> cloud(PATH, keychain);
+    SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    sensory::api::common::ServerHealthResponse server_healthResponse;
-    auto status = cloud.health.getHealth(&server_healthResponse);
+    sensory::api::common::ServerHealthResponse server_health_response;
+    auto status = cloud.health.get_health(&server_health_response);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health ("
             << status.error_code() << "): "
@@ -217,16 +213,24 @@ int main(int argc, const char** argv) {
     }
     if (VERBOSE) {
         std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_healthResponse.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_healthResponse.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_healthResponse.id()            << std::endl;
+        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
+        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
+        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
+    }
+
+    // Initialize the client.
+    sensory::api::v1::management::DeviceResponse response;
+    status = cloud.initialize(&response);
+    if (!status.ok()) {  // the call failed, print a descriptive message
+        std::cout << "Failed to initialize (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
     }
 
     // ------ Query the available audio models ---------------------------------
 
     if (GETMODELS) {
         int error_code = 0;
-        cloud.audio.getModels([&error_code](AudioService<InsecureCredentialStore>::GetModelsCallData* call) {
+        cloud.audio.get_models([&error_code](AudioService<FileSystemCredentialStore>::GetModelsCallbackData* call) {
             if (!call->getStatus().ok()) {  // The call failed.
                 std::cout << "Failed to get audio models ("
                     << call->getStatus().error_code() << "): "
@@ -253,8 +257,7 @@ int main(int argc, const char** argv) {
     // The number of bytes per sample, for 16-bit audio, this is 2 bytes.
     const auto SAMPLE_SIZE = 2;
     // The number of bytes in a given chunk of samples.
-    const auto BYTES_PER_BLOCK =
-        CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
+    const auto BYTES_PER_BLOCK = CHUNK_SIZE * NUM_CHANNELS * SAMPLE_SIZE;
 
     // Initialize the PortAudio driver.
     PaError err = paNoError;
@@ -291,7 +294,18 @@ int main(int argc, const char** argv) {
     err = Pa_StartStream(capture);
     if (err != paNoError) return describe_pa_error(err);
 
-    // Create the gRPC reactor to respond to streaming events.
+    // Create an audio config that describes the format of the audio stream.
+    auto audio_config = new sensory::api::v1::audio::AudioConfig;
+    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
+    audio_config->set_sampleratehertz(SAMPLE_RATE);
+    audio_config->set_audiochannelcount(NUM_CHANNELS);
+    audio_config->set_languagecode(LANGUAGE);
+    // Create the config with the event validation parameters.
+    auto validate_event_config = new sensory::api::v1::audio::ValidateEventConfig;
+    validate_event_config->set_modelname(MODEL);
+    validate_event_config->set_userid(USER_ID);
+    validate_event_config->set_sensitivity(THRESHOLD);
+    // Initialize the stream with the cloud.
     PortAudioReactor reactor(capture,
         NUM_CHANNELS,
         SAMPLE_SIZE,
@@ -300,16 +314,7 @@ int main(int argc, const char** argv) {
         DURATION,
         VERBOSE
     );
-    // Initialize the stream with the reactor for callbacks, given audio model,
-    // the sample rate of the audio and the expected language. A user ID is also
-    // necessary to detect audio events.
-    cloud.audio.validateEvent(&reactor,
-        sensory::service::audio::new_audio_config(
-            sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16,
-            SAMPLE_RATE, 1, LANGUAGE
-        ),
-        sensory::service::audio::new_validate_event_config(MODEL, USER_ID, THRESHOLD)
-    );
+    cloud.audio.validate_event(&reactor, audio_config, validate_event_config);
     reactor.StartCall();
     status = reactor.await();
 

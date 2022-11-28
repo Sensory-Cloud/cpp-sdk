@@ -28,7 +28,7 @@ must also have the following pieces of information:
 To return the health of the remote server:
 
 ```shell
-./management <path to config.ini file> getHealth
+./management <path to config.ini file> get_health
 ```
 
 ### Get enrollments
@@ -36,7 +36,7 @@ To return the health of the remote server:
 To fetch the enrollments for a given user ID:
 
 ```shell
-./management <path to config.ini file> getEnrollments -u <user ID>
+./management <path to config.ini file> get_enrollments -u <user ID>
 ```
 
 ### Delete enrollment
@@ -44,7 +44,7 @@ To fetch the enrollments for a given user ID:
 To delete a particular enrollment:
 
 ```shell
-./management <path to config.ini file> deleteEnrollment -e <enrollment ID>
+./management <path to config.ini file> delete_enrollment -e <enrollment ID>
 ```
 
 ### Get enrollment groups
@@ -52,7 +52,7 @@ To delete a particular enrollment:
 To fetch the enrollment groups a particular user belongs to:
 
 ```shell
-./management <path to config.ini file> getEnrollmentGroups -u <user ID>
+./management <path to config.ini file> get_enrollment_groups -u <user ID>
 ```
 
 ### Delete enrollment group
@@ -60,7 +60,7 @@ To fetch the enrollment groups a particular user belongs to:
 To delete an enrollment group:
 
 ```shell
-./management <path to config.ini file> deleteEnrollmentGroup -e <group ID>
+./management <path to config.ini file> delete_enrollment_group -e <group ID>
 ```
 
 ### Create enrollment group
@@ -68,7 +68,7 @@ To delete an enrollment group:
 To create a new enrollment group belonging to a particular user:
 
 ```shell
-./management <path to config.ini file> createEnrollmentGroup \
+./management <path to config.ini file> create_enrollment_group \
     -u <user ID> \
     -n <group name> \
     -d <group description> \
@@ -81,7 +81,7 @@ To create a new enrollment group belonging to a particular user:
 To append enrollments to an existing enrollment group:
 
 ```shell
-./management <path to config.ini file> appendEnrollmentGroup \
+./management <path to config.ini file> append_enrollment_group \
     -e <group ID> \
     -E <enrollment ID>*
 ```

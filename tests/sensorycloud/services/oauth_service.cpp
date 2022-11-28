@@ -1,6 +1,6 @@
 // Test cases for the OAuth service.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -46,7 +46,6 @@ using ::sensory::api::v1::management::DeviceResponse;
 using ::sensory::api::v1::management::EnrollDeviceRequest;
 using ::sensory::api::v1::management::RenewDeviceCredentialRequest;
 
-
 using testing::_;
 
 TEST_CASE("Should create OAuthService from Config") {
@@ -62,14 +61,14 @@ SCENARIO("A client requires a synchronous interface to the video service") {
         // Create the configuration that provides information about the remote host.
         Config config("hostname.com", 443, "tenant ID", "device ID", false);
         // Create the service with the mock stubs.
-        auto deviceStub = new ::sensory::api::v1::management::MockDeviceServiceStub;
-        auto oauthStub = new ::sensory::api::oauth::MockOauthServiceStub;
-        OAuthService service(config, deviceStub, oauthStub);
+        auto device_stub = new ::sensory::api::v1::management::MockDeviceServiceStub;
+        auto oauth_stub = new ::sensory::api::oauth::MockOauthServiceStub;
+        OAuthService service(config, device_stub, oauth_stub);
 
         // ----- EnrollDevice --------------------------------------------------
 
         WHEN("EnrollDevice is called") {
-            EXPECT_CALL(*deviceStub, EnrollDevice(_, _, _))
+            EXPECT_CALL(*device_stub, EnrollDevice(_, _, _))
                 .Times(1)
                 .WillOnce([] (ClientContext*, const EnrollDeviceRequest& request, DeviceResponse *response) {
                     REQUIRE("device ID" == request.deviceid());
@@ -84,7 +83,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             DeviceResponse response;
-            auto status = service.registerDevice(&response, "foo name", "foo credential", "foo client ID", "foo client secret");
+            auto status = service.register_device(&response, "foo name", "foo credential", "foo client ID", "foo client secret");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
@@ -97,7 +96,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
         // ----- RenewDeviceCredential -----------------------------------------
 
         WHEN("RenewDeviceCredential is called") {
-            EXPECT_CALL(*deviceStub, RenewDeviceCredential(_, _, _))
+            EXPECT_CALL(*device_stub, RenewDeviceCredential(_, _, _))
                 .Times(1)
                 .WillOnce([] (ClientContext*, const RenewDeviceCredentialRequest& request, DeviceResponse *response) {
                     REQUIRE("device ID" == request.deviceid());
@@ -110,7 +109,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             DeviceResponse response;
-            auto status = service.renewDeviceCredential(&response, "foo credential", "foo client ID");
+            auto status = service.renew_device_credential(&response, "foo credential", "foo client ID");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }
@@ -123,7 +122,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
         // ----- GetToken ------------------------------------------------------
 
         WHEN("GetToken is called") {
-            EXPECT_CALL(*oauthStub, GetToken(_, _, _))
+            EXPECT_CALL(*oauth_stub, GetToken(_, _, _))
                 .Times(1)
                 .WillOnce([] (ClientContext*, const TokenRequest& request, TokenResponse *response) {
                     REQUIRE("foo client ID" == request.clientid());
@@ -133,7 +132,7 @@ SCENARIO("A client requires a synchronous interface to the video service") {
                 }
             );
             TokenResponse response;
-            auto status = service.getToken(&response, "foo client ID", "foo client secret");
+            auto status = service.get_token(&response, "foo client ID", "foo client secret");
             THEN("The status is OK") {
                 REQUIRE(status.ok());
             }

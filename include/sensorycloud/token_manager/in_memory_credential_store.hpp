@@ -1,6 +1,6 @@
-// An insecure credential store for the SensoryCloud C++ SDK.
+// An in-memory credential store.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -32,10 +32,10 @@
 /// @brief The SensoryCloud SDK.
 namespace sensory {
 
-/// @brief Modules for generating and storing secure credentials.
+/// @brief Modules for generating and storing credentials.
 namespace token_manager {
 
-/// @brief A mock secure credential store for testing the TokenManager.
+/// @brief An in-memory credential store (mostly for testing purposes).
 struct InMemoryCredentialStore : public std::unordered_map<std::string, std::string> {
 #if (__cplusplus <= 202002L)  // C++ 2020 and later defines contains for STL maps
     /// @brief Return true if the key exists in the key-value store.
@@ -47,10 +47,10 @@ struct InMemoryCredentialStore : public std::unordered_map<std::string, std::str
     }
 #endif
 
-    /// @brief Emplace or replace a key/value pair in the key-chain.
+    /// @brief Emplace (or replace) a key/value pair in the credential store.
     ///
     /// @param key the plain-text key of the value to store
-    /// @param value the secure value to store
+    /// @param value the value to store
     ///
     inline void emplace(const std::string& key, const std::string& value) {
         if (contains(key)) erase(key);

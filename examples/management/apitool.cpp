@@ -1,6 +1,6 @@
 // The SensoryCloud C++ SDK management service demo (synchronous interface).
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Jonathan Welch (jwelch@sensoryinc.com)
 //
@@ -30,11 +30,11 @@
 #include <google/protobuf/util/time_util.h>
 #include <grpcpp/completion_queue.h>
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/insecure_credential_store.hpp>
+#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "dep/argparse.hpp"
 
 using SensoryCloudInstance =
-    sensory::SensoryCloud<sensory::token_manager::InsecureCredentialStore>;
+    sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>;
 
 struct modelData {
   std::string modelName;
@@ -61,18 +61,18 @@ int main(int argc, const char **argv) {
       .action("store_true")
       .help("List all available models for your tenant by type");
   parser.add_argument({"path"}).help(
-      "PATH The path to an INI file containing server metadata.");
+      "The path to an INI file containing server metadata.");
   parser.add_argument({"-v", "--verbose"})
       .action("store_true")
-      .help("VERBOSE Produce verbose output.");
+      .help("Produce verbose output.");
 
   const auto args = parser.parse_args();
   const auto GETMODELS = args.get<bool>("getmodels");
   const auto PATH = args.get<std::string>("path");
   const auto VERBOSE = args.get<bool>("verbose");
 
-  // Create an insecure credential store for keeping OAuth credentials
-  sensory::token_manager::InsecureCredentialStore keychain(
+  // Create a credential store for keeping OAuth credentials
+  sensory::token_manager::FileSystemCredentialStore keychain(
       ".", "com.sensory.cloud.examples");
 
   // Create the cloud services handle
@@ -80,7 +80,7 @@ int main(int argc, const char **argv) {
 
   // Query the health of the remote services
   sensory::api::common::ServerHealthResponse server_health;
-  auto status = cloud.health.getHealth(&server_health);
+  auto status = cloud.health.get_health(&server_health);
   if (!status.ok()) { // the call failed, print a descriptive message
     std::cout << "Failed to get server health (" << status.error_code()
               << "): " << status.error_message() << std::endl;
@@ -142,7 +142,7 @@ std::list<modelData> GetSpeechModels(SensoryCloudInstance *cloud,
 
   /********** AUDIO MODELS ***************/
   // Get Models Through Audio Interface
-  auto getModelsRPC = cloud->audio.getModels(queue);
+  auto get_models_rpc = cloud->audio.get_models(queue);
 
   // Execute the async RPC in this thread (which will technically block)
   void *tag(nullptr);
@@ -152,8 +152,8 @@ std::list<modelData> GetSpeechModels(SensoryCloudInstance *cloud,
   queue->Next(&tag, &ok);
   int error_code = 0;
   std::list<modelData> modelNames;
-  if (ok && tag == getModelsRPC) {
-    for (auto &model : getModelsRPC->getResponse().models()) {
+  if (ok && tag == get_models_rpc) {
+    for (auto &model : get_models_rpc->getResponse().models()) {
       if (model.modeltype() ==
           sensory::api::common::ModelType::VOICE_TRANSCRIBE_GRAMMAR) {
         modelData mdata;
@@ -172,7 +172,7 @@ std::list<modelData> GetSoundIDModels(SensoryCloudInstance *cloud,
 
   /********** AUDIO MODELS ***************/
   // Get Models Through Audio Interface
-  auto getModelsRPC = cloud->audio.getModels(queue);
+  auto get_models_rpc = cloud->audio.get_models(queue);
 
   // Execute the async RPC in this thread (which will technically block)
   void *tag(nullptr);
@@ -182,8 +182,8 @@ std::list<modelData> GetSoundIDModels(SensoryCloudInstance *cloud,
   queue->Next(&tag, &ok);
   int error_code = 0;
   std::list<modelData> modelNames;
-  if (ok && tag == getModelsRPC) {
-    for (auto &model : getModelsRPC->getResponse().models()) {
+  if (ok && tag == get_models_rpc) {
+    for (auto &model : get_models_rpc->getResponse().models()) {
       modelData mdata;
 
       switch (model.modeltype()) {
@@ -210,7 +210,7 @@ std::list<modelData> GetVideoModels(SensoryCloudInstance *cloud,
 
   /********** VIDEO MODELS ***************/
   // Get Models Through Video Interface
-  auto getModelsRPC = cloud->video.getModels(queue);
+  auto get_models_rpc = cloud->video.get_models(queue);
 
   // Execute the async RPC in this thread (which will technically block)
   void *tag(nullptr);
@@ -220,8 +220,8 @@ std::list<modelData> GetVideoModels(SensoryCloudInstance *cloud,
   queue->Next(&tag, &ok);
   int error_code = 0;
   std::list<modelData> modelNames;
-  if (ok && tag == getModelsRPC) {
-    for (auto &model : getModelsRPC->getResponse().models()) {
+  if (ok && tag == get_models_rpc) {
+    for (auto &model : get_models_rpc->getResponse().models()) {
       if (model.modeltype() ==
               sensory::api::common::ModelType::FACE_BIOMETRIC ||
           model.modeltype() == sensory::api::common::FACE_RECOGNITION) {

@@ -1,6 +1,6 @@
 // An OAuth Token manager for the SensoryCloud C++ SDK.
 //
-// Copyright (c) 2021 Sensory, Inc.
+// Copyright (c) 2022 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -27,9 +27,9 @@
 #define SENSORYCLOUD_TOKEN_MANAGER_TOKEN_MANAGER_HPP_
 
 #include <mutex>
-#include "sensorycloud/token_manager/uuid.hpp"
-#include "sensorycloud/token_manager/secure_random.hpp"
-#include "sensorycloud/token_manager/time.hpp"
+#include "sensorycloud/util/secure_random.hpp"
+#include "sensorycloud/util/time.hpp"
+#include "sensorycloud/util/uuid.hpp"
 #include "sensorycloud/services/oauth_service.hpp"
 
 /// @brief The SensoryCloud SDK.
@@ -59,15 +59,15 @@ static const struct {
 } TAGS;
 
 /// @brief A token manager class for generating OAuth tokens.
-/// @tparam SecureCredentialStore A secure key-value store for storing and
-/// fetching credentials and tokens.
-template<typename SecureCredentialStore>
+/// @tparam CredentialStore A key-value store for storing and fetching
+/// credentials and tokens.
+template<typename CredentialStore>
 class TokenManager {
  private:
     /// the OAuth service to get secure tokens from the remote host
     ::sensory::service::OAuthService& service;
     /// the key-chain to interact with to store / query key-value pairs
-    SecureCredentialStore& keychain;
+    CredentialStore& credential_store;
 
     /// @brief Create a copy of this object.
     ///
@@ -89,50 +89,50 @@ class TokenManager {
     /// @brief Initialize a new token manager.
     ///
     /// @param service_ The OAuth service for requesting new tokens.
-    /// @param keychain_ The keychain to query secure credentials from.
+    /// @param credential_store_ The credential store to query data from.
     ///
     TokenManager(
         ::sensory::service::OAuthService& service_,
-        SecureCredentialStore& keychain_
-    ) : service(service_), keychain(keychain_) { }
+        CredentialStore& credential_store_
+    ) : service(service_), credential_store(credential_store_) { }
 
     /// @brief Return a reference to the underlying OAuth service.
-    ::sensory::service::OAuthService& get_service() { return service; }
+    ::sensory::service::OAuthService& get_service() const { return service; }
 
     /// @brief Return a reference to the underlying credential store.
-    SecureCredentialStore& get_keychain() { return keychain; }
+    CredentialStore& get_credential_store() const { return credential_store; }
 
     /// @brief Generate a new set of OAuth credentials and store them in the
-    /// keychain.
+    /// credential store.
     ///
     /// @returns The generated OAuth credentials.
     /// @throws An error if credentials cannot be securely generated or if the
-    /// credentials cannot be stored in the keychain.
+    /// credentials cannot be stored in the credential store.
     ///
     /// @details
     /// This function will overwrite any other credentials that have been
     /// generated using this function, i.e., the `clientID` and `clientSecret`
-    /// in the keychain.
+    /// in the credential store.
     ///
     inline AccessTokenCredentials generate_credentials() const {
         // Generate a new client ID and secure random secret string.
-        const auto clientID = uuid_v4();  // v4 UUIDs don't identify the host.
-        const auto secret = secure_random<24>();  // Use a 24 character secret.
+        const auto clientID = ::sensory::util::uuid_v4();  // v4 UUIDs don't identify the host.
+        const auto secret = ::sensory::util::secure_random<24>();  // Use a 24 character secret.
         // Insert the clientID and secret into the persistent credential store.
         // If any key-value pair already exists, overwrite it.
-        keychain.emplace(TAGS.ClientID, clientID);
-        keychain.emplace(TAGS.ClientSecret, secret);
+        credential_store.emplace(TAGS.ClientID, clientID);
+        credential_store.emplace(TAGS.ClientSecret, secret);
         // Return a new access token with the credentials
         return {clientID, secret};
     }
 
     /// @brief Return the stored credentials.
     ///
-    /// @returns The `clientID` and `clientSecret` from the keychain in an
-    /// `AccessTokenCredentials` instance.
+    /// @returns The `clientID` and `clientSecret` from the credential store in
+    /// an `AccessTokenCredentials` instance.
     ///
     inline AccessTokenCredentials get_saved_credentials() const {
-        return {keychain.at(TAGS.ClientID), keychain.at(TAGS.ClientSecret)};
+        return {credential_store.at(TAGS.ClientID), credential_store.at(TAGS.ClientSecret)};
     }
 
     /// @brief Determine if client ID and client secret are stored on device.
@@ -141,11 +141,11 @@ class TokenManager {
     ///
     /// @details
     /// This function checks for the existence of the `clientID` and
-    /// `clientSecret` keys in the keychain.
+    /// `clientSecret` keys in the credential store.
     ///
     inline bool has_saved_credentials() const {
-        return keychain.contains(TAGS.ClientID) &&
-            keychain.contains(TAGS.ClientSecret);
+        return credential_store.contains(TAGS.ClientID) &&
+            credential_store.contains(TAGS.ClientSecret);
     }
 
     /// @brief Determine if any token is stored on the device.
@@ -154,11 +154,11 @@ class TokenManager {
     ///
     /// @details
     /// This function checks for the existence of the `accessToken` and
-    /// `expiration` keys in the keychain.
+    /// `expiration` keys in the credential store.
     ///
     inline bool has_token() const {
-        return keychain.contains(TAGS.AccessToken) &&
-            keychain.contains(TAGS.Expiration);
+        return credential_store.contains(TAGS.AccessToken) &&
+            credential_store.contains(TAGS.Expiration);
     }
 
     /// @brief Delete any credentials stored for requesting access tokens, as
@@ -169,10 +169,10 @@ class TokenManager {
     /// `expiration` keys-value pairs from the secure credential store.
     ///
     inline void delete_credentials() const {
-        keychain.erase(TAGS.AccessToken);
-        keychain.erase(TAGS.Expiration);
-        keychain.erase(TAGS.ClientID);
-        keychain.erase(TAGS.ClientSecret);
+        credential_store.erase(TAGS.AccessToken);
+        credential_store.erase(TAGS.Expiration);
+        credential_store.erase(TAGS.ClientID);
+        credential_store.erase(TAGS.ClientSecret);
     }
 
     /// @brief Return a valid access token for SensoryCloud gRPC calls.
@@ -194,11 +194,11 @@ class TokenManager {
         if (!has_token())  // no access token has been generated and stored
             return fetch_new_access_token();
         // fetch existing access token and expiration date from the secure store
-        const auto access_token = keychain.at(TAGS.AccessToken);
-        const auto expiration_date = keychain.at(TAGS.Expiration);
+        const auto access_token = credential_store.at(TAGS.AccessToken);
+        const auto expiration_date = credential_store.at(TAGS.Expiration);
         // check for expiration of the token
         const auto now = std::chrono::system_clock::now();
-        const auto expiration = timestamp_to_timepoint(expiration_date);
+        const auto expiration = ::sensory::util::timestamp_to_timepoint(expiration_date);
         if (now > expiration - std::chrono::minutes(5))  // token has expired
             return fetch_new_access_token();
         return access_token;
@@ -213,17 +213,17 @@ class TokenManager {
         // new credentials.
         if (!has_saved_credentials()) generate_credentials();
         // Get the ID of the client and the secret from the secure store.
-        const auto client_id = keychain.at(TAGS.ClientID);
-        const auto secret = keychain.at(TAGS.ClientSecret);
+        const auto client_id = credential_store.at(TAGS.ClientID);
+        const auto secret = credential_store.at(TAGS.ClientSecret);
         // Synchronously request a new token from the server.
         api::common::TokenResponse response;
-        const auto status = service.getToken(&response, client_id, secret);
+        const auto status = service.get_token(&response, client_id, secret);
         // Insert the OAuth access token for the client in the secure store
-        keychain.emplace(TAGS.AccessToken, response.accesstoken());
+        credential_store.emplace(TAGS.AccessToken, response.accesstoken());
         // Determine when the token will expire and store this time
         const auto expiration_date =
             std::chrono::system_clock::now() + std::chrono::seconds(response.expiresin());
-        keychain.emplace(TAGS.Expiration, timepoint_to_timestamp(expiration_date));
+        credential_store.emplace(TAGS.Expiration, ::sensory::util::timepoint_to_timestamp(expiration_date));
         // Return the newly created OAuth token
         return response.accesstoken();
     }
