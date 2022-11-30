@@ -128,3 +128,11 @@
         -   `sensory::CallData` -> `sensory::calldata::CallbackData`
         -   `sensory::calldata::AsyncReaderWriterCall`
         -   `sensory::calldata::AsyncResponseReaderCall`
+
+## 0.17.3
+
+-   INI parser bug-fixes and improvements (for constructing `SensoryCloud`)
+    -   runtime error handling for irrecoverable failure cases:
+        1.  a file-path points to a non-existent file,
+        2.  a file contains improperly formatted INI data, and
+        3.  a file is missing sections/keys that are required.

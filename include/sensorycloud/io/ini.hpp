@@ -16,60 +16,56 @@ https://github.com/benhoyt/inih
 #ifndef SENSORYCLOUD_IO_INI_HPP_
 #define SENSORYCLOUD_IO_INI_HPP_
 
-/* Make this header file easier to include in C++ code */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdio.h>
 
-/* Typedef for prototype of handler function. */
-typedef int (*ini_handler)(void* user, const char* section,
-                           const char* name, const char* value);
+/// Typedef for prototype of handler function.
+typedef int (*ini_handler)(void* user, const char* section, const char* name, const char* value);
 
-/* Typedef for prototype of fgets-style reader function. */
+/// Typedef for prototype of fgets-style reader function.
 typedef char* (*ini_reader)(char* str, int num, void* stream);
 
-/* Parse given INI-style file. May have [section]s, name=value pairs
-   (whitespace stripped), and comments starting with ';' (semicolon). Section
-   is "" if name=value pair parsed before any section heading. name:value
-   pairs are also supported as a concession to Python's configparser.
+/// Parse given INI-style file. May have [section]s, name=value pairs
+/// (whitespace stripped), and comments starting with ';' (semicolon). Section
+/// is "" if name=value pair parsed before any section heading. name:value
+/// pairs are also supported as a concession to Python's configparser.///
+///
+/// For each name=value pair parsed, call handler function with given user
+/// pointer as well as section, name, and value (data only valid for duration
+/// of handler call). Handler should return nonzero on success, zero on error.///
+///
+/// Returns 0 on success, line number of first error on parse error (doesn't
+/// stop on first error), -1 on file open error, or -2 on memory allocation
+/// error (only when INI_USE_STACK is zero).
+void ini_parse(const char* filename, ini_handler handler, void* user);
 
-   For each name=value pair parsed, call handler function with given user
-   pointer as well as section, name, and value (data only valid for duration
-   of handler call). Handler should return nonzero on success, zero on error.
+/// Same as ini_parse(), but takes a FILE* instead of filename. This doesn't
+/// close the file when it's finished -- the caller must do that.
+void ini_parse_file(FILE* file, ini_handler handler, void* user);
 
-   Returns 0 on success, line number of first error on parse error (doesn't
-   stop on first error), -1 on file open error, or -2 on memory allocation
-   error (only when INI_USE_STACK is zero).
-*/
-int ini_parse(const char* filename, ini_handler handler, void* user);
+/// Same as ini_parse(), but takes an ini_reader function pointer instead of
+/// filename. Used for implementing custom or string-based I/O.
+void ini_parse_stream(ini_reader reader, void* stream, ini_handler handler, void* user);
 
-/* Same as ini_parse(), but takes a FILE* instead of filename. This doesn't
-   close the file when it's finished -- the caller must do that. */
-int ini_parse_file(FILE* file, ini_handler handler, void* user);
-
-/* Same as ini_parse(), but takes an ini_reader function pointer instead of
-   filename. Used for implementing custom or string-based I/O. */
-int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
-                     void* user);
-
-/* Nonzero to allow multi-line value parsing, in the style of Python's
-   configparser. If allowed, ini_parse() will call the handler with the same
-   name for each subsequent line parsed. */
+/// Nonzero to allow multi-line value parsing, in the style of Python's
+/// configparser. If allowed, ini_parse() will call the handler with the same
+/// name for each subsequent line parsed.
 #ifndef INI_ALLOW_MULTILINE
 #define INI_ALLOW_MULTILINE 1
 #endif
 
-/* Nonzero to allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of
-   the file. See http://code.google.com/p/inih/issues/detail?id=21 */
+/// Nonzero to allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of
+/// the file. See http://code.google.com/p/inih/issues/detail?id=21
 #ifndef INI_ALLOW_BOM
 #define INI_ALLOW_BOM 1
 #endif
 
-/* Nonzero to allow inline comments (with valid inline comment characters
-   specified by INI_INLINE_COMMENT_PREFIXES). Set to 0 to turn off and match
-   Python 3.2+ configparser behaviour. */
+/// Nonzero to allow inline comments (with valid inline comment characters
+/// specified by INI_INLINE_COMMENT_PREFIXES). Set to 0 to turn off and match
+/// Python 3.2+ configparser behaviour.
 #ifndef INI_ALLOW_INLINE_COMMENTS
 #define INI_ALLOW_INLINE_COMMENTS 1
 #endif
@@ -77,17 +73,17 @@ int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
 #define INI_INLINE_COMMENT_PREFIXES ";"
 #endif
 
-/* Nonzero to use stack, zero to use heap (malloc/free). */
+/// Nonzero to use stack, zero to use heap (malloc/free).
 #ifndef INI_USE_STACK
 #define INI_USE_STACK 1
 #endif
 
-/* Stop parsing on first error (default is to keep parsing). */
+/// Stop parsing on first error (default is to keep parsing).
 #ifndef INI_STOP_ON_FIRST_ERROR
 #define INI_STOP_ON_FIRST_ERROR 0
 #endif
 
-/* Maximum line length for any line in INI file. */
+/// Maximum line length for any line in INI file.
 #ifndef INI_MAX_LINE
 #define INI_MAX_LINE 200
 #endif
@@ -161,8 +157,7 @@ inline static char* strncpy0(char* dest, const char* src, size_t size) {
     return dest;
 }
 
-/* See documentation in header file. */
-inline int ini_parse_stream(
+inline void ini_parse_stream(
     ini_reader reader,
     void* stream,
     ini_handler handler,
@@ -186,9 +181,8 @@ inline int ini_parse_stream(
 
 #if !INI_USE_STACK
     line = (char*)malloc(INI_MAX_LINE);
-    if (!line) {
-        return -2;
-    }
+    if (!line)
+        throw std::runtime_error("Failed to allocate onto heap for INI contents!");
 #endif
 
     /* Scan through stream line by line */
@@ -273,25 +267,23 @@ inline int ini_parse_stream(
     free(line);
 #endif
 
-    return error;
+    if (error)  // An error occurred while parsing the file contents.
+        throw std::runtime_error("Failed to parse INI file at line " + std::to_string(error));
 }
 
 /* See documentation in header file. */
-inline int ini_parse_file(FILE* file, ini_handler handler, void* user) {
-    return ini_parse_stream((ini_reader)fgets, file, handler, user);
+inline void ini_parse_file(FILE* file, ini_handler handler, void* user) {
+    ini_parse_stream((ini_reader)fgets, file, handler, user);
 }
 
 /* See documentation in header file. */
-inline int ini_parse(const char* filename, ini_handler handler, void* user) {
+inline void ini_parse(const char* filename, ini_handler handler, void* user) {
     FILE* file;
-    int error;
-
     file = fopen(filename, "r");
     if (!file)
-        return -1;
-    error = ini_parse_file(file, handler, user);
+        throw std::runtime_error("Failed to open INI file at path \"" + std::string(filename) + "\"");
+    ini_parse_file(file, handler, user);
     fclose(file);
-    return error;
 }
 
 #endif  // SENSORYCLOUD_IO_INI_HPP_
@@ -304,6 +296,10 @@ inline int ini_parse(const char* filename, ini_handler handler, void* user) {
 #include <map>
 #include <set>
 #include <string>
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
+#include <exception>
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -311,185 +307,168 @@ namespace sensory {
 /// @brief File IO components.
 namespace io {
 
-// Read an INI file into easy-to-access name/value pairs. (Note that I've gone
-// for simplicity here rather than speed, but it should be pretty decent.)
-class INIReader
-{
-public:
-    // Empty Constructor
-    INIReader() {};
+/// @brief An IO structure for parsing INI files into key-value pairs.
+class INIReader {
+ private:
+    /// @brief Initialize a null INIReader with no content.
+    INIReader() { }
 
-    // Construct INIReader and parse given filename. See ini.h for more info
-    // about the parsing.
-    explicit INIReader(const std::string& filename);
+ protected:
+    /// A mapping of flattened section/key names to their associated values.
+    std::map<std::string, std::string> values;
+    /// A collection of the unique sections in the file.
+    std::set<std::string> sections;
+
+    /// @brief Create a combined section/name key from a section and name.
+    /// @param section The section that contains the key with given name.
+    /// @param name The name of the key in the given section
+    /// @returns A unique combination of the section and key for flat mapping.
+    /// @details
+    /// Keys are case insensitive.
+    inline static std::string get_key_from_section_and_name(
+        const std::string& section,
+        const std::string& name
+    ) {
+        // `=` is the INI assignment operator; it's safe to use as a delimiter.
+        std::string key = section + "=" + name;
+        std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+        return key;
+    }
+
+    /// @brief A callback for handling values during parsing.
+    /// @param reader_ The instance of INIReader that is being parsed into.
+    /// @param section The section that is being parsed
+    /// @param name The name of the key to handle
+    /// @param value The value of the key to handle
+    static int handle_value(
+        void* reader_,
+        const char* section,
+        const char* name,
+        const char* value
+    ) {
+        INIReader* reader = reinterpret_cast<INIReader*>(reader_);
+        std::string key = get_key_from_section_and_name(section, name);
+        if (reader->values[key].size() > 0) reader->values[key] += "\n";
+        reader->values[key] += value;
+        reader->sections.insert(section);
+        return 1;
+    }
+
+ public:
+    /// @brief Construct a new INI reader from a file with given path name.
+    /// @param filename The path to the file on the file-system.
+    explicit INIReader(const std::string& filename) {
+        ini_parse(filename.c_str(), handle_value, this);
+    }
 
     // Construct INIReader and parse given file. See ini.h for more info
     // about the parsing.
-    explicit INIReader(FILE *file);
-
-    // Return the result of ini_parse(), i.e., 0 on success, line number of
-    // first error on parse error, or -1 on file open error.
-    int ParseError() const;
+    explicit INIReader(FILE *file) {
+        ini_parse_file(file, handle_value, this);
+    }
 
     // Return the list of sections found in ini file
-    const std::set<std::string>& Sections() const;
+    inline const std::set<std::string>& get_sections() const {
+        return sections;
+    }
 
-    // Get a string value from INI file, returning default_value if not found.
-    std::string Get(const std::string& section, const std::string& name,
-                    const std::string& default_value) const;
-
-    // Get an integer (long) value from INI file, returning default_value if
-    // not found or not a valid integer (decimal "1234", "-1234", or hex "0x4d2").
-    long GetInteger(const std::string& section, const std::string& name, long default_value) const;
-
-    // Get a real (floating point double) value from INI file, returning
-    // default_value if not found or not a valid floating point value
-    // according to strtod().
-    double GetReal(const std::string& section, const std::string& name, double default_value) const;
-
-    // Get a single precision floating point number value from INI file, returning
-    // default_value if not found or not a valid floating point value
-    // according to strtof().
-    float GetFloat(const std::string& section, const std::string& name, float default_value) const;
-  
-    // Get a boolean value from INI file, returning default_value if not found or if
-    // not a valid true/false value. Valid true values are "true", "yes", "on", "1",
-    // and valid false values are "false", "no", "off", "0" (not case sensitive).
-    bool GetBoolean(const std::string& section, const std::string& name, bool default_value) const;
-
-protected:
-    int _error;
-    std::map<std::string, std::string> _values;
-    std::set<std::string> _sections;
-    static std::string MakeKey(const std::string& section, const std::string& name);
-    static int ValueHandler(void* user, const char* section, const char* name,
-                            const char* value);
+    /// @brief Fetch a value from the ini file.
+    /// @tparam T The data-type to cast the return value to.
+    /// @param section The section of the file to constrain the search to.
+    /// @param name The name of the key to look for within the section.
+    /// @param default_value A default value to use if the key does not exist.
+    /// @param required True to throw an error if the key does not exist.
+    /// @returns The value of the given key in the given section.
+    /// @throws A `std::runtime_error` when `required` is true and the section
+    ///         doesn't exist, or the key doesn't exist within the section.
+    template<typename T>
+    T get(
+        const std::string& section,
+        const std::string& name,
+        const T& default_value = T(),
+        const bool& required = false) const;
 };
+
+template<>
+std::string INIReader::get<std::string>(
+    const std::string& section,
+    const std::string& name,
+    const std::string& default_value,
+    const bool& required
+) const {
+    std::string key = get_key_from_section_and_name(section, name);
+    if (values.count(key))  // section exists and has a value for the key.
+        return values.at(key);
+    if (!required)  // Section/key doesn't exist, but the value is optional.
+        return default_value;
+    // The value should exist but doesn't, throw an error.
+    throw std::runtime_error(
+        "Failed to find key \"" + name + "\" in section [" + section + "]");
+}
+
+template<>
+bool INIReader::get<bool>(
+    const std::string& section,
+    const std::string& name,
+    const bool& default_value,
+    const bool& required
+) const {
+    std::string value = get<std::string>(section, name, "", required);
+    // Convert to lower case to make string comparisons case-insensitive.
+    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+    if (value == "true" || value == "yes" || value == "on" || value == "1")
+        return true;
+    if (value == "false" || value == "no" || value == "off" || value == "0")
+        return false;
+    return default_value;
+}
+
+template<>
+inline int32_t INIReader::get<int32_t>(
+    const std::string& section,
+    const std::string& name,
+    const int32_t& default_value,
+    const bool& required
+) const {
+    const std::string value = get<std::string>(section, name, "", required);
+    return value.empty() ? default_value : std::stoi(value);
+}
+
+template<>
+inline int64_t INIReader::get<int64_t>(
+    const std::string& section,
+    const std::string& name,
+    const int64_t& default_value,
+    const bool& required
+) const {
+    const std::string value = get<std::string>(section, name, "", required);
+    return value.empty() ? default_value : std::stol(value);
+}
+
+template<>
+inline float INIReader::get<float>(
+    const std::string& section,
+    const std::string& name,
+    const float& default_value,
+    const bool& required
+) const {
+    const std::string value = get<std::string>(section, name, "", required);
+    return value.empty() ? default_value : std::stof(value);
+}
+
+template<>
+inline double INIReader::get<double>(
+    const std::string& section,
+    const std::string& name,
+    const double& default_value,
+    const bool& required
+) const {
+    const std::string value = get<std::string>(section, name, "", required);
+    return value.empty() ? default_value : std::stod(value);
+}
 
 }  // namespace io
 
 }  // namespace sensory
 
 #endif  // SENSORYCLOUD_IO_INIREADER_HPP_
-
-
-
-#ifndef SENSORYCLOUD_IO_INIREADER_
-#define SENSORYCLOUD_IO_INIREADER_
-
-#include <algorithm>
-#include <cctype>
-#include <cstdlib>
-
-/// @brief The SensoryCloud SDK.
-namespace sensory {
-
-/// @brief File IO components.
-namespace io {
-
-inline INIReader::INIReader(const std::string& filename) {
-    _error = ini_parse(filename.c_str(), ValueHandler, this);
-}
-
-inline INIReader::INIReader(FILE *file) {
-    _error = ini_parse_file(file, ValueHandler, this);
-}
-
-inline int INIReader::ParseError() const { return _error; }
-
-inline const std::set<std::string>& INIReader::Sections() const {
-    return _sections;
-}
-
-inline std::string INIReader::Get(
-    const std::string& section,
-    const std::string& name,
-    const std::string& default_value
-) const {
-    std::string key = MakeKey(section, name);
-    return _values.count(key) ? _values.at(key) : default_value;
-}
-
-inline long INIReader::GetInteger(
-    const std::string& section,
-    const std::string& name,
-    long default_value
-) const {
-    std::string valstr = Get(section, name, "");
-    const char* value = valstr.c_str();
-    char* end;
-    // This parses "1234" (decimal) and also "0x4D2" (hex)
-    long n = strtol(value, &end, 0);
-    return end > value ? n : default_value;
-}
-
-inline double INIReader::GetReal(
-    const std::string& section,
-    const std::string& name,
-    double default_value
-) const {
-    std::string valstr = Get(section, name, "");
-    const char* value = valstr.c_str();
-    char* end;
-    double n = strtod(value, &end);
-    return end > value ? n : default_value;
-}
-
-inline float INIReader::GetFloat(
-    const std::string& section,
-    const std::string& name,
-    float default_value
-) const {
-    std::string valstr = Get(section, name, "");
-    const char* value = valstr.c_str();
-    char* end;
-    float n = strtof(value, &end);
-    return end > value ? n : default_value;
-}
-
-inline bool INIReader::GetBoolean(
-    const std::string& section,
-    const std::string& name,
-    bool default_value
-) const {
-    std::string valstr = Get(section, name, "");
-    // Convert to lower case to make string comparisons case-insensitive
-    std::transform(valstr.begin(), valstr.end(), valstr.begin(), ::tolower);
-    if (valstr == "true" || valstr == "yes" || valstr == "on" || valstr == "1")
-        return true;
-    else if (valstr == "false" || valstr == "no" || valstr == "off" || valstr == "0")
-        return false;
-    else
-        return default_value;
-}
-
-inline std::string INIReader::MakeKey(
-    const std::string& section,
-    const std::string& name
-) {
-    std::string key = section + "=" + name;
-    // Convert to lower case to make section/name lookups case-insensitive
-    std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-    return key;
-}
-
-inline int INIReader::ValueHandler(
-    void* user,
-    const char* section,
-    const char* name,
-    const char* value
-) {
-    INIReader* reader = (INIReader*)user;
-    std::string key = MakeKey(section, name);
-    if (reader->_values[key].size() > 0)
-        reader->_values[key] += "\n";
-    reader->_values[key] += value;
-    reader->_sections.insert(section);
-    return 1;
-}
-
-}  // namespace io
-
-}  // namespace sensory
-
-#endif  // SENSORYCLOUD_IO_INIREADER_

@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.2</span>
+                                &#160;<span id="projectnumber">0.17.3</span>
                             </div>
                         </td>
                     </tr>
@@ -84,58 +84,278 @@ $(function() {
   <div class="headertitle"><div class="title">sensory::io::INIReader Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>An IO structure for parsing INI files into key-value pairs.  
+ <a href="classsensory_1_1io_1_1_i_n_i_reader.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ini_8hpp_source.html">sensorycloud/io/ini.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0499eca5c8ae0b8f8e1cd5a17323a062"><td class="memItemLeft" align="right" valign="top"><a id="a0499eca5c8ae0b8f8e1cd5a17323a062" name="a0499eca5c8ae0b8f8e1cd5a17323a062"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>INIReader</b> (const std::string &amp;filename)</td></tr>
+<tr class="memitem:a0499eca5c8ae0b8f8e1cd5a17323a062"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1io_1_1_i_n_i_reader.html#a0499eca5c8ae0b8f8e1cd5a17323a062">INIReader</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:a0499eca5c8ae0b8f8e1cd5a17323a062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new INI reader from a file with given path name.  <a href="classsensory_1_1io_1_1_i_n_i_reader.html#a0499eca5c8ae0b8f8e1cd5a17323a062">More...</a><br /></td></tr>
 <tr class="separator:a0499eca5c8ae0b8f8e1cd5a17323a062"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad93c7ac834d9cfaca496c2b61f47b62c"><td class="memItemLeft" align="right" valign="top"><a id="ad93c7ac834d9cfaca496c2b61f47b62c" name="ad93c7ac834d9cfaca496c2b61f47b62c"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>INIReader</b> (FILE *file)</td></tr>
 <tr class="separator:ad93c7ac834d9cfaca496c2b61f47b62c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9959c6e4822a170028e6e8d71a7d03de"><td class="memItemLeft" align="right" valign="top"><a id="a9959c6e4822a170028e6e8d71a7d03de" name="a9959c6e4822a170028e6e8d71a7d03de"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>ParseError</b> () const</td></tr>
-<tr class="separator:a9959c6e4822a170028e6e8d71a7d03de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7394929a28255297888ea0a1deb5bd1"><td class="memItemLeft" align="right" valign="top"><a id="ae7394929a28255297888ea0a1deb5bd1" name="ae7394929a28255297888ea0a1deb5bd1"></a>
-const std::set&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Sections</b> () const</td></tr>
-<tr class="separator:ae7394929a28255297888ea0a1deb5bd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad5fac019076a19df67cb2fc1d4c51c0"><td class="memItemLeft" align="right" valign="top"><a id="aad5fac019076a19df67cb2fc1d4c51c0" name="aad5fac019076a19df67cb2fc1d4c51c0"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>Get</b> (const std::string &amp;section, const std::string &amp;name, const std::string &amp;default_value) const</td></tr>
-<tr class="separator:aad5fac019076a19df67cb2fc1d4c51c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e8f40e75af36f0f4af4405f4a817148"><td class="memItemLeft" align="right" valign="top"><a id="a7e8f40e75af36f0f4af4405f4a817148" name="a7e8f40e75af36f0f4af4405f4a817148"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>GetInteger</b> (const std::string &amp;section, const std::string &amp;name, long default_value) const</td></tr>
-<tr class="separator:a7e8f40e75af36f0f4af4405f4a817148"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac69c5c126ee17c2fe2dfbd0da3b7d40b"><td class="memItemLeft" align="right" valign="top"><a id="ac69c5c126ee17c2fe2dfbd0da3b7d40b" name="ac69c5c126ee17c2fe2dfbd0da3b7d40b"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>GetReal</b> (const std::string &amp;section, const std::string &amp;name, double default_value) const</td></tr>
-<tr class="separator:ac69c5c126ee17c2fe2dfbd0da3b7d40b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85e87d98a6730d6c959bc7f295246d69"><td class="memItemLeft" align="right" valign="top"><a id="a85e87d98a6730d6c959bc7f295246d69" name="a85e87d98a6730d6c959bc7f295246d69"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>GetFloat</b> (const std::string &amp;section, const std::string &amp;name, float default_value) const</td></tr>
-<tr class="separator:a85e87d98a6730d6c959bc7f295246d69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d47d9e7b015cd8d84a84b8eb420366b"><td class="memItemLeft" align="right" valign="top"><a id="a5d47d9e7b015cd8d84a84b8eb420366b" name="a5d47d9e7b015cd8d84a84b8eb420366b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>GetBoolean</b> (const std::string &amp;section, const std::string &amp;name, bool default_value) const</td></tr>
-<tr class="separator:a5d47d9e7b015cd8d84a84b8eb420366b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac32a8eb8f01b3f14990ead00aee2cf99"><td class="memItemLeft" align="right" valign="top"><a id="ac32a8eb8f01b3f14990ead00aee2cf99" name="ac32a8eb8f01b3f14990ead00aee2cf99"></a>
+const std::set&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get_sections</b> () const</td></tr>
+<tr class="separator:ac32a8eb8f01b3f14990ead00aee2cf99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab31780e6188347bab9ad0dd358c4e137"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ab31780e6188347bab9ad0dd358c4e137"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsensory_1_1io_1_1_i_n_i_reader.html#ab31780e6188347bab9ad0dd358c4e137">get</a> (const std::string &amp;section, const std::string &amp;name, const T &amp;default_value=T(), const bool &amp;required=false) const</td></tr>
+<tr class="memdesc:ab31780e6188347bab9ad0dd358c4e137"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetch a value from the ini file.  <a href="classsensory_1_1io_1_1_i_n_i_reader.html#ab31780e6188347bab9ad0dd358c4e137">More...</a><br /></td></tr>
+<tr class="separator:ab31780e6188347bab9ad0dd358c4e137"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa54bd0404fd4dc0d6ccba46079a805f5"><td class="memItemLeft" align="right" valign="top"><a id="aa54bd0404fd4dc0d6ccba46079a805f5" name="aa54bd0404fd4dc0d6ccba46079a805f5"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:aa54bd0404fd4dc0d6ccba46079a805f5"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::string &amp;section, const std::string &amp;name, const bool &amp;default_value, const bool &amp;required) const</td></tr>
+<tr class="separator:aa54bd0404fd4dc0d6ccba46079a805f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83bbf55ed0c41d12c303ecff388766fd"><td class="memItemLeft" align="right" valign="top"><a id="a83bbf55ed0c41d12c303ecff388766fd" name="a83bbf55ed0c41d12c303ecff388766fd"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a83bbf55ed0c41d12c303ecff388766fd"><td class="memTemplItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::string &amp;section, const std::string &amp;name, const int32_t &amp;default_value, const bool &amp;required) const</td></tr>
+<tr class="separator:a83bbf55ed0c41d12c303ecff388766fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68623707193274b01aa89c001e11b247"><td class="memItemLeft" align="right" valign="top"><a id="a68623707193274b01aa89c001e11b247" name="a68623707193274b01aa89c001e11b247"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a68623707193274b01aa89c001e11b247"><td class="memTemplItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::string &amp;section, const std::string &amp;name, const int64_t &amp;default_value, const bool &amp;required) const</td></tr>
+<tr class="separator:a68623707193274b01aa89c001e11b247"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31503e33ecd87435ee109aa5e0f0b2a9"><td class="memItemLeft" align="right" valign="top"><a id="a31503e33ecd87435ee109aa5e0f0b2a9" name="a31503e33ecd87435ee109aa5e0f0b2a9"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a31503e33ecd87435ee109aa5e0f0b2a9"><td class="memTemplItemLeft" align="right" valign="top">float&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::string &amp;section, const std::string &amp;name, const float &amp;default_value, const bool &amp;required) const</td></tr>
+<tr class="separator:a31503e33ecd87435ee109aa5e0f0b2a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a39da439c7f83034310f2bbf78c6eb5"><td class="memItemLeft" align="right" valign="top"><a id="a0a39da439c7f83034310f2bbf78c6eb5" name="a0a39da439c7f83034310f2bbf78c6eb5"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a0a39da439c7f83034310f2bbf78c6eb5"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::string &amp;section, const std::string &amp;name, const double &amp;default_value, const bool &amp;required) const</td></tr>
+<tr class="separator:a0a39da439c7f83034310f2bbf78c6eb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:ac222d07ef4915e341715d9af21009506"><td class="memItemLeft" align="right" valign="top"><a id="ac222d07ef4915e341715d9af21009506" name="ac222d07ef4915e341715d9af21009506"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>MakeKey</b> (const std::string &amp;section, const std::string &amp;name)</td></tr>
-<tr class="separator:ac222d07ef4915e341715d9af21009506"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd83d7dfe43d44aabba2a807754cc702"><td class="memItemLeft" align="right" valign="top"><a id="acd83d7dfe43d44aabba2a807754cc702" name="acd83d7dfe43d44aabba2a807754cc702"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>ValueHandler</b> (void *user, const char *section, const char *name, const char *value)</td></tr>
-<tr class="separator:acd83d7dfe43d44aabba2a807754cc702"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93a0ad7a4364f4121b97bf74cdfe3b8d"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1io_1_1_i_n_i_reader.html#a93a0ad7a4364f4121b97bf74cdfe3b8d">get_key_from_section_and_name</a> (const std::string &amp;section, const std::string &amp;name)</td></tr>
+<tr class="memdesc:a93a0ad7a4364f4121b97bf74cdfe3b8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a combined section/name key from a section and name.  <a href="classsensory_1_1io_1_1_i_n_i_reader.html#a93a0ad7a4364f4121b97bf74cdfe3b8d">More...</a><br /></td></tr>
+<tr class="separator:a93a0ad7a4364f4121b97bf74cdfe3b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c0c5ee4514335c381823d12066377ba"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1io_1_1_i_n_i_reader.html#a9c0c5ee4514335c381823d12066377ba">handle_value</a> (void *reader_, const char *section, const char *name, const char *value)</td></tr>
+<tr class="memdesc:a9c0c5ee4514335c381823d12066377ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">A callback for handling values during parsing.  <a href="classsensory_1_1io_1_1_i_n_i_reader.html#a9c0c5ee4514335c381823d12066377ba">More...</a><br /></td></tr>
+<tr class="separator:a9c0c5ee4514335c381823d12066377ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:adda161925393675b59a527c0c70f5192"><td class="memItemLeft" align="right" valign="top"><a id="adda161925393675b59a527c0c70f5192" name="adda161925393675b59a527c0c70f5192"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>_error</b></td></tr>
-<tr class="separator:adda161925393675b59a527c0c70f5192"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e79af3c060a9d052792e746415d1ed5"><td class="memItemLeft" align="right" valign="top"><a id="a5e79af3c060a9d052792e746415d1ed5" name="a5e79af3c060a9d052792e746415d1ed5"></a>
-std::map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_values</b></td></tr>
-<tr class="separator:a5e79af3c060a9d052792e746415d1ed5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a365cc61d247075d1f8d960912b9a2470"><td class="memItemLeft" align="right" valign="top"><a id="a365cc61d247075d1f8d960912b9a2470" name="a365cc61d247075d1f8d960912b9a2470"></a>
-std::set&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_sections</b></td></tr>
-<tr class="separator:a365cc61d247075d1f8d960912b9a2470"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f4778b648a062560c4f62a77d7813e4"><td class="memItemLeft" align="right" valign="top"><a id="a2f4778b648a062560c4f62a77d7813e4" name="a2f4778b648a062560c4f62a77d7813e4"></a>
+std::map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>values</b></td></tr>
+<tr class="memdesc:a2f4778b648a062560c4f62a77d7813e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">A mapping of flattened section/key names to their associated values. <br /></td></tr>
+<tr class="separator:a2f4778b648a062560c4f62a77d7813e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dd99b00c7c60eabc9a455a655c13a2e"><td class="memItemLeft" align="right" valign="top"><a id="a4dd99b00c7c60eabc9a455a655c13a2e" name="a4dd99b00c7c60eabc9a455a655c13a2e"></a>
+std::set&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sections</b></td></tr>
+<tr class="memdesc:a4dd99b00c7c60eabc9a455a655c13a2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A collection of the unique sections in the file. <br /></td></tr>
+<tr class="separator:a4dd99b00c7c60eabc9a455a655c13a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >An IO structure for parsing INI files into key-value pairs. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a0499eca5c8ae0b8f8e1cd5a17323a062" name="a0499eca5c8ae0b8f8e1cd5a17323a062"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0499eca5c8ae0b8f8e1cd5a17323a062">&#9670;&nbsp;</a></span>INIReader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sensory::io::INIReader::INIReader </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new INI reader from a file with given path name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>The path to the file on the file-system. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab31780e6188347bab9ad0dd358c4e137" name="ab31780e6188347bab9ad0dd358c4e137"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab31780e6188347bab9ad0dd358c4e137">&#9670;&nbsp;</a></span>get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T sensory::io::INIReader::get </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>section</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>default_value</em> = <code>T()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool &amp;&#160;</td>
+          <td class="paramname"><em>required</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fetch a value from the ini file. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The data-type to cast the return value to. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">section</td><td>The section of the file to constrain the search to. </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the key to look for within the section. </td></tr>
+    <tr><td class="paramname">default_value</td><td>A default value to use if the key does not exist. </td></tr>
+    <tr><td class="paramname">required</td><td>True to throw an error if the key does not exist. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value of the given key in the given section. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">A</td><td><code>std::runtime_error</code> when <code>required</code> is true and the section doesn't exist, or the key doesn't exist within the section. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a93a0ad7a4364f4121b97bf74cdfe3b8d" name="a93a0ad7a4364f4121b97bf74cdfe3b8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93a0ad7a4364f4121b97bf74cdfe3b8d">&#9670;&nbsp;</a></span>get_key_from_section_and_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::string sensory::io::INIReader::get_key_from_section_and_name </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>section</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a combined section/name key from a section and name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">section</td><td>The section that contains the key with given name. </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the key in the given section </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A unique combination of the section and key for flat mapping.</dd></dl>
+<p>Keys are case insensitive. </p>
+
+</div>
+</div>
+<a id="a9c0c5ee4514335c381823d12066377ba" name="a9c0c5ee4514335c381823d12066377ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c0c5ee4514335c381823d12066377ba">&#9670;&nbsp;</a></span>handle_value()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int sensory::io::INIReader::handle_value </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>reader_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>section</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>A callback for handling values during parsing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reader_</td><td>The instance of <a class="el" href="classsensory_1_1io_1_1_i_n_i_reader.html" title="An IO structure for parsing INI files into key-value pairs.">INIReader</a> that is being parsed into. </td></tr>
+    <tr><td class="paramname">section</td><td>The section that is being parsed </td></tr>
+    <tr><td class="paramname">name</td><td>The name of the key to handle </td></tr>
+    <tr><td class="paramname">value</td><td>The value of the key to handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/sensorycloud/io/<a class="el" href="ini_8hpp_source.html">ini.hpp</a></li>
 </ul>

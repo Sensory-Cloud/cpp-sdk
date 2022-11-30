@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.2</span>
+                                &#160;<span id="projectnumber">0.17.3</span>
                             </div>
                         </td>
                     </tr>
@@ -149,52 +149,51 @@ $(function() {
 <div class="line">deviceID = 4e07cce1-cccb-4630-a2d1-5da71e3c85a3</div>
 <div class="line">deviceName = Server 1</div>
 <div class="line">isSecure = 1</div>
-</div><!-- fragment --><h2>Secure Credential Storage</h2>
-<p >The last thing you will need to set up for your application is a structure for storing credentials in a way that fits your security needs. <code>SecureCredentialStore</code> provides the interface for secure credential storage that must be implemented for your specific usage.</p>
+</div><!-- fragment --><h2>Credential Storage</h2>
+<p >The last thing you will need to set up for your application is a structure for storing credentials in a way that fits your security needs. <code>CredentialStore</code> provides the interface for credential storage that should be implemented for your specific usage.</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">/// @brief A keychain manager for interacting with the OS credential manager.</div>
-<div class="line">struct SecureCredentialStore {</div>
-<div class="line">    /// @brief Emplace or replace a key/value pair in the secure credential</div>
-<div class="line">    /// store.</div>
+<div class="line">/// @brief A key-value interface for storing credentials, tokens, etc.</div>
+<div class="line">struct CredentialStore {</div>
+<div class="line">    /// @brief Emplace or replace a key/value pair in the credential store.</div>
 <div class="line">    ///</div>
 <div class="line">    /// @param key the plain-text key of the value to store</div>
-<div class="line">    /// @param value the secure value to store</div>
+<div class="line">    /// @param value the value to store</div>
 <div class="line">    /// @details</div>
 <div class="line">    /// Unlike most key-value store abstractions in the STL, this</div>
-<div class="line">    /// implementation of emplace will overwrite existing values in the</div>
+<div class="line">    /// implementation of emplace should overwrite existing values in the</div>
 <div class="line">    /// key-value store.</div>
 <div class="line">    ///</div>
 <div class="line">    inline void emplace(const std::string&amp; key, const std::string&amp; value) const;</div>
 <div class="line"> </div>
-<div class="line">    /// @brief Return true if the key exists in the secure credential store.</div>
+<div class="line">    /// @brief Return true if the key exists in the credential store.</div>
 <div class="line">    ///</div>
 <div class="line">    /// @param key the plain-text key to check for the existence of</div>
 <div class="line">    ///</div>
 <div class="line">    inline bool contains(const std::string&amp; key) const;</div>
 <div class="line"> </div>
-<div class="line">    /// @brief Look-up a secret value in the secure credential store.</div>
+<div class="line">    /// @brief Look-up a secret value in the credential store.</div>
 <div class="line">    ///</div>
 <div class="line">    /// @param key the plain-text key of the value to return</div>
 <div class="line">    /// @returns the secret value indexed by the given key</div>
 <div class="line">    ///</div>
 <div class="line">    inline std::string at(const std::string&amp; key) const;</div>
 <div class="line"> </div>
-<div class="line">    /// @brief Remove a secret key-value pair in the secure credential store.</div>
+<div class="line">    /// @brief Remove a secret key-value pair in the credential store.</div>
 <div class="line">    ///</div>
-<div class="line">    /// @param key the plain-text key of the pair to remove from the keychain</div>
+<div class="line">    /// @param key the key of the pair to remove from the credential store</div>
 <div class="line">    ///</div>
 <div class="line">    inline void erase(const std::string&amp; key) const;</div>
 <div class="line">};</div>
-</div><!-- fragment --><p >Included with the SDK are an in-memory credential store <code><a class="el" href="structsensory_1_1token__manager_1_1_in_memory_credential_store.html" title="An in-memory credential store (mostly for testing purposes).">sensory::token_manager::InMemoryCredentialStore</a></code>, and a file-system based credential store <code>sensory::token_manager::InsecureCredentialStore</code> that may be useful for low-security applications, demonstration purposes, or debugging.</p>
+</div><!-- fragment --><p >Included with the SDK are an in-memory credential store <code><a class="el" href="structsensory_1_1token__manager_1_1_in_memory_credential_store.html" title="An in-memory credential store (mostly for testing purposes).">sensory::token_manager::InMemoryCredentialStore</a></code>, and a file-system based credential store <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> that may be useful for low-security applications, demonstration purposes, or debugging.</p>
 <h2>SDK Instantiation</h2>
-<p >With the data and structures from the previous steps, one can construct an instance of <code><a class="el" href="classsensory_1_1_sensory_cloud.html" title="The SensoryCloud service.">sensory::SensoryCloud</a></code> that provides access to each cloud service.</p>
+<p >With the data and structures from the previous steps, one can construct an instance of <code><a class="el" href="classsensory_1_1_sensory_cloud.html" title="The SensoryCloud service.">sensory::SensoryCloud</a></code> that provides access to each cloud service. The following example uses <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> as a credential store for demonstration purposes.</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">// Create an insecure credential store for keeping OAuth credentials in.</div>
-<div class="line">sensory::InsecureCredentialStore keychain(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
-<div class="line">SensoryCloud&lt;InsecureCredentialStore&gt; cloud(config, credentials, keychain);</div>
+<div class="line">FileSystemCredentialStore credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
+<div class="line">SensoryCloud&lt;FileSystemCredentialStore&gt;</div>
+<div class="line">    cloud(config, credentials, credential_store);</div>
 </div><!-- fragment --><p >As previously mentioned, config and registration credentials may optionally be stored in INI files and parsed on SDK initialization using the following:</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">SensoryCloud&lt;InsecureCredentialStore&gt; cloud(&quot;config.ini&quot;, keychain);</div>
+<div class="line">SensoryCloud&lt;FileSystemCredentialStore&gt; cloud(&quot;config.ini&quot;, ...);</div>
 </div><!-- fragment --><h1>Checking The Server Health</h1>
 <p >It's important to check the health of your <a href="https://sensorycloud.ai/">SensoryCloud</a> Inference server. You can do so using the <code>HealthService</code> via the following:</p>
 <div class="fragment"><div class="line"> {c++}</div>

@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.2</span>
+                                &#160;<span id="projectnumber">0.17.3</span>
                             </div>
                         </td>
                     </tr>
@@ -157,6 +157,7 @@ $(function() {
 <ul>
 <li>Bug fixes<ul>
 <li>Add missing logic to query user enrollments to <a href="examples/dr_wav/validate_enrolled_event.cpp">examples/dr_wav/validate_enrolled_event.cpp</a></li>
+<li>Add missing <code>cloud.initialize</code> calls to example code</li>
 </ul>
 </li>
 <li>New features<ul>
@@ -168,7 +169,7 @@ $(function() {
 </ul>
 </li>
 <li>Removals<ul>
-<li>Remove support for convenience initializers of gRPC stream configuration objects in favor of explicitly instantiation of gRPC structures.</li>
+<li>Remove support for convenience initializers of gRPC stream configuration objects in favor of explicitly instantiating gRPC structures.</li>
 </ul>
 </li>
 <li>Namespace/symbolic changes<ul>
@@ -189,8 +190,20 @@ $(function() {
 <li><code><a class="el" href="classsensory_1_1calldata_1_1_awaitable_write_reactor.html" title="An abstract reactor for asynchronous unary write streams.">sensory::calldata::AwaitableWriteReactor</a></code></li>
 <li><code>sensory::CallData</code> -&gt; <code><a class="el" href="structsensory_1_1calldata_1_1_callback_data.html" title="A type for encapsulating data for asynchronous calls.">sensory::calldata::CallbackData</a></code></li>
 <li><code><a class="el" href="structsensory_1_1calldata_1_1_async_reader_writer_call.html" title="A type for encapsulating data for asynchronous bi-directional calls.">sensory::calldata::AsyncReaderWriterCall</a></code></li>
-<li><code><a class="el" href="structsensory_1_1calldata_1_1_async_response_reader_call.html" title="A type for encapsulating data for asynchronous unary read calls.">sensory::calldata::AsyncResponseReaderCall</a></code> </li>
+<li><code><a class="el" href="structsensory_1_1calldata_1_1_async_response_reader_call.html" title="A type for encapsulating data for asynchronous unary read calls.">sensory::calldata::AsyncResponseReaderCall</a></code></li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1>0.17.3</h1>
+<ul>
+<li>INI parser bug-fixes and improvements (for constructing <code>SensoryCloud</code>)<ul>
+<li>runtime error handling for irrecoverable failure cases:<ol type="1">
+<li>a file-path points to a non-existent file,</li>
+<li>a file contains improperly formatted INI data, and</li>
+<li>a file is missing sections/keys that are required. </li>
+</ol>
 </li>
 </ul>
 </li>

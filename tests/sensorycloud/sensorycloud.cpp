@@ -24,11 +24,16 @@
 //
 
 #define CATCH_CONFIG_MAIN
+#include <cstdio>
+#include <cstdlib>
 #include <catch2/catch.hpp>
 #include "sensorycloud/sensorycloud.hpp"
+#include "sensorycloud/token_manager/in_memory_credential_store.hpp"
 
 using sensory::parse_enrollment_type;
 using sensory::EnrollmentType;
+using sensory::SensoryCloud;
+using sensory::token_manager::InMemoryCredentialStore;
 
 // ---------------------------------------------------------------------------
 // MARK: parse_enrollment_type
@@ -67,6 +72,97 @@ SCENARIO("a user wants to parse an EnrollmentType from a string") {
         WHEN("The string is parsed") {
             THEN("an std::runtime_error is thrown") {
                 REQUIRE_THROWS(parse_enrollment_type(input));
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: SensoryCloud
+// ---------------------------------------------------------------------------
+
+/// @brief A temporary C-style file that deletes itself when de-allocated.
+/// @details
+/// The implementation of this temporary file follows C++ context conventions
+/// whereby the constructor sets up the context and the de-constructor tears it
+/// down. As such, it is typically recommended to initialize the structure on
+/// the stack unless persistence via heap allocation is a strict requirement.
+struct TemporaryFile {
+    /// @brief An immutable pointer to the temporary file.
+    FILE* const file = nullptr;
+
+    /// @brief Initialize and open a new temporary file.
+    TemporaryFile() : file(tmpfile()) { }
+
+    /// @brief Close and delete the file when the object is de-allocated.
+    ~TemporaryFile() { if (is_open()) fclose(file); }
+
+    /// @brief Return true if the file is open, false otherwise.
+    inline bool is_open() const { return file != NULL; }
+
+    /// @brief Write the given string data to the file.
+    /// @param content The string content to write to the file
+    /// @details
+    /// The file cursor is rewound after this write operation (for reading.)
+    inline void write(const std::string& content) const {
+        if (!is_open())
+            throw std::runtime_error("Attempted write, but the file is not open");
+        fputs(content.c_str(), file);
+        rewind(file);
+    }
+};
+
+SCENARIO("a user attempts to create a new SensoryCloud instance with a broken INI file") {
+    GIVEN("a path to a non-existent INI file") {
+        const std::string path = "/foo/bar/baz";
+        InMemoryCredentialStore keychain;
+        WHEN("a new instance of SensoryCloud is instantiated") {
+            THEN("a runtime error is thrown") {
+                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(path, keychain), Catch::Contains("Failed to open INI file at path \"/foo/bar/baz\""));
+            }
+        }
+    }
+    GIVEN("a path to a file that exists, but is not formatted as INI") {
+        TemporaryFile file;
+        if (!file.is_open()) FAIL("Failed to create temporary file for test");
+        file.write("Hello, INI!");
+        // Check that an error is thrown by the initializer.
+        InMemoryCredentialStore keychain;
+        WHEN("a new instance of SensoryCloud is instantiated") {
+            THEN("a runtime error is thrown") {
+                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(file.file, keychain), Catch::Contains("Failed to parse INI file at line 1"));
+            }
+        }
+    }
+    GIVEN("a path to a valid INI file that has no SDK-Configuration section") {
+        TemporaryFile file;
+        if (!file.is_open()) FAIL("Failed to create temporary file for test");
+        InMemoryCredentialStore keychain;
+        WHEN("a new instance of SensoryCloud is instantiated") {
+            THEN("a runtime error is thrown") {
+                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(file.file, keychain), Catch::Contains("Failed to find key \"tenantID\" in section [SDK-configuration]"));
+            }
+        }
+    }
+    GIVEN("a path to a valid INI file that has an [SDK-Configuration] section with no `tenantID`") {
+        TemporaryFile file;
+        if (!file.is_open()) FAIL("Failed to create temporary file for test");
+        file.write("[SDK-Configuration]\ndeviceID=c359e48b-5c95-4b20-8051-75bfaa6bb485");
+        InMemoryCredentialStore keychain;
+        WHEN("a new instance of SensoryCloud is instantiated") {
+            THEN("a runtime error is thrown") {
+                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(file.file, keychain), Catch::Contains("Failed to find key \"tenantID\" in section [SDK-configuration]"));
+            }
+        }
+    }
+    GIVEN("a path to a valid INI file that has an [SDK-Configuration] section with no `deviceID`") {
+        TemporaryFile file;
+        if (!file.is_open()) FAIL("Failed to create temporary file for test");
+        file.write("[SDK-Configuration]\ntenantID=c359e48b-5c95-4b20-8051-75bfaa6bb485");
+        InMemoryCredentialStore keychain;
+        WHEN("a new instance of SensoryCloud is instantiated") {
+            THEN("a runtime error is thrown") {
+                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(file.file, keychain), Catch::Contains("Failed to find key \"deviceID\" in section [SDK-configuration]"));
             }
         }
     }
