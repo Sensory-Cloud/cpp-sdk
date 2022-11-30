@@ -158,15 +158,15 @@ class SensoryCloud {
     ///
     SensoryCloud(const io::INIReader& reader, CredentialStore& keychain) :
         config{
-            reader.Get("SDK-configuration", "fullyQualifiedDomainName", "localhost:50051"),
-            reader.Get("SDK-configuration", "tenantID", ""),
-            reader.Get("SDK-configuration", "deviceID", ""),
-            reader.GetBoolean("SDK-configuration", "isSecure", false)
+            reader.get<std::string>("SDK-configuration", "fullyQualifiedDomainName", "localhost:50051"),
+            reader.get<std::string>("SDK-configuration", "tenantID", "", true),
+            reader.get<std::string>("SDK-configuration", "deviceID", "", true),
+            reader.get<bool>("SDK-configuration", "isSecure", false)
         },
         registration_credentials{
-            reader.Get("SDK-configuration", "deviceName", ""),
-            reader.Get("SDK-configuration", "enrollmentType", "none"),
-            reader.Get("SDK-configuration", "credential", "")
+            reader.get<std::string>("SDK-configuration", "deviceName", ""),
+            reader.get<std::string>("SDK-configuration", "enrollmentType", "none"),
+            reader.get<std::string>("SDK-configuration", "credential", "")
         },
         health(config),
         oauth(config),
