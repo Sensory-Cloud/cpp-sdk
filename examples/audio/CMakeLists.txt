@@ -1,4 +1,4 @@
-# cmake build file for SensoryCloud Applications based on portaudio.
+# cmake build file for SensoryCloud audio service examples.
 #
 # Copyright 2021 Sensory, Inc.
 #
@@ -15,15 +15,13 @@
 # limitations under the License.
 #
 
-# Version 3.11 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.11)
-# Assign the name of the project
-project(sensory-cloud-portaudio-applications)
+project(sensory-cloud-audio-examples)
 
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.3
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.4
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -33,8 +31,14 @@ FetchContent_Declare(portaudio
     GIT_TAG        v19.7.0
 )
 FetchContent_MakeAvailable(portaudio)
-# Setup the includes for the portaudio library
 include_directories(${portaudio_BINARY_DIR} ${portaudio_SOURCE_DIR})
+
+# Fetch the sndfile library and compile it as part of this project.
+FetchContent_Declare(sndfile
+    GIT_REPOSITORY https://github.com/libsndfile/libsndfile.git
+    GIT_TAG        1.1.0
+)
+FetchContent_MakeAvailable(sndfile)
 
 include_directories(dep)
 
@@ -52,6 +56,10 @@ add_executable(validate_event_callback asynchronous_callback/validate_event.cpp)
 target_link_libraries(validate_event_callback PRIVATE sensorycloud)
 target_link_libraries(validate_event_callback PRIVATE portaudio)
 
+add_executable(validate_event_file file/validate_event.cpp)
+target_link_libraries(validate_event_file PRIVATE sensorycloud)
+target_link_libraries(validate_event_file PRIVATE sndfile)
+
 # --- Transcribe ---------------------------------------------------------------
 
 add_executable(transcribe synchronous/transcribe.cpp)
@@ -65,6 +73,10 @@ target_link_libraries(transcribe_async PRIVATE portaudio)
 add_executable(transcribe_callback asynchronous_callback/transcribe.cpp)
 target_link_libraries(transcribe_callback PRIVATE sensorycloud)
 target_link_libraries(transcribe_callback PRIVATE portaudio)
+
+add_executable(transcribe_file file/transcribe.cpp)
+target_link_libraries(transcribe_file PRIVATE sensorycloud)
+target_link_libraries(transcribe_file PRIVATE sndfile)
 
 # --- Create Enrollment --------------------------------------------------------
 
@@ -80,6 +92,10 @@ add_executable(enroll_callback asynchronous_callback/enroll.cpp)
 target_link_libraries(enroll_callback PRIVATE sensorycloud)
 target_link_libraries(enroll_callback PRIVATE portaudio)
 
+add_executable(enroll_file file/enroll.cpp)
+target_link_libraries(enroll_file PRIVATE sensorycloud)
+target_link_libraries(enroll_file PRIVATE sndfile)
+
 # --- Authenticate -------------------------------------------------------------
 
 add_executable(authenticate synchronous/authenticate.cpp)
@@ -93,6 +109,10 @@ target_link_libraries(authenticate_async PRIVATE portaudio)
 add_executable(authenticate_callback asynchronous_callback/authenticate.cpp)
 target_link_libraries(authenticate_callback PRIVATE sensorycloud)
 target_link_libraries(authenticate_callback PRIVATE portaudio)
+
+add_executable(authenticate_file file/authenticate.cpp)
+target_link_libraries(authenticate_file PRIVATE sensorycloud)
+target_link_libraries(authenticate_file PRIVATE sndfile)
 
 # --- Create Enrolled Event ----------------------------------------------------
 
@@ -108,6 +128,10 @@ add_executable(enroll_event_callback asynchronous_callback/enroll_event.cpp)
 target_link_libraries(enroll_event_callback PRIVATE sensorycloud)
 target_link_libraries(enroll_event_callback PRIVATE portaudio)
 
+add_executable(enroll_event_file file/enroll_event.cpp)
+target_link_libraries(enroll_event_file PRIVATE sensorycloud)
+target_link_libraries(enroll_event_file PRIVATE sndfile)
+
 # --- Validate Enrolled Event --------------------------------------------------
 
 add_executable(validate_enrolled_event synchronous/validate_enrolled_event.cpp)
@@ -121,3 +145,12 @@ target_link_libraries(validate_enrolled_event_async PRIVATE portaudio)
 add_executable(validate_enrolled_event_callback asynchronous_callback/validate_enrolled_event.cpp)
 target_link_libraries(validate_enrolled_event_callback PRIVATE sensorycloud)
 target_link_libraries(validate_enrolled_event_callback PRIVATE portaudio)
+
+add_executable(validate_enrolled_event_file file/validate_enrolled_event.cpp)
+target_link_libraries(validate_enrolled_event_file PRIVATE sensorycloud)
+target_link_libraries(validate_enrolled_event_file PRIVATE sndfile)
+
+# --- Synthesize speech --------------------------------------------------------
+
+add_executable(synthesize_speech file/synthesize_speech.cpp)
+target_link_libraries(synthesize_speech PRIVATE sensorycloud)

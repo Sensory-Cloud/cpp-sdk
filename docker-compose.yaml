@@ -4,59 +4,59 @@ services:
     image: sensory-cloud-cpp-sdk:Ubuntu22.04
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Ubuntu.22.04
+      dockerfile: dockerfiles/Ubuntu.22.04.Dockerfile
   ubuntu_20_04:
     image: sensory-cloud-cpp-sdk:Ubuntu20.04
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Ubuntu.20.04
+      dockerfile: dockerfiles/Ubuntu.20.04.Dockerfile
   ubuntu_18_04:
     image: sensory-cloud-cpp-sdk:Ubuntu18.04
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Ubuntu.18.04
+      dockerfile: dockerfiles/Ubuntu.18.04.Dockerfile
   ubuntu_16_04:
     image: sensory-cloud-cpp-sdk:Ubuntu16.04
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Ubuntu.16.04
+      dockerfile: dockerfiles/Ubuntu.16.04.Dockerfile
   debian_11:
     image: sensory-cloud-cpp-sdk:Debian11
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Debian.11
+      dockerfile: dockerfiles/Debian.11.Dockerfile
   debian_10:
     image: sensory-cloud-cpp-sdk:Debian10
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Debian.10
+      dockerfile: dockerfiles/Debian.10.Dockerfile
   debian_9:
     image: sensory-cloud-cpp-sdk:Debian9
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.Debian.9
+      dockerfile: dockerfiles/Debian.9.Dockerfile
   rhel_9:
     image: sensory-cloud-cpp-sdk:RHEL9
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.RHEL.9
+      dockerfile: dockerfiles/RHEL.9.Dockerfile
   rhel_8:
     image: sensory-cloud-cpp-sdk:RHEL8
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.RHEL.8
+      dockerfile: dockerfiles/RHEL.8.Dockerfile
   rhel_7:
     image: sensory-cloud-cpp-sdk:RHEL7
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.RHEL.7
+      dockerfile: dockerfiles/RHEL.7.Dockerfile
   centos_8:
     image: sensory-cloud-cpp-sdk:CentOS8
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.CentOS.8
+      dockerfile: dockerfiles/CentOS.8.Dockerfile
   centos_7:
     image: sensory-cloud-cpp-sdk:CentOS7
     build:
       context: .
-      dockerfile: dockerfiles/Dockerfile.CentOS.7
+      dockerfile: dockerfiles/CentOS.7.Dockerfile

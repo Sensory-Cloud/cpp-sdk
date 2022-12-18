@@ -15,38 +15,47 @@
 # limitations under the License.
 #
 
-# Version 3.11 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.11)
-# Assign the name of the project
-project(sensory-cloud-audio-file-transcription)
+project(sensory-cloud-audio-service-file-examples)
 
-# Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
+
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.3
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.4
 )
 FetchContent_MakeAvailable(sensorycloud)
 
-# Add the application to the build chain.
+FetchContent_Declare(sndfile
+    GIT_REPOSITORY https://github.com/libsndfile/libsndfile.git
+    GIT_TAG        1.1.0
+)
+FetchContent_MakeAvailable(sndfile)
+
 include_directories(dep)
 
 add_executable(transcribe transcribe.cpp)
 target_link_libraries(transcribe PRIVATE sensorycloud)
+target_link_libraries(transcribe PRIVATE sndfile)
 
 add_executable(synthesize_speech synthesize_speech.cpp)
 target_link_libraries(synthesize_speech PRIVATE sensorycloud)
 
 add_executable(authenticate authenticate.cpp)
 target_link_libraries(authenticate PRIVATE sensorycloud)
+target_link_libraries(authenticate PRIVATE sndfile)
 
 add_executable(enroll enroll.cpp)
 target_link_libraries(enroll PRIVATE sensorycloud)
+target_link_libraries(enroll PRIVATE sndfile)
 
 add_executable(enroll_event enroll_event.cpp)
 target_link_libraries(enroll_event PRIVATE sensorycloud)
+target_link_libraries(enroll_event PRIVATE sndfile)
 
 add_executable(validate_enrolled_event validate_enrolled_event.cpp)
 target_link_libraries(validate_enrolled_event PRIVATE sensorycloud)
+target_link_libraries(validate_enrolled_event PRIVATE sndfile)
 
 add_executable(validate_event validate_event.cpp)
 target_link_libraries(validate_event PRIVATE sensorycloud)
+target_link_libraries(validate_event PRIVATE sndfile)

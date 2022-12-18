@@ -24,17 +24,15 @@ project(sensory-cloud-cpp-sdk)
 
 # Include the common files for finding/compiling Protobuf and gRPC.
 include(cmake/common.cmake)
-include(FetchContent)
 
 # Setup the optional arguments for augmenting the compilation of the library.
 option(SENSORY_CLOUD_BUILD_TESTS "Build test cases" OFF)
 option(SENSORY_CLOUD_GENERATE_PROTO "Generate proto header and source files" OFF)
 option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore" OFF)
 option(SENSORY_CLOUD_BUILD_EXAMPLES "Build all example applications" OFF)
-option(SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO "Build real-time audio example applications" OFF)
-option(SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO "Build real-time video example applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO "Build audio example applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO "Build video example applications" OFF)
 option(SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT "Build management and admin applications" OFF)
-option(SENSORY_CLOUD_BUILD_EXAMPLES_DR_WAV "Build audio file example applications" OFF)
 
 # --- Proto Files ------------------------------------------------------------
 
@@ -96,15 +94,6 @@ endif()  # SENSORY_CLOUD_GENERATE_PROTO
 
 # --- Library ----------------------------------------------------------------
 
-# This block is taken from the protobuf CMakeLists.txt and tells the compiler
-# where the header files are located. These are necessary for using google proto
-# dependencies.
-include_directories(
-    ${ZLIB_INCLUDE_DIRECTORIES}
-    ${protobuf_BINARY_DIR}
-    ${protobuf_SOURCE_DIR}/../src
-)
-
 # Locate the header and source files for the sensorycloud library.
 file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS include/*.h include/*.hpp)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.c src/*.cc src/*.cpp)
@@ -118,6 +107,10 @@ target_include_directories(sensorycloud PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     include/sensorycloud include/sensorycloud/generated
+    ${ZLIB_INCLUDE_DIRECTORIES}
+    ${protobuf_BINARY_DIR}
+    ${protobuf_SOURCE_DIR}/../src
+    ${grpc_SOURCE_DIR}/third_party/boringssl-with-bazel/src/include
 )
 target_compile_features(sensorycloud PUBLIC cxx_std_11)
 set_target_properties(sensorycloud PROPERTIES
@@ -157,6 +150,7 @@ endif()  # SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE
 # --- Test Cases -------------------------------------------------------------
 
 if (SENSORY_CLOUD_BUILD_TESTS)
+    include(FetchContent)
     # Install the Catch2 development dependency
     FetchContent_Declare(Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
@@ -190,14 +184,21 @@ endif()  # SENSORY_CLOUD_BUILD_TESTS
 # --- Examples -----------------------------------------------------------------
 
 if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
+    include(FetchContent)
     # Fetch the portaudio library and compile it as part of this project.
     FetchContent_Declare(portaudio
         GIT_REPOSITORY https://github.com/PortAudio/portaudio.git
         GIT_TAG        v19.7.0
     )
     FetchContent_MakeAvailable(portaudio)
-    # Setup the includes for the portaudio library
     include_directories(${portaudio_BINARY_DIR} ${portaudio_SOURCE_DIR})
+
+    # Fetch the sndfile library and compile it as part of this project.
+    FetchContent_Declare(sndfile
+        GIT_REPOSITORY https://github.com/libsndfile/libsndfile.git
+        GIT_TAG        1.1.0
+    )
+    FetchContent_MakeAvailable(sndfile)
 
     include_directories(examples/audio/dep)
 
@@ -215,6 +216,10 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
     target_link_libraries(examples_audio_validate_event_callback PRIVATE sensorycloud)
     target_link_libraries(examples_audio_validate_event_callback PRIVATE portaudio)
 
+    add_executable(examples_audio_validate_event_file examples/audio/file/validate_event.cpp)
+    target_link_libraries(examples_audio_validate_event_file PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_event_file PRIVATE sndfile)
+
     # --- Transcribe -----------------------------------------------------------
 
     add_executable(examples_audio_transcribe examples/audio/synchronous/transcribe.cpp)
@@ -228,6 +233,10 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
     add_executable(examples_audio_transcribe_callback examples/audio/asynchronous_callback/transcribe.cpp)
     target_link_libraries(examples_audio_transcribe_callback PRIVATE sensorycloud)
     target_link_libraries(examples_audio_transcribe_callback PRIVATE portaudio)
+
+    add_executable(examples_audio_transcribe_file examples/audio/file/transcribe.cpp)
+    target_link_libraries(examples_audio_transcribe_file PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_transcribe_file PRIVATE sndfile)
 
     # --- Create Enrollment ----------------------------------------------------
 
@@ -243,6 +252,10 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
     target_link_libraries(examples_audio_enroll_callback PRIVATE sensorycloud)
     target_link_libraries(examples_audio_enroll_callback PRIVATE portaudio)
 
+    add_executable(examples_audio_enroll_file examples/audio/file/enroll.cpp)
+    target_link_libraries(examples_audio_enroll_file PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_file PRIVATE sndfile)
+
     # --- Authenticate ---------------------------------------------------------
 
     add_executable(examples_audio_authenticate examples/audio/synchronous/authenticate.cpp)
@@ -256,6 +269,10 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
     add_executable(examples_audio_authenticate_callback examples/audio/asynchronous_callback/authenticate.cpp)
     target_link_libraries(examples_audio_authenticate_callback PRIVATE sensorycloud)
     target_link_libraries(examples_audio_authenticate_callback PRIVATE portaudio)
+
+    add_executable(examples_audio_authenticate_file examples/audio/file/authenticate.cpp)
+    target_link_libraries(examples_audio_authenticate_file PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_authenticate_file PRIVATE sndfile)
 
     # --- Create Enrolled Event ------------------------------------------------
 
@@ -271,6 +288,10 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
     target_link_libraries(examples_audio_enroll_event_callback PRIVATE sensorycloud)
     target_link_libraries(examples_audio_enroll_event_callback PRIVATE portaudio)
 
+    add_executable(examples_audio_enroll_event_file examples/audio/file/enroll_event.cpp)
+    target_link_libraries(examples_audio_enroll_event_file PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_enroll_event_file PRIVATE sndfile)
+
     # --- Validate Enrolled Event ----------------------------------------------
 
     add_executable(examples_audio_validate_enrolled_event examples/audio/synchronous/validate_enrolled_event.cpp)
@@ -284,6 +305,16 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO)
     add_executable(examples_audio_validate_enrolled_event_callback examples/audio/asynchronous_callback/validate_enrolled_event.cpp)
     target_link_libraries(examples_audio_validate_enrolled_event_callback PRIVATE sensorycloud)
     target_link_libraries(examples_audio_validate_enrolled_event_callback PRIVATE portaudio)
+
+    add_executable(examples_audio_validate_enrolled_event_file examples/audio/file/validate_enrolled_event.cpp)
+    target_link_libraries(examples_audio_validate_enrolled_event_file PRIVATE sensorycloud)
+    target_link_libraries(examples_audio_validate_enrolled_event_file PRIVATE sndfile)
+
+    # --- Synthesize speech ----------------------------------------------------
+
+    add_executable(examples_audio_synthesize_speech examples/audio/file/synthesize_speech.cpp)
+    target_link_libraries(examples_audio_synthesize_speech PRIVATE sensorycloud)
+
 endif()
 
 if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO)
@@ -352,29 +383,4 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT)
 
     add_executable(apitool examples/management/apitool.cpp)
     target_link_libraries(apitool PRIVATE sensorycloud)
-endif()
-
-if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_DR_WAV)
-    include_directories(examples/dr_wav/dep)
-
-    add_executable(examples_dr_wav_transcribe examples/dr_wav/transcribe.cpp)
-    target_link_libraries(examples_dr_wav_transcribe PRIVATE sensorycloud)
-
-    add_executable(examples_dr_wav_synthesize_speech examples/dr_wav/synthesize_speech.cpp)
-    target_link_libraries(examples_dr_wav_synthesize_speech PRIVATE sensorycloud)
-
-    add_executable(examples_dr_wav_authenticate examples/dr_wav/authenticate.cpp)
-    target_link_libraries(examples_dr_wav_authenticate PRIVATE sensorycloud)
-
-    add_executable(examples_dr_wav_enroll examples/dr_wav/enroll.cpp)
-    target_link_libraries(examples_dr_wav_enroll PRIVATE sensorycloud)
-
-    add_executable(examples_dr_wav_enroll_event examples/dr_wav/enroll_event.cpp)
-    target_link_libraries(examples_dr_wav_enroll_event PRIVATE sensorycloud)
-
-    add_executable(examples_dr_wav_validate_enrolled_event examples/dr_wav/validate_enrolled_event.cpp)
-    target_link_libraries(examples_dr_wav_validate_enrolled_event PRIVATE sensorycloud)
-
-    add_executable(examples_dr_wav_validate_event examples/dr_wav/validate_event.cpp)
-    target_link_libraries(examples_dr_wav_validate_event PRIVATE sensorycloud)
 endif()

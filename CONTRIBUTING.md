@@ -100,7 +100,8 @@ SDK.
     ```
 
 1.  Update the the `PROJECT_NUMBER` in [Doxyfile](Doxyfile) to reflect the
-    change in version. Regenerate documentation using:
+    change in version. Regenerate documentation using the following command and
+    commit and push the changes in the `docs` folder.
 
     ```shell
     doxygen Doxyfile

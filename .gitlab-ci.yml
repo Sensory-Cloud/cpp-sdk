@@ -12,7 +12,7 @@ stages:
   - image
   - test
   - demo
-  - prod
+  - production
 
 # ------------------------------------------------------------------------------
 # MARK: Docker image generation
@@ -221,7 +221,8 @@ test:macos:
   tags:
     - shell
   script: >
-    docker run --rm $IMAGE bash -c "TZ=US/Mountain DEBIAN_FRONTEND=noninteractive $DEPENDS &&
+    docker run --rm $IMAGE bash -c "export TZ=US/Mountain && export DEBIAN_FRONTEND=noninteractive &&
+      apt-get update && $DEPENDS &&
       cd cpp-sdk && mkdir -p build && cd build &&
       cmake -DFETCHCONTENT_QUIET=OFF -DSENSORY_CLOUD_GENERATE_PROTO=OFF -DSENSORY_CLOUD_BUILD_TESTS=OFF -DSENSORY_CLOUD_BUILD_EXAMPLES=ON .. &&
       make -j`sysctl -n hw.logicalcpu`
@@ -324,87 +325,136 @@ demo:debian:10:
 # ------------------------------------------------------------------------------
 
 # This hidden job contains the metadata and script for building production code.
-.prod:
+.production:
   timeout: 2h
   interruptible: true
-  stage: prod
+  stage: production
   tags:
     - shell
   script: >
-    docker run --rm $IMAGE bash -c "
-      cd cpp-sdk && mkdir -p build && cd build &&
-      cmake -DFETCHCONTENT_QUIET=OFF -DSENSORY_CLOUD_GENERATE_PROTO=OFF -DSENSORY_CLOUD_BUILD_TESTS=OFF -DSENSORY_CLOUD_BUILD_EXAMPLES=OFF .. &&
+    docker run --rm $IMAGE bash -c "export TZ=US/Mountain && export DEBIAN_FRONTEND=noninteractive &&
+      apt-get update && $DEPENDS &&
+      cd cpp-sdk/examples/$EXAMPLE && mkdir -p build && cd build &&
+      cmake -DFETCHCONTENT_QUIET=OFF .. &&
       make -j`sysctl -n hw.logicalcpu`
     "
+  only:
+    - tags
 
-# # Ubuntu
+.management:
+  extends: .production
+  variables:
+    EXAMPLE: management
+    DEPENDS: echo "No dependencies"
 
-# ubuntu_22_04_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
+.audio:
+  extends: .production
+  variables:
+    EXAMPLE: audio
+    DEPENDS: apt-get install -y libasound-dev
 
-# # ubuntu_20_04_prod:
-# #   extends: .prod
-# #   variables:
-# #     IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
+.video:
+  extends: .production
+  variables:
+    EXAMPLE: video
+    DEPENDS: apt-get install -y libopencv-dev
 
-# ubuntu_18_04_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
+# Ubuntu 22.04
 
-# ubuntu_16_04_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:Ubuntu16.04
+production:management:ubuntu:22.04:
+  extends: .management
+  needs: ['demo:ubuntu:22.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
 
-# # Debian
+production:audio:ubuntu:22.04:
+  extends: .audio
+  needs: ['demo:ubuntu:22.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
 
-# # debian_11_prod:
-# #   extends: .prod
-# #   variables:
-# #     IMAGE: sensory-cloud-cpp-sdk:Debian11
+production:video:ubuntu:22.04:
+  extends: .video
+  needs: ['demo:ubuntu:22.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu22.04
 
-# debian_10_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:Debian10
+# Ubuntu 20.04
 
-# debian_9_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:Debian9
+production:management:ubuntu:20.04:
+  extends: .management
+  needs: ['demo:ubuntu:20.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
 
-# # RHEL
+production:audio:ubuntu:20.04:
+  extends: .audio
+  needs: ['demo:ubuntu:20.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
 
-# rhel_9_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:RHEL9
+production:video:ubuntu:20.04:
+  extends: .video
+  needs: ['demo:ubuntu:20.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu20.04
 
-# rhel_8_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:RHEL8
+# Ubuntu 18.04
 
-# # rhel_7_prod:
-# #   extends: .prod
-# #   variables:
-# #     IMAGE: sensory-cloud-cpp-sdk:RHEL7
+production:management:ubuntu:18.04:
+  extends: .management
+  needs: ['demo:ubuntu:18.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
 
-# # CentOS
+production:audio:ubuntu:18.04:
+  extends: .audio
+  needs: ['demo:ubuntu:18.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
 
-# centos_8_prod:
-#   extends: .prod
-#   variables:
-#     IMAGE: sensory-cloud-cpp-sdk:CentOS8
+production:video:ubuntu:18.04:
+  extends: .video
+  needs: ['demo:ubuntu:18.04']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Ubuntu18.04
 
-# # centos_7_prod:
-# #   extends: .prod
-# #   variables:
-# #     IMAGE: sensory-cloud-cpp-sdk:CentOS7
+# Debian 11
 
-# ------------------------------------------------------------------------------
-# MARK: GitHub builds
-# ------------------------------------------------------------------------------
+production:management:debian:11:
+  extends: .management
+  needs: ['demo:debian:11']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian11
+
+production:audio:debian:11:
+  extends: .audio
+  needs: ['demo:debian:11']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian11
+
+production:video:debian:11:
+  extends: .video
+  needs: ['demo:debian:11']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian11
+
+# Debian 10
+
+production:management:debian:10:
+  extends: .management
+  needs: ['demo:debian:10']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian10
+
+production:audio:debian:10:
+  extends: .audio
+  needs: ['demo:debian:10']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian10
+
+production:video:debian:10:
+  extends: .video
+  needs: ['demo:debian:10']
+  variables:
+    IMAGE: sensory-cloud-cpp-sdk:Debian10

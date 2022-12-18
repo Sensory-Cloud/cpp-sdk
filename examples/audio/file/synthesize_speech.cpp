@@ -50,6 +50,9 @@ int main(int argc, const char** argv) {
         .help("The name of the voice to use.");
     parser.add_argument({ "-p", "--phrase" })
         .help("The phrase to synthesize into speech.");
+    parser.add_argument({ "-fs", "--sample_rate" })
+        .help("The sample rate of the audio to generate (default 22050.)")
+        .default_value(22050);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("Produce verbose output during synthesis.");
     // Parse the arguments from the command line.
@@ -60,6 +63,7 @@ int main(int argc, const char** argv) {
     const auto LANGUAGE = args.get<std::string>("language");
     const auto VOICE = args.get<std::string>("voice");
     const auto PHRASE = args.get<std::string>("phrase");
+    const auto SAMPLE_RATE = args.get<uint32_t>("sample_rate");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create a credential store for keeping OAuth credentials in.
@@ -89,8 +93,6 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    // ------ Query the available audio models ---------------------------------
-
     if (GETMODELS) {
         sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
         status = cloud.audio.get_models(&audioModelsResponse);
@@ -111,7 +113,7 @@ int main(int argc, const char** argv) {
     // Create an audio config that describes the format of the audio stream.
     auto audio_config = new sensory::api::v1::audio::AudioConfig;
     audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-    audio_config->set_sampleratehertz(22050);
+    audio_config->set_sampleratehertz(SAMPLE_RATE);
     audio_config->set_audiochannelcount(1);
     audio_config->set_languagecode(LANGUAGE);
 
@@ -133,7 +135,7 @@ int main(int argc, const char** argv) {
     // Close the stream and check the status code in case the stream broke.
     status = stream->Finish();
     if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "Speech synthesis stream broke ("
+        std::cout << "stream broke ("
             << status.error_code() << "): "
             << status.error_message() << std::endl;
         return 1;

@@ -1,11 +1,7 @@
 # SensoryCloud Audio Services (from files)
 
-This project uses [dr_wav][dr_wav], [dr_flac][dr_flac], and [dr_mp3][dr_mp3] to
-provide an audio file interface that will compile on most major build platforms.
-
-[dr_wav]: https://mackron.github.io/dr_wav
-[dr_flac]: https://mackron.github.io/dr_flac
-[dr_mp3]: https://github.com/mackron/dr_libs/blob/master/dr_mp3.h
+This project provides a demonstration of SensoryCloud audio services from files
+using libsndfile.
 
 ## Compilation
 
@@ -40,7 +36,7 @@ streaming audio and batch modes. To transcribe speech to text:
 
 ```shell
 ./transcribe <path to config.ini file> \
-    -i <path to WAV, MP3, or FLAC file> \
+    -i <path to audio file> \
     -o <path to output text file> \
     -m <transcription model name> \
     -u <user ID> \
@@ -56,7 +52,7 @@ To synthesize speech from text:
 
 ```shell
 ./synthesize_speech <path to config.ini file> \
-    -o <path to output text file> \
+    -o <path to output audio file> \
     -l <language code> \
     -V <synthesis voice> \
     -p <text to synthesize into speech> \
