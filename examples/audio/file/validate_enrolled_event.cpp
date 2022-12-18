@@ -28,113 +28,14 @@
 #include <google/protobuf/util/time_util.h>
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
-#include "dep/audio_buffer.hpp"
-#include "dep/argparse.hpp"
-#include "dep/tqdm.hpp"
+#include <sndfile.h>
+#include "../dep/argparse.hpp"
+#include "../dep/tqdm.hpp"
 
 using sensory::SensoryCloud;
 using sensory::token_manager::FileSystemCredentialStore;
 using sensory::service::AudioService;
 using sensory::api::v1::audio::ThresholdSensitivity;
-
-/// @brief A bi-directional stream reactor for enrolled audio signal event validation.
-///
-class AudioFileReactor :
-    public AudioService<FileSystemCredentialStore>::ValidateEnrolledEventBidiReactor {
- private:
-    /// The audio samples to send to the cloud.
-    const std::vector<int16_t>& buffer;
-    /// The number of channels in the input audio.
-    uint32_t num_channels;
-    /// The sample rate of the audio input stream.
-    uint32_t sample_rate;
-    /// The number of frames per block of audio.
-    uint32_t frames_per_block;
-    /// Whether to produce verbose output from the server.
-    bool verbose = false;
-    /// A mutex for guarding access to the `isDone` and `status` variables.
-    std::mutex mutex;
-    /// The current index of the audio stream.
-    std::size_t index = 0;
-    /// The progress bar for providing a response per frame written.
-    tqdm bar;
-
- public:
-    /// @brief Initialize a reactor for streaming audio from a PortAudio stream.
-    ///
-    /// @param buffer_ The audio samples to send to the cloud
-    /// @param num_channels_ The number of channels in the input stream.
-    /// @param sample_rate_ The sampling rate of the audio stream.
-    /// @param frames_per_block_ The number of frames in a block of audio.
-    /// @param verbose_ Whether to produce verbose output from the reactor.
-    ///
-    AudioFileReactor(const std::vector<int16_t>& buffer_,
-        uint32_t num_channels_ = 1,
-        uint32_t sample_rate_ = 16000,
-        uint32_t frames_per_block_ = 4096,
-        const bool& verbose_ = false
-    ) :
-        AudioService<FileSystemCredentialStore>::ValidateEnrolledEventBidiReactor(),
-        buffer(buffer_),
-        num_channels(num_channels_),
-        sample_rate(sample_rate_),
-        frames_per_block(num_channels_ * frames_per_block_),
-        verbose(verbose_),
-        bar(buffer_.size() / static_cast<float>(frames_per_block_), "frame") { }
-
-    /// @brief React to a _write done_ event.
-    ///
-    /// @param ok whether the write succeeded.
-    ///
-    void OnWriteDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
-        if (!ok) return;
-
-        // If the index has exceeded the buffer size, there are no more samples
-        // to write from the audio buffer.
-        if (index >= buffer.size()) {
-            // Signal to the stream that no more data will be written.
-            StartWritesDone();
-            return;
-        }
-
-        // Count the number of samples to upload in this request based on the
-        // index of the current sample and the number of remaining samples.
-        const auto numSamples = index + frames_per_block > buffer.size() ?
-            buffer.size() - index : frames_per_block;
-        // Set the audio content for the request and start the write request.
-        request.set_audiocontent(&buffer[index], numSamples * sizeof(int16_t));
-        // Update the index of the current sample based on the number of samples
-        // that were just pushed.
-        index += numSamples;
-        if (frames_per_block < buffer.size())  // Update progress bar if chunking
-            bar.update();
-        // If the number of blocks written surpasses the maximal length, close
-        // the stream.
-        StartWrite(&request);
-    }
-
-    /// @brief React to a _read done_ event.
-    ///
-    /// @param ok whether the read succeeded.
-    ///
-    void OnReadDone(bool ok) override {
-        // If the status is not OK, then an error occurred during the stream.
-        if (!ok) return;
-        // Log the result of the request to the terminal.
-        if (verbose) {  // Verbose output, dump the message to the terminal
-            std::cout << "Response" << std::endl;
-            std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
-            std::cout << "\tUser ID:                  " << response.userid()                 << std::endl;
-            std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
-            std::cout << "\tSuccess:                  " << response.success()                << std::endl;
-            std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
-        } else if (response.success()) {  // detected event
-            std::cout << "Detected event!" << std::endl;
-        }
-        StartRead(&response);
-    }
-};
 
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
@@ -163,9 +64,6 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default).")
         .default_value(0);
-    parser.add_argument({ "-p", "--padding" })
-        .help("The number of milliseconds of padding to append to the audio buffer.")
-        .default_value(300);
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("Produce verbose output during transcription.");
     // Parse the arguments from the command line.
@@ -188,7 +86,6 @@ int main(int argc, const char** argv) {
     const auto LANGUAGE = args.get<std::string>("language");
     const auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
-    const auto PADDING = args.get<float>("padding");
 
     // Create a credential store for keeping OAuth credentials in.
     sensory::token_manager::FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
@@ -249,33 +146,34 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    // ------ Create the audio service -----------------------------------------
+    // Try to load the audio file.
+    SNDFILE* infile = nullptr;
+    SF_INFO sfinfo;
+    if ((infile = sf_open(INPUT_FILE.c_str(), SFM_READ, &sfinfo)) == NULL) {
+        std::cout << "Failed to open file " << INPUT_FILE << std::endl;
+        return 1;
+    }
 
-    // Load the audio file.
-    AudioBuffer buffer;
-    buffer.load(INPUT_FILE);
-    // Check that the file is 16kHz.
-    if (buffer.get_sample_rate() != 16000) {
-        std::cout << "Error: attempting to load WAV file with sample rate of "
-            << buffer.get_sample_rate() << "Hz, but only 16000Hz audio is supported."
+    // Check that the audio is 16kHz.
+    if (sfinfo.samplerate != 16000) {
+        std::cout << "Attempting to load file with sample rate of "
+            << sfinfo.samplerate << "Hz, but only 16000Hz audio is supported."
             << std::endl;
         return 1;
     }
-    // Check that the file in monophonic.
-    if (buffer.get_channels() > 1) {
-        std::cout << "Error: attempting to load WAV file with "
-            << buffer.get_channels() << " channels, but only mono audio is supported."
+    // Check that the audio is monophonic.
+    if (sfinfo.channels > 1) {
+        std::cout << "Attempting to load file with "
+            << sfinfo.channels << " channels, but only mono audio is supported."
             << std::endl;
         return 1;
     }
-    // Pad the file with silence.
-    buffer.pad_back(PADDING);
 
     // Create an audio config that describes the format of the audio stream.
     auto audio_config = new sensory::api::v1::audio::AudioConfig;
     audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-    audio_config->set_sampleratehertz(buffer.get_sample_rate());
-    audio_config->set_audiochannelcount(buffer.get_channels());
+    audio_config->set_sampleratehertz(sfinfo.samplerate);
+    audio_config->set_audiochannelcount(sfinfo.channels);
     audio_config->set_languagecode(LANGUAGE);
     // Create the config with the enrolled event validation parameters.
     auto validate_enrolled_event_config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
@@ -284,20 +182,47 @@ int main(int argc, const char** argv) {
     else
         validate_enrolled_event_config->set_enrollmentid(ENROLLMENT_ID);
     validate_enrolled_event_config->set_sensitivity(SENSITIVITY);
-    // Initialize the stream with the cloud.
-    AudioFileReactor reactor(buffer.get_samples(),
-        buffer.get_channels(),
-        buffer.get_sample_rate(),
-        CHUNK_SIZE > 0 ? CHUNK_SIZE : buffer.get_num_samples(),
-        VERBOSE
-    );
-    cloud.audio.validate_enrolled_event(&reactor, audio_config, validate_enrolled_event_config);
-    reactor.StartCall();
 
-    // Wait for the call to terminate and check the final status.
-    status = reactor.await();
+    grpc::ClientContext context;
+    auto stream = cloud.audio.validate_enrolled_event(&context, audio_config, validate_enrolled_event_config);
+
+    // Create a background thread for handling the transcription responses.
+    std::thread receipt_thread([&stream, &VERBOSE](){
+        while (true) {
+            // Read a message and break out of the loop when the read fails.
+            sensory::api::v1::audio::ValidateEnrolledEventResponse response;
+            if (!stream->Read(&response)) break;
+            if (VERBOSE) {  // Verbose output, dump the message to the terminal
+                std::cout << "Response" << std::endl;
+                std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
+                std::cout << "\tUser ID:                  " << response.userid()                 << std::endl;
+                std::cout << "\tEnrollment ID:            " << response.enrollmentid()           << std::endl;
+                std::cout << "\tSuccess:                  " << response.success()                << std::endl;
+                std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
+            } else if (response.success()) {  // detected event
+                std::cout << "Detected event!" << std::endl;
+            }
+        }
+    });
+
+    tqdm progress(sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE));
+    int16_t samples[CHUNK_SIZE];
+    int num_frames;
+    while ((num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE))) {
+        sensory::api::v1::audio::ValidateEnrolledEventRequest request;
+        request.set_audiocontent((uint8_t*) samples, sizeof(int16_t) * num_frames);
+        if (!stream->Write(request)) break;
+        progress();
+    }
+    sf_close(infile);
+    receipt_thread.join();
+
+    // Close the stream and check the status code in case the stream broke.
+    status = stream->Finish();
     if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "Stream broke (" << status.error_code() << "): " << status.error_message() << std::endl;
+        std::cout << "stream broke ("
+            << status.error_code() << "): "
+            << status.error_message() << std::endl;
         return 1;
     }
 

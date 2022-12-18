@@ -5,5 +5,5 @@ SensoryCloud:
 
 -   [management](management) implements management services,
 -   [video](video) implements interactive video services using OpenCV,
--   [audio](audio) implements interactive audio services using portaudio, and
--   [dr_wav](dr_wav) implements file-IO based audio services.
+-   [audio](audio) implements interactive audio services using portaudio for
+    real-time streaming and libsndfile for audio file streaming.

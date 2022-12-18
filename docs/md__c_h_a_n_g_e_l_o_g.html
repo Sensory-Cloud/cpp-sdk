@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.3</span>
+                                &#160;<span id="projectnumber">0.17.4</span>
                             </div>
                         </td>
                     </tr>
@@ -75,83 +75,30 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>0.6.0</h1>
+<div class="textblock"><h1>0.17.4</h1>
 <ul>
-<li>Initial release</li>
-</ul>
-<h1>0.6.1</h1>
-<ul>
-<li>Fixed cryptographic-ally secure random string generation to produce alpha-numeric values with 62^24 possible combinations.</li>
-<li>Resolve an issue on MacOS where cryptographic-ally secure random strings that were generated were not valid UTF-8 format.</li>
-<li>Added Apache 2.0 license</li>
-<li>Added CHANGELOG.md</li>
-<li>Updated README.md for example projects with example CLI usage</li>
-<li>Updated examples to not regenerate client ID and secret when attempting to register a device that has credentials but no OAuth token.</li>
-</ul>
-<h1>0.8.0</h1>
-<ul>
-<li>Updated to support features in SensoryCloud version 0.8.0<ul>
-<li>Implemented <code>RenewDeviceCredential</code> end-points in the <code>OAuthService</code></li>
-<li>Updated <code>Authenticate</code> end-point in the <code>VideoService</code> to support enrollment groups</li>
-<li>Updated <code>CreateEnrollment</code> end-point in the <code>VideoService</code> to support number of required liveness frames</li>
-</ul>
-</li>
-<li>Updated <code>CreateEnrollmentGroup</code> end-points in the <code>ManagementService</code> to accept a vector of enrollment IDs to create the group with</li>
-<li>Implemented a constructor in each service for building from pointers to each of the necessary stubs</li>
-</ul>
-<h1>0.11.4</h1>
-<ul>
-<li>Support for <code>v0.11.4</code> of the SensoryCloud API</li>
-</ul>
-<h1>0.12.4</h1>
-<ul>
-<li>Support for <code>v0.12.4</code> of the SensoryCloud API</li>
-<li>Updated speech-to-text (STT) example to use new <code>FINAL</code> post-processing action to indicate the end of a finite audio stream.</li>
-</ul>
-<h1>0.12.10</h1>
-<ul>
-<li>Support for <code>v0.12.10</code> of the SensoryCloud API</li>
-<li>Re-organize example code according to programming model.</li>
-<li>Updates and breaking changes to <code><a class="el" href="classsensory_1_1_config.html" title="Configuration for a cloud endpoint.">sensory::Config</a></code><ul>
-<li>Update to expect unary gRPC timeouts in milliseconds instead of seconds.</li>
-<li>Update to treat fully qualified domain name as the default storage medium for server addresses.<ul>
-<li>Refactor internal data structures to favor fully qualified domain name over host-port combination.</li>
-<li>Implement a new constructor that expects a formatted FQDN.</li>
-<li>Leave all old functionality in place to prevent downstream breakage.</li>
-</ul>
-</li>
-<li>Update <code>connect</code> to throw a <code>sensory::ConfigError</code> if called when a gRPC channel already exists.</li>
-<li>Update <code>get_channel</code> to throw <code>sensory::ConfigError</code> if called when a gRPC channel does not exist.</li>
-<li>Update with new <code>is_connected</code> getter for determining if <code>connect</code> has been called.</li>
-</ul>
-</li>
-<li>Updates relevant to all services:<ul>
-<li>Added <code>get_config</code> getter for accessing the immutable config being used by a particular service.</li>
-<li>Refactored functional envy between <code>Config</code> and <code>TokenManager</code>; the token manager now handles all gRPC context setup outside of the scope of the config.<ul>
-<li><code>setup_unary_client_context</code> and <code>setup_bidi_client_context</code> both moved from <code><a class="el" href="classsensory_1_1_config.html" title="Configuration for a cloud endpoint.">sensory::Config</a></code> to <code><a class="el" href="classsensory_1_1token__manager_1_1_token_manager.html" title="A token manager class for generating OAuth tokens.">sensory::token_manager::TokenManager</a></code></li>
+<li>Resolve issue where OpenSSL was not linked in FetchContent install pathways</li>
+<li>Update [examples](examples)<ul>
+<li>Update <a href="examples/audio">audio</a><ul>
+<li>Deprecate <code>--padding</code> flag for audio service examples, any padding will be calibrated and conducted server-side</li>
+<li>Add <code>--sample_rate</code>/<code>-fs</code> flag to speech synthesis examples to allow control over the sample rate of the audio that is returned.</li>
+<li>Move <code>dr_wav</code> examples to <code>audio/file</code> and replace local <code>dr_*</code> dependencies with libsndfile, pulled using <code>FetchContent</code></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<h1>0.12.1</h1>
+<h1>0.17.3</h1>
 <ul>
-<li>Support for <code>SynthesizeSpeech</code> (text-to-speech) endpoints</li>
-</ul>
-<h1>0.15.1</h1>
-<ul>
-<li>Support for <code>v0.15.1</code> of the SensoryCloud API<ul>
-<li>New <code>sensory::services::audio::TranscriptAggregator</code> for aggregating partial speech-to-text updates from the server into a final transcript.</li>
-<li>Audio transcription examples updated with <code>sensory::services::audio::TranscriptAggregator</code> and optional closed-captioning mode for rendering partial transcripts.</li>
-</ul>
+<li>INI parser bug-fixes and improvements (for constructing <code>SensoryCloud</code>)<ul>
+<li>runtime error handling for irrecoverable failure cases:<ol type="1">
+<li>a file-path points to a non-existent file,</li>
+<li>a file contains improperly formatted INI data, and</li>
+<li>a file is missing sections/keys that are required.</li>
+</ol>
 </li>
 </ul>
-<h1>0.15.2</h1>
-<ul>
-<li>Video service examples updated to support file IO (video and single images)</li>
-<li>Audio service examples updated to support file IO</li>
-<li>Implemented support for JSON web token (JWT) device enrollments</li>
-<li>Deprecated internal implementation of RC4 cryptography algorithm in favor of <code>RAND_bytes</code> from required SSL dependency</li>
+</li>
 </ul>
 <h1>0.17.2</h1>
 <ul>
@@ -196,17 +143,83 @@ $(function() {
 </ul>
 </li>
 </ul>
-<h1>0.17.3</h1>
+<h1>0.15.2</h1>
 <ul>
-<li>INI parser bug-fixes and improvements (for constructing <code>SensoryCloud</code>)<ul>
-<li>runtime error handling for irrecoverable failure cases:<ol type="1">
-<li>a file-path points to a non-existent file,</li>
-<li>a file contains improperly formatted INI data, and</li>
-<li>a file is missing sections/keys that are required. </li>
-</ol>
+<li>Video service examples updated to support file IO (video and single images)</li>
+<li>Audio service examples updated to support file IO</li>
+<li>Implemented support for JSON web token (JWT) device enrollments</li>
+<li>Deprecated internal implementation of RC4 cryptography algorithm in favor of <code>RAND_bytes</code> from required SSL dependency</li>
+</ul>
+<h1>0.15.1</h1>
+<ul>
+<li>Support for <code>v0.15.1</code> of the SensoryCloud API<ul>
+<li>New <code>sensory::services::audio::TranscriptAggregator</code> for aggregating partial speech-to-text updates from the server into a final transcript.</li>
+<li>Audio transcription examples updated with <code>sensory::services::audio::TranscriptAggregator</code> and optional closed-captioning mode for rendering partial transcripts.</li>
+</ul>
+</li>
+</ul>
+<h1>0.12.1</h1>
+<ul>
+<li>Support for <code>SynthesizeSpeech</code> (text-to-speech) endpoints</li>
+</ul>
+<h1>0.12.10</h1>
+<ul>
+<li>Support for <code>v0.12.10</code> of the SensoryCloud API</li>
+<li>Re-organize example code according to programming model.</li>
+<li>Updates and breaking changes to <code><a class="el" href="classsensory_1_1_config.html" title="Configuration for a cloud endpoint.">sensory::Config</a></code><ul>
+<li>Update to expect unary gRPC timeouts in milliseconds instead of seconds.</li>
+<li>Update to treat fully qualified domain name as the default storage medium for server addresses.<ul>
+<li>Refactor internal data structures to favor fully qualified domain name over host-port combination.</li>
+<li>Implement a new constructor that expects a formatted FQDN.</li>
+<li>Leave all old functionality in place to prevent downstream breakage.</li>
+</ul>
+</li>
+<li>Update <code>connect</code> to throw a <code>sensory::ConfigError</code> if called when a gRPC channel already exists.</li>
+<li>Update <code>get_channel</code> to throw <code>sensory::ConfigError</code> if called when a gRPC channel does not exist.</li>
+<li>Update with new <code>is_connected</code> getter for determining if <code>connect</code> has been called.</li>
+</ul>
+</li>
+<li>Updates relevant to all services:<ul>
+<li>Added <code>get_config</code> getter for accessing the immutable config being used by a particular service.</li>
+<li>Refactored functional envy between <code>Config</code> and <code>TokenManager</code>; the token manager now handles all gRPC context setup outside of the scope of the config.<ul>
+<li><code>setup_unary_client_context</code> and <code>setup_bidi_client_context</code> both moved from <code><a class="el" href="classsensory_1_1_config.html" title="Configuration for a cloud endpoint.">sensory::Config</a></code> to <code><a class="el" href="classsensory_1_1token__manager_1_1_token_manager.html" title="A token manager class for generating OAuth tokens.">sensory::token_manager::TokenManager</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
+</ul>
+<h1>0.12.4</h1>
+<ul>
+<li>Support for <code>v0.12.4</code> of the SensoryCloud API</li>
+<li>Updated speech-to-text (STT) example to use new <code>FINAL</code> post-processing action to indicate the end of a finite audio stream.</li>
+</ul>
+<h1>0.11.4</h1>
+<ul>
+<li>Support for <code>v0.11.4</code> of the SensoryCloud API</li>
+</ul>
+<h1>0.8.0</h1>
+<ul>
+<li>Updated to support features in SensoryCloud version 0.8.0<ul>
+<li>Implemented <code>RenewDeviceCredential</code> end-points in the <code>OAuthService</code></li>
+<li>Updated <code>Authenticate</code> end-point in the <code>VideoService</code> to support enrollment groups</li>
+<li>Updated <code>CreateEnrollment</code> end-point in the <code>VideoService</code> to support number of required liveness frames</li>
+</ul>
+</li>
+<li>Updated <code>CreateEnrollmentGroup</code> end-points in the <code>ManagementService</code> to accept a vector of enrollment IDs to create the group with</li>
+<li>Implemented a constructor in each service for building from pointers to each of the necessary stubs</li>
+</ul>
+<h1>0.6.1</h1>
+<ul>
+<li>Fixed cryptographic-ally secure random string generation to produce alpha-numeric values with 62^24 possible combinations.</li>
+<li>Resolve an issue on MacOS where cryptographic-ally secure random strings that were generated were not valid UTF-8 format.</li>
+<li>Added Apache 2.0 license</li>
+<li>Added CHANGELOG.md</li>
+<li>Updated README.md for example projects with example CLI usage</li>
+<li>Updated examples to not regenerate client ID and secret when attempting to register a device that has credentials but no OAuth token.</li>
+</ul>
+<h1>0.6.0</h1>
+<ul>
+<li>Initial release </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
