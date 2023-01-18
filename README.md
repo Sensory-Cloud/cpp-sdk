@@ -86,7 +86,7 @@ to your `CMakeLists.txt`.
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.4
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.17.5
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```

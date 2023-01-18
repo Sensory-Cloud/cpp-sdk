@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.17.5
+
+-   Update `sensory::util::{lstrip,rstrip,strip}` to more strictly adhere to
+    the Python semantics that they derive from. Instead of only stripping
+    white-space, the methods now strip any character outside of the range of
+    (0x20, 0x7F) in arbitrary combinations (i.e., only simple characters are
+    left.)
+-   Implement new `sensory::io::path` namespace with methods for normalizing
+    URIs to a standard `host:port` format.
+-   Resolve a bug in config.ini parsing where fully qualified domain names
+    formatted like `https://domain` would cause an error from the `stoi`
+    function. Protocols are now stripped from URIs when parsed.
+
 ## 0.17.4
 
 -   Resolve issue where OpenSSL was not linked in FetchContent install pathways

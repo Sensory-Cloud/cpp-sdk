@@ -35,6 +35,8 @@
 #include "sensorycloud/services/video_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/io/ini.hpp"
+#include "sensorycloud/io/path.hpp"
+#include "sensorycloud/util/string_extensions.hpp"
 #include "sensorycloud/util/jwt.h"
 #include "sensorycloud/util/transcript_aggregator.hpp"
 
@@ -158,7 +160,9 @@ class SensoryCloud {
     ///
     SensoryCloud(const io::INIReader& reader, CredentialStore& keychain) :
         config{
-            reader.get<std::string>("SDK-configuration", "fullyQualifiedDomainName", "localhost:50051"),
+            io::path::normalize_uri(util::strip(
+                reader.get<std::string>("SDK-configuration", "fullyQualifiedDomainName", "localhost:50051")
+            )),
             reader.get<std::string>("SDK-configuration", "tenantID", "", true),
             reader.get<std::string>("SDK-configuration", "deviceID", "", true),
             reader.get<bool>("SDK-configuration", "isSecure", false)
