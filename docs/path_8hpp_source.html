@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9" />
     <meta name="generator" content="Doxygen 1.9.2" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SensoryCloud C++ SDK: include/sensorycloud/util/uuid.hpp Source File</title>
+    <title>SensoryCloud C++ SDK: include/sensorycloud/io/path.hpp Source File</title>
     <link href="tabs.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="dynsections.js"></script>
@@ -72,14 +72,14 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_5cc8667df3cf690af97095e1df31a1a6.html">sensorycloud</a></li><li class="navelem"><a class="el" href="dir_69f5f90c6f114e86931623f1537842e2.html">util</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_5cc8667df3cf690af97095e1df31a1a6.html">sensorycloud</a></li><li class="navelem"><a class="el" href="dir_8b4e1ae56fbd96c5a165467f8dafe780.html">io</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">uuid.hpp</div></div>
+  <div class="headertitle"><div class="title">path.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// Functions for generating UUIDs.</span></div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// Extensions to the C++11 &lt;string&gt; header.</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">// Copyright (c) 2022 Sensory, Inc.</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//</span></div>
@@ -104,40 +104,32 @@ $(function() {
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">// SOFTWARE.</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">//</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#ifndef SENSORYCLOUD_UTIL_UUID_HPP_</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#define SENSORYCLOUD_UTIL_UUID_HPP_</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#ifndef SENSORYCLOUD_IO_PATH_HPP_</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#define SENSORYCLOUD_IO_PATH_HPP_</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;random&gt;</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;chrono&gt;</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">namespace </span>util {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="namespacesensory_1_1util.html#afe2ab2f74c69f7797dfb8b2bebf92943">   71</a></span>std::string <a class="code hl_function" href="namespacesensory_1_1util.html#afe2ab2f74c69f7797dfb8b2bebf92943">uuid_v4</a>() {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="comment">// Create a random number generator conditioned on the system RNG</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    std::mt19937_64 generator(std::random_device(<span class="stringliteral">&quot;/dev/random&quot;</span>)());</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="comment">// Create the UUID from randomly generated digits</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    std::string uuid(36, <span class="charliteral">&#39;-&#39;</span>);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> i = 0; i &lt; 36; i++) {</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keywordflow">if</span> (i == 8 || i == 13 || i == 18 || i == 23)  <span class="comment">// hyphenated position</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (i == 14)  <span class="comment">// character 14 is always A</span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            uuid[i] = <span class="charliteral">&#39;4&#39;</span>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (i == 19)  <span class="comment">// character 19 is always in {8, 9, A, B}</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            uuid[i] = <span class="stringliteral">&quot;89AB&quot;</span>[generator() &amp; 0x3];</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        <span class="keywordflow">else</span>  <span class="comment">// arbitrary characters have no constraints</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            uuid[i] = <span class="stringliteral">&quot;0123456789ABCDEF&quot;</span>[generator() &amp; 0xF];</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">return</span> uuid;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}  <span class="comment">// namespace util</span></div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>}  <span class="comment">// namespace sensory</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_UUID_HPP_</span></div>
-<div class="ttc" id="anamespacesensory_1_1util_html_afe2ab2f74c69f7797dfb8b2bebf92943"><div class="ttname"><a href="namespacesensory_1_1util.html#afe2ab2f74c69f7797dfb8b2bebf92943">sensory::util::uuid_v4</a></div><div class="ttdeci">std::string uuid_v4()</div><div class="ttdoc">Generate a pseudo-random UUID compliant with RFC-4122 v4.</div><div class="ttdef"><b>Definition:</b> uuid.hpp:71</div></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">namespace </span>io {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacesensory_1_1io_1_1path.html">   38</a></span><span class="keyword">namespace </span>path {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">   45</a></span><span class="keyword">inline</span> std::string <a class="code hl_function" href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">normalize_uri</a>(<span class="keyword">const</span> std::string&amp; uri) {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">const</span> std::string DELIMITER = <span class="stringliteral">&quot;://&quot;</span>;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">const</span> std::size_t index = uri.find(DELIMITER);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">if</span> (index == std::string::npos) <span class="keywordflow">return</span> uri;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">return</span> uri.substr(index + DELIMITER.length(), uri.length() - index - DELIMITER.length());</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}  <span class="comment">// namespace path</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}  <span class="comment">// namespace io</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}  <span class="comment">// namespace sensory</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_IO_PATH_HPP_</span></div>
+<div class="ttc" id="anamespacesensory_1_1io_1_1path_html_a7a38ae4b4b40b8514d009130076ec72d"><div class="ttname"><a href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">sensory::io::path::normalize_uri</a></div><div class="ttdeci">std::string normalize_uri(const std::string &amp;uri)</div><div class="ttdoc">Normalize URIs to a strict host(:port)? format.</div><div class="ttdef"><b>Definition:</b> path.hpp:45</div></div>
 <div class="ttc" id="anamespacesensory_html"><div class="ttname"><a href="namespacesensory.html">sensory</a></div><div class="ttdoc">The SensoryCloud SDK.</div><div class="ttdef"><b>Definition:</b> async_reader_writer_call.hpp:41</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->

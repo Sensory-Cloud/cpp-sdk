@@ -36,30 +36,43 @@ namespace util {
 
 /// @brief Strip leading white spaces from a string.
 ///
-/// @param s The string to strip the leading white spaces from
+/// @param str The string to strip the leading white spaces from
 /// @returns The input string with leading white spaces removed.
+/// @details
+/// All characters with ASCII code outside of the range of (0x20, 0x7F) are
+/// considered removable by this function.
 ///
-inline std::string lstrip(const std::string &s) {
-    size_t start = s.find_first_not_of(" ");
-    return (start == std::string::npos) ? "" : s.substr(start);
+inline std::string lstrip(const std::string &str) {
+    int32_t index;
+    for (index = 0; index < str.length(); ++index)
+        if (str[index] > 0x20 && str[index] < 0x7F) break;
+    return str.substr(index, str.length() - index);
 }
 
 /// @brief Strip trailing white spaces from a string.
 ///
-/// @param s The string to strip the trailing white spaces from.
+/// @param str The string to strip the trailing white spaces from.
 /// @returns The input string with trailing white spaces removed.
+/// @details
+/// All characters with ASCII code outside of the range of (0x20, 0x7F) are
+/// considered removable by this function.
 ///
-inline std::string rstrip(const std::string &s) {
-    size_t end = s.find_last_not_of(" ");
-    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+inline std::string rstrip(const std::string &str) {
+    int32_t index;
+    for (index = str.length(); index > 0; --index)
+        if (str[index - 1] > 0x20 && str[index - 1] < 0x7F) break;
+    return str.substr(0, index);
 }
 
 /// @brief Strip leading & trailing white spaces from a string.
 ///
-/// @param s The string to strip the leading & trailing white spaces from.
+/// @param str The string to strip the leading & trailing white spaces from.
 /// @returns The input string with leading & trailing white spaces removed.
+/// @details
+/// All characters with ASCII code outside of the range of (0x20, 0x7F) are
+/// considered removable by this function.
 ///
-inline std::string strip(const std::string &s) { return rstrip(lstrip(s)); }
+inline std::string strip(const std::string &str) { return rstrip(lstrip(str)); }
 
 }  // namespace util
 

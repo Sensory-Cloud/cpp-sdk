@@ -83,17 +83,8 @@ class Config {
         tenant_id(tenant_id_),
         device_id(device_id_),
         is_secure(is_secure_) {
-        // Check that the FQDN is properly formatted in `host:port` format.
-        const auto idx = fqdn.find(':');
-        if (fqdn.empty() || idx == 0 || idx >= fqdn.length() - 1)
+        if (fqdn.empty())  // The FQDN is not valid
             throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidFQDN);
-        // Parse the port as a 32-bit signed integer and ensure that the value
-        // is a valid 16-bit unsigned integer.
-        const auto port = std::stoi(fqdn.substr(idx + 1));
-        if (port < std::numeric_limits<uint16_t>::min() ||
-            port > std::numeric_limits<uint16_t>::max())
-            throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidPort);
-        // Ensure the tenant ID and device ID are not empty.
         if (tenant_id.empty())  // the tenant ID is not valid
             throw ::sensory::error::ConfigError(::sensory::error::ConfigError::Code::InvalidTenantID);
         if (device_id.empty())  // the device ID is not valid
@@ -132,57 +123,25 @@ class Config {
     ///
     /// @returns The gRPC channel to use for connecting services.
     ///
-    inline std::shared_ptr<::grpc::Channel> get_channel() const {
-        return channel;
-    }
+    inline std::shared_ptr<::grpc::Channel> get_channel() const { return channel; }
 
     /// @brief Return the fully qualified domain name of the server.
     ///
     /// @returns The fully qualified domain name in `host:port` format.
     ///
-    inline const std::string& get_fully_qualified_domain_name() const {
-        return fqdn;
-    }
-
-    /// @brief Return the host name of the server.
-    ///
-    /// @returns The host name.
-    ///
-    inline std::string get_host() const {
-        // Note: Typically one would need to check that `find` returned a value
-        // other than std::string::npos; however, the fully qualified domain
-        // name is immutable and the existence of the ':' character is
-        // guaranteed past initialization time.
-        return fqdn.substr(0, fqdn.find(':'));
-    }
-
-    /// @brief Return the port number of the service.
-    ///
-    /// @returns The port number of the service.
-    ///
-    inline uint16_t get_port() const {
-        // Note: Typically one would need to check that `find` returned a value
-        // other than std::string::npos; however, the fully qualified domain
-        // name is immutable and the existence of the ':' character is
-        // guaranteed past initialization time.
-        return std::stoi(fqdn.substr(fqdn.find(':') + 1));
-    }
+    inline const std::string& get_fully_qualified_domain_name() const { return fqdn; }
 
     /// @brief Return the UUID of the tenant.
     ///
     /// @returns The UUID for identifying a tenant.
     ///
-    inline const std::string& get_tenant_id() const {
-        return tenant_id;
-    }
+    inline const std::string& get_tenant_id() const { return tenant_id; }
 
     /// @brief Return the UUID of the device.
     ///
     /// @returns The UUID for identifying a registered device.
     ///
-    inline const std::string& get_device_id() const {
-        return device_id;
-    }
+    inline const std::string& get_device_id() const { return device_id; }
 
     /// @brief Return the security policy of the remote host.
     ///
@@ -201,7 +160,7 @@ class Config {
     ///
     /// @returns The timeout for unary gRPC calls in milliseconds.
     ///
-    inline const uint32_t get_timeout() const { return timeout; }
+    inline const uint32_t& get_timeout() const { return timeout; }
 
     /// @brief Create a new deadline from the current time and RPC timeout.
     ///

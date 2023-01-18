@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.4</span>
+                                &#160;<span id="projectnumber">0.17.5</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,13 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>0.17.4</h1>
+<div class="textblock"><h1>0.17.5</h1>
+<ul>
+<li>Update <code><a class="el" href="namespacesensory_1_1util.html" title="Utility functions.">sensory::util</a>::{lstrip,rstrip,strip}</code> to more strictly adhere to the Python semantics that they derive from. Instead of only stripping white-space, the methods now strip any character outside of the range of (0x20, 0x7F) in arbitrary combinations (i.e., only simple characters are left.)</li>
+<li>Implement new <code><a class="el" href="namespacesensory_1_1io_1_1path.html" title="Path manipulation tools.">sensory::io::path</a></code> namespace with methods for normalizing URIs to a standard <code>host:port</code> format.</li>
+<li>Resolve a bug in config.ini parsing where fully qualified domain names formatted like <code><a href="https://domain">https://domain</a></code> would cause an error from the <code>stoi</code> function. Protocols are now stripped from URIs when parsed.</li>
+</ul>
+<h1>0.17.4</h1>
 <ul>
 <li>Resolve issue where OpenSSL was not linked in FetchContent install pathways</li>
 <li>Update [examples](examples)<ul>
