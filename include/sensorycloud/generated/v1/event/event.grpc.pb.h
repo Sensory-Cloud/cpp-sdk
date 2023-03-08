@@ -68,6 +68,15 @@ class EventService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>> PrepareAsyncGetUsageEventSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>>(PrepareAsyncGetUsageEventSummaryRaw(context, request, cq));
     }
+    // Obtains a usage summary of events across all specified tenants
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::sensory::api::v1::event::UsageEventSummary* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>> AsyncGetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>>(AsyncGetGlobalUsageSummaryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>> PrepareAsyncGetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>>(PrepareAsyncGetGlobalUsageSummaryRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -83,6 +92,10 @@ class EventService final {
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
       virtual void GetUsageEventSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetUsageEventSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Obtains a usage summary of events across all specified tenants
+      // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+      virtual void GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -94,6 +107,8 @@ class EventService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventListResponse>* PrepareAsyncGetUsageEventListRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>* AsyncGetUsageEventSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>* PrepareAsyncGetUsageEventSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>* AsyncGetGlobalUsageSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::event::UsageEventSummary>* PrepareAsyncGetGlobalUsageSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -119,6 +134,13 @@ class EventService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>> PrepareAsyncGetUsageEventSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>>(PrepareAsyncGetUsageEventSummaryRaw(context, request, cq));
     }
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::sensory::api::v1::event::UsageEventSummary* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>> AsyncGetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>>(AsyncGetGlobalUsageSummaryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>> PrepareAsyncGetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>>(PrepareAsyncGetGlobalUsageSummaryRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
@@ -128,6 +150,8 @@ class EventService final {
       void GetUsageEventList(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventListResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetUsageEventSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, std::function<void(::grpc::Status)>) override;
       void GetUsageEventSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, std::function<void(::grpc::Status)>) override;
+      void GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -145,9 +169,12 @@ class EventService final {
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventListResponse>* PrepareAsyncGetUsageEventListRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>* AsyncGetUsageEventSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>* PrepareAsyncGetUsageEventSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::UsageEventListRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>* AsyncGetGlobalUsageSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>* PrepareAsyncGetGlobalUsageSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_PublishUsageEvents_;
     const ::grpc::internal::RpcMethod rpcmethod_GetUsageEventList_;
     const ::grpc::internal::RpcMethod rpcmethod_GetUsageEventSummary_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetGlobalUsageSummary_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -164,6 +191,9 @@ class EventService final {
     // Obtains a summary of events given the filter critieria
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
     virtual ::grpc::Status GetUsageEventSummary(::grpc::ServerContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventSummary* response);
+    // Obtains a usage summary of events across all specified tenants
+    // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
+    virtual ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_PublishUsageEvents : public BaseClass {
@@ -225,7 +255,27 @@ class EventService final {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_PublishUsageEvents<WithAsyncMethod_GetUsageEventList<WithAsyncMethod_GetUsageEventSummary<Service > > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_GetGlobalUsageSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetGlobalUsageSummary() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_GetGlobalUsageSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetGlobalUsageSummary(::grpc::ServerContext* context, ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::event::UsageEventSummary>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_PublishUsageEvents<WithAsyncMethod_GetUsageEventList<WithAsyncMethod_GetUsageEventSummary<WithAsyncMethod_GetGlobalUsageSummary<Service > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_PublishUsageEvents : public BaseClass {
    private:
@@ -307,7 +357,34 @@ class EventService final {
     virtual ::grpc::ServerUnaryReactor* GetUsageEventSummary(
       ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::event::UsageEventListRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_PublishUsageEvents<WithCallbackMethod_GetUsageEventList<WithCallbackMethod_GetUsageEventSummary<Service > > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_GetGlobalUsageSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetGlobalUsageSummary() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response) { return this->GetGlobalUsageSummary(context, request, response); }));}
+    void SetMessageAllocatorFor_GetGlobalUsageSummary(
+        ::grpc::MessageAllocator< ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetGlobalUsageSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetGlobalUsageSummary(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_PublishUsageEvents<WithCallbackMethod_GetUsageEventList<WithCallbackMethod_GetUsageEventSummary<WithCallbackMethod_GetGlobalUsageSummary<Service > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_PublishUsageEvents : public BaseClass {
@@ -356,6 +433,23 @@ class EventService final {
     }
     // disable synchronous version of this method
     ::grpc::Status GetUsageEventSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::UsageEventListRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GetGlobalUsageSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetGlobalUsageSummary() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_GetGlobalUsageSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -418,6 +512,26 @@ class EventService final {
     }
     void RequestGetUsageEventSummary(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetGlobalUsageSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetGlobalUsageSummary() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_GetGlobalUsageSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetGlobalUsageSummary(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -484,6 +598,28 @@ class EventService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* GetUsageEventSummary(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetGlobalUsageSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetGlobalUsageSummary() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetGlobalUsageSummary(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetGlobalUsageSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetGlobalUsageSummary(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -567,9 +703,36 @@ class EventService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetUsageEventSummary(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::event::UsageEventListRequest,::sensory::api::v1::event::UsageEventSummary>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_PublishUsageEvents<WithStreamedUnaryMethod_GetUsageEventList<WithStreamedUnaryMethod_GetUsageEventSummary<Service > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetGlobalUsageSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetGlobalUsageSummary() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary>* streamer) {
+                       return this->StreamedGetGlobalUsageSummary(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetGlobalUsageSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetGlobalUsageSummary(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::event::GlobalEventSummaryRequest* /*request*/, ::sensory::api::v1::event::UsageEventSummary* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetGlobalUsageSummary(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::event::GlobalEventSummaryRequest,::sensory::api::v1::event::UsageEventSummary>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_PublishUsageEvents<WithStreamedUnaryMethod_GetUsageEventList<WithStreamedUnaryMethod_GetUsageEventSummary<WithStreamedUnaryMethod_GetGlobalUsageSummary<Service > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_PublishUsageEvents<WithStreamedUnaryMethod_GetUsageEventList<WithStreamedUnaryMethod_GetUsageEventSummary<Service > > > StreamedService;
+  typedef WithStreamedUnaryMethod_PublishUsageEvents<WithStreamedUnaryMethod_GetUsageEventList<WithStreamedUnaryMethod_GetUsageEventSummary<WithStreamedUnaryMethod_GetGlobalUsageSummary<Service > > > > StreamedService;
 };
 
 }  // namespace event

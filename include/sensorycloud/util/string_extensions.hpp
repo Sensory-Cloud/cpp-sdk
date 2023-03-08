@@ -42,12 +42,7 @@ namespace util {
 /// All characters with ASCII code outside of the range of (0x20, 0x7F) are
 /// considered removable by this function.
 ///
-inline std::string lstrip(const std::string &str) {
-    int32_t index;
-    for (index = 0; index < str.length(); ++index)
-        if (str[index] > 0x20 && str[index] < 0x7F) break;
-    return str.substr(index, str.length() - index);
-}
+std::string lstrip(const std::string &str);
 
 /// @brief Strip trailing white spaces from a string.
 ///
@@ -57,12 +52,7 @@ inline std::string lstrip(const std::string &str) {
 /// All characters with ASCII code outside of the range of (0x20, 0x7F) are
 /// considered removable by this function.
 ///
-inline std::string rstrip(const std::string &str) {
-    int32_t index;
-    for (index = str.length(); index > 0; --index)
-        if (str[index - 1] > 0x20 && str[index - 1] < 0x7F) break;
-    return str.substr(0, index);
-}
+std::string rstrip(const std::string &str);
 
 /// @brief Strip leading & trailing white spaces from a string.
 ///

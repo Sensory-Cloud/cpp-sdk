@@ -117,7 +117,7 @@ class TokenManager {
     inline AccessTokenCredentials generate_credentials() const {
         // Generate a new client ID and secure random secret string.
         const auto clientID = ::sensory::util::uuid_v4();  // v4 UUIDs don't identify the host.
-        const auto secret = ::sensory::util::secure_random<24>();  // Use a 24 character secret.
+        const auto secret = ::sensory::util::secure_random(24);  // Use a 24 character secret.
         // Insert the clientID and secret into the persistent credential store.
         // If any key-value pair already exists, overwrite it.
         credential_store.emplace(TAGS.ClientID, clientID);

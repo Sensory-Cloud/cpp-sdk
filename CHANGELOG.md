@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.0.0
+
+-   Support for SensoryCloud 1.0.0
+
+## 0.17.6
+
+-   Move code definitions from header files to separate source cpp files where
+    appropriate
+-   Fix an issue in the audio file examples where the `FINAL` message was not
+    sent for cases where the number of samples in an input file a mulitple of
+    the specified chunk size.
+-   Fix an issue in the STT transcript aggregator where non-alphanumeric
+    characters were being trimmed from the aggregated transcripts
+
 ## 0.17.5
 
 -   Update `sensory::util::{lstrip,rstrip,strip}` to more strictly adhere to

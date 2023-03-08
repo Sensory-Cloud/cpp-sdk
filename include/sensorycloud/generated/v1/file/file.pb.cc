@@ -274,29 +274,29 @@ const char descriptor_table_protodef_v1_2ffile_2ffile_2eproto[] PROTOBUF_SECTION
   "ory.api.v1.file.VersionedFileCategory\"g\n"
   "\025VersionedFileCategory\022=\n\010category\030\001 \001(\016"
   "2!.sensory.api.v1.file.FileCategoryB\010\372B\005"
-  "\202\001\002\020\001\022\017\n\007version\030\002 \001(\t*L\n\014FileCategory\022\016"
-  "\n\nTSSV_MODEL\020\000\022\020\n\014FENRIR_MODEL\020\001\022\r\n\tTNL_"
-  "MODEL\020\002\022\013\n\007UNKNOWN\020d2\377\002\n\004File\022L\n\007GetInfo"
-  "\022 .sensory.api.v1.file.FileRequest\032\035.sen"
-  "sory.api.v1.file.FileInfo\"\000\022a\n\nGetCatalo"
-  "g\022\'.sensory.api.v1.file.FileCatalogReque"
-  "st\032(.sensory.api.v1.file.FileCatalogResp"
-  "onse\"\000\022q\n\022GetCompleteCatalog\022/.sensory.a"
-  "pi.v1.file.FileCompleteCatalogRequest\032(."
-  "sensory.api.v1.file.FileCatalogResponse\""
-  "\000\022S\n\010Download\022 .sensory.api.v1.file.File"
-  "Request\032!.sensory.api.v1.file.FileRespon"
-  "se\"\0000\001Bq\n\033ai.sensorycloud.api.v1.fileB\025S"
-  "ensoryApiV1FileProtoP\001Z9gitlab.com/senso"
-  "ry-cloud/server/titan.git/pkg/api/v1/fil"
-  "eb\006proto3"
+  "\202\001\002\020\001\022\017\n\007version\030\002 \001(\t*K\n\014FileCategory\022\016"
+  "\n\nTSSV_MODEL\020\000\022\017\n\013ATLAS_MODEL\020\001\022\r\n\tTNL_M"
+  "ODEL\020\002\022\013\n\007UNKNOWN\020d2\377\002\n\004File\022L\n\007GetInfo\022"
+  " .sensory.api.v1.file.FileRequest\032\035.sens"
+  "ory.api.v1.file.FileInfo\"\000\022a\n\nGetCatalog"
+  "\022\'.sensory.api.v1.file.FileCatalogReques"
+  "t\032(.sensory.api.v1.file.FileCatalogRespo"
+  "nse\"\000\022q\n\022GetCompleteCatalog\022/.sensory.ap"
+  "i.v1.file.FileCompleteCatalogRequest\032(.s"
+  "ensory.api.v1.file.FileCatalogResponse\"\000"
+  "\022S\n\010Download\022 .sensory.api.v1.file.FileR"
+  "equest\032!.sensory.api.v1.file.FileRespons"
+  "e\"\0000\001Bx\n\033ai.sensorycloud.api.v1.fileB\025Se"
+  "nsoryApiV1FileProtoP\001Z9gitlab.com/sensor"
+  "y-cloud/server/titan.git/pkg/api/v1/file"
+  "\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2ffile_2ffile_2eproto_deps[1] = {
   &::descriptor_table_validate_2fvalidate_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2ffile_2ffile_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2ffile_2ffile_2eproto = {
-  false, false, 1529, descriptor_table_protodef_v1_2ffile_2ffile_2eproto, "v1/file/file.proto", 
+  false, false, 1535, descriptor_table_protodef_v1_2ffile_2ffile_2eproto, "v1/file/file.proto", 
   &descriptor_table_v1_2ffile_2ffile_2eproto_once, descriptor_table_v1_2ffile_2ffile_2eproto_deps, 1, 9,
   schemas, file_default_instances, TableStruct_v1_2ffile_2ffile_2eproto::offsets,
   file_level_metadata_v1_2ffile_2ffile_2eproto, file_level_enum_descriptors_v1_2ffile_2ffile_2eproto, file_level_service_descriptors_v1_2ffile_2ffile_2eproto,

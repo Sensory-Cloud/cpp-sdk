@@ -1,4 +1,4 @@
-// Extensions to the C++11 <string> header.
+// Functions for manipulating file-system and web paths/URIs.
 //
 // Copyright (c) 2022 Sensory, Inc.
 //
@@ -42,12 +42,12 @@ namespace path {
 /// @param uri The URI to normalize.
 /// @returns A URI that conforms strictly to `host(:port)?` format.
 ///
-inline std::string normalize_uri(const std::string& uri) {
-    const std::string DELIMITER = "://";
-    const std::size_t index = uri.find(DELIMITER);
-    if (index == std::string::npos) return uri;
-    return uri.substr(index + DELIMITER.length(), uri.length() - index - DELIMITER.length());
-}
+std::string normalize_uri(const std::string& uri);
+
+/// @brief Return a flag determining whether the given path references a file.
+/// @param path The path on the OS to verify the file-ness of.
+/// @returns True if the path points to a file, false otherwise.
+bool is_file(const char* path);
 
 }  // namespace path
 

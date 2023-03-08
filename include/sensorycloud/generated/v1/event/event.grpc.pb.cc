@@ -28,6 +28,7 @@ static const char* EventService_method_names[] = {
   "/sensory.api.v1.event.EventService/PublishUsageEvents",
   "/sensory.api.v1.event.EventService/GetUsageEventList",
   "/sensory.api.v1.event.EventService/GetUsageEventSummary",
+  "/sensory.api.v1.event.EventService/GetGlobalUsageSummary",
 };
 
 std::unique_ptr< EventService::Stub> EventService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -40,6 +41,7 @@ EventService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chann
   : channel_(channel), rpcmethod_PublishUsageEvents_(EventService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetUsageEventList_(EventService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetUsageEventSummary_(EventService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetGlobalUsageSummary_(EventService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status EventService::Stub::PublishUsageEvents(::grpc::ClientContext* context, const ::sensory::api::v1::event::PublishUsageEventsRequest& request, ::sensory::api::v1::event::PublishUsageEventsResponse* response) {
@@ -111,6 +113,29 @@ void EventService::Stub::async::GetUsageEventSummary(::grpc::ClientContext* cont
   return result;
 }
 
+::grpc::Status EventService::Stub::GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::sensory::api::v1::event::UsageEventSummary* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetGlobalUsageSummary_, context, request, response);
+}
+
+void EventService::Stub::async::GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetGlobalUsageSummary_, context, request, response, std::move(f));
+}
+
+void EventService::Stub::async::GetGlobalUsageSummary(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetGlobalUsageSummary_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>* EventService::Stub::PrepareAsyncGetGlobalUsageSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::event::UsageEventSummary, ::sensory::api::v1::event::GlobalEventSummaryRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetGlobalUsageSummary_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::event::UsageEventSummary>* EventService::Stub::AsyncGetGlobalUsageSummaryRaw(::grpc::ClientContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetGlobalUsageSummaryRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 EventService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       EventService_method_names[0],
@@ -142,6 +167,16 @@ EventService::Service::Service() {
              ::sensory::api::v1::event::UsageEventSummary* resp) {
                return service->GetUsageEventSummary(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      EventService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< EventService::Service, ::sensory::api::v1::event::GlobalEventSummaryRequest, ::sensory::api::v1::event::UsageEventSummary, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](EventService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::sensory::api::v1::event::GlobalEventSummaryRequest* req,
+             ::sensory::api::v1::event::UsageEventSummary* resp) {
+               return service->GetGlobalUsageSummary(ctx, req, resp);
+             }, this)));
 }
 
 EventService::Service::~Service() {
@@ -162,6 +197,13 @@ EventService::Service::~Service() {
 }
 
 ::grpc::Status EventService::Service::GetUsageEventSummary(::grpc::ServerContext* context, const ::sensory::api::v1::event::UsageEventListRequest* request, ::sensory::api::v1::event::UsageEventSummary* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status EventService::Service::GetGlobalUsageSummary(::grpc::ServerContext* context, const ::sensory::api::v1::event::GlobalEventSummaryRequest* request, ::sensory::api::v1::event::UsageEventSummary* response) {
   (void) context;
   (void) request;
   (void) response;

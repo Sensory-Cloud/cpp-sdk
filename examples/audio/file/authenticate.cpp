@@ -256,6 +256,7 @@ int main(int argc, const char** argv) {
         if (!stream->Write(request)) break;
         progress();
     }
+    stream->WritesDone();
     sf_close(infile);
     receipt_thread.join();
 

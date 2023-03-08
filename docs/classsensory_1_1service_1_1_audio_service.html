@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -265,16 +265,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9bb117c7bbfb0aeeb9e163f8409afa3c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#a9bb117c7bbfb0aeeb9e163f8409afa3c">transcribe</a> (Reactor *reactor, ::sensory::api::v1::audio::AudioConfig *audio_config, ::sensory::api::v1::audio::TranscribeConfig *transcribe_config) const</td></tr>
 <tr class="memdesc:a9bb117c7bbfb0aeeb9e163f8409afa3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a bidirectional stream to the server that provides a transcription of the provided audio data.  <a href="classsensory_1_1service_1_1_audio_service.html#a9bb117c7bbfb0aeeb9e163f8409afa3c">More...</a><br /></td></tr>
 <tr class="separator:a9bb117c7bbfb0aeeb9e163f8409afa3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d2a7833a4443cb000c13a514b7dc143"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#a0591f39eb2c8637ce66e4f3ed81ea116">SynthesizeSpeechStream</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#a5d2a7833a4443cb000c13a514b7dc143">synthesize_speech</a> (::grpc::ClientContext *context, ::sensory::api::v1::audio::AudioConfig *audio_config, const std::string &amp;voice, const std::string &amp;phrase) const</td></tr>
-<tr class="memdesc:a5d2a7833a4443cb000c13a514b7dc143"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a unidirectional stream from the server that provides a synthesis of the provided text.  <a href="classsensory_1_1service_1_1_audio_service.html#a5d2a7833a4443cb000c13a514b7dc143">More...</a><br /></td></tr>
-<tr class="separator:a5d2a7833a4443cb000c13a514b7dc143"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e05e29cc5b015f7ac3c2448f10a282b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#af0aad5752f085801b602b897f5f7144c">SynthesizeSpeechAsyncStream</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#a8e05e29cc5b015f7ac3c2448f10a282b">synthesize_speech</a> (::grpc::CompletionQueue *queue, ::sensory::api::v1::audio::AudioConfig *audio_config, const std::string &amp;voice, const std::string &amp;phrase, void *init_tag=nullptr, void *finish_tag=nullptr) const</td></tr>
-<tr class="memdesc:a8e05e29cc5b015f7ac3c2448f10a282b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a unidirectional stream from the server that provides a synthesis of the provided text.  <a href="classsensory_1_1service_1_1_audio_service.html#a8e05e29cc5b015f7ac3c2448f10a282b">More...</a><br /></td></tr>
-<tr class="separator:a8e05e29cc5b015f7ac3c2448f10a282b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf119138b6bb078e2afaf58515bf8247"><td class="memTemplParams" colspan="2">template&lt;typename Reactor &gt; </td></tr>
-<tr class="memitem:abf119138b6bb078e2afaf58515bf8247"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#abf119138b6bb078e2afaf58515bf8247">synthesize_speech</a> (Reactor *reactor, ::sensory::api::v1::audio::AudioConfig *audio_config, const std::string &amp;voice, const std::string &amp;phrase) const</td></tr>
-<tr class="memdesc:abf119138b6bb078e2afaf58515bf8247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a unidirectional stream from the server that provides a synthesis of the provided text.  <a href="classsensory_1_1service_1_1_audio_service.html#abf119138b6bb078e2afaf58515bf8247">More...</a><br /></td></tr>
-<tr class="separator:abf119138b6bb078e2afaf58515bf8247"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adea9b58d78b949fb01aab150b44de057"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#a0591f39eb2c8637ce66e4f3ed81ea116">SynthesizeSpeechStream</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#adea9b58d78b949fb01aab150b44de057">synthesize_speech</a> (::grpc::ClientContext *context, const std::string &amp;model_name, const uint32_t &amp;sample_rate, const std::string &amp;phrase) const</td></tr>
+<tr class="memdesc:adea9b58d78b949fb01aab150b44de057"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a unidirectional stream from the server that provides a synthesis of the provided text.  <a href="classsensory_1_1service_1_1_audio_service.html#adea9b58d78b949fb01aab150b44de057">More...</a><br /></td></tr>
+<tr class="separator:adea9b58d78b949fb01aab150b44de057"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19e5bb84775d153d4ff2c9d595ce50fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#af0aad5752f085801b602b897f5f7144c">SynthesizeSpeechAsyncStream</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#a19e5bb84775d153d4ff2c9d595ce50fc">synthesize_speech</a> (::grpc::CompletionQueue *queue, const std::string &amp;model_name, const uint32_t &amp;sample_rate, const std::string &amp;phrase, void *init_tag=nullptr, void *finish_tag=nullptr) const</td></tr>
+<tr class="memdesc:a19e5bb84775d153d4ff2c9d595ce50fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a unidirectional stream from the server that provides a synthesis of the provided text.  <a href="classsensory_1_1service_1_1_audio_service.html#a19e5bb84775d153d4ff2c9d595ce50fc">More...</a><br /></td></tr>
+<tr class="separator:a19e5bb84775d153d4ff2c9d595ce50fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acef03c3e0fc20ae292ed07c28c667885"><td class="memTemplParams" colspan="2">template&lt;typename Reactor &gt; </td></tr>
+<tr class="memitem:acef03c3e0fc20ae292ed07c28c667885"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsensory_1_1service_1_1_audio_service.html#acef03c3e0fc20ae292ed07c28c667885">synthesize_speech</a> (Reactor *reactor, const std::string &amp;model_name, const uint32_t &amp;sample_rate, const std::string &amp;phrase) const</td></tr>
+<tr class="memdesc:acef03c3e0fc20ae292ed07c28c667885"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a unidirectional stream from the server that provides a synthesis of the provided text.  <a href="classsensory_1_1service_1_1_audio_service.html#acef03c3e0fc20ae292ed07c28c667885">More...</a><br /></td></tr>
+<tr class="separator:acef03c3e0fc20ae292ed07c28c667885"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename CredentialStore&gt;<br />
@@ -1132,8 +1132,8 @@ template&lt;typename Callback &gt; </div>
 
 </div>
 </div>
-<a id="a5d2a7833a4443cb000c13a514b7dc143" name="a5d2a7833a4443cb000c13a514b7dc143"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d2a7833a4443cb000c13a514b7dc143">&#9670;&nbsp;</a></span>synthesize_speech() <span class="overload">[1/3]</span></h2>
+<a id="adea9b58d78b949fb01aab150b44de057" name="adea9b58d78b949fb01aab150b44de057"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adea9b58d78b949fb01aab150b44de057">&#9670;&nbsp;</a></span>synthesize_speech() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1152,14 +1152,14 @@ template&lt;typename CredentialStore &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">::sensory::api::v1::audio::AudioConfig *&#160;</td>
-          <td class="paramname"><em>audio_config</em>, </td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>model_name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>voice</em>, </td>
+          <td class="paramtype">const uint32_t &amp;&#160;</td>
+          <td class="paramname"><em>sample_rate</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1185,7 +1185,7 @@ template&lt;typename CredentialStore &gt; </div>
   <table class="params">
     <tr><td class="paramname">context</td><td>the gRPC context for the stream </td></tr>
     <tr><td class="paramname">audio_config</td><td>The audio configuration that provides information about the input audio streams. <em>Ownership of the dynamically allocated configuration is implicitly transferred to the stream</em>. </td></tr>
-    <tr><td class="paramname">voice</td><td>The style of voice to use for the synthesis </td></tr>
+    <tr><td class="paramname">model_name</td><td>The name of the synthesis model to use. </td></tr>
     <tr><td class="paramname">phrase</td><td>The text phrase to synthesize into speech. </td></tr>
   </table>
   </dd>
@@ -1195,8 +1195,8 @@ template&lt;typename CredentialStore &gt; </div>
 
 </div>
 </div>
-<a id="a8e05e29cc5b015f7ac3c2448f10a282b" name="a8e05e29cc5b015f7ac3c2448f10a282b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e05e29cc5b015f7ac3c2448f10a282b">&#9670;&nbsp;</a></span>synthesize_speech() <span class="overload">[2/3]</span></h2>
+<a id="a19e5bb84775d153d4ff2c9d595ce50fc" name="a19e5bb84775d153d4ff2c9d595ce50fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19e5bb84775d153d4ff2c9d595ce50fc">&#9670;&nbsp;</a></span>synthesize_speech() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1215,14 +1215,14 @@ template&lt;typename CredentialStore &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">::sensory::api::v1::audio::AudioConfig *&#160;</td>
-          <td class="paramname"><em>audio_config</em>, </td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>model_name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>voice</em>, </td>
+          <td class="paramtype">const uint32_t &amp;&#160;</td>
+          <td class="paramname"><em>sample_rate</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1260,7 +1260,7 @@ template&lt;typename CredentialStore &gt; </div>
   <table class="params">
     <tr><td class="paramname">queue</td><td>The <code>::grpc::CompletionQueue</code> instance for handling asynchronous callbacks. </td></tr>
     <tr><td class="paramname">audio_config</td><td>The audio configuration that provides information about the input audio streams. <em>Ownership of the dynamically allocated configuration is implicitly transferred to the stream</em>. </td></tr>
-    <tr><td class="paramname">voice</td><td>The style of voice to use for the synthesis </td></tr>
+    <tr><td class="paramname">model_name</td><td>The name of the synthesis model to use. </td></tr>
     <tr><td class="paramname">phrase</td><td>The text phrase to synthesize into speech. </td></tr>
     <tr><td class="paramname">init_tag</td><td>The tag to initialize the stream with. Use <code>nullptr</code> to use the pointer as the tag. </td></tr>
     <tr><td class="paramname">finish_tag</td><td>The tag to finish the stream with. Use <code>nullptr</code> to use the pointer as the tag. </td></tr>
@@ -1272,8 +1272,8 @@ template&lt;typename CredentialStore &gt; </div>
 
 </div>
 </div>
-<a id="abf119138b6bb078e2afaf58515bf8247" name="abf119138b6bb078e2afaf58515bf8247"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf119138b6bb078e2afaf58515bf8247">&#9670;&nbsp;</a></span>synthesize_speech() <span class="overload">[3/3]</span></h2>
+<a id="acef03c3e0fc20ae292ed07c28c667885" name="acef03c3e0fc20ae292ed07c28c667885"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acef03c3e0fc20ae292ed07c28c667885">&#9670;&nbsp;</a></span>synthesize_speech() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1294,14 +1294,14 @@ template&lt;typename Reactor &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">::sensory::api::v1::audio::AudioConfig *&#160;</td>
-          <td class="paramname"><em>audio_config</em>, </td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>model_name</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>voice</em>, </td>
+          <td class="paramtype">const uint32_t &amp;&#160;</td>
+          <td class="paramname"><em>sample_rate</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1333,7 +1333,7 @@ template&lt;typename Reactor &gt; </div>
   <table class="params">
     <tr><td class="paramname">reactor</td><td>The reactor for receiving callbacks and managing the context of the stream. </td></tr>
     <tr><td class="paramname">audio_config</td><td>The audio configuration that provides information about the input audio streams. <em>Ownership of the dynamically allocated configuration is implicitly transferred to the stream</em>. </td></tr>
-    <tr><td class="paramname">voice</td><td>The style of voice to use for the synthesis </td></tr>
+    <tr><td class="paramname">model_name</td><td>The name of the synthesis model to use. </td></tr>
     <tr><td class="paramname">phrase</td><td>The text phrase to synthesize into speech.</td></tr>
   </table>
   </dd>

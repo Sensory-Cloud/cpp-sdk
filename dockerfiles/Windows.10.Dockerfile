@@ -98,10 +98,9 @@ RUN vagrant up
 
 # # Copy the files for the SDK into the image.
 # COPY CMakeLists.txt /cpp-sdk/
-# ADD ./proto /cpp-sdk/proto
-# ADD ./include /cpp-sdk/include
-# ADD ./src /cpp-sdk/src
-# ADD ./tests /cpp-sdk/tests
-# ADD ./examples /cpp-sdk/examples
-# # Remove any generated protobuf and gRPC code.
-# RUN rm -rf /cpp-sdk/include/sensorycloud/generated/*
+# ADD ./cmake         /cpp-sdk/cmake
+# ADD ./proto         /cpp-sdk/proto
+# ADD ./include       /cpp-sdk/include
+# ADD ./src           /cpp-sdk/src
+# ADD ./tests         /cpp-sdk/tests
+# ADD ./examples      /cpp-sdk/examples

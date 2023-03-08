@@ -297,13 +297,12 @@ enum ThresholdSensitivity : int {
   MEDIUM = 2,
   HIGH = 3,
   HIGHEST = 4,
-  OFF = 5,
   ThresholdSensitivity_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ThresholdSensitivity_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ThresholdSensitivity_IsValid(int value);
 constexpr ThresholdSensitivity ThresholdSensitivity_MIN = LOWEST;
-constexpr ThresholdSensitivity ThresholdSensitivity_MAX = OFF;
+constexpr ThresholdSensitivity ThresholdSensitivity_MAX = HIGHEST;
 constexpr int ThresholdSensitivity_ARRAYSIZE = ThresholdSensitivity_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ThresholdSensitivity_descriptor();
@@ -3887,27 +3886,11 @@ class TranscribeResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTranscriptFieldNumber = 2,
     kWordListFieldNumber = 4,
     kPostProcessingActionFieldNumber = 10,
     kAudioEnergyFieldNumber = 1,
-    kIsPartialResultFieldNumber = 3,
     kHasVoiceActivityFieldNumber = 5,
   };
-  // string transcript = 2;
-  void clear_transcript();
-  const std::string& transcript() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_transcript(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_transcript();
-  PROTOBUF_MUST_USE_RESULT std::string* release_transcript();
-  void set_allocated_transcript(std::string* transcript);
-  private:
-  const std::string& _internal_transcript() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_transcript(const std::string& value);
-  std::string* _internal_mutable_transcript();
-  public:
-
   // .sensory.api.v1.audio.TranscribeWordResponse wordList = 4;
   bool has_wordlist() const;
   private:
@@ -3953,15 +3936,6 @@ class TranscribeResponse final :
   void _internal_set_audioenergy(float value);
   public:
 
-  // bool isPartialResult = 3 [deprecated = true];
-  PROTOBUF_DEPRECATED void clear_ispartialresult();
-  PROTOBUF_DEPRECATED bool ispartialresult() const;
-  PROTOBUF_DEPRECATED void set_ispartialresult(bool value);
-  private:
-  bool _internal_ispartialresult() const;
-  void _internal_set_ispartialresult(bool value);
-  public:
-
   // bool hasVoiceActivity = 5;
   void clear_hasvoiceactivity();
   bool hasvoiceactivity() const;
@@ -3978,11 +3952,9 @@ class TranscribeResponse final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr transcript_;
   ::sensory::api::v1::audio::TranscribeWordResponse* wordlist_;
   ::sensory::api::v1::audio::AudioResponsePostProcessingAction* postprocessingaction_;
   float audioenergy_;
-  bool ispartialresult_;
   bool hasvoiceactivity_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
@@ -6247,40 +6219,31 @@ class VoiceSynthesisConfig final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kVoiceFieldNumber = 2,
-    kAudioFieldNumber = 1,
+    kModelNameFieldNumber = 2,
+    kSampleRateHertzFieldNumber = 3,
   };
-  // string voice = 2 [(.validate.rules) = {
-  void clear_voice();
-  const std::string& voice() const;
+  // string modelName = 2 [(.validate.rules) = {
+  void clear_modelname();
+  const std::string& modelname() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_voice(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_voice();
-  PROTOBUF_MUST_USE_RESULT std::string* release_voice();
-  void set_allocated_voice(std::string* voice);
+  void set_modelname(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_modelname();
+  PROTOBUF_MUST_USE_RESULT std::string* release_modelname();
+  void set_allocated_modelname(std::string* modelname);
   private:
-  const std::string& _internal_voice() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_voice(const std::string& value);
-  std::string* _internal_mutable_voice();
+  const std::string& _internal_modelname() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_modelname(const std::string& value);
+  std::string* _internal_mutable_modelname();
   public:
 
-  // .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
-  bool has_audio() const;
+  // int32 sampleRateHertz = 3 [(.validate.rules) = {
+  void clear_sampleratehertz();
+  ::PROTOBUF_NAMESPACE_ID::int32 sampleratehertz() const;
+  void set_sampleratehertz(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  bool _internal_has_audio() const;
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_sampleratehertz() const;
+  void _internal_set_sampleratehertz(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
-  void clear_audio();
-  const ::sensory::api::v1::audio::AudioConfig& audio() const;
-  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::audio::AudioConfig* release_audio();
-  ::sensory::api::v1::audio::AudioConfig* mutable_audio();
-  void set_allocated_audio(::sensory::api::v1::audio::AudioConfig* audio);
-  private:
-  const ::sensory::api::v1::audio::AudioConfig& _internal_audio() const;
-  ::sensory::api::v1::audio::AudioConfig* _internal_mutable_audio();
-  public:
-  void unsafe_arena_set_allocated_audio(
-      ::sensory::api::v1::audio::AudioConfig* audio);
-  ::sensory::api::v1::audio::AudioConfig* unsafe_arena_release_audio();
 
   // @@protoc_insertion_point(class_scope:sensory.api.v1.audio.VoiceSynthesisConfig)
  private:
@@ -6289,8 +6252,8 @@ class VoiceSynthesisConfig final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr voice_;
-  ::sensory::api::v1::audio::AudioConfig* audio_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelname_;
+  ::PROTOBUF_NAMESPACE_ID::int32 sampleratehertz_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2faudio_2faudio_2eproto;
 };
@@ -9356,72 +9319,6 @@ inline void TranscribeResponse::set_audioenergy(float value) {
   // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeResponse.audioEnergy)
 }
 
-// string transcript = 2;
-inline void TranscribeResponse::clear_transcript() {
-  transcript_.ClearToEmpty();
-}
-inline const std::string& TranscribeResponse::transcript() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeResponse.transcript)
-  return _internal_transcript();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void TranscribeResponse::set_transcript(ArgT0&& arg0, ArgT... args) {
- 
- transcript_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeResponse.transcript)
-}
-inline std::string* TranscribeResponse::mutable_transcript() {
-  std::string* _s = _internal_mutable_transcript();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.TranscribeResponse.transcript)
-  return _s;
-}
-inline const std::string& TranscribeResponse::_internal_transcript() const {
-  return transcript_.Get();
-}
-inline void TranscribeResponse::_internal_set_transcript(const std::string& value) {
-  
-  transcript_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* TranscribeResponse::_internal_mutable_transcript() {
-  
-  return transcript_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* TranscribeResponse::release_transcript() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.TranscribeResponse.transcript)
-  return transcript_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void TranscribeResponse::set_allocated_transcript(std::string* transcript) {
-  if (transcript != nullptr) {
-    
-  } else {
-    
-  }
-  transcript_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), transcript,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.TranscribeResponse.transcript)
-}
-
-// bool isPartialResult = 3 [deprecated = true];
-inline void TranscribeResponse::clear_ispartialresult() {
-  ispartialresult_ = false;
-}
-inline bool TranscribeResponse::_internal_ispartialresult() const {
-  return ispartialresult_;
-}
-inline bool TranscribeResponse::ispartialresult() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.TranscribeResponse.isPartialResult)
-  return _internal_ispartialresult();
-}
-inline void TranscribeResponse::_internal_set_ispartialresult(bool value) {
-  
-  ispartialresult_ = value;
-}
-inline void TranscribeResponse::set_ispartialresult(bool value) {
-  _internal_set_ispartialresult(value);
-  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.TranscribeResponse.isPartialResult)
-}
-
 // .sensory.api.v1.audio.TranscribeWordResponse wordList = 4;
 inline bool TranscribeResponse::_internal_has_wordlist() const {
   return this != internal_default_instance() && wordlist_ != nullptr;
@@ -12150,140 +12047,70 @@ inline void AudioConfig::set_allocated_languagecode(std::string* languagecode) {
 
 // VoiceSynthesisConfig
 
-// .sensory.api.v1.audio.AudioConfig audio = 1 [(.validate.rules) = {
-inline bool VoiceSynthesisConfig::_internal_has_audio() const {
-  return this != internal_default_instance() && audio_ != nullptr;
+// string modelName = 2 [(.validate.rules) = {
+inline void VoiceSynthesisConfig::clear_modelname() {
+  modelname_.ClearToEmpty();
 }
-inline bool VoiceSynthesisConfig::has_audio() const {
-  return _internal_has_audio();
-}
-inline void VoiceSynthesisConfig::clear_audio() {
-  if (GetArenaForAllocation() == nullptr && audio_ != nullptr) {
-    delete audio_;
-  }
-  audio_ = nullptr;
-}
-inline const ::sensory::api::v1::audio::AudioConfig& VoiceSynthesisConfig::_internal_audio() const {
-  const ::sensory::api::v1::audio::AudioConfig* p = audio_;
-  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::audio::AudioConfig&>(
-      ::sensory::api::v1::audio::_AudioConfig_default_instance_);
-}
-inline const ::sensory::api::v1::audio::AudioConfig& VoiceSynthesisConfig::audio() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
-  return _internal_audio();
-}
-inline void VoiceSynthesisConfig::unsafe_arena_set_allocated_audio(
-    ::sensory::api::v1::audio::AudioConfig* audio) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(audio_);
-  }
-  audio_ = audio;
-  if (audio) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
-}
-inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::release_audio() {
-  
-  ::sensory::api::v1::audio::AudioConfig* temp = audio_;
-  audio_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::unsafe_arena_release_audio() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
-  
-  ::sensory::api::v1::audio::AudioConfig* temp = audio_;
-  audio_ = nullptr;
-  return temp;
-}
-inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::_internal_mutable_audio() {
-  
-  if (audio_ == nullptr) {
-    auto* p = CreateMaybeMessage<::sensory::api::v1::audio::AudioConfig>(GetArenaForAllocation());
-    audio_ = p;
-  }
-  return audio_;
-}
-inline ::sensory::api::v1::audio::AudioConfig* VoiceSynthesisConfig::mutable_audio() {
-  ::sensory::api::v1::audio::AudioConfig* _msg = _internal_mutable_audio();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
-  return _msg;
-}
-inline void VoiceSynthesisConfig::set_allocated_audio(::sensory::api::v1::audio::AudioConfig* audio) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete audio_;
-  }
-  if (audio) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::audio::AudioConfig>::GetOwningArena(audio);
-    if (message_arena != submessage_arena) {
-      audio = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, audio, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  audio_ = audio;
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.audio)
-}
-
-// string voice = 2 [(.validate.rules) = {
-inline void VoiceSynthesisConfig::clear_voice() {
-  voice_.ClearToEmpty();
-}
-inline const std::string& VoiceSynthesisConfig::voice() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
-  return _internal_voice();
+inline const std::string& VoiceSynthesisConfig::modelname() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.VoiceSynthesisConfig.modelName)
+  return _internal_modelname();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void VoiceSynthesisConfig::set_voice(ArgT0&& arg0, ArgT... args) {
+void VoiceSynthesisConfig::set_modelname(ArgT0&& arg0, ArgT... args) {
  
- voice_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+ modelname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.VoiceSynthesisConfig.modelName)
 }
-inline std::string* VoiceSynthesisConfig::mutable_voice() {
-  std::string* _s = _internal_mutable_voice();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+inline std::string* VoiceSynthesisConfig::mutable_modelname() {
+  std::string* _s = _internal_mutable_modelname();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.audio.VoiceSynthesisConfig.modelName)
   return _s;
 }
-inline const std::string& VoiceSynthesisConfig::_internal_voice() const {
-  return voice_.Get();
+inline const std::string& VoiceSynthesisConfig::_internal_modelname() const {
+  return modelname_.Get();
 }
-inline void VoiceSynthesisConfig::_internal_set_voice(const std::string& value) {
+inline void VoiceSynthesisConfig::_internal_set_modelname(const std::string& value) {
   
-  voice_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  modelname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* VoiceSynthesisConfig::_internal_mutable_voice() {
+inline std::string* VoiceSynthesisConfig::_internal_mutable_modelname() {
   
-  return voice_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  return modelname_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* VoiceSynthesisConfig::release_voice() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
-  return voice_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline std::string* VoiceSynthesisConfig::release_modelname() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.audio.VoiceSynthesisConfig.modelName)
+  return modelname_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void VoiceSynthesisConfig::set_allocated_voice(std::string* voice) {
-  if (voice != nullptr) {
+inline void VoiceSynthesisConfig::set_allocated_modelname(std::string* modelname) {
+  if (modelname != nullptr) {
     
   } else {
     
   }
-  voice_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), voice,
+  modelname_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), modelname,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.voice)
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.audio.VoiceSynthesisConfig.modelName)
+}
+
+// int32 sampleRateHertz = 3 [(.validate.rules) = {
+inline void VoiceSynthesisConfig::clear_sampleratehertz() {
+  sampleratehertz_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 VoiceSynthesisConfig::_internal_sampleratehertz() const {
+  return sampleratehertz_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 VoiceSynthesisConfig::sampleratehertz() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.audio.VoiceSynthesisConfig.sampleRateHertz)
+  return _internal_sampleratehertz();
+}
+inline void VoiceSynthesisConfig::_internal_set_sampleratehertz(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  sampleratehertz_ = value;
+}
+inline void VoiceSynthesisConfig::set_sampleratehertz(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_sampleratehertz(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.audio.VoiceSynthesisConfig.sampleRateHertz)
 }
 
 #ifdef __GNUC__

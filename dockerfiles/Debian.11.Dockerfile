@@ -44,7 +44,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get --fix-missing update
 RUN apt-get -y upgrade
 # Install dependencies for the SDK.
-RUN apt-get install -y build-essential autoconf libtool pkg-config git
+RUN apt-get install -y build-essential autoconf libtool pkg-config git python3
 
 # Install the latest version of CMake.
 RUN apt-get install -y wget libssl-dev
@@ -73,8 +73,9 @@ RUN cd /cpp-sdk/build && make -j`nproc`
 
 # Copy the files for the SDK into the image.
 COPY CMakeLists.txt /cpp-sdk/
-ADD ./proto /cpp-sdk/proto
-ADD ./include /cpp-sdk/include
-ADD ./src /cpp-sdk/src
-ADD ./tests /cpp-sdk/tests
-ADD ./examples /cpp-sdk/examples
+ADD ./cmake         /cpp-sdk/cmake
+ADD ./proto         /cpp-sdk/proto
+ADD ./include       /cpp-sdk/include
+ADD ./src           /cpp-sdk/src
+ADD ./tests         /cpp-sdk/tests
+ADD ./examples      /cpp-sdk/examples

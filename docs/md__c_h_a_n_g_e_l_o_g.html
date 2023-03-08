@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,17 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>0.17.5</h1>
+<div class="textblock"><h1>1.0.0</h1>
+<ul>
+<li>Support for SensoryCloud 1.0.0</li>
+</ul>
+<h1>0.17.6</h1>
+<ul>
+<li>Move code definitions from header files to separate source cpp files where appropriate</li>
+<li>Fix an issue in the audio file examples where the <code>FINAL</code> message was not sent for cases where the number of samples in an input file a mulitple of the specified chunk size.</li>
+<li>Fix an issue in the STT transcript aggregator where non-alphanumeric characters were being trimmed from the aggregated transcripts</li>
+</ul>
+<h1>0.17.5</h1>
 <ul>
 <li>Update <code><a class="el" href="namespacesensory_1_1util.html" title="Utility functions.">sensory::util</a>::{lstrip,rstrip,strip}</code> to more strictly adhere to the Python semantics that they derive from. Instead of only stripping white-space, the methods now strip any character outside of the range of (0x20, 0x7F) in arbitrary combinations (i.e., only simple characters are left.)</li>
 <li>Implement new <code><a class="el" href="namespacesensory_1_1io_1_1path.html" title="Path manipulation tools.">sensory::io::path</a></code> namespace with methods for normalizing URIs to a standard <code>host:port</code> format.</li>

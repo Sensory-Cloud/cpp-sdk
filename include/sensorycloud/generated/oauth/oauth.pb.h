@@ -98,12 +98,13 @@ enum SignTokenRequest_TokenScope : int {
   SignTokenRequest_TokenScope_SUPER_ADMIN = 1,
   SignTokenRequest_TokenScope_BILLING_ADMIN = 2,
   SignTokenRequest_TokenScope_READ_ONLY_ADMIN = 3,
+  SignTokenRequest_TokenScope_EMAIL_SELF_VERIFY = 4,
   SignTokenRequest_TokenScope_SignTokenRequest_TokenScope_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   SignTokenRequest_TokenScope_SignTokenRequest_TokenScope_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool SignTokenRequest_TokenScope_IsValid(int value);
 constexpr SignTokenRequest_TokenScope SignTokenRequest_TokenScope_TokenScope_MIN = SignTokenRequest_TokenScope_USER;
-constexpr SignTokenRequest_TokenScope SignTokenRequest_TokenScope_TokenScope_MAX = SignTokenRequest_TokenScope_READ_ONLY_ADMIN;
+constexpr SignTokenRequest_TokenScope SignTokenRequest_TokenScope_TokenScope_MAX = SignTokenRequest_TokenScope_EMAIL_SELF_VERIFY;
 constexpr int SignTokenRequest_TokenScope_TokenScope_ARRAYSIZE = SignTokenRequest_TokenScope_TokenScope_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SignTokenRequest_TokenScope_descriptor();
@@ -411,6 +412,8 @@ class SignTokenRequest final :
     SignTokenRequest_TokenScope_BILLING_ADMIN;
   static constexpr TokenScope READ_ONLY_ADMIN =
     SignTokenRequest_TokenScope_READ_ONLY_ADMIN;
+  static constexpr TokenScope EMAIL_SELF_VERIFY =
+    SignTokenRequest_TokenScope_EMAIL_SELF_VERIFY;
   static inline bool TokenScope_IsValid(int value) {
     return SignTokenRequest_TokenScope_IsValid(value);
   }

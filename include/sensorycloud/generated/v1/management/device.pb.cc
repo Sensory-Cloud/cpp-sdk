@@ -296,10 +296,10 @@ const char descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto[] PROTOBUF
   "nt.DeviceResponse\"\000\022e\n\014DeleteDevice\022(.se"
   "nsory.api.v1.management.DeviceRequest\032)."
   "sensory.api.v1.management.DeviceResponse"
-  "\"\000B\211\001\n!ai.sensorycloud.api.v1.management"
+  "\"\000B\220\001\n!ai.sensorycloud.api.v1.management"
   "B!SensoryApiV1ManagementDeviceProtoP\001Z\?g"
   "itlab.com/sensory-cloud/server/titan.git"
-  "/pkg/api/v1/managementb\006proto3"
+  "/pkg/api/v1/management\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -307,7 +307,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fmanagement_2fdevice_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fmanagement_2fdevice_2eproto = {
-  false, false, 1910, descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto, "v1/management/device.proto", 
+  false, false, 1917, descriptor_table_protodef_v1_2fmanagement_2fdevice_2eproto, "v1/management/device.proto", 
   &descriptor_table_v1_2fmanagement_2fdevice_2eproto_once, descriptor_table_v1_2fmanagement_2fdevice_2eproto_deps, 2, 9,
   schemas, file_default_instances, TableStruct_v1_2fmanagement_2fdevice_2eproto::offsets,
   file_level_metadata_v1_2fmanagement_2fdevice_2eproto, file_level_enum_descriptors_v1_2fmanagement_2fdevice_2eproto, file_level_service_descriptors_v1_2fmanagement_2fdevice_2eproto,

@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -108,38 +108,19 @@ $(function() {
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#define SENSORYCLOUD_UTIL_SECURE_RANDOM_HPP_</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;openssl/rand.h&gt;</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="namespacesensory_1_1util.html">   36</a></span><span class="keyword">namespace </span>util {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span>&lt;std::<span class="keywordtype">size_t</span> length&gt;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="namespacesensory_1_1util.html#a07827c50b4ab28eb9ad80cde272042d8">   44</a></span>std::string <a class="code hl_function" href="namespacesensory_1_1util.html#a07827c50b4ab28eb9ad80cde272042d8">secure_random</a>() {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="comment">// Initialize an empty string of the specified length.</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    std::string uuid(length, <span class="charliteral">&#39; &#39;</span>);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="comment">// Randomly initialize the bytes of the string using OpenSSL rand bytes.</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">// Here we assume that std::string is backed by a contiguous buffer, which</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">// is a specification of C++00 and is true of all active std::string</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">// implementations that are currently known predating the C++00 standard.</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// The reinterpret cast is necessary to coerce the char* to uint8_t* that</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="comment">// RAND_bytes expects.</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    RAND_bytes(<span class="keyword">reinterpret_cast&lt;</span>uint8_t*<span class="keyword">&gt;</span>(&amp;uuid[0]), uuid.size());</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="comment">// Iterate over the bytes in the string to generate random characters.</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">// This is necessary because we want a specific subset of characters that</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// are not contiguously spaced in the ASCII codec.</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; length; i++)</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        uuid[i] = <span class="stringliteral">&quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&quot;</span>[<span class="keyword">static_cast&lt;</span>uint8_t<span class="keyword">&gt;</span>(uuid[i]) % (10 + 26 + 26)];</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="comment">// Move the output string to the caller&#39;s container.</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">return</span> std::move(uuid);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}  <span class="comment">// namespace util</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}  <span class="comment">// namespace sensory</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_SECURE_RANDOM_HPP_</span></div>
-<div class="ttc" id="anamespacesensory_1_1util_html_a07827c50b4ab28eb9ad80cde272042d8"><div class="ttname"><a href="namespacesensory_1_1util.html#a07827c50b4ab28eb9ad80cde272042d8">sensory::util::secure_random</a></div><div class="ttdeci">std::string secure_random()</div><div class="ttdoc">Generate a cryptographically secure random number.</div><div class="ttdef"><b>Definition:</b> secure_random.hpp:44</div></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="namespacesensory_1_1util.html">   35</a></span><span class="keyword">namespace </span>util {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>std::string <a class="code hl_function" href="namespacesensory_1_1util.html#a20d4db7ad358f864f649f18d9c297b4f">secure_random</a>(std::size_t length);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>}  <span class="comment">// namespace util</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}  <span class="comment">// namespace sensory</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_SECURE_RANDOM_HPP_</span></div>
+<div class="ttc" id="anamespacesensory_1_1util_html_a20d4db7ad358f864f649f18d9c297b4f"><div class="ttname"><a href="namespacesensory_1_1util.html#a20d4db7ad358f864f649f18d9c297b4f">sensory::util::secure_random</a></div><div class="ttdeci">std::string secure_random(std::size_t length)</div><div class="ttdoc">Generate a cryptographically secure random number.</div><div class="ttdef"><b>Definition:</b> secure_random.cpp:33</div></div>
 <div class="ttc" id="anamespacesensory_html"><div class="ttname"><a href="namespacesensory.html">sensory</a></div><div class="ttdoc">The SensoryCloud SDK.</div><div class="ttdef"><b>Definition:</b> async_reader_writer_call.hpp:41</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->

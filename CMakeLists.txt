@@ -19,11 +19,11 @@
 
 # Version 3.11 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.11)
-# Assign the name of the project.
-project(sensory-cloud-cpp-sdk)
+project(sensory-cloud-cpp-sdk VERSION 0.17.5)
 
 # Include the common files for finding/compiling Protobuf and gRPC.
 include(cmake/common.cmake)
+include(GNUInstallDirs)
 
 # Setup the optional arguments for augmenting the compilation of the library.
 option(SENSORY_CLOUD_BUILD_TESTS "Build test cases" OFF)
@@ -66,12 +66,6 @@ if(SENSORY_CLOUD_GENERATE_PROTO)
         string(REPLACE ".proto" ".grpc.pb.cc" GRPC_SRC ${PROTO})
         string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_SRC ${GRPC_SRC})
         list(APPEND GRPC_SRCS ${GRPC_SRC})
-        # Create the gRPC definition file
-        if (SENSORY_CLOUD_BUILD_TESTS)
-            string(REPLACE ".proto" "_mock.grpc.pb.h" GRPC_MOCK ${PROTO})
-            string(REPLACE "proto/" "include/sensorycloud/generated/" GRPC_MOCK ${GRPC_MOCK})
-            list(APPEND GRPC_MOCKS ${GRPC_MOCK})
-        endif()
         # Create the command to generate the protobuf and gRPC code
         add_custom_command(
             OUTPUT "${PROTO_SRC}" "${PROTO_HDR}" "${GRPC_SRC}" "${GRPC_HDR}" "${GRPC_MOCKS}"
@@ -94,11 +88,9 @@ endif()  # SENSORY_CLOUD_GENERATE_PROTO
 
 # --- Library ----------------------------------------------------------------
 
-# Locate the header and source files for the sensorycloud library.
 file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS include/*.h include/*.hpp)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.c src/*.cc src/*.cpp)
-# Create the sensorycloud library
-add_library(sensorycloud
+add_library(sensorycloud SHARED
     ${INCLUDES} ${SOURCES}
     ${PROTO_HDRS} ${PROTO_SRCS}
     ${GRPC_HDRS} ${GRPC_SRCS}
@@ -107,24 +99,19 @@ target_include_directories(sensorycloud PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     include/sensorycloud include/sensorycloud/generated
-    ${ZLIB_INCLUDE_DIRECTORIES}
     ${protobuf_BINARY_DIR}
     ${protobuf_SOURCE_DIR}/../src
     ${grpc_SOURCE_DIR}/third_party/boringssl-with-bazel/src/include
 )
 target_compile_features(sensorycloud PUBLIC cxx_std_11)
-set_target_properties(sensorycloud PROPERTIES
-    PUBLIC_HEADER include/sensorycloud/sensorycloud.hpp
-)
-target_link_libraries(sensorycloud PUBLIC
-    ${_REFLECTION}
-    ${_GRPC_GRPCPP}
-    ${_PROTOBUF_LIBPROTOBUF}
-)
+set_target_properties(sensorycloud PROPERTIES PUBLIC_HEADER include/sensorycloud/sensorycloud.hpp)
+set_target_properties(sensorycloud PROPERTIES VERSION ${PROJECT_VERSION})
+target_link_libraries(sensorycloud PUBLIC ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
 
 # --- SecureCredentialStore Implementation -----------------------------------
 
 if (SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE)
+    add_compile_definitions(BUILD_SECURE_CREDENTIAL_STORE)
     if (APPLE)
         message(STATUS "Using Apple Keychain implementation of SecureCredentialStore")
         # Target the Keychain library for using the MacOS keychain
@@ -146,6 +133,38 @@ if (SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE)
         target_link_libraries(sensorycloud PRIVATE crypt32)
     endif()  # Operating System Switch
 endif()  # SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE
+
+# --- Installation -----------------------------------------------------------
+
+# Setup the configuration files for the installation of the library.
+include(CMakePackageConfigHelpers)
+configure_file(cmake/sensorycloudConfig.cmake.in
+  sensorycloudConfig.cmake @ONLY)
+write_basic_package_version_file(${PROJECT_BINARY_DIR}/sensorycloudConfigVersion.cmake
+  VERSION ${CMAKE_CPP_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+configure_package_config_file(
+    "${PROJECT_SOURCE_DIR}/cmake/sensorycloudConfig.cmake.in"
+    "${PROJECT_BINARY_DIR}/sensorycloudConfig.cmake"
+    INSTALL_DESTINATION lib/cmake/mylib
+)
+
+# Setup the installation targets, exports, and files.
+install(TARGETS sensorycloud
+    EXPORT sensorycloudTargets
+    LIBRARY DESTINATION lib COMPONENT Runtime
+    ARCHIVE DESTINATION lib COMPONENT Development
+    RUNTIME DESTINATION bin COMPONENT Runtime
+    PUBLIC_HEADER DESTINATION include/sensorycloud COMPONENT Development
+    BUNDLE DESTINATION bin COMPONENT Runtime
+)
+# install(EXPORT sensorycloudTargets DESTINATION lib/cmake/sensorycloud)
+install(FILES
+    ${PROJECT_BINARY_DIR}/sensorycloudConfig.cmake
+    ${PROJECT_BINARY_DIR}/sensorycloudConfigVersion.cmake
+  DESTINATION lib/cmake/sensorycloud
+)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/sensorycloud DESTINATION include)
 
 # --- Test Cases -------------------------------------------------------------
 
@@ -380,7 +399,4 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT)
 
     add_executable(examples_management_async examples/management/management_async.cpp)
     target_link_libraries(examples_management_async PRIVATE sensorycloud)
-
-    add_executable(apitool examples/management/apitool.cpp)
-    target_link_libraries(apitool PRIVATE sensorycloud)
 endif()
