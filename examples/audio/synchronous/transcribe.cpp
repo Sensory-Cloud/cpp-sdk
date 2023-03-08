@@ -82,9 +82,6 @@ int main(int argc, const char** argv) {
         .help("An optional ID of a server-side custom vocabulary list to use.");
     parser.add_argument({ "-L", "--language" })
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
-    parser.add_argument({ "-cc", "--closedcaptioning" })
-        .action("store_true")
-        .help("Whether to render simplified closed captioning transcription outputs.");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("The number of audio samples per message (default 4096).")
     //     .default_value("4096");
@@ -126,7 +123,6 @@ int main(int argc, const char** argv) {
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
-    const auto CLOSEDCAPTIONING = args.get<bool>("closedcaptioning");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create a credential store for keeping OAuth credentials in.
@@ -249,7 +245,7 @@ int main(int argc, const char** argv) {
     // Create a thread to poll read requests in the background. Audio
     // transcription has a bursty response pattern, so a locked read-write loop
     // will not work with this service.
-    std::thread receipt_thread([&stream, &CLOSEDCAPTIONING, &VERBOSE](){
+    std::thread receipt_thread([&stream, &VERBOSE](){
         /// An aggregator for accumulating partial updates into a transcript.
         TranscriptAggregator aggregator;
         while (true) {
@@ -263,9 +259,6 @@ int main(int argc, const char** argv) {
                 // Relative energy of the processed audio as a value between 0 and 1.
                 // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
                 std::cout << "Audio Energy: " << response.audioenergy() << std::endl;
-                // The text of the current transcript as a sliding window on the last
-                // ~7 seconds of processed audio.
-                std::cout << "Sliding Transcript: " << response.transcript() << std::endl;
                 // The word list contains the directives to the TranscriptAggregator
                 // for accumulating the sliding window transcript over time.
                 for (const auto& word : response.wordlist().words()) {
@@ -299,10 +292,7 @@ int main(int argc, const char** argv) {
                 #else
                     std::system("clear");
                 #endif
-                if (CLOSEDCAPTIONING)
-                    std::cout << ">>>" << response.transcript() << std::endl;
-                else
-                    std::cout << aggregator.get_transcript() << std::endl;
+                std::cout << aggregator.get_transcript() << std::endl;
             }
         }
     });

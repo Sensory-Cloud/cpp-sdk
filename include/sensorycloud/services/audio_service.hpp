@@ -1152,7 +1152,7 @@ class AudioService {
     /// @param audio_config The audio configuration that provides information
     /// about the input audio streams. _Ownership of the dynamically allocated
     /// configuration is implicitly transferred to the stream_.
-    /// @param voice The style of voice to use for the synthesis
+    /// @param model_name The name of the synthesis model to use.
     /// @param phrase The text phrase to synthesize into speech.
     /// @returns A unidirectional stream that can be used to receive audio data
     /// from the server.
@@ -1163,15 +1163,15 @@ class AudioService {
     ///
     inline SynthesizeSpeechStream synthesize_speech(
         ::grpc::ClientContext* context,
-        ::sensory::api::v1::audio::AudioConfig* audio_config,
-        const std::string& voice,
+        const std::string& model_name,
+        const uint32_t& sample_rate,
         const std::string& phrase
     ) const {
         token_manager.setup_bidi_client_context(*context);
         // Create the synthesis configuration object.
         auto synthesis_config = new ::sensory::api::v1::audio::VoiceSynthesisConfig;
-        synthesis_config->set_voice(voice);
-        synthesis_config->set_allocated_audio(audio_config);
+        synthesis_config->set_modelname(model_name);
+        synthesis_config->set_sampleratehertz(sample_rate);
         // Create the synthesis request.
         ::sensory::api::v1::audio::SynthesizeSpeechRequest request;
         request.set_allocated_config(synthesis_config);
@@ -1199,7 +1199,7 @@ class AudioService {
     /// @param audio_config The audio configuration that provides information
     /// about the input audio streams. _Ownership of the dynamically allocated
     /// configuration is implicitly transferred to the stream_.
-    /// @param voice The style of voice to use for the synthesis
+    /// @param model_name The name of the synthesis model to use.
     /// @param phrase The text phrase to synthesize into speech.
     /// @param init_tag The tag to initialize the stream with. Use `nullptr` to
     /// use the pointer as the tag.
@@ -1218,8 +1218,8 @@ class AudioService {
     ///
     inline SynthesizeSpeechAsyncStream* synthesize_speech(
         ::grpc::CompletionQueue* queue,
-        ::sensory::api::v1::audio::AudioConfig* audio_config,
-        const std::string& voice,
+        const std::string& model_name,
+        const uint32_t& sample_rate,
         const std::string& phrase,
         void* init_tag = nullptr,
         void* finish_tag = nullptr
@@ -1232,8 +1232,8 @@ class AudioService {
         token_manager.setup_bidi_client_context(call->context);
         // Create the synthesis configuration object.
         auto synthesis_config = new ::sensory::api::v1::audio::VoiceSynthesisConfig;
-        synthesis_config->set_voice(voice);
-        synthesis_config->set_allocated_audio(audio_config);
+        synthesis_config->set_modelname(model_name);
+        synthesis_config->set_sampleratehertz(sample_rate);
         // Create the request with the pointer to the synthesis config.
         call->request.set_allocated_config(synthesis_config);
         // Start the asynchronous RPC with the call's context and queue. If the
@@ -1263,7 +1263,7 @@ class AudioService {
     /// @param audio_config The audio configuration that provides information
     /// about the input audio streams. _Ownership of the dynamically allocated
     /// configuration is implicitly transferred to the stream_.
-    /// @param voice The style of voice to use for the synthesis
+    /// @param model_name The name of the synthesis model to use.
     /// @param phrase The text phrase to synthesize into speech.
     ///
     /// @details
@@ -1272,8 +1272,8 @@ class AudioService {
     ///
     template<typename Reactor>
     inline void synthesize_speech(Reactor* reactor,
-        ::sensory::api::v1::audio::AudioConfig* audio_config,
-        const std::string& voice,
+        const std::string& model_name,
+        const uint32_t& sample_rate,
         const std::string& phrase
     ) const {
         // Setup the context of the reactor for a unidirectional stream. This
@@ -1281,8 +1281,8 @@ class AudioService {
         token_manager.setup_bidi_client_context(reactor->context);
         // Create the synthesis configuration object.
         auto synthesis_config = new ::sensory::api::v1::audio::VoiceSynthesisConfig;
-        synthesis_config->set_voice(voice);
-        synthesis_config->set_allocated_audio(audio_config);
+        synthesis_config->set_modelname(model_name);
+        synthesis_config->set_sampleratehertz(sample_rate);
         reactor->request.set_allocated_config(synthesis_config);
         // Create the stream and write the initial configuration request.
         synthesis_stub->async()->SynthesizeSpeech(&reactor->context, reactor);

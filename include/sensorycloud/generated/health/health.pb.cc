@@ -58,17 +58,17 @@ const char descriptor_table_protodef_health_2fhealth_2eproto[] PROTOBUF_SECTION_
   "h\032\023common/common.proto\"\017\n\rHealthRequest2"
   "k\n\rHealthService\022Z\n\tGetHealth\022!.sensory."
   "api.health.HealthRequest\032(.sensory.api.c"
-  "ommon.ServerHealthResponse\"\000Bo\n\032ai.senso"
+  "ommon.ServerHealthResponse\"\000Bv\n\032ai.senso"
   "rycloud.api.healthB\025SensoryApiHealthProt"
   "oP\001Z8gitlab.com/sensory-cloud/server/tit"
-  "an.git/pkg/api/healthb\006proto3"
+  "an.git/pkg/api/health\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_health_2fhealth_2eproto_deps[1] = {
   &::descriptor_table_common_2fcommon_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_health_2fhealth_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_health_2fhealth_2eproto = {
-  false, false, 309, descriptor_table_protodef_health_2fhealth_2eproto, "health/health.proto", 
+  false, false, 316, descriptor_table_protodef_health_2fhealth_2eproto, "health/health.proto", 
   &descriptor_table_health_2fhealth_2eproto_once, descriptor_table_health_2fhealth_2eproto_deps, 1, 1,
   schemas, file_default_instances, TableStruct_health_2fhealth_2eproto::offsets,
   file_level_metadata_health_2fhealth_2eproto, file_level_enum_descriptors_health_2fhealth_2eproto, file_level_service_descriptors_health_2fhealth_2eproto,

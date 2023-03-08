@@ -1,4 +1,4 @@
-// Test cases for C++11 <string> header extensions.
+// Test cases for sensorycloud/io/path.hpp
 //
 // Copyright (c) 2022 Sensory, Inc.
 //
@@ -28,6 +28,11 @@
 #include "sensorycloud/io/path.hpp"
 
 using sensory::io::path::normalize_uri;
+using sensory::io::path::is_file;
+
+// ---------------------------------------------------------------------------
+// MARK: normalize_uri
+// ---------------------------------------------------------------------------
 
 SCENARIO("URIs need to be normalized to a host(:port)? format") {
     GIVEN("an empty host-name") {
@@ -79,6 +84,35 @@ SCENARIO("URIs need to be normalized to a host(:port)? format") {
         WHEN("the string is normalized") {
             THEN("the host-name is returned") {
                 REQUIRE_THAT(normalize_uri("://foo"), Catch::Equals("foo"));
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// MARK: is_file
+// ---------------------------------------------------------------------------
+
+SCENARIO("Paths need to be checked to determine if they are files or not") {
+    GIVEN("a path to a file") {
+        WHEN("is_file is called") {
+            THEN("true is returned") {
+                REQUIRE(is_file("/bin/ls"));
+            }
+        }
+    }
+    GIVEN("a path to a directory") {
+        WHEN("is_file is called") {
+            THEN("false is returned") {
+                REQUIRE_FALSE(is_file("/usr"));
+            }
+        }
+    }
+    GIVEN("an invalid path") {
+        WHEN("is_file is called") {
+            THEN("false is returned") {
+                REQUIRE_FALSE(is_file("/foo/bar/zam"));
+
             }
         }
     }

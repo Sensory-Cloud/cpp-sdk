@@ -118,7 +118,7 @@ SCENARIO("a user attempts to create a new SensoryCloud instance with a broken IN
         InMemoryCredentialStore keychain;
         WHEN("a new instance of SensoryCloud is instantiated") {
             THEN("a runtime error is thrown") {
-                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(path, keychain), Catch::Contains("Failed to open INI file at path \"/foo/bar/baz\""));
+                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(path, keychain), Catch::Contains("Path does not refer to an INI file \"/foo/bar/baz\""));
             }
         }
     }

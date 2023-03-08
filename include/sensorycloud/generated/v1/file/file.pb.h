@@ -108,7 +108,7 @@ namespace file {
 
 enum FileCategory : int {
   TSSV_MODEL = 0,
-  FENRIR_MODEL = 1,
+  ATLAS_MODEL = 1,
   TNL_MODEL = 2,
   UNKNOWN = 100,
   FileCategory_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),

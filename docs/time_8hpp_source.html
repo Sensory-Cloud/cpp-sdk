@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -108,41 +108,23 @@ $(function() {
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#define SENSORYCLOUD_UTIL_TIME_HPP_</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;chrono&gt;</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;ctime&gt;</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">namespace </span>util {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="namespacesensory_1_1util.html#add94fcf7145769079111df16b32cef5e">   45</a></span><span class="keyword">inline</span> std::string <a class="code hl_function" href="namespacesensory_1_1util.html#add94fcf7145769079111df16b32cef5e">timepoint_to_timestamp</a>(<span class="keyword">const</span> std::chrono::system_clock::time_point&amp; time_point) {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="comment">// Convert the time point to a time_t object</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">const</span> <span class="keyword">auto</span> tt = std::chrono::system_clock::to_time_t(time_point);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">// Format the time point into a character buffer (as a string).</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    std::string output(<span class="stringliteral">&quot;0000-00-00T00:00:00Z&quot;</span>);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">// use a local `std::tm` buffer and the accompanying `gmtime_r` function</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// instead of the static memory used by `gmtime`. This is for thread safety.</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    std::tm tm;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    strftime(&amp;output[0], output.length(), <span class="stringliteral">&quot;%Y-%m-%dT%H:%M:%SZ&quot;</span>, gmtime_r(&amp;tt, &amp;tm));</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">return</span> std::move(output);</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>}</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="namespacesensory_1_1util.html#a716e2abacfa1d9724fa309315b086b0b">   62</a></span><span class="keyword">inline</span> std::chrono::system_clock::time_point <a class="code hl_function" href="namespacesensory_1_1util.html#a716e2abacfa1d9724fa309315b086b0b">timestamp_to_timepoint</a>(<span class="keyword">const</span> std::string&amp; timestamp) {</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="comment">// Stream the contents of the timestamp string into the tm structure</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    std::tm tm = {};</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    strptime(timestamp.c_str(), <span class="stringliteral">&quot;%Y-%m-%dT%H:%M:%SZ&quot;</span>, &amp;tm);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="comment">// Convert tm -&gt; time_t in GMT format -&gt; time_point</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">return</span> std::chrono::system_clock::from_time_t(timegm(&amp;tm));</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>}</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>}  <span class="comment">// namespace util</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>}  <span class="comment">// namespace sensory</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_TIME_HPP_</span></div>
-<div class="ttc" id="anamespacesensory_1_1util_html_a716e2abacfa1d9724fa309315b086b0b"><div class="ttname"><a href="namespacesensory_1_1util.html#a716e2abacfa1d9724fa309315b086b0b">sensory::util::timestamp_to_timepoint</a></div><div class="ttdeci">std::chrono::system_clock::time_point timestamp_to_timepoint(const std::string &amp;timestamp)</div><div class="ttdoc">Convert a UTC ISO8601 timestamp to a time point.</div><div class="ttdef"><b>Definition:</b> time.hpp:62</div></div>
-<div class="ttc" id="anamespacesensory_1_1util_html_add94fcf7145769079111df16b32cef5e"><div class="ttname"><a href="namespacesensory_1_1util.html#add94fcf7145769079111df16b32cef5e">sensory::util::timepoint_to_timestamp</a></div><div class="ttdeci">std::string timepoint_to_timestamp(const std::chrono::system_clock::time_point &amp;time_point)</div><div class="ttdoc">Convert a time point to a UTC ISO8601 timestamp.</div><div class="ttdef"><b>Definition:</b> time.hpp:45</div></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">namespace </span>util {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>std::string <a class="code hl_function" href="namespacesensory_1_1util.html#add94fcf7145769079111df16b32cef5e">timepoint_to_timestamp</a>(<span class="keyword">const</span> std::chrono::system_clock::time_point&amp; time_point);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>std::chrono::system_clock::time_point <a class="code hl_function" href="namespacesensory_1_1util.html#a716e2abacfa1d9724fa309315b086b0b">timestamp_to_timepoint</a>(<span class="keyword">const</span> std::string&amp; timestamp);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}  <span class="comment">// namespace util</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}  <span class="comment">// namespace sensory</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_TIME_HPP_</span></div>
+<div class="ttc" id="anamespacesensory_1_1util_html_a716e2abacfa1d9724fa309315b086b0b"><div class="ttname"><a href="namespacesensory_1_1util.html#a716e2abacfa1d9724fa309315b086b0b">sensory::util::timestamp_to_timepoint</a></div><div class="ttdeci">std::chrono::system_clock::time_point timestamp_to_timepoint(const std::string &amp;timestamp)</div><div class="ttdoc">Convert a UTC ISO8601 timestamp to a time point.</div><div class="ttdef"><b>Definition:</b> time.cpp:46</div></div>
+<div class="ttc" id="anamespacesensory_1_1util_html_add94fcf7145769079111df16b32cef5e"><div class="ttname"><a href="namespacesensory_1_1util.html#add94fcf7145769079111df16b32cef5e">sensory::util::timepoint_to_timestamp</a></div><div class="ttdeci">std::string timepoint_to_timestamp(const std::chrono::system_clock::time_point &amp;time_point)</div><div class="ttdoc">Convert a time point to a UTC ISO8601 timestamp.</div><div class="ttdef"><b>Definition:</b> time.cpp:34</div></div>
 <div class="ttc" id="anamespacesensory_html"><div class="ttname"><a href="namespacesensory.html">sensory</a></div><div class="ttdoc">The SensoryCloud SDK.</div><div class="ttdef"><b>Definition:</b> async_reader_writer_call.hpp:41</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->

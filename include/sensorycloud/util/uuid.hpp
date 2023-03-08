@@ -26,8 +26,7 @@
 #ifndef SENSORYCLOUD_UTIL_UUID_HPP_
 #define SENSORYCLOUD_UTIL_UUID_HPP_
 
-#include <random>
-#include <chrono>
+#include <string>
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -68,23 +67,7 @@ namespace util {
 ///               1    2
 /// ```
 ///
-std::string uuid_v4() {
-    // Create a random number generator conditioned on the system RNG
-    std::mt19937_64 generator(std::random_device("/dev/random")());
-    // Create the UUID from randomly generated digits
-    std::string uuid(36, '-');
-    for (unsigned i = 0; i < 36; i++) {
-        if (i == 8 || i == 13 || i == 18 || i == 23)  // hyphenated position
-            continue;
-        else if (i == 14)  // character 14 is always A
-            uuid[i] = '4';
-        else if (i == 19)  // character 19 is always in {8, 9, A, B}
-            uuid[i] = "89AB"[generator() & 0x3];
-        else  // arbitrary characters have no constraints
-            uuid[i] = "0123456789ABCDEF"[generator() & 0xF];
-    }
-    return uuid;
-}
+std::string uuid_v4();
 
 }  // namespace util
 

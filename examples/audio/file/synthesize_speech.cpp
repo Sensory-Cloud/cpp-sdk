@@ -110,16 +110,9 @@ int main(int argc, const char** argv) {
         return 0;
     }
 
-    // Create an audio config that describes the format of the audio stream.
-    auto audio_config = new sensory::api::v1::audio::AudioConfig;
-    audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
-    audio_config->set_sampleratehertz(SAMPLE_RATE);
-    audio_config->set_audiochannelcount(1);
-    audio_config->set_languagecode(LANGUAGE);
-
     // Initialize the stream with the cloud.
     grpc::ClientContext context;
-    auto stream = cloud.audio.synthesize_speech(&context, audio_config, VOICE, PHRASE);
+    auto stream = cloud.audio.synthesize_speech(&context, VOICE, SAMPLE_RATE, PHRASE);
 
     // Open a binary file-stream to write the audio contents to.
     std::ofstream file(OUTPUT, std::ios::out | std::ios::binary);

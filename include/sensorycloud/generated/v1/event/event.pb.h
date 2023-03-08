@@ -50,7 +50,7 @@ struct TableStruct_v1_2fevent_2fevent_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[8]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,6 +61,9 @@ namespace sensory {
 namespace api {
 namespace v1 {
 namespace event {
+class GlobalEventSummaryRequest;
+struct GlobalEventSummaryRequestDefaultTypeInternal;
+extern GlobalEventSummaryRequestDefaultTypeInternal _GlobalEventSummaryRequest_default_instance_;
 class PublishUsageEventsRequest;
 struct PublishUsageEventsRequestDefaultTypeInternal;
 extern PublishUsageEventsRequestDefaultTypeInternal _PublishUsageEventsRequest_default_instance_;
@@ -90,6 +93,7 @@ extern UsageEventSummaryDefaultTypeInternal _UsageEventSummary_default_instance_
 }  // namespace api
 }  // namespace sensory
 PROTOBUF_NAMESPACE_OPEN
+template<> ::sensory::api::v1::event::GlobalEventSummaryRequest* Arena::CreateMaybeMessage<::sensory::api::v1::event::GlobalEventSummaryRequest>(Arena*);
 template<> ::sensory::api::v1::event::PublishUsageEventsRequest* Arena::CreateMaybeMessage<::sensory::api::v1::event::PublishUsageEventsRequest>(Arena*);
 template<> ::sensory::api::v1::event::PublishUsageEventsResponse* Arena::CreateMaybeMessage<::sensory::api::v1::event::PublishUsageEventsResponse>(Arena*);
 template<> ::sensory::api::v1::event::UsageEvent* Arena::CreateMaybeMessage<::sensory::api::v1::event::UsageEvent>(Arena*);
@@ -1308,6 +1312,224 @@ class UsageEventListResponse final :
 };
 // -------------------------------------------------------------------
 
+class GlobalEventSummaryRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.event.GlobalEventSummaryRequest) */ {
+ public:
+  inline GlobalEventSummaryRequest() : GlobalEventSummaryRequest(nullptr) {}
+  ~GlobalEventSummaryRequest() override;
+  explicit constexpr GlobalEventSummaryRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GlobalEventSummaryRequest(const GlobalEventSummaryRequest& from);
+  GlobalEventSummaryRequest(GlobalEventSummaryRequest&& from) noexcept
+    : GlobalEventSummaryRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GlobalEventSummaryRequest& operator=(const GlobalEventSummaryRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GlobalEventSummaryRequest& operator=(GlobalEventSummaryRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GlobalEventSummaryRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GlobalEventSummaryRequest* internal_default_instance() {
+    return reinterpret_cast<const GlobalEventSummaryRequest*>(
+               &_GlobalEventSummaryRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(GlobalEventSummaryRequest& a, GlobalEventSummaryRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GlobalEventSummaryRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GlobalEventSummaryRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GlobalEventSummaryRequest* New() const final {
+    return new GlobalEventSummaryRequest();
+  }
+
+  GlobalEventSummaryRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GlobalEventSummaryRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GlobalEventSummaryRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GlobalEventSummaryRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GlobalEventSummaryRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensory.api.v1.event.GlobalEventSummaryRequest";
+  }
+  protected:
+  explicit GlobalEventSummaryRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTenantsFieldNumber = 1,
+    kBillableFunctionsFieldNumber = 5,
+    kAfterFieldNumber = 2,
+    kBeforeFieldNumber = 3,
+  };
+  // repeated string tenants = 1;
+  int tenants_size() const;
+  private:
+  int _internal_tenants_size() const;
+  public:
+  void clear_tenants();
+  const std::string& tenants(int index) const;
+  std::string* mutable_tenants(int index);
+  void set_tenants(int index, const std::string& value);
+  void set_tenants(int index, std::string&& value);
+  void set_tenants(int index, const char* value);
+  void set_tenants(int index, const char* value, size_t size);
+  std::string* add_tenants();
+  void add_tenants(const std::string& value);
+  void add_tenants(std::string&& value);
+  void add_tenants(const char* value);
+  void add_tenants(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& tenants() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_tenants();
+  private:
+  const std::string& _internal_tenants(int index) const;
+  std::string* _internal_add_tenants();
+  public:
+
+  // repeated .sensory.api.common.ModelType billableFunctions = 5;
+  int billablefunctions_size() const;
+  private:
+  int _internal_billablefunctions_size() const;
+  public:
+  void clear_billablefunctions();
+  private:
+  ::sensory::api::common::ModelType _internal_billablefunctions(int index) const;
+  void _internal_add_billablefunctions(::sensory::api::common::ModelType value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* _internal_mutable_billablefunctions();
+  public:
+  ::sensory::api::common::ModelType billablefunctions(int index) const;
+  void set_billablefunctions(int index, ::sensory::api::common::ModelType value);
+  void add_billablefunctions(::sensory::api::common::ModelType value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>& billablefunctions() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>* mutable_billablefunctions();
+
+  // .google.protobuf.Timestamp after = 2;
+  bool has_after() const;
+  private:
+  bool _internal_has_after() const;
+  public:
+  void clear_after();
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& after() const;
+  PROTOBUF_MUST_USE_RESULT ::PROTOBUF_NAMESPACE_ID::Timestamp* release_after();
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_after();
+  void set_allocated_after(::PROTOBUF_NAMESPACE_ID::Timestamp* after);
+  private:
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_after() const;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_after();
+  public:
+  void unsafe_arena_set_allocated_after(
+      ::PROTOBUF_NAMESPACE_ID::Timestamp* after);
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_after();
+
+  // .google.protobuf.Timestamp before = 3;
+  bool has_before() const;
+  private:
+  bool _internal_has_before() const;
+  public:
+  void clear_before();
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& before() const;
+  PROTOBUF_MUST_USE_RESULT ::PROTOBUF_NAMESPACE_ID::Timestamp* release_before();
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_before();
+  void set_allocated_before(::PROTOBUF_NAMESPACE_ID::Timestamp* before);
+  private:
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_before() const;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_before();
+  public:
+  void unsafe_arena_set_allocated_before(
+      ::PROTOBUF_NAMESPACE_ID::Timestamp* before);
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_before();
+
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.event.GlobalEventSummaryRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> tenants_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField<int> billablefunctions_;
+  mutable std::atomic<int> _billablefunctions_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* after_;
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* before_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_v1_2fevent_2fevent_2eproto;
+};
+// -------------------------------------------------------------------
+
 class UsageEventSummary final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.event.UsageEventSummary) */ {
  public:
@@ -1356,7 +1578,7 @@ class UsageEventSummary final :
                &_UsageEventSummary_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(UsageEventSummary& a, UsageEventSummary& b) {
     a.Swap(&b);
@@ -1508,7 +1730,7 @@ class UsageEventModelSummary final :
                &_UsageEventModelSummary_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(UsageEventModelSummary& a, UsageEventModelSummary& b) {
     a.Swap(&b);
@@ -1580,6 +1802,7 @@ class UsageEventModelSummary final :
 
   enum : int {
     kUnitsFieldNumber = 2,
+    kTenantIdFieldNumber = 6,
     kValueFieldNumber = 3,
     kCountFieldNumber = 4,
     kCreditsFieldNumber = 5,
@@ -1597,6 +1820,20 @@ class UsageEventModelSummary final :
   const std::string& _internal_units() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_units(const std::string& value);
   std::string* _internal_mutable_units();
+  public:
+
+  // string tenantId = 6;
+  void clear_tenantid();
+  const std::string& tenantid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_tenantid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_tenantid();
+  PROTOBUF_MUST_USE_RESULT std::string* release_tenantid();
+  void set_allocated_tenantid(std::string* tenantid);
+  private:
+  const std::string& _internal_tenantid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_tenantid(const std::string& value);
+  std::string* _internal_mutable_tenantid();
   public:
 
   // int64 value = 3;
@@ -1643,6 +1880,7 @@ class UsageEventModelSummary final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr units_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tenantid_;
   ::PROTOBUF_NAMESPACE_ID::int64 value_;
   ::PROTOBUF_NAMESPACE_ID::int64 count_;
   double credits_;
@@ -1699,7 +1937,7 @@ class PublishUsageEventsResponse final :
                &_PublishUsageEventsResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(PublishUsageEventsResponse& a, PublishUsageEventsResponse& b) {
     a.Swap(&b);
@@ -3329,6 +3567,300 @@ inline void UsageEventListResponse::set_allocated_pagination(::sensory::api::com
 
 // -------------------------------------------------------------------
 
+// GlobalEventSummaryRequest
+
+// repeated string tenants = 1;
+inline int GlobalEventSummaryRequest::_internal_tenants_size() const {
+  return tenants_.size();
+}
+inline int GlobalEventSummaryRequest::tenants_size() const {
+  return _internal_tenants_size();
+}
+inline void GlobalEventSummaryRequest::clear_tenants() {
+  tenants_.Clear();
+}
+inline std::string* GlobalEventSummaryRequest::add_tenants() {
+  std::string* _s = _internal_add_tenants();
+  // @@protoc_insertion_point(field_add_mutable:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+  return _s;
+}
+inline const std::string& GlobalEventSummaryRequest::_internal_tenants(int index) const {
+  return tenants_.Get(index);
+}
+inline const std::string& GlobalEventSummaryRequest::tenants(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+  return _internal_tenants(index);
+}
+inline std::string* GlobalEventSummaryRequest::mutable_tenants(int index) {
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+  return tenants_.Mutable(index);
+}
+inline void GlobalEventSummaryRequest::set_tenants(int index, const std::string& value) {
+  tenants_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline void GlobalEventSummaryRequest::set_tenants(int index, std::string&& value) {
+  tenants_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline void GlobalEventSummaryRequest::set_tenants(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  tenants_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline void GlobalEventSummaryRequest::set_tenants(int index, const char* value, size_t size) {
+  tenants_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline std::string* GlobalEventSummaryRequest::_internal_add_tenants() {
+  return tenants_.Add();
+}
+inline void GlobalEventSummaryRequest::add_tenants(const std::string& value) {
+  tenants_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline void GlobalEventSummaryRequest::add_tenants(std::string&& value) {
+  tenants_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline void GlobalEventSummaryRequest::add_tenants(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  tenants_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline void GlobalEventSummaryRequest::add_tenants(const char* value, size_t size) {
+  tenants_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+GlobalEventSummaryRequest::tenants() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+  return tenants_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+GlobalEventSummaryRequest::mutable_tenants() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.event.GlobalEventSummaryRequest.tenants)
+  return &tenants_;
+}
+
+// .google.protobuf.Timestamp after = 2;
+inline bool GlobalEventSummaryRequest::_internal_has_after() const {
+  return this != internal_default_instance() && after_ != nullptr;
+}
+inline bool GlobalEventSummaryRequest::has_after() const {
+  return _internal_has_after();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& GlobalEventSummaryRequest::_internal_after() const {
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = after_;
+  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
+      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& GlobalEventSummaryRequest::after() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.GlobalEventSummaryRequest.after)
+  return _internal_after();
+}
+inline void GlobalEventSummaryRequest::unsafe_arena_set_allocated_after(
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* after) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(after_);
+  }
+  after_ = after;
+  if (after) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.event.GlobalEventSummaryRequest.after)
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::release_after() {
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = after_;
+  after_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::unsafe_arena_release_after() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.event.GlobalEventSummaryRequest.after)
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = after_;
+  after_ = nullptr;
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::_internal_mutable_after() {
+  
+  if (after_ == nullptr) {
+    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
+    after_ = p;
+  }
+  return after_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::mutable_after() {
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_after();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.event.GlobalEventSummaryRequest.after)
+  return _msg;
+}
+inline void GlobalEventSummaryRequest::set_allocated_after(::PROTOBUF_NAMESPACE_ID::Timestamp* after) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(after_);
+  }
+  if (after) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(after));
+    if (message_arena != submessage_arena) {
+      after = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, after, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  after_ = after;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.event.GlobalEventSummaryRequest.after)
+}
+
+// .google.protobuf.Timestamp before = 3;
+inline bool GlobalEventSummaryRequest::_internal_has_before() const {
+  return this != internal_default_instance() && before_ != nullptr;
+}
+inline bool GlobalEventSummaryRequest::has_before() const {
+  return _internal_has_before();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& GlobalEventSummaryRequest::_internal_before() const {
+  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = before_;
+  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
+      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
+}
+inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& GlobalEventSummaryRequest::before() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.GlobalEventSummaryRequest.before)
+  return _internal_before();
+}
+inline void GlobalEventSummaryRequest::unsafe_arena_set_allocated_before(
+    ::PROTOBUF_NAMESPACE_ID::Timestamp* before) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(before_);
+  }
+  before_ = before;
+  if (before) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.event.GlobalEventSummaryRequest.before)
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::release_before() {
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = before_;
+  before_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::unsafe_arena_release_before() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.event.GlobalEventSummaryRequest.before)
+  
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = before_;
+  before_ = nullptr;
+  return temp;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::_internal_mutable_before() {
+  
+  if (before_ == nullptr) {
+    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
+    before_ = p;
+  }
+  return before_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::Timestamp* GlobalEventSummaryRequest::mutable_before() {
+  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_before();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.event.GlobalEventSummaryRequest.before)
+  return _msg;
+}
+inline void GlobalEventSummaryRequest::set_allocated_before(::PROTOBUF_NAMESPACE_ID::Timestamp* before) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(before_);
+  }
+  if (before) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(before));
+    if (message_arena != submessage_arena) {
+      before = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, before, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  before_ = before;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.event.GlobalEventSummaryRequest.before)
+}
+
+// repeated .sensory.api.common.ModelType billableFunctions = 5;
+inline int GlobalEventSummaryRequest::_internal_billablefunctions_size() const {
+  return billablefunctions_.size();
+}
+inline int GlobalEventSummaryRequest::billablefunctions_size() const {
+  return _internal_billablefunctions_size();
+}
+inline void GlobalEventSummaryRequest::clear_billablefunctions() {
+  billablefunctions_.Clear();
+}
+inline ::sensory::api::common::ModelType GlobalEventSummaryRequest::_internal_billablefunctions(int index) const {
+  return static_cast< ::sensory::api::common::ModelType >(billablefunctions_.Get(index));
+}
+inline ::sensory::api::common::ModelType GlobalEventSummaryRequest::billablefunctions(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.GlobalEventSummaryRequest.billableFunctions)
+  return _internal_billablefunctions(index);
+}
+inline void GlobalEventSummaryRequest::set_billablefunctions(int index, ::sensory::api::common::ModelType value) {
+  billablefunctions_.Set(index, value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.GlobalEventSummaryRequest.billableFunctions)
+}
+inline void GlobalEventSummaryRequest::_internal_add_billablefunctions(::sensory::api::common::ModelType value) {
+  billablefunctions_.Add(value);
+}
+inline void GlobalEventSummaryRequest::add_billablefunctions(::sensory::api::common::ModelType value) {
+  _internal_add_billablefunctions(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.event.GlobalEventSummaryRequest.billableFunctions)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>&
+GlobalEventSummaryRequest::billablefunctions() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.event.GlobalEventSummaryRequest.billableFunctions)
+  return billablefunctions_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+GlobalEventSummaryRequest::_internal_mutable_billablefunctions() {
+  return &billablefunctions_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField<int>*
+GlobalEventSummaryRequest::mutable_billablefunctions() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.event.GlobalEventSummaryRequest.billableFunctions)
+  return _internal_mutable_billablefunctions();
+}
+
+// -------------------------------------------------------------------
+
 // UsageEventSummary
 
 // repeated .sensory.api.v1.event.UsageEventModelSummary summaries = 1;
@@ -3501,6 +4033,52 @@ inline void UsageEventModelSummary::set_credits(double value) {
   // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEventModelSummary.credits)
 }
 
+// string tenantId = 6;
+inline void UsageEventModelSummary::clear_tenantid() {
+  tenantid_.ClearToEmpty();
+}
+inline const std::string& UsageEventModelSummary::tenantid() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEventModelSummary.tenantId)
+  return _internal_tenantid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void UsageEventModelSummary::set_tenantid(ArgT0&& arg0, ArgT... args) {
+ 
+ tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEventModelSummary.tenantId)
+}
+inline std::string* UsageEventModelSummary::mutable_tenantid() {
+  std::string* _s = _internal_mutable_tenantid();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.event.UsageEventModelSummary.tenantId)
+  return _s;
+}
+inline const std::string& UsageEventModelSummary::_internal_tenantid() const {
+  return tenantid_.Get();
+}
+inline void UsageEventModelSummary::_internal_set_tenantid(const std::string& value) {
+  
+  tenantid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* UsageEventModelSummary::_internal_mutable_tenantid() {
+  
+  return tenantid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* UsageEventModelSummary::release_tenantid() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.event.UsageEventModelSummary.tenantId)
+  return tenantid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void UsageEventModelSummary::set_allocated_tenantid(std::string* tenantid) {
+  if (tenantid != nullptr) {
+    
+  } else {
+    
+  }
+  tenantid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), tenantid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.event.UsageEventModelSummary.tenantId)
+}
+
 // -------------------------------------------------------------------
 
 // PublishUsageEventsResponse
@@ -3508,6 +4086,8 @@ inline void UsageEventModelSummary::set_credits(double value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

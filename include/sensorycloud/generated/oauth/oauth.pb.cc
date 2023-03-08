@@ -172,29 +172,30 @@ const char descriptor_table_protodef_oauth_2foauth_2eproto[] PROTOBUF_SECTION_VA
   "\n\021oauth/oauth.proto\022\021sensory.api.oauth\032\027"
   "validate/validate.proto\032\023common/common.p"
   "roto\":\n\014TokenRequest\022\032\n\010clientId\030\001 \001(\tB\010"
-  "\372B\005r\003\260\001\001\022\016\n\006secret\030\002 \001(\t\"\310\001\n\020SignTokenRe"
+  "\372B\005r\003\260\001\001\022\016\n\006secret\030\002 \001(\t\"\337\001\n\020SignTokenRe"
   "quest\022\032\n\007subject\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022G\n\005sco"
   "pe\030\002 \001(\0162..sensory.api.oauth.SignTokenRe"
-  "quest.TokenScopeB\010\372B\005\202\001\002\020\001\"O\n\nTokenScope"
+  "quest.TokenScopeB\010\372B\005\202\001\002\020\001\"f\n\nTokenScope"
   "\022\010\n\004USER\020\000\022\017\n\013SUPER_ADMIN\020\001\022\021\n\rBILLING_A"
-  "DMIN\020\002\022\023\n\017READ_ONLY_ADMIN\020\003\"\017\n\rWhoAmIReq"
-  "uest\"4\n\016WhoAmIResponse\022\020\n\010clientId\030\001 \001(\t"
-  "\022\020\n\010tenantId\030\002 \001(\t\"+\n\020PublicKeyRequest\022\027"
-  "\n\005keyId\030\001 \001(\tB\010\372B\005r\003\260\001\001\"T\n\021PublicKeyResp"
-  "onse\022\021\n\tpublicKey\030\001 \001(\014\022,\n\007keyType\030\002 \001(\016"
-  "2\033.sensory.api.common.KeyType2\350\002\n\014OauthS"
-  "ervice\022P\n\010GetToken\022\037.sensory.api.oauth.T"
-  "okenRequest\032!.sensory.api.common.TokenRe"
-  "sponse\"\000\022U\n\tSignToken\022#.sensory.api.oaut"
-  "h.SignTokenRequest\032!.sensory.api.common."
-  "TokenResponse\"\000\022R\n\tGetWhoAmI\022 .sensory.a"
-  "pi.oauth.WhoAmIRequest\032!.sensory.api.oau"
-  "th.WhoAmIResponse\"\000\022[\n\014GetPublicKey\022#.se"
-  "nsory.api.oauth.PublicKeyRequest\032$.senso"
-  "ry.api.oauth.PublicKeyResponse\"\000Bl\n\031ai.s"
-  "ensorycloud.api.oauthB\024SensoryApiOauthPr"
-  "otoP\001Z7gitlab.com/sensory-cloud/server/t"
-  "itan.git/pkg/api/oauthb\006proto3"
+  "DMIN\020\002\022\023\n\017READ_ONLY_ADMIN\020\003\022\025\n\021EMAIL_SEL"
+  "F_VERIFY\020\004\"\017\n\rWhoAmIRequest\"4\n\016WhoAmIRes"
+  "ponse\022\020\n\010clientId\030\001 \001(\t\022\020\n\010tenantId\030\002 \001("
+  "\t\"+\n\020PublicKeyRequest\022\027\n\005keyId\030\001 \001(\tB\010\372B"
+  "\005r\003\260\001\001\"T\n\021PublicKeyResponse\022\021\n\tpublicKey"
+  "\030\001 \001(\014\022,\n\007keyType\030\002 \001(\0162\033.sensory.api.co"
+  "mmon.KeyType2\350\002\n\014OauthService\022P\n\010GetToke"
+  "n\022\037.sensory.api.oauth.TokenRequest\032!.sen"
+  "sory.api.common.TokenResponse\"\000\022U\n\tSignT"
+  "oken\022#.sensory.api.oauth.SignTokenReques"
+  "t\032!.sensory.api.common.TokenResponse\"\000\022R"
+  "\n\tGetWhoAmI\022 .sensory.api.oauth.WhoAmIRe"
+  "quest\032!.sensory.api.oauth.WhoAmIResponse"
+  "\"\000\022[\n\014GetPublicKey\022#.sensory.api.oauth.P"
+  "ublicKeyRequest\032$.sensory.api.oauth.Publ"
+  "icKeyResponse\"\000Bs\n\031ai.sensorycloud.api.o"
+  "authB\024SensoryApiOauthProtoP\001Z7gitlab.com"
+  "/sensory-cloud/server/titan.git/pkg/api/"
+  "oauth\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_oauth_2foauth_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -202,7 +203,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_oauth_2foauth_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_oauth_2foauth_2eproto = {
-  false, false, 1030, descriptor_table_protodef_oauth_2foauth_2eproto, "oauth/oauth.proto", 
+  false, false, 1060, descriptor_table_protodef_oauth_2foauth_2eproto, "oauth/oauth.proto", 
   &descriptor_table_oauth_2foauth_2eproto_once, descriptor_table_oauth_2foauth_2eproto_deps, 2, 6,
   schemas, file_default_instances, TableStruct_oauth_2foauth_2eproto::offsets,
   file_level_metadata_oauth_2foauth_2eproto, file_level_enum_descriptors_oauth_2foauth_2eproto, file_level_service_descriptors_oauth_2foauth_2eproto,
@@ -226,6 +227,7 @@ bool SignTokenRequest_TokenScope_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -237,6 +239,7 @@ constexpr SignTokenRequest_TokenScope SignTokenRequest::USER;
 constexpr SignTokenRequest_TokenScope SignTokenRequest::SUPER_ADMIN;
 constexpr SignTokenRequest_TokenScope SignTokenRequest::BILLING_ADMIN;
 constexpr SignTokenRequest_TokenScope SignTokenRequest::READ_ONLY_ADMIN;
+constexpr SignTokenRequest_TokenScope SignTokenRequest::EMAIL_SELF_VERIFY;
 constexpr SignTokenRequest_TokenScope SignTokenRequest::TokenScope_MIN;
 constexpr SignTokenRequest_TokenScope SignTokenRequest::TokenScope_MAX;
 constexpr int SignTokenRequest::TokenScope_ARRAYSIZE;

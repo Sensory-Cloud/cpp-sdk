@@ -17,6 +17,7 @@ https://github.com/benhoyt/inih
 #define SENSORYCLOUD_IO_INI_HPP_
 
 #ifdef __cplusplus
+#include "sensorycloud/io/path.hpp"
 extern "C" {
 #endif
 
@@ -278,6 +279,8 @@ inline void ini_parse_file(FILE* file, ini_handler handler, void* user) {
 
 /* See documentation in header file. */
 inline void ini_parse(const char* filename, ini_handler handler, void* user) {
+    if (!sensory::io::path::is_file(filename))
+        throw std::runtime_error("Path does not refer to an INI file \"" + std::string(filename) + "\"");
     FILE* file;
     file = fopen(filename, "r");
     if (!file)

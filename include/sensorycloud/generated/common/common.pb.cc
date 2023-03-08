@@ -494,10 +494,10 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "eEventType\022\022\n\016AUTHENTICATION\020\000\022\017\n\013RECOGN"
   "ITION\020\001\022\016\n\nENROLLMENT\020\002\022\r\n\tSYNTHESIS\020\003\022\021"
   "\n\rTRANSCRIPTION\020\004*\037\n\nServerType\022\t\n\005TITAN"
-  "\020\000\022\006\n\002IO\020\001Bo\n\032ai.sensorycloud.api.common"
+  "\020\000\022\006\n\002IO\020\001Bv\n\032ai.sensorycloud.api.common"
   "B\025SensoryApiCommonProtoP\001Z8gitlab.com/se"
   "nsory-cloud/server/titan.git/pkg/api/com"
-  "monb\006proto3"
+  "mon\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2fcommon_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
@@ -505,7 +505,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2fcommon_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2fcommon_2eproto = {
-  false, false, 2971, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
+  false, false, 2978, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
   &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 2, 14,
   schemas, file_default_instances, TableStruct_common_2fcommon_2eproto::offsets,
   file_level_metadata_common_2fcommon_2eproto, file_level_enum_descriptors_common_2fcommon_2eproto, file_level_service_descriptors_common_2fcommon_2eproto,

@@ -569,8 +569,8 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             THEN("the function catches the null stream and throws an error") {
                 REQUIRE_THROWS_AS(service.synthesize_speech(
                     &context,
-                    audio_config,
-                    "craig",
+                    "text_to_spectrogram_craig_en-us",
+                    22050,
                     "Hello, World!"
                 ), NullStreamError);
             }
@@ -581,7 +581,12 @@ SCENARIO("A client requires a synchronous interface to the audio service") {
             EXPECT_CALL(*synthesis_stub, SynthesizeSpeechRaw(_, _))
                 .Times(1).WillOnce(testing::Return(mock_stream));
             ClientContext context;
-            auto stream = service.synthesize_speech(&context, audio_config, "craig", "Hello, World!");
+            auto stream = service.synthesize_speech(
+                &context,
+                "text_to_spectrogram_craig_en-us",
+                22050,
+                "Hello, World!"
+            );
             THEN("a unique pointer to the mock stream is returned") {
                 REQUIRE(stream.get() == mock_stream);
             }

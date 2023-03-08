@@ -27,7 +27,6 @@
 #define SENSORYCLOUD_UTIL_SECURE_RANDOM_HPP_
 
 #include <string>
-#include <openssl/rand.h>
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -37,28 +36,10 @@ namespace util {
 
 /// @brief Generate a cryptographically secure random number.
 ///
-/// @tparam length The length of the alpha-numeric string to generate.
+/// @param length The length of the alpha-numeric string to generate.
 /// @returns A cryptographically secure random alpha-numeric string.
 ///
-template<std::size_t length>
-std::string secure_random() {
-    // Initialize an empty string of the specified length.
-    std::string uuid(length, ' ');
-    // Randomly initialize the bytes of the string using OpenSSL rand bytes.
-    // Here we assume that std::string is backed by a contiguous buffer, which
-    // is a specification of C++00 and is true of all active std::string
-    // implementations that are currently known predating the C++00 standard.
-    // The reinterpret cast is necessary to coerce the char* to uint8_t* that
-    // RAND_bytes expects.
-    RAND_bytes(reinterpret_cast<uint8_t*>(&uuid[0]), uuid.size());
-    // Iterate over the bytes in the string to generate random characters.
-    // This is necessary because we want a specific subset of characters that
-    // are not contiguously spaced in the ASCII codec.
-    for (std::size_t i = 0; i < length; i++)
-        uuid[i] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[static_cast<uint8_t>(uuid[i]) % (10 + 26 + 26)];
-    // Move the output string to the caller's container.
-    return std::move(uuid);
-}
+std::string secure_random(std::size_t length);
 
 }  // namespace util
 

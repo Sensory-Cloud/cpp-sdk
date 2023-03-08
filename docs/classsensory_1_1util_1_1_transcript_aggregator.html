@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -90,12 +90,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa61cbaddbbf00692036e582c5036c1c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">process_response</a> (const ::sensory::api::v1::audio::TranscribeWordResponse &amp;response)</td></tr>
-<tr class="memdesc:aa61cbaddbbf00692036e582c5036c1c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a single sliding-window response from the server.  <a href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">More...</a><br /></td></tr>
-<tr class="separator:aa61cbaddbbf00692036e582c5036c1c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f9bd62467fd6a71b9a4fa1953aa0c1c"><td class="memItemLeft" align="right" valign="top">const std::vector&lt;::sensory::api::v1::audio::TranscribeWord &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">get_word_list</a> () const</td></tr>
 <tr class="memdesc:a3f9bd62467fd6a71b9a4fa1953aa0c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a constant reference to the complete transcript.  <a href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">More...</a><br /></td></tr>
 <tr class="separator:a3f9bd62467fd6a71b9a4fa1953aa0c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa61cbaddbbf00692036e582c5036c1c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">process_response</a> (const ::sensory::api::v1::audio::TranscribeWordResponse &amp;response)</td></tr>
+<tr class="memdesc:aa61cbaddbbf00692036e582c5036c1c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a single sliding-window response from the server.  <a href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">More...</a><br /></td></tr>
+<tr class="separator:aa61cbaddbbf00692036e582c5036c1c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af42b7c4b63cc2ba9ebf931f668659c26"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">get_transcript</a> (const std::string &amp;delimiter=&quot; &quot;) const</td></tr>
 <tr class="memdesc:af42b7c4b63cc2ba9ebf931f668659c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the full transcript as computed from the current word list.  <a href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">More...</a><br /></td></tr>
 <tr class="separator:af42b7c4b63cc2ba9ebf931f668659c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,9 +109,6 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::string sensory::util::TranscriptAggregator::get_transcript </td>
@@ -121,11 +118,6 @@ Public Member Functions</h2></td></tr>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Return the full transcript as computed from the current word list. </p>
@@ -172,9 +164,6 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void sensory::util::TranscriptAggregator::process_response </td>
@@ -184,11 +173,6 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Process a single sliding-window response from the server. </p>
@@ -201,8 +185,9 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>include/sensorycloud/util/<a class="el" href="transcript__aggregator_8hpp_source.html">transcript_aggregator.hpp</a></li>
+<li>src/sensorycloud/util/transcript_aggregator.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->

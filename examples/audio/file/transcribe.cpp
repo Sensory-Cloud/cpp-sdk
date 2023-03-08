@@ -203,9 +203,6 @@ int main(int argc, const char** argv) {
             // Relative energy of the processed audio as a value between 0 and 1.
             // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
             std::cout << "Audio Energy: " << response.audioenergy() << std::endl;
-            // The text of the current transcript as a sliding window on the last
-            // ~7 seconds of processed audio.
-            std::cout << "Sliding Transcript: " << response.transcript() << std::endl;
             // The word list contains the directives to the TranscriptAggregator
             // for accumulating the sliding window transcript over time.
             for (const auto& word : response.wordlist().words()) {
@@ -243,14 +240,16 @@ int main(int argc, const char** argv) {
         }
     });
 
-    tqdm progress(sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE));
+    // Pre-calculate the number of chunks to process for determining done-ness.
+    auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);
+    tqdm progress(num_chunks);
     int16_t samples[CHUNK_SIZE];
-    int num_frames;
-    while ((num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE))) {
+    for (int i = 0; i < num_chunks; i++) {
+        auto num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE);
         sensory::api::v1::audio::TranscribeRequest request;
         request.set_audiocontent((uint8_t*) samples, sizeof(int16_t) * num_frames);
-        // Detect the end of the audio file and write the post-processing action
-        if (num_frames < CHUNK_SIZE) {
+        // Detect the last chunk and write the post-processing action
+        if (i == num_chunks - 1) {
             auto action = new ::sensory::api::v1::audio::AudioRequestPostProcessingAction;
             action->set_action(::sensory::api::v1::audio::FINAL);
             request.set_allocated_postprocessingaction(action);
@@ -260,6 +259,7 @@ int main(int argc, const char** argv) {
         if (!stream->Write(request)) break;
         progress();
     }
+    stream->WritesDone();
     sf_close(infile);
     receipt_thread.join();
 

@@ -32,7 +32,7 @@ using ::sensory::util::TranscriptAggregator;
 using ::sensory::api::v1::audio::TranscribeWord;
 using ::sensory::api::v1::audio::TranscribeWordResponse;
 
-SCENARIO("A client needs to track a full transcript using the STT engine") {
+SCENARIO("A client needs to aggregate a transcript of English characters") {
     WHEN("A transcript aggregator is initialized") {
         TranscriptAggregator aggregator;
         THEN("The transcript aggregator embodies a null state") {
@@ -69,7 +69,7 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
         WHEN("A multi-word response is passed to the aggregator") {
             // Create a mock word at index 0.
             TranscribeWord foo;
-            foo.set_word("foo ");
+            foo.set_word("foo");
             foo.set_wordindex(0);
             TranscribeWord bar;
             bar.set_word("bar");
@@ -150,6 +150,236 @@ SCENARIO("A client needs to track a full transcript using the STT engine") {
         TranscriptAggregator aggregator;
         TranscribeWord word;
         word.set_word("foobar");
+        word.set_wordindex(1);
+        TranscribeWordResponse rsp;
+        rsp.set_firstwordindex(0);
+        rsp.set_lastwordindex(0);
+        (*rsp.mutable_words()->Add()) = word;
+        THEN("An expected runtime error is raised") {
+            REQUIRE_THROWS(aggregator.process_response(rsp));
+        }
+    }
+}
+
+SCENARIO("A client needs to aggregate a transcript of Russian characters") {
+    GIVEN("An empty transcript aggregator") {
+        TranscriptAggregator aggregator;
+        WHEN("A single word response is passed to the aggregator") {
+            // Create a mock word at index 0.
+            TranscribeWord foo;
+            foo.set_word("фу");
+            foo.set_wordindex(0);
+            // Create the transcription response with the word update.
+            TranscribeWordResponse rsp;
+            rsp.set_firstwordindex(0);
+            rsp.set_lastwordindex(0);
+            (*rsp.mutable_words()->Add()) = foo;
+            // Update the structure with the single word transcript.
+            aggregator.process_response(rsp);
+            THEN("The aggregator is updated with the transcript state") {
+                REQUIRE(1 == aggregator.get_word_list().size());
+                REQUIRE_THAT("фу", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+        WHEN("A multi-word response is passed to the aggregator") {
+            // Create a mock word at index 0.
+            TranscribeWord foo;
+            foo.set_word("фу");
+            foo.set_wordindex(0);
+            TranscribeWord bar;
+            bar.set_word("бар");
+            bar.set_wordindex(1);
+            // Create the transcription response with the word update.
+            TranscribeWordResponse rsp;
+            rsp.set_firstwordindex(0);
+            rsp.set_lastwordindex(1);
+            (*rsp.mutable_words()->Add()) = foo;
+            (*rsp.mutable_words()->Add()) = bar;
+            aggregator.process_response(rsp);
+            THEN("The aggregator is updated with the transcript state") {
+                REQUIRE(2 == aggregator.get_word_list().size());
+                REQUIRE_THAT("фу бар", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+    }
+    GIVEN("A transcript aggregator with existing state") {
+        TranscriptAggregator aggregator;
+        // Create mock words.
+        TranscribeWord foo;
+        foo.set_word("фу");
+        foo.set_wordindex(0);
+        TranscribeWord bar;
+        bar.set_word("бар");
+        bar.set_wordindex(1);
+        // Create the transcription response with the word update.
+        TranscribeWordResponse rsp0;
+        rsp0.set_firstwordindex(0);
+        rsp0.set_lastwordindex(1);
+        (*rsp0.mutable_words()->Add()) = foo;
+        (*rsp0.mutable_words()->Add()) = bar;
+        aggregator.process_response(rsp0);
+        WHEN("An update response is passed to the aggregator that adds a word") {
+            TranscribeWord baz;
+            baz.set_word("баз");
+            baz.set_wordindex(2);
+            TranscribeWordResponse rsp1;
+            rsp1.set_firstwordindex(0);
+            rsp1.set_lastwordindex(2);
+            (*rsp1.mutable_words()->Add()) = baz;
+            aggregator.process_response(rsp1);
+            THEN("The aggregator is updated with the new word") {
+                REQUIRE(3 == aggregator.get_word_list().size());
+                REQUIRE_THAT("фу бар баз", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+        WHEN("An update response is passed to the aggregator that replaces a word") {
+            TranscribeWord food;
+            food.set_word("пища");
+            food.set_wordindex(0);
+            TranscribeWordResponse rsp1;
+            rsp1.set_firstwordindex(0);
+            rsp1.set_lastwordindex(1);
+            (*rsp1.mutable_words()->Add()) = food;
+            aggregator.process_response(rsp1);
+            THEN("The aggregator is updated with the replacement word") {
+                REQUIRE(2 == aggregator.get_word_list().size());
+                REQUIRE_THAT("пища бар", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+        WHEN("An update response is passed to the aggregator that replaces a sub-string") {
+            TranscribeWord word;
+            word.set_word("фубар");
+            word.set_wordindex(0);
+            TranscribeWordResponse rsp1;
+            rsp1.set_firstwordindex(0);
+            rsp1.set_lastwordindex(0);
+            (*rsp1.mutable_words()->Add()) = word;
+            aggregator.process_response(rsp1);
+            THEN("The aggregator is updated with the sub-string replacement") {
+                REQUIRE(1 == aggregator.get_word_list().size());
+                REQUIRE_THAT("фубар", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+    }
+    WHEN("A transcript aggregator is passed an invalid index") {
+        TranscriptAggregator aggregator;
+        TranscribeWord word;
+        word.set_word("фубар");
+        word.set_wordindex(1);
+        TranscribeWordResponse rsp;
+        rsp.set_firstwordindex(0);
+        rsp.set_lastwordindex(0);
+        (*rsp.mutable_words()->Add()) = word;
+        THEN("An expected runtime error is raised") {
+            REQUIRE_THROWS(aggregator.process_response(rsp));
+        }
+    }
+}
+
+SCENARIO("A client needs to aggregate a transcript of Chinese Traditional characters") {
+    GIVEN("An empty transcript aggregator") {
+        TranscriptAggregator aggregator;
+        WHEN("A single word response is passed to the aggregator") {
+            // Create a mock word at index 0.
+            TranscribeWord foo;
+            foo.set_word("食物");
+            foo.set_wordindex(0);
+            // Create the transcription response with the word update.
+            TranscribeWordResponse rsp;
+            rsp.set_firstwordindex(0);
+            rsp.set_lastwordindex(0);
+            (*rsp.mutable_words()->Add()) = foo;
+            // Update the structure with the single word transcript.
+            aggregator.process_response(rsp);
+            THEN("The aggregator is updated with the transcript state") {
+                REQUIRE(1 == aggregator.get_word_list().size());
+                REQUIRE_THAT("食物", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+        WHEN("A multi-word response is passed to the aggregator") {
+            // Create a mock word at index 0.
+            TranscribeWord foo;
+            foo.set_word("食物");
+            foo.set_wordindex(0);
+            TranscribeWord bar;
+            bar.set_word("酒吧");
+            bar.set_wordindex(1);
+            // Create the transcription response with the word update.
+            TranscribeWordResponse rsp;
+            rsp.set_firstwordindex(0);
+            rsp.set_lastwordindex(1);
+            (*rsp.mutable_words()->Add()) = foo;
+            (*rsp.mutable_words()->Add()) = bar;
+            aggregator.process_response(rsp);
+            THEN("The aggregator is updated with the transcript state") {
+                REQUIRE(2 == aggregator.get_word_list().size());
+                REQUIRE_THAT("食物 酒吧", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+    }
+    GIVEN("A transcript aggregator with existing state") {
+        TranscriptAggregator aggregator;
+        // Create mock words.
+        TranscribeWord foo;
+        foo.set_word("食物");
+        foo.set_wordindex(0);
+        TranscribeWord bar;
+        bar.set_word("酒吧");
+        bar.set_wordindex(1);
+        // Create the transcription response with the word update.
+        TranscribeWordResponse rsp0;
+        rsp0.set_firstwordindex(0);
+        rsp0.set_lastwordindex(1);
+        (*rsp0.mutable_words()->Add()) = foo;
+        (*rsp0.mutable_words()->Add()) = bar;
+        aggregator.process_response(rsp0);
+        WHEN("An update response is passed to the aggregator that adds a word") {
+            TranscribeWord baz;
+            baz.set_word("布茲");
+            baz.set_wordindex(2);
+            TranscribeWordResponse rsp1;
+            rsp1.set_firstwordindex(0);
+            rsp1.set_lastwordindex(2);
+            (*rsp1.mutable_words()->Add()) = baz;
+            aggregator.process_response(rsp1);
+            THEN("The aggregator is updated with the new word") {
+                REQUIRE(3 == aggregator.get_word_list().size());
+                REQUIRE_THAT("食物 酒吧 布茲", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+        WHEN("An update response is passed to the aggregator that replaces a word") {
+            TranscribeWord food;
+            food.set_word("布茲");
+            food.set_wordindex(0);
+            TranscribeWordResponse rsp1;
+            rsp1.set_firstwordindex(0);
+            rsp1.set_lastwordindex(1);
+            (*rsp1.mutable_words()->Add()) = food;
+            aggregator.process_response(rsp1);
+            THEN("The aggregator is updated with the replacement word") {
+                REQUIRE(2 == aggregator.get_word_list().size());
+                REQUIRE_THAT("布茲 酒吧", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+        WHEN("An update response is passed to the aggregator that replaces a sub-string") {
+            TranscribeWord word;
+            word.set_word("食物酒吧");
+            word.set_wordindex(0);
+            TranscribeWordResponse rsp1;
+            rsp1.set_firstwordindex(0);
+            rsp1.set_lastwordindex(0);
+            (*rsp1.mutable_words()->Add()) = word;
+            aggregator.process_response(rsp1);
+            THEN("The aggregator is updated with the sub-string replacement") {
+                REQUIRE(1 == aggregator.get_word_list().size());
+                REQUIRE_THAT("食物酒吧", Catch::Equals(aggregator.get_transcript()));
+            }
+        }
+    }
+    WHEN("A transcript aggregator is passed an invalid index") {
+        TranscriptAggregator aggregator;
+        TranscribeWord word;
+        word.set_word("食物酒吧");
         word.set_wordindex(1);
         TranscribeWordResponse rsp;
         rsp.set_firstwordindex(0);

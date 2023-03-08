@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -79,7 +79,7 @@ $(function() {
   <div class="headertitle"><div class="title">path.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// Extensions to the C++11 &lt;string&gt; header.</span></div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// Functions for manipulating file-system and web paths/URIs.</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">// Copyright (c) 2022 Sensory, Inc.</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//</span></div>
@@ -115,12 +115,9 @@ $(function() {
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacesensory_1_1io_1_1path.html">   38</a></span><span class="keyword">namespace </span>path {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">   45</a></span><span class="keyword">inline</span> std::string <a class="code hl_function" href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">normalize_uri</a>(<span class="keyword">const</span> std::string&amp; uri) {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">const</span> std::string DELIMITER = <span class="stringliteral">&quot;://&quot;</span>;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">const</span> std::size_t index = uri.find(DELIMITER);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">if</span> (index == std::string::npos) <span class="keywordflow">return</span> uri;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">return</span> uri.substr(index + DELIMITER.length(), uri.length() - index - DELIMITER.length());</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>std::string <a class="code hl_function" href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">normalize_uri</a>(<span class="keyword">const</span> std::string&amp; uri);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespacesensory_1_1io_1_1path.html#a5984f9ad2d81e9e075a1e7522b951931">is_file</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* path);</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}  <span class="comment">// namespace path</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
@@ -129,7 +126,8 @@ $(function() {
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}  <span class="comment">// namespace sensory</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_IO_PATH_HPP_</span></div>
-<div class="ttc" id="anamespacesensory_1_1io_1_1path_html_a7a38ae4b4b40b8514d009130076ec72d"><div class="ttname"><a href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">sensory::io::path::normalize_uri</a></div><div class="ttdeci">std::string normalize_uri(const std::string &amp;uri)</div><div class="ttdoc">Normalize URIs to a strict host(:port)? format.</div><div class="ttdef"><b>Definition:</b> path.hpp:45</div></div>
+<div class="ttc" id="anamespacesensory_1_1io_1_1path_html_a5984f9ad2d81e9e075a1e7522b951931"><div class="ttname"><a href="namespacesensory_1_1io_1_1path.html#a5984f9ad2d81e9e075a1e7522b951931">sensory::io::path::is_file</a></div><div class="ttdeci">bool is_file(const char *path)</div><div class="ttdoc">Return a flag determining whether the given path references a file.</div><div class="ttdef"><b>Definition:</b> path.cpp:44</div></div>
+<div class="ttc" id="anamespacesensory_1_1io_1_1path_html_a7a38ae4b4b40b8514d009130076ec72d"><div class="ttname"><a href="namespacesensory_1_1io_1_1path.html#a7a38ae4b4b40b8514d009130076ec72d">sensory::io::path::normalize_uri</a></div><div class="ttdeci">std::string normalize_uri(const std::string &amp;uri)</div><div class="ttdoc">Normalize URIs to a strict host(:port)? format.</div><div class="ttdef"><b>Definition:</b> path.cpp:37</div></div>
 <div class="ttc" id="anamespacesensory_html"><div class="ttname"><a href="namespacesensory.html">sensory</a></div><div class="ttdoc">The SensoryCloud SDK.</div><div class="ttdef"><b>Definition:</b> async_reader_writer_call.hpp:41</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->

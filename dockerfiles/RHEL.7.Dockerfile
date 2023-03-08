@@ -42,7 +42,7 @@ ENV TZ=US/Mountain
 RUN yum -y update
 RUN yum -y upgrade
 # Install dependencies for the SDK.
-RUN yum install -y autoconf libtool pkg-config gcc gcc-c++ git
+RUN yum install -y autoconf libtool pkg-config gcc gcc-c++ git python3
 
 # Install the latest version of CMake. CMake does not officially support RHEL
 # 7 anymore, so CMake must be compiled from source.
@@ -72,8 +72,9 @@ RUN cd /cpp-sdk/build && make -j`nproc`
 
 # Copy the files for the SDK into the image.
 COPY CMakeLists.txt /cpp-sdk/
-ADD ./proto /cpp-sdk/proto
-ADD ./include /cpp-sdk/include
-ADD ./src /cpp-sdk/src
-ADD ./tests /cpp-sdk/tests
-ADD ./examples /cpp-sdk/examples
+ADD ./cmake         /cpp-sdk/cmake
+ADD ./proto         /cpp-sdk/proto
+ADD ./include       /cpp-sdk/include
+ADD ./src           /cpp-sdk/src
+ADD ./tests         /cpp-sdk/tests
+ADD ./examples      /cpp-sdk/examples

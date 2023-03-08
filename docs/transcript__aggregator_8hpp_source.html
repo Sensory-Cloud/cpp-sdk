@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">0.17.5</span>
+                                &#160;<span id="projectnumber">1.0.0</span>
                             </div>
                         </td>
                     </tr>
@@ -111,67 +111,34 @@ $(function() {
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &quot;sensorycloud/generated/v1/audio/audio.pb.h&quot;</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#include &quot;sensorycloud/generated/v1/audio/audio.grpc.pb.h&quot;</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &quot;sensorycloud/util/string_extensions.hpp&quot;</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">namespace </span>util {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="classsensory_1_1util_1_1_transcript_aggregator.html">   45</a></span><span class="keyword">class </span><a class="code hl_class" href="classsensory_1_1util_1_1_transcript_aggregator.html">TranscriptAggregator</a> {</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    std::vector&lt;::sensory::api::v1::audio::TranscribeWord&gt; word_list;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">   55</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">process_response</a>(const ::sensory::api::v1::audio::TranscribeWordResponse&amp; response) {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordflow">if</span> (response.words().empty()) <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <span class="comment">// Get the expected transcript size from the index of the last word.</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keyword">const</span> <span class="keyword">auto</span> response_size = response.lastwordindex() + 1;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="comment">// Grow the word buffer if the incoming transcript is larger.</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">if</span> (response_size &gt; word_list.size())</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            word_list.resize(response_size);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="comment">// Loop through returned words and replace buffered words that changed.</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; word : response.words()) {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            <span class="comment">// Sanity check the word index to prevent the possibility of</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="comment">// unexpected segmentation faults in favor of descriptive errors.</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            <span class="keywordflow">if</span> (word.wordindex() &gt;= word_list.size())</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                <span class="keywordflow">throw</span> std::runtime_error(</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                    <span class="stringliteral">&quot;Attempting to update word at index &quot;</span> +</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                    std::to_string(word.wordindex()) +</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                    <span class="stringliteral">&quot; that exceeds the expected buffer size of &quot;</span> +</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                    std::to_string(word_list.size())</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                );</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            word_list[word.wordindex()] = word;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        }</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="comment">// Shrink the word list if the incoming transcript is smaller.</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordflow">if</span> (response_size &lt; word_list.size())</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            word_list.erase(word_list.begin() + response_size, word_list.end());</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">   84</a></span>    <span class="keyword">inline</span> <span class="keyword">const</span> std::vector&lt;::sensory::api::v1::audio::TranscribeWord&gt;&amp; <a class="code hl_function" href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">get_word_list</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="keywordflow">return</span> word_list;</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    }</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">   94</a></span>    std::string <a class="code hl_function" href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">get_transcript</a>(<span class="keyword">const</span> std::string&amp; delimiter=<span class="stringliteral">&quot; &quot;</span>)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keywordflow">if</span> (word_list.empty()) <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        <span class="comment">// Iterate over the words to accumulate the transcript.</span></div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        std::string transcript = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; word : word_list)</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            transcript += delimiter + ::sensory::util::strip(word.word());</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="comment">// Remove the extra space at the front of the transcript.</span></div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        transcript.erase(0, 1);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="keywordflow">return</span> transcript;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    }</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>};</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>}  <span class="comment">// namespace util</span></div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>}  <span class="comment">// namespace sensory</span></div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_TRANSCRIPT_AGGREGATOR_HPP_</span></div>
-<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html">sensory::util::TranscriptAggregator</a></div><div class="ttdoc">A structure that aggregates and stores transcription responses.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.hpp:45</div></div>
-<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html_a3f9bd62467fd6a71b9a4fa1953aa0c1c"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">sensory::util::TranscriptAggregator::get_word_list</a></div><div class="ttdeci">const std::vector&lt;::sensory::api::v1::audio::TranscribeWord &gt; &amp; get_word_list() const</div><div class="ttdoc">Return a constant reference to the complete transcript.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.hpp:84</div></div>
-<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html_aa61cbaddbbf00692036e582c5036c1c4"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">sensory::util::TranscriptAggregator::process_response</a></div><div class="ttdeci">void process_response(const ::sensory::api::v1::audio::TranscribeWordResponse &amp;response)</div><div class="ttdoc">Process a single sliding-window response from the server.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.hpp:55</div></div>
-<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html_af42b7c4b63cc2ba9ebf931f668659c26"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">sensory::util::TranscriptAggregator::get_transcript</a></div><div class="ttdeci">std::string get_transcript(const std::string &amp;delimiter=&quot; &quot;) const</div><div class="ttdoc">Return the full transcript as computed from the current word list.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.hpp:94</div></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensory.html">sensory</a> {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">namespace </span>util {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classsensory_1_1util_1_1_transcript_aggregator.html">   44</a></span><span class="keyword">class </span><a class="code hl_class" href="classsensory_1_1util_1_1_transcript_aggregator.html">TranscriptAggregator</a> {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    std::vector&lt;::sensory::api::v1::audio::TranscribeWord&gt; word_list;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">   54</a></span>    <span class="keyword">inline</span> <span class="keyword">const</span> std::vector&lt;::sensory::api::v1::audio::TranscribeWord&gt;&amp; <a class="code hl_function" href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">get_word_list</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keywordflow">return</span> word_list;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">process_response</a>(const ::sensory::api::v1::audio::TranscribeWordResponse&amp; response);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    std::string <a class="code hl_function" href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">get_transcript</a>(<span class="keyword">const</span> std::string&amp; delimiter=<span class="stringliteral">&quot; &quot;</span>) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>};</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>}  <span class="comment">// namespace util</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}  <span class="comment">// namespace sensory</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#endif  </span><span class="comment">// SENSORYCLOUD_UTIL_TRANSCRIPT_AGGREGATOR_HPP_</span></div>
+<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html">sensory::util::TranscriptAggregator</a></div><div class="ttdoc">A structure that aggregates and stores transcription responses.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.hpp:44</div></div>
+<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html_a3f9bd62467fd6a71b9a4fa1953aa0c1c"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html#a3f9bd62467fd6a71b9a4fa1953aa0c1c">sensory::util::TranscriptAggregator::get_word_list</a></div><div class="ttdeci">const std::vector&lt;::sensory::api::v1::audio::TranscribeWord &gt; &amp; get_word_list() const</div><div class="ttdoc">Return a constant reference to the complete transcript.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.hpp:54</div></div>
+<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html_aa61cbaddbbf00692036e582c5036c1c4"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html#aa61cbaddbbf00692036e582c5036c1c4">sensory::util::TranscriptAggregator::process_response</a></div><div class="ttdeci">void process_response(const ::sensory::api::v1::audio::TranscribeWordResponse &amp;response)</div><div class="ttdoc">Process a single sliding-window response from the server.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.cpp:33</div></div>
+<div class="ttc" id="aclasssensory_1_1util_1_1_transcript_aggregator_html_af42b7c4b63cc2ba9ebf931f668659c26"><div class="ttname"><a href="classsensory_1_1util_1_1_transcript_aggregator.html#af42b7c4b63cc2ba9ebf931f668659c26">sensory::util::TranscriptAggregator::get_transcript</a></div><div class="ttdeci">std::string get_transcript(const std::string &amp;delimiter=&quot; &quot;) const</div><div class="ttdoc">Return the full transcript as computed from the current word list.</div><div class="ttdef"><b>Definition:</b> transcript_aggregator.cpp:58</div></div>
 <div class="ttc" id="anamespacesensory_html"><div class="ttname"><a href="namespacesensory.html">sensory</a></div><div class="ttdoc">The SensoryCloud SDK.</div><div class="ttdef"><b>Definition:</b> async_reader_writer_call.hpp:41</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->

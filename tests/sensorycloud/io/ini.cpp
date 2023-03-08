@@ -71,7 +71,7 @@ SCENARIO("a user attempts to create an INIReader with a faulty INI file") {
         const std::string path = "/foo/bar/baz";
         WHEN("an INIReader is instantiated") {
             THEN("a runtime error is thrown") {
-                REQUIRE_THROWS_WITH(INIReader(path), Catch::Contains("Failed to open INI file at path \"" + path + "\""));
+                REQUIRE_THROWS_WITH(INIReader(path), Catch::Contains("Path does not refer to an INI file \"" + path + "\""));
             }
         }
     }
