@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 
 # C++11 with gcc >4.9 is required to compile this code-base.
 set(CMAKE_CXX_STANDARD 11)

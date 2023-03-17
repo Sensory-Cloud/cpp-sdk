@@ -24,7 +24,7 @@ deployment target. The minimum requirements for installation of the SDK are:
 
 | Dependency       | Version |
 |:-----------------|:--------|
-| [`cmake`][cmake] | >= 3.11 |
+| [`cmake`][cmake] | >= 3.14 |
 | [`gcc`][gcc]     | >= 5.1  |
 | [`clang`][clang] | >= 4    |
 | [`MSVC`][MSVC]   | >= 2015 |
