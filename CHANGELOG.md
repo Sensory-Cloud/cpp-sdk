@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.1
+
+-   Fix [CMakeLists.txt](CMakeLists.txt) with a minimum version of 3.14. This
+    version is required to use the `FetchContent_MakeAvailable` command.
+
 ## 1.0.0
 
 -   Support for SensoryCloud 1.0.0

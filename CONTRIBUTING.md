@@ -92,11 +92,12 @@ SDK.
     make
     ```
 
-1.  Update the `URL` in the README snippets and `CMakeLists.txt` of example
-    projects (replace `<tag to target>` with the tag for the next release).
+1.  Update the library version in [CMakeLists.txt](CMakeLists.txt)
 
     ```cmake
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
+    ...
+    project(sensory-cloud-cpp-sdk VERSION <tag to target>)
+    ...
     ```
 
 1.  Update the the `PROJECT_NUMBER` in [Doxyfile](Doxyfile) to reflect the
@@ -105,6 +106,13 @@ SDK.
 
     ```shell
     doxygen Doxyfile
+    ```
+
+1.  Update the `URL` in the README snippets and `CMakeLists.txt` of example
+    projects (replace `<tag to target>` with the tag for the next release).
+
+    ```cmake
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
     ```
 
 1.  Update `CHANGELOG.md` with the new features / bug fixes / changes.
