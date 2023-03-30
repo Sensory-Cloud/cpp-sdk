@@ -1,6 +1,6 @@
 // An example of audio transcription based on audio file inputs.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -110,7 +110,7 @@ int main(int argc, const char** argv) {
         CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::HIGHEST;
     const auto CUSTOM_VOCAB_ID = args.get<std::string>("custom-vocabulary-id");
     const auto LANGUAGE = args.get<std::string>("language");
-    const auto CHUNK_SIZE = args.get<int>("chunksize");
+    auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create a credential store for keeping OAuth credentials in.
@@ -239,6 +239,10 @@ int main(int argc, const char** argv) {
             output_file.close();
         }
     });
+
+    // If the chunk size is zero, disable chunking by setting the chunk size
+    // to be equal to the number of samples.
+    if (CHUNK_SIZE <= 0) CHUNK_SIZE = sfinfo.frames;
 
     // Pre-calculate the number of chunks to process for determining done-ness.
     auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);

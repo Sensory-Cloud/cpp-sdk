@@ -1,6 +1,6 @@
 # cmake build file for SensoryCloud video service examples.
 #
-# Copyright 2021 Sensory, Inc.
+# Copyright (c) 2023 Sensory, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ project(sensory-cloud-video-examples)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.1
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.2
 )
 FetchContent_MakeAvailable(sensorycloud)
 

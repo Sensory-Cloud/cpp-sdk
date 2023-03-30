@@ -1,6 +1,6 @@
 // An example of audio event validation using SensoryCloud with PortAudio.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

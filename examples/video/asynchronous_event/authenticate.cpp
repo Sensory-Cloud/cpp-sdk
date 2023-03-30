@@ -1,6 +1,6 @@
-// An example of biometric face authentication using SensoryCloud with OpenCV.
+// Face authentication using SensoryCloud with OpenCV.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -26,7 +26,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-#include <google/protobuf/util/time_util.h>
+#include <google/protobuf/util/json_util.h>
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include <opencv2/highgui.hpp>
@@ -37,6 +37,13 @@
 using sensory::SensoryCloud;
 using sensory::token_manager::FileSystemCredentialStore;
 using sensory::api::v1::video::RecognitionThreshold;
+
+// The thickness of the face boxes to render
+const auto BOX_THICKNESS = 5;
+// The thickness of the font to render
+const auto FONT_THICKNESS = 2;
+// The scale of the font to render
+const auto FONT_SCALE = 0.9;
 
 int main(int argc, const char** argv) {
     // Create an argument parser to parse inputs from the command line.
@@ -62,6 +69,9 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-D", "--device" })
         .default_value("0")
         .help("The ID of the OpenCV device to use or a path to an image / video file.");
+    parser.add_argument({ "-C", "--codec" })
+        .default_value("jpg")
+        .help("The codec to use when compressing image data.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
         .help("Produce verbose output.");
@@ -82,6 +92,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = RecognitionThreshold::HIGHEST;
     const auto GROUP = args.get<bool>("group");
     const auto DEVICE = args.get<std::string>("device");
+    const auto CODEC = "." + args.get<std::string>("codec");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create a credential store for keeping OAuth credentials in.
@@ -102,10 +113,14 @@ int main(int argc, const char** argv) {
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
-        std::cout << "\tid: " << server_health.id() << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -132,21 +147,16 @@ int main(int argc, const char** argv) {
         for (auto& enrollment : enrollment_response.enrollments()) {
             if (enrollment.modeltype() != sensory::api::common::FACE_BIOMETRIC)
                 continue;
-            std::cout << "Description:     " << enrollment.description()  << std::endl;
-            std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
-            std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
-            std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-            std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
-            std::cout << "\tDevice ID:     " << enrollment.deviceid()     << std::endl;
-            std::cout << "\tCreated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-                << std::endl;
-            std::cout << "\tUpdated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-                << std::endl;
-            std::cout << "\tID:            " << enrollment.id()           << std::endl;
-            std::cout << "\tReference ID:  " << enrollment.referenceid()  << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string enrollment_json;
+            google::protobuf::util::MessageToJsonString(enrollment, &enrollment_json, options);
+            std::cout << enrollment_json << std::endl;
         }
+        return 0;
     }
 
     // ------ Authorize against the enrollment ---------------------------------
@@ -159,13 +169,11 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    // A flag determining whether the last sent frame was enrolled. This flag
-    // is atomic to support thread safe reads and writes.
-    std::atomic<bool> is_authenticated(false);
-    // The score from the liveness model.
-    std::atomic<float> score(100);
-    // A flag determining whether the last sent frame was detected as live.
-    std::atomic<bool> is_live(false);
+    // Here we use atomic variables to simplify the passage of data between
+    // networking and UI contexts.
+    std::atomic<bool> did_find_face(false), is_live(false), is_authenticated(false);
+    std::atomic<float> xmin(0), ymin(0), xmax(0), ymax(0);
+    std::atomic<float> score(0);
     // An OpenCV matrix containing the frame data from the camera.
     cv::Mat frame;
     // A mutual exclusion for locking access to the frame between foreground
@@ -227,33 +235,39 @@ int main(int argc, const char** argv) {
                     stream->getCall()->WritesDone((void*) Events::WritesDone);
                     continue;
                 }
-                // To send image data to the server, it must be JPEG compressed.
                 std::vector<unsigned char> buffer;
-                {  // Lock the mutex and encode the frame with JPEG into a buffer.
+                {  // Lock the mutex and encode the frame into a buffer.
                     std::lock_guard<std::mutex> lock(frame_mutex);
                     // If the frame is empty, something went wrong, shutdown the loop.
                     if (frame.empty()) {
                         is_running = false;
                         continue;
                     }
-                    cv::imencode(".jpg", frame, buffer);
+                    cv::imencode(CODEC, frame, buffer);
                 }
                 // Create the request from the encoded image data.
                 sensory::api::v1::video::AuthenticateRequest request;
                 request.set_imagecontent(buffer.data(), buffer.size());
                 stream->getCall()->Write(request, (void*) Events::Write);
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
-                if (VERBOSE) {
-                    std::cout << "Frame Response:" << std::endl;
-                    std::cout << "\tSuccess: "  << stream->getResponse().success() << std::endl;
-                    std::cout << "\tScore: "    << stream->getResponse().score() << std::endl;
-                    std::cout << "\tIs Alive: " << stream->getResponse().isalive() << std::endl;
-                }
+                did_find_face = stream->getResponse().didfindface();
+                xmin = stream->getResponse().boundingbox()[0];
+                ymin = stream->getResponse().boundingbox()[1];
+                xmax = stream->getResponse().boundingbox()[2];
+                ymax = stream->getResponse().boundingbox()[3];
                 is_authenticated = stream->getResponse().success();
-                if (LIVENESS)
-                    is_authenticated = is_authenticated && stream->getResponse().isalive();
                 score = stream->getResponse().score();
                 is_live = stream->getResponse().isalive();
+                if (VERBOSE) {
+                    google::protobuf::util::JsonPrintOptions options;
+                    options.add_whitespace = false;
+                    options.always_print_primitive_fields = true;
+                    options.always_print_enums_as_ints = false;
+                    options.preserve_proto_field_names = true;
+                    std::string response_json;
+                    google::protobuf::util::MessageToJsonString(stream->getResponse(), &response_json, options);
+                    std::cout << response_json << std::endl;
+                }
                 // If the write thread has encountered an error, stop reading and exit.
                 if (!is_running) break;
                 // If we're finished enrolling, don't issue a new read request.
@@ -273,15 +287,37 @@ int main(int argc, const char** argv) {
         if (frame.empty()) break;
         // Draw text indicating the liveness status of the last frame.
         auto presentation_frame = frame.clone();
-        if (LIVENESS) {  // liveness is enabled
-            cv::putText(presentation_frame,
-                is_live ? "Live" : "Not Live",
-                cv::Point(10, 40),
-                cv::FONT_HERSHEY_SIMPLEX,
-                1,  // font scale
-                is_live ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
-                2   // thickness
-            );
+        if (did_find_face) {  // Draw the bounding box on the frame.
+            const auto box_color = (!LIVENESS || is_live) ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255);
+            // Draw the face bounding box
+            cv::rectangle(presentation_frame,
+                cv::Point(xmin, ymin),
+                cv::Point(xmax, ymax),
+                box_color,
+                BOX_THICKNESS);
+            if (LIVENESS) {  // Render the liveness decision
+                const auto label = is_live ? "Live" : "Spoof";
+                // Determine the size of the label
+                const auto text_size = cv::getTextSize(label,
+                    cv::FONT_HERSHEY_SIMPLEX,
+                    FONT_SCALE,
+                    FONT_THICKNESS,
+                    nullptr  // baseline is not used
+                );
+                // Create a solid background to render the label on top of
+                cv::rectangle(presentation_frame,
+                    cv::Point(xmin + BOX_THICKNESS - 1, ymin + BOX_THICKNESS - 1),
+                    cv::Point(xmin + text_size.width + BOX_THICKNESS + FONT_THICKNESS + 1, ymin + text_size.height + BOX_THICKNESS + FONT_THICKNESS + 5),
+                    box_color, cv::FILLED);
+                // Render the text label for the frame
+                cv::putText(presentation_frame, label,
+                    cv::Point(xmin + BOX_THICKNESS, ymin + text_size.height + BOX_THICKNESS),
+                    cv::FONT_HERSHEY_SIMPLEX,
+                    FONT_SCALE,
+                    cv::Scalar(255, 255, 255),
+                    FONT_THICKNESS
+                );
+            }
         }
         // Show the frame in a viewfinder window.
         cv::imshow("SensoryCloud Face Authentication Demo", presentation_frame);

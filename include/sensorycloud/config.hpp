@@ -1,6 +1,6 @@
 // Configuration structures for the SensoryCloud C++ SDK.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

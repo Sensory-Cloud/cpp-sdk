@@ -1,6 +1,6 @@
 // The SensoryCloud C++ SDK Management service demo (callback interface).
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

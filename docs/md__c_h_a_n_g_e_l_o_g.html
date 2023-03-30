@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.1</span>
+                                &#160;<span id="projectnumber">1.0.2</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,24 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>1.0.1</h1>
+<div class="textblock"><h1>1.0.2</h1>
+<ul>
+<li>Update vision examples<ul>
+<li>Incorporate new bounding box data from responses into the GUI</li>
+<li>Add command line argument for controlling the image transport codec</li>
+<li>Update logging to print server responses in JSON format</li>
+</ul>
+</li>
+<li>Fix the case of 0 chunk size in the audio file examples<ul>
+<li>The expected functionality is to send the entire audio sample when the chunk size is 0</li>
+<li>a floating point exception was being raised due to an invalid divide-by-zero<ul>
+<li>this has been corrected for all audio file examples</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1>1.0.1</h1>
 <ul>
 <li>Fix <a href="CMakeLists.txt">CMakeLists.txt</a> with a minimum version of 3.14. This version is required to use the <code>FetchContent_MakeAvailable</code> command.</li>
 </ul>

@@ -1,6 +1,6 @@
 // Test cases for the sensory::token_manager::FileSystemCredentialStore.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

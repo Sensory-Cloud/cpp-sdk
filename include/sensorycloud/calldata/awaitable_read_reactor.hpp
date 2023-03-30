@@ -1,6 +1,6 @@
 // An abstract reactor for asynchronous unary read streams.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

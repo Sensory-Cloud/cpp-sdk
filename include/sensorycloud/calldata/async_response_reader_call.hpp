@@ -1,6 +1,6 @@
 // A type for encapsulating data for asynchronous unary read calls.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
