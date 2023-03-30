@@ -1342,14 +1342,39 @@ class CreateEnrollmentResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kBoundingBoxFieldNumber = 9,
     kEnrollmentIdFieldNumber = 3,
     kModelNameFieldNumber = 4,
     kModelVersionFieldNumber = 5,
     kEnrollmentTokenFieldNumber = 7,
     kPercentCompleteFieldNumber = 1,
     kIsAliveFieldNumber = 2,
+    kDidFindFaceFieldNumber = 8,
     kScoreFieldNumber = 6,
+    kProbabilityFaceFieldNumber = 10,
   };
+  // repeated int64 boundingBox = 9;
+  int boundingbox_size() const;
+  private:
+  int _internal_boundingbox_size() const;
+  public:
+  void clear_boundingbox();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_boundingbox(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      _internal_boundingbox() const;
+  void _internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      _internal_mutable_boundingbox();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int64 boundingbox(int index) const;
+  void set_boundingbox(int index, ::PROTOBUF_NAMESPACE_ID::int64 value);
+  void add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      boundingbox() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      mutable_boundingbox();
+
   // string enrollmentId = 3;
   void clear_enrollmentid();
   const std::string& enrollmentid() const;
@@ -1428,6 +1453,15 @@ class CreateEnrollmentResponse final :
   void _internal_set_isalive(bool value);
   public:
 
+  // bool didFindFace = 8;
+  void clear_didfindface();
+  bool didfindface() const;
+  void set_didfindface(bool value);
+  private:
+  bool _internal_didfindface() const;
+  void _internal_set_didfindface(bool value);
+  public:
+
   // float score = 6;
   void clear_score();
   float score() const;
@@ -1437,6 +1471,15 @@ class CreateEnrollmentResponse final :
   void _internal_set_score(float value);
   public:
 
+  // float probabilityFace = 10;
+  void clear_probabilityface();
+  float probabilityface() const;
+  void set_probabilityface(float value);
+  private:
+  float _internal_probabilityface() const;
+  void _internal_set_probabilityface(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.video.CreateEnrollmentResponse)
  private:
   class _Internal;
@@ -1444,13 +1487,17 @@ class CreateEnrollmentResponse final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 > boundingbox_;
+  mutable std::atomic<int> _boundingbox_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmentid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelname_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelversion_;
   ::sensory::api::common::EnrollmentToken* enrollmenttoken_;
   ::PROTOBUF_NAMESPACE_ID::int64 percentcomplete_;
   bool isalive_;
+  bool didfindface_;
   float score_;
+  float probabilityface_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
 };
@@ -1575,13 +1622,38 @@ class AuthenticateResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kBoundingBoxFieldNumber = 8,
     kUserIdFieldNumber = 5,
     kEnrollmentIdFieldNumber = 6,
     kTokenFieldNumber = 4,
     kScoreFieldNumber = 2,
     kSuccessFieldNumber = 1,
     kIsAliveFieldNumber = 3,
+    kDidFindFaceFieldNumber = 7,
+    kProbabilityFaceFieldNumber = 9,
   };
+  // repeated int64 boundingBox = 8;
+  int boundingbox_size() const;
+  private:
+  int _internal_boundingbox_size() const;
+  public:
+  void clear_boundingbox();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_boundingbox(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      _internal_boundingbox() const;
+  void _internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      _internal_mutable_boundingbox();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int64 boundingbox(int index) const;
+  void set_boundingbox(int index, ::PROTOBUF_NAMESPACE_ID::int64 value);
+  void add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      boundingbox() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      mutable_boundingbox();
+
   // string userId = 5;
   void clear_userid();
   const std::string& userid() const;
@@ -1655,6 +1727,24 @@ class AuthenticateResponse final :
   void _internal_set_isalive(bool value);
   public:
 
+  // bool didFindFace = 7;
+  void clear_didfindface();
+  bool didfindface() const;
+  void set_didfindface(bool value);
+  private:
+  bool _internal_didfindface() const;
+  void _internal_set_didfindface(bool value);
+  public:
+
+  // float probabilityFace = 9;
+  void clear_probabilityface();
+  float probabilityface() const;
+  void set_probabilityface(float value);
+  private:
+  float _internal_probabilityface() const;
+  void _internal_set_probabilityface(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.video.AuthenticateResponse)
  private:
   class _Internal;
@@ -1662,12 +1752,16 @@ class AuthenticateResponse final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 > boundingbox_;
+  mutable std::atomic<int> _boundingbox_cached_byte_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr userid_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr enrollmentid_;
   ::sensory::api::common::TokenResponse* token_;
   float score_;
   bool success_;
   bool isalive_;
+  bool didfindface_;
+  float probabilityface_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
 };
@@ -1792,17 +1886,33 @@ class LivenessRecognitionResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIsAliveFieldNumber = 1,
+    kBoundingBoxFieldNumber = 4,
     kScoreFieldNumber = 2,
+    kIsAliveFieldNumber = 1,
+    kDidFindFaceFieldNumber = 3,
+    kProbabilityFaceFieldNumber = 5,
   };
-  // bool isAlive = 1;
-  void clear_isalive();
-  bool isalive() const;
-  void set_isalive(bool value);
+  // repeated int64 boundingBox = 4;
+  int boundingbox_size() const;
   private:
-  bool _internal_isalive() const;
-  void _internal_set_isalive(bool value);
+  int _internal_boundingbox_size() const;
   public:
+  void clear_boundingbox();
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_boundingbox(int index) const;
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      _internal_boundingbox() const;
+  void _internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      _internal_mutable_boundingbox();
+  public:
+  ::PROTOBUF_NAMESPACE_ID::int64 boundingbox(int index) const;
+  void set_boundingbox(int index, ::PROTOBUF_NAMESPACE_ID::int64 value);
+  void add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+      boundingbox() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+      mutable_boundingbox();
 
   // float score = 2;
   void clear_score();
@@ -1813,6 +1923,33 @@ class LivenessRecognitionResponse final :
   void _internal_set_score(float value);
   public:
 
+  // bool isAlive = 1;
+  void clear_isalive();
+  bool isalive() const;
+  void set_isalive(bool value);
+  private:
+  bool _internal_isalive() const;
+  void _internal_set_isalive(bool value);
+  public:
+
+  // bool didFindFace = 3;
+  void clear_didfindface();
+  bool didfindface() const;
+  void set_didfindface(bool value);
+  private:
+  bool _internal_didfindface() const;
+  void _internal_set_didfindface(bool value);
+  public:
+
+  // float probabilityFace = 5;
+  void clear_probabilityface();
+  float probabilityface() const;
+  void set_probabilityface(float value);
+  private:
+  float _internal_probabilityface() const;
+  void _internal_set_probabilityface(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.video.LivenessRecognitionResponse)
  private:
   class _Internal;
@@ -1820,8 +1957,12 @@ class LivenessRecognitionResponse final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  bool isalive_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 > boundingbox_;
+  mutable std::atomic<int> _boundingbox_cached_byte_size_;
   float score_;
+  bool isalive_;
+  bool didfindface_;
+  float probabilityface_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fvideo_2fvideo_2eproto;
 };
@@ -3637,6 +3778,93 @@ inline void CreateEnrollmentResponse::set_allocated_enrollmenttoken(::sensory::a
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.CreateEnrollmentResponse.enrollmentToken)
 }
 
+// bool didFindFace = 8;
+inline void CreateEnrollmentResponse::clear_didfindface() {
+  didfindface_ = false;
+}
+inline bool CreateEnrollmentResponse::_internal_didfindface() const {
+  return didfindface_;
+}
+inline bool CreateEnrollmentResponse::didfindface() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentResponse.didFindFace)
+  return _internal_didfindface();
+}
+inline void CreateEnrollmentResponse::_internal_set_didfindface(bool value) {
+  
+  didfindface_ = value;
+}
+inline void CreateEnrollmentResponse::set_didfindface(bool value) {
+  _internal_set_didfindface(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentResponse.didFindFace)
+}
+
+// repeated int64 boundingBox = 9;
+inline int CreateEnrollmentResponse::_internal_boundingbox_size() const {
+  return boundingbox_.size();
+}
+inline int CreateEnrollmentResponse::boundingbox_size() const {
+  return _internal_boundingbox_size();
+}
+inline void CreateEnrollmentResponse::clear_boundingbox() {
+  boundingbox_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 CreateEnrollmentResponse::_internal_boundingbox(int index) const {
+  return boundingbox_.Get(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 CreateEnrollmentResponse::boundingbox(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentResponse.boundingBox)
+  return _internal_boundingbox(index);
+}
+inline void CreateEnrollmentResponse::set_boundingbox(int index, ::PROTOBUF_NAMESPACE_ID::int64 value) {
+  boundingbox_.Set(index, value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentResponse.boundingBox)
+}
+inline void CreateEnrollmentResponse::_internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  boundingbox_.Add(value);
+}
+inline void CreateEnrollmentResponse::add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_add_boundingbox(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.video.CreateEnrollmentResponse.boundingBox)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+CreateEnrollmentResponse::_internal_boundingbox() const {
+  return boundingbox_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+CreateEnrollmentResponse::boundingbox() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.video.CreateEnrollmentResponse.boundingBox)
+  return _internal_boundingbox();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+CreateEnrollmentResponse::_internal_mutable_boundingbox() {
+  return &boundingbox_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+CreateEnrollmentResponse::mutable_boundingbox() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.video.CreateEnrollmentResponse.boundingBox)
+  return _internal_mutable_boundingbox();
+}
+
+// float probabilityFace = 10;
+inline void CreateEnrollmentResponse::clear_probabilityface() {
+  probabilityface_ = 0;
+}
+inline float CreateEnrollmentResponse::_internal_probabilityface() const {
+  return probabilityface_;
+}
+inline float CreateEnrollmentResponse::probabilityface() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.CreateEnrollmentResponse.probabilityFace)
+  return _internal_probabilityface();
+}
+inline void CreateEnrollmentResponse::_internal_set_probabilityface(float value) {
+  
+  probabilityface_ = value;
+}
+inline void CreateEnrollmentResponse::set_probabilityface(float value) {
+  _internal_set_probabilityface(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.CreateEnrollmentResponse.probabilityFace)
+}
+
 // -------------------------------------------------------------------
 
 // AuthenticateResponse
@@ -3879,6 +4107,93 @@ inline void AuthenticateResponse::set_allocated_enrollmentid(std::string* enroll
   // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.video.AuthenticateResponse.enrollmentId)
 }
 
+// bool didFindFace = 7;
+inline void AuthenticateResponse::clear_didfindface() {
+  didfindface_ = false;
+}
+inline bool AuthenticateResponse::_internal_didfindface() const {
+  return didfindface_;
+}
+inline bool AuthenticateResponse::didfindface() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateResponse.didFindFace)
+  return _internal_didfindface();
+}
+inline void AuthenticateResponse::_internal_set_didfindface(bool value) {
+  
+  didfindface_ = value;
+}
+inline void AuthenticateResponse::set_didfindface(bool value) {
+  _internal_set_didfindface(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateResponse.didFindFace)
+}
+
+// repeated int64 boundingBox = 8;
+inline int AuthenticateResponse::_internal_boundingbox_size() const {
+  return boundingbox_.size();
+}
+inline int AuthenticateResponse::boundingbox_size() const {
+  return _internal_boundingbox_size();
+}
+inline void AuthenticateResponse::clear_boundingbox() {
+  boundingbox_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 AuthenticateResponse::_internal_boundingbox(int index) const {
+  return boundingbox_.Get(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 AuthenticateResponse::boundingbox(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateResponse.boundingBox)
+  return _internal_boundingbox(index);
+}
+inline void AuthenticateResponse::set_boundingbox(int index, ::PROTOBUF_NAMESPACE_ID::int64 value) {
+  boundingbox_.Set(index, value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateResponse.boundingBox)
+}
+inline void AuthenticateResponse::_internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  boundingbox_.Add(value);
+}
+inline void AuthenticateResponse::add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_add_boundingbox(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.video.AuthenticateResponse.boundingBox)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+AuthenticateResponse::_internal_boundingbox() const {
+  return boundingbox_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+AuthenticateResponse::boundingbox() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.video.AuthenticateResponse.boundingBox)
+  return _internal_boundingbox();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+AuthenticateResponse::_internal_mutable_boundingbox() {
+  return &boundingbox_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+AuthenticateResponse::mutable_boundingbox() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.video.AuthenticateResponse.boundingBox)
+  return _internal_mutable_boundingbox();
+}
+
+// float probabilityFace = 9;
+inline void AuthenticateResponse::clear_probabilityface() {
+  probabilityface_ = 0;
+}
+inline float AuthenticateResponse::_internal_probabilityface() const {
+  return probabilityface_;
+}
+inline float AuthenticateResponse::probabilityface() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.AuthenticateResponse.probabilityFace)
+  return _internal_probabilityface();
+}
+inline void AuthenticateResponse::_internal_set_probabilityface(float value) {
+  
+  probabilityface_ = value;
+}
+inline void AuthenticateResponse::set_probabilityface(float value) {
+  _internal_set_probabilityface(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.AuthenticateResponse.probabilityFace)
+}
+
 // -------------------------------------------------------------------
 
 // LivenessRecognitionResponse
@@ -3921,6 +4236,93 @@ inline void LivenessRecognitionResponse::_internal_set_score(float value) {
 inline void LivenessRecognitionResponse::set_score(float value) {
   _internal_set_score(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.video.LivenessRecognitionResponse.score)
+}
+
+// bool didFindFace = 3;
+inline void LivenessRecognitionResponse::clear_didfindface() {
+  didfindface_ = false;
+}
+inline bool LivenessRecognitionResponse::_internal_didfindface() const {
+  return didfindface_;
+}
+inline bool LivenessRecognitionResponse::didfindface() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.LivenessRecognitionResponse.didFindFace)
+  return _internal_didfindface();
+}
+inline void LivenessRecognitionResponse::_internal_set_didfindface(bool value) {
+  
+  didfindface_ = value;
+}
+inline void LivenessRecognitionResponse::set_didfindface(bool value) {
+  _internal_set_didfindface(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.LivenessRecognitionResponse.didFindFace)
+}
+
+// repeated int64 boundingBox = 4;
+inline int LivenessRecognitionResponse::_internal_boundingbox_size() const {
+  return boundingbox_.size();
+}
+inline int LivenessRecognitionResponse::boundingbox_size() const {
+  return _internal_boundingbox_size();
+}
+inline void LivenessRecognitionResponse::clear_boundingbox() {
+  boundingbox_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 LivenessRecognitionResponse::_internal_boundingbox(int index) const {
+  return boundingbox_.Get(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 LivenessRecognitionResponse::boundingbox(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.LivenessRecognitionResponse.boundingBox)
+  return _internal_boundingbox(index);
+}
+inline void LivenessRecognitionResponse::set_boundingbox(int index, ::PROTOBUF_NAMESPACE_ID::int64 value) {
+  boundingbox_.Set(index, value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.LivenessRecognitionResponse.boundingBox)
+}
+inline void LivenessRecognitionResponse::_internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  boundingbox_.Add(value);
+}
+inline void LivenessRecognitionResponse::add_boundingbox(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_add_boundingbox(value);
+  // @@protoc_insertion_point(field_add:sensory.api.v1.video.LivenessRecognitionResponse.boundingBox)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+LivenessRecognitionResponse::_internal_boundingbox() const {
+  return boundingbox_;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >&
+LivenessRecognitionResponse::boundingbox() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.video.LivenessRecognitionResponse.boundingBox)
+  return _internal_boundingbox();
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+LivenessRecognitionResponse::_internal_mutable_boundingbox() {
+  return &boundingbox_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int64 >*
+LivenessRecognitionResponse::mutable_boundingbox() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.video.LivenessRecognitionResponse.boundingBox)
+  return _internal_mutable_boundingbox();
+}
+
+// float probabilityFace = 5;
+inline void LivenessRecognitionResponse::clear_probabilityface() {
+  probabilityface_ = 0;
+}
+inline float LivenessRecognitionResponse::_internal_probabilityface() const {
+  return probabilityface_;
+}
+inline float LivenessRecognitionResponse::probabilityface() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.video.LivenessRecognitionResponse.probabilityFace)
+  return _internal_probabilityface();
+}
+inline void LivenessRecognitionResponse::_internal_set_probabilityface(float value) {
+  
+  probabilityface_ = value;
+}
+inline void LivenessRecognitionResponse::set_probabilityface(float value) {
+  _internal_set_probabilityface(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.video.LivenessRecognitionResponse.probabilityFace)
 }
 
 // -------------------------------------------------------------------

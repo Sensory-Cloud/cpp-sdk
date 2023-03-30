@@ -221,12 +221,13 @@ enum ModelType : int {
   FACE_RECOGNITION = 202,
   OBJECT_RECOGNITION = 203,
   IMAGE_TRANSFORM = 204,
+  FACE_EMBEDDING = 205,
   ModelType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ModelType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ModelType_IsValid(int value);
 constexpr ModelType ModelType_MIN = UNKNOWN;
-constexpr ModelType ModelType_MAX = IMAGE_TRANSFORM;
+constexpr ModelType ModelType_MAX = FACE_EMBEDDING;
 constexpr int ModelType_ARRAYSIZE = ModelType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ModelType_descriptor();

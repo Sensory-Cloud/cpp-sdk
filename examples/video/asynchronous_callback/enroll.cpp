@@ -1,6 +1,6 @@
-// An example of biometric face enrollment using SensoryCloud with OpenCV.
+// Face enrollment using SensoryCloud with OpenCV.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -26,7 +26,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-#include <google/protobuf/util/time_util.h>
+#include <google/protobuf/util/json_util.h>
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include <sensorycloud/config.hpp>
@@ -40,24 +40,41 @@
 #include "../dep/argparse.hpp"
 
 using sensory::SensoryCloud;
+using sensory::service::VideoService;
 using sensory::token_manager::FileSystemCredentialStore;
 using sensory::api::v1::video::RecognitionThreshold;
 
-using sensory::token_manager::TokenManager;
-using sensory::token_manager::FileSystemCredentialStore;
-using sensory::service::HealthService;
-using sensory::service::VideoService;
-using sensory::service::OAuthService;
+// The thickness of the face boxes to render
+const auto BOX_THICKNESS = 5;
+// The thickness of the font to render
+const auto FONT_THICKNESS = 2;
+// The scale of the font to render
+const auto FONT_SCALE = 0.9;
 
-/// @brief A bidirection stream reactor for biometric enrollments from video
+/// @brief A bidirectional stream reactor for biometric enrollments from video
 /// stream data.
 ///
 /// @details
 /// Input data for the stream is provided by an OpenCV capture device.
 ///
-class OpenCVReactor :
+class FaceEnrollmentReactor :
     public VideoService<FileSystemCredentialStore>::CreateEnrollmentBidiReactor {
  private:
+    /// An OpenCV matrix containing the frame data from the camera.
+    cv::Mat frame;
+    /// A mutual exclusion for locking access to the frame between foreground
+    /// (frame capture) and background (network stream processing) threads.
+    std::mutex frame_mutex;
+    /// The codec to use when compressing images.
+    std::string codec = ".jpg";
+    /// Whether to produce verbose output in the reactor
+    bool verbose = false;
+    /// A flag determining whether the stream is actively running.
+    std::atomic<bool> is_running;
+    /// A flag determining whether the last sent contained a face.
+    std::atomic<bool> did_find_face;
+    /// Bounding box coordinates for the face that was detected
+    std::atomic<float> xmin, ymin, xmax, ymax;
     /// A flag determining whether the last sent frame was enrolled. This flag
     /// is atomic to support thread safe reads and writes.
     std::atomic<bool> is_enrolled;
@@ -65,25 +82,26 @@ class OpenCVReactor :
     std::atomic<float> percent_complete;
     /// A flag determining whether the last sent frame was detected as live.
     std::atomic<bool> is_live;
-    /// An OpenCV matrix containing the frame data from the camera.
-    cv::Mat frame;
-    /// A mutual exclusion for locking access to the frame between foreground
-    /// (frame capture) and background (network stream processing) threads.
-    std::mutex frame_mutex;
-    /// Whether to produce verbose output in the reactor
-    bool verbose = false;
-    /// A flag determining whether the stream is actively running.
-    std::atomic<bool> is_running;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
-    OpenCVReactor(const bool& verbose_ = false) :
+    ///
+    /// @param codec_ The codec to use when compressing images.
+    /// @param verbose_ True to enable verbose logging
+    ///
+    FaceEnrollmentReactor(
+        const std::string& codec_ = ".jpg",
+        const bool& verbose_ = false
+    ) :
         VideoService<FileSystemCredentialStore>::CreateEnrollmentBidiReactor(),
+        codec(codec_),
+        verbose(verbose_),
+        is_running(true),
+        did_find_face(false),
+        xmin(0), ymin(0), xmax(0), ymax(0),
         is_enrolled(false),
         percent_complete(0),
-        is_live(false),
-        verbose(verbose_),
-        is_running(true) { }
+        is_live(false) { }
 
     /// @brief React to a _write done_ event.
     ///
@@ -97,14 +115,14 @@ class OpenCVReactor :
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
         std::vector<unsigned char> buffer;
-        {  // Lock the mutex and encode the frame with JPEG into a buffer.
+        {  // Lock the mutex and encode the frame into a buffer.
             std::lock_guard<std::mutex> lock(frame_mutex);
             if (frame.empty()) {
                 is_running = false;
                 StartWritesDone();
                 return;
             }
-            cv::imencode(".jpg", frame, buffer);
+            cv::imencode(codec, frame, buffer);
         }
         // Create the request from the encoded image data.
         request.set_imagecontent(buffer.data(), buffer.size());
@@ -121,21 +139,25 @@ class OpenCVReactor :
         if (is_enrolled) return;
         // If the status is not OK, then an error occurred during the stream.
         if (!ok) return;
+        did_find_face = response.didfindface();
+        xmin = response.boundingbox()[0];
+        ymin = response.boundingbox()[1];
+        xmax = response.boundingbox()[2];
+        ymax = response.boundingbox()[3];
+        is_enrolled = !response.enrollmentid().empty();
+        percent_complete = response.percentcomplete() / 100.f;
+        is_live = response.isalive();
         // Log information about the response to the terminal.
         if (verbose) {
-            std::cout << "Frame Response:     " << std::endl;
-            std::cout << "\tPercent Complete: " << response.percentcomplete() << std::endl;
-            std::cout << "\tIs Alive?:        " << response.isalive() << std::endl;
-            std::cout << "\tEnrollment ID:    " << response.enrollmentid() << std::endl;
-            std::cout << "\tModel Name:       " << response.modelname() << std::endl;
-            std::cout << "\tModel Version:    " << response.modelversion() << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = false;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string response_json;
+            google::protobuf::util::MessageToJsonString(response, &response_json, options);
+            std::cout << response_json << std::endl;
         }
-        // If the enrollment ID is not empty, then the enrollment succeeded.
-        is_enrolled = !response.enrollmentid().empty();
-        // Set the completion percentage of the enrollment.
-        percent_complete = response.percentcomplete() / 100.f;
-        // Set the liveness status of the last frame.
-        is_live = response.isalive();
         if (!is_running) {
             OnDone({});
             return;
@@ -149,10 +171,10 @@ class OpenCVReactor :
     /// @brief Stream video from an OpenCV capture device.
     ///
     /// @param capture The OpenCV capture device.
-    /// @param is_livenessEnabled `true` to enable the liveness check interface,
+    /// @param is_liveness_enabled `true` to enable the liveness check interface,
     /// `false` to disable the interface.
     ///
-    ::grpc::Status stream_video(cv::VideoCapture& capture, const bool& is_livenessEnabled) {
+    ::grpc::Status stream_video(cv::VideoCapture& capture, const bool& is_liveness_enabled) {
         // Start the call to initiate the stream in the background.
         StartCall();
         // Start capturing frames from the device.
@@ -178,16 +200,37 @@ class OpenCVReactor :
                 cv::Point(0, 0),
                 cv::Point(percent_complete * presentation_frame.size().width, 10),
                 cv::Scalar(0, 255, 0), -1);
-            // Draw text indicating the liveness status of the last frame.
-            if (is_livenessEnabled) {  // Liveness is enabled.
-                cv::putText(presentation_frame,
-                    is_live ? "Live" : "Not Live",
-                    cv::Point(10, 40),
-                    cv::FONT_HERSHEY_SIMPLEX,
-                    1,  // font scale
-                    is_live ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255),
-                    2   // thickness
-                );
+            if (did_find_face) {  // Draw the bounding box on the frame.
+                const auto box_color = (!is_liveness_enabled || is_live) ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255);
+                // Draw the face bounding box
+                cv::rectangle(presentation_frame,
+                    cv::Point(xmin, ymin),
+                    cv::Point(xmax, ymax),
+                    box_color,
+                    BOX_THICKNESS);
+                if (is_liveness_enabled) {  // Render the liveness decision
+                    const auto label = is_live ? "Live" : "Spoof";
+                    // Determine the size of the label
+                    const auto text_size = cv::getTextSize(label,
+                        cv::FONT_HERSHEY_SIMPLEX,
+                        FONT_SCALE,
+                        FONT_THICKNESS,
+                        nullptr  // baseline is not used
+                    );
+                    // Create a solid background to render the label on top of
+                    cv::rectangle(presentation_frame,
+                        cv::Point(xmin + BOX_THICKNESS - 1, ymin + BOX_THICKNESS - 1),
+                        cv::Point(xmin + text_size.width + BOX_THICKNESS + FONT_THICKNESS + 1, ymin + text_size.height + BOX_THICKNESS + FONT_THICKNESS + 5),
+                        box_color, cv::FILLED);
+                    // Render the text label for the frame
+                    cv::putText(presentation_frame, label,
+                        cv::Point(xmin + BOX_THICKNESS, ymin + text_size.height + BOX_THICKNESS),
+                        cv::FONT_HERSHEY_SIMPLEX,
+                        FONT_SCALE,
+                        cv::Scalar(255, 255, 255),
+                        FONT_THICKNESS
+                    );
+                }
             }
             // Show the frame in a view-finder window.
             cv::imshow("SensoryCloud Face Enrollment Demo", presentation_frame);
@@ -235,6 +278,9 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-D", "--device" })
         .default_value("0")
         .help("The ID of the OpenCV device to use or a path to an image / video file.");
+    parser.add_argument({ "-C", "--codec" })
+        .default_value("jpg")
+        .help("The codec to use when compressing image data.");
     parser.add_argument({ "-v", "--verbose" })
         .action("store_true")
         .help("Produce verbose output.");
@@ -258,6 +304,7 @@ int main(int argc, const char** argv) {
     const auto NUM_LIVENESS_FRAMES = args.get<int>("num-liveness-frames");
     const auto REFERENCE_ID = args.get<std::string>("reference-id");
     const auto DEVICE = args.get<std::string>("device");
+    const auto CODEC = "." + args.get<std::string>("codec");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create a credential store for keeping OAuth credentials in.
@@ -276,10 +323,14 @@ int main(int argc, const char** argv) {
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
-        std::cout << "\tid: " << server_health.id() << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -308,7 +359,14 @@ int main(int argc, const char** argv) {
                     // Ignore models that aren't face biometric models.
                     if (model.modeltype() != sensory::api::common::FACE_BIOMETRIC)
                         continue;
-                    std::cout << model.name() << std::endl;
+                    google::protobuf::util::JsonPrintOptions options;
+                    options.add_whitespace = true;
+                    options.always_print_primitive_fields = true;
+                    options.always_print_enums_as_ints = false;
+                    options.preserve_proto_field_names = true;
+                    std::string model_json;
+                    google::protobuf::util::MessageToJsonString(model, &model_json, options);
+                    std::cout << model_json << std::endl;
                 }
             }
         })->await();
@@ -333,7 +391,7 @@ int main(int argc, const char** argv) {
     config->set_numlivenessframesrequired(NUM_LIVENESS_FRAMES);
     config->set_referenceid(REFERENCE_ID);
     // Initialize the stream with the cloud.
-    OpenCVReactor reactor(VERBOSE);
+    FaceEnrollmentReactor reactor(CODEC, VERBOSE);
     cloud.video.create_enrollment(&reactor, config);
     // Wait for the stream to conclude. This is necessary to check the final
     // status of the call and allow any dynamically allocated data to be cleaned

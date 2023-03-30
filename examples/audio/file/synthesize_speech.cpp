@@ -1,6 +1,6 @@
 // An example of text-to-speech (TTS) to a WAV file using SensoryCloud.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //

@@ -1,6 +1,6 @@
 // The video service for the SensoryCloud SDK.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -41,29 +41,6 @@ namespace sensory {
 
 /// @brief SensoryCloud services.
 namespace service {
-
-/// @brief SensoryCloud video service.
-namespace video {
-
-/// @brief Face alignment codes from face detection-based pipelines.
-enum class FaceAlignment : int {
-    /// A sentinel for valid alignment.
-    Valid = 0,
-    /// An unknown error occurred.
-    Unknown = 100,
-    /// No face was detected.
-    NoFace = 101,
-    /// The face box is too small.
-    SmallFace = 102,
-    /// The face box has a bad quality score.
-    BadFQ = 103,
-    /// The face is not centered in the frame.
-    NotCentered = 104,
-    /// The face is not upright.
-    NotVertical = 105
-};
-
-}  // namespace video
 
 /// @brief A service for video data.
 /// @tparam CredentialStore A key-value store for storing and fetching

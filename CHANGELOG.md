@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.0.2
+
+-   Update vision examples
+    -   Incorporate new bounding box data from responses into the GUI
+    -   Add command line argument for controlling the image transport codec
+    -   Update logging to print server responses in JSON format
+-   Fix the case of 0 chunk size in the audio file examples
+    -   The expected functionality is to send the entire audio sample when the
+        chunk size is 0
+    -   a floating point exception was being raised due to an invalid
+        divide-by-zero
+        -   this has been corrected for all audio file examples
+
 ## 1.0.1
 
 -   Fix [CMakeLists.txt](CMakeLists.txt) with a minimum version of 3.14. This

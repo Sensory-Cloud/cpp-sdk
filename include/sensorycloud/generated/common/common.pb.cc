@@ -471,7 +471,7 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "LIC_KEY\020\000\022\026\n\022PUBLIC_KEY_ED25519\020\001\022\021\n\rSHA"
   "RED_SECRET\020\003\022\013\n\007AES_256\020\004*4\n\013FeatureFlag"
   "\022\014\n\010TSSV_ALL\020\000\022\n\n\006TS_ALL\020\001\022\013\n\007TNL_ALL\020\002*"
-  "\244\004\n\tModelType\022\013\n\007UNKNOWN\020\000\022$\n VOICE_BIOM"
+  "\271\004\n\tModelType\022\013\n\007UNKNOWN\020\000\022$\n VOICE_BIOM"
   "ETRIC_TEXT_INDEPENDENT\020\001\022\034\n\030VOICE_BIOMET"
   "RIC_WAKEWORD\020\002\022\030\n\024VOICE_EVENT_WAKEWORD\020\003"
   "\022\034\n\030VOICE_TRANSCRIBE_GRAMMAR\020\004\022\'\n#VOICE_"
@@ -484,20 +484,20 @@ const char descriptor_table_protodef_common_2fcommon_2eproto[] PROTOBUF_SECTION_
   "EVALIDATION\020e\022\025\n\021SOUND_EVENT_FIXED\020f\022\025\n\021"
   "SOUND_SCENE_FIXED\020g\022\023\n\016FACE_BIOMETRIC\020\311\001"
   "\022\025\n\020FACE_RECOGNITION\020\312\001\022\027\n\022OBJECT_RECOGN"
-  "ITION\020\313\001\022\024\n\017IMAGE_TRANSFORM\020\314\001*J\n\016Techno"
-  "logyType\022\013\n\007NOT_SET\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022"
-  "\007\n\003TNL\020\003\022\007\n\003STT\020\004\022\007\n\003TTS\020\005*&\n\017Compressio"
-  "nType\022\023\n\017IMAGE_GRAYSCALE\020\000*|\n\nClientType"
-  "\022\013\n\007INVALID\020\000\022\n\n\006DEVICE\020\001\022\013\n\007CLUSTER\020\002\022\010"
-  "\n\004USER\020\003\022\016\n\nSUPER_USER\020\004\022\020\n\014BILLING_USER"
-  "\020\005\022\022\n\016READ_ONLY_USER\020\006\022\010\n\004ROOT\020d*g\n\016Usag"
-  "eEventType\022\022\n\016AUTHENTICATION\020\000\022\017\n\013RECOGN"
-  "ITION\020\001\022\016\n\nENROLLMENT\020\002\022\r\n\tSYNTHESIS\020\003\022\021"
-  "\n\rTRANSCRIPTION\020\004*\037\n\nServerType\022\t\n\005TITAN"
-  "\020\000\022\006\n\002IO\020\001Bv\n\032ai.sensorycloud.api.common"
-  "B\025SensoryApiCommonProtoP\001Z8gitlab.com/se"
-  "nsory-cloud/server/titan.git/pkg/api/com"
-  "mon\242\002\004SENGb\006proto3"
+  "ITION\020\313\001\022\024\n\017IMAGE_TRANSFORM\020\314\001\022\023\n\016FACE_E"
+  "MBEDDING\020\315\001*J\n\016TechnologyType\022\013\n\007NOT_SET"
+  "\020\000\022\010\n\004TSSV\020\001\022\006\n\002TS\020\002\022\007\n\003TNL\020\003\022\007\n\003STT\020\004\022\007"
+  "\n\003TTS\020\005*&\n\017CompressionType\022\023\n\017IMAGE_GRAY"
+  "SCALE\020\000*|\n\nClientType\022\013\n\007INVALID\020\000\022\n\n\006DE"
+  "VICE\020\001\022\013\n\007CLUSTER\020\002\022\010\n\004USER\020\003\022\016\n\nSUPER_U"
+  "SER\020\004\022\020\n\014BILLING_USER\020\005\022\022\n\016READ_ONLY_USE"
+  "R\020\006\022\010\n\004ROOT\020d*g\n\016UsageEventType\022\022\n\016AUTHE"
+  "NTICATION\020\000\022\017\n\013RECOGNITION\020\001\022\016\n\nENROLLME"
+  "NT\020\002\022\r\n\tSYNTHESIS\020\003\022\021\n\rTRANSCRIPTION\020\004*\037"
+  "\n\nServerType\022\t\n\005TITAN\020\000\022\006\n\002IO\020\001Bv\n\032ai.se"
+  "nsorycloud.api.commonB\025SensoryApiCommonP"
+  "rotoP\001Z8gitlab.com/sensory-cloud/server/"
+  "titan.git/pkg/api/common\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_common_2fcommon_2eproto_deps[2] = {
   &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
@@ -505,7 +505,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_common_2fcommon_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_common_2fcommon_2eproto = {
-  false, false, 2978, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
+  false, false, 2999, descriptor_table_protodef_common_2fcommon_2eproto, "common/common.proto", 
   &descriptor_table_common_2fcommon_2eproto_once, descriptor_table_common_2fcommon_2eproto_deps, 2, 14,
   schemas, file_default_instances, TableStruct_common_2fcommon_2eproto::offsets,
   file_level_metadata_common_2fcommon_2eproto, file_level_enum_descriptors_common_2fcommon_2eproto, file_level_service_descriptors_common_2fcommon_2eproto,
@@ -588,6 +588,7 @@ bool ModelType_IsValid(int value) {
     case 202:
     case 203:
     case 204:
+    case 205:
       return true;
     default:
       return false;

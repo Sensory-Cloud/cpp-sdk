@@ -101,13 +101,17 @@ struct ValidateRecognitionRequestDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ValidateRecognitionRequestDefaultTypeInternal _ValidateRecognitionRequest_default_instance_;
 constexpr CreateEnrollmentResponse::CreateEnrollmentResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : enrollmentid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  : boundingbox_()
+  , _boundingbox_cached_byte_size_(0)
+  , enrollmentid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , modelname_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , modelversion_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , enrollmenttoken_(nullptr)
   , percentcomplete_(int64_t{0})
   , isalive_(false)
-  , score_(0){}
+  , didfindface_(false)
+  , score_(0)
+  , probabilityface_(0){}
 struct CreateEnrollmentResponseDefaultTypeInternal {
   constexpr CreateEnrollmentResponseDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -119,12 +123,16 @@ struct CreateEnrollmentResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CreateEnrollmentResponseDefaultTypeInternal _CreateEnrollmentResponse_default_instance_;
 constexpr AuthenticateResponse::AuthenticateResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : userid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  : boundingbox_()
+  , _boundingbox_cached_byte_size_(0)
+  , userid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , enrollmentid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , token_(nullptr)
   , score_(0)
   , success_(false)
-  , isalive_(false){}
+  , isalive_(false)
+  , didfindface_(false)
+  , probabilityface_(0){}
 struct AuthenticateResponseDefaultTypeInternal {
   constexpr AuthenticateResponseDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -136,8 +144,12 @@ struct AuthenticateResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AuthenticateResponseDefaultTypeInternal _AuthenticateResponse_default_instance_;
 constexpr LivenessRecognitionResponse::LivenessRecognitionResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : isalive_(false)
-  , score_(0){}
+  : boundingbox_()
+  , _boundingbox_cached_byte_size_(0)
+  , score_(0)
+  , isalive_(false)
+  , didfindface_(false)
+  , probabilityface_(0){}
 struct LivenessRecognitionResponseDefaultTypeInternal {
   constexpr LivenessRecognitionResponseDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -277,6 +289,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fvideo_2fvideo_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, modelversion_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, score_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, enrollmenttoken_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, didfindface_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, boundingbox_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentResponse, probabilityface_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -289,6 +304,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fvideo_2fvideo_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, token_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, userid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, enrollmentid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, didfindface_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, boundingbox_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::AuthenticateResponse, probabilityface_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::LivenessRecognitionResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -297,6 +315,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fvideo_2fvideo_2eproto::of
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::LivenessRecognitionResponse, isalive_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::LivenessRecognitionResponse, score_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::LivenessRecognitionResponse, didfindface_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::LivenessRecognitionResponse, boundingbox_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::LivenessRecognitionResponse, probabilityface_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::video::CreateEnrollmentConfig, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -345,11 +366,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 35, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateRequest)},
   { 44, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionRequest)},
   { 53, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentResponse)},
-  { 66, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateResponse)},
-  { 78, -1, -1, sizeof(::sensory::api::v1::video::LivenessRecognitionResponse)},
-  { 86, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentConfig)},
-  { 102, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateConfig)},
-  { 116, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionConfig)},
+  { 69, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateResponse)},
+  { 84, -1, -1, sizeof(::sensory::api::v1::video::LivenessRecognitionResponse)},
+  { 95, -1, -1, sizeof(::sensory::api::v1::video::CreateEnrollmentConfig)},
+  { 111, -1, -1, sizeof(::sensory::api::v1::video::AuthenticateConfig)},
+  { 125, -1, -1, sizeof(::sensory::api::v1::video::ValidateRecognitionConfig)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -388,59 +409,64 @@ const char descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto[] PROTOBUF_SECTI
   "\"\220\001\n\032ValidateRecognitionRequest\022A\n\006confi"
   "g\030\001 \001(\0132/.sensory.api.v1.video.ValidateR"
   "ecognitionConfigH\000\022\026\n\014imageContent\030\002 \001(\014"
-  "H\000B\027\n\020streamingRequest\022\003\370B\001\"\320\001\n\030CreateEn"
+  "H\000B\027\n\020streamingRequest\022\003\370B\001\"\223\002\n\030CreateEn"
   "rollmentResponse\022\027\n\017percentComplete\030\001 \001("
   "\003\022\017\n\007isAlive\030\002 \001(\010\022\024\n\014enrollmentId\030\003 \001(\t"
   "\022\021\n\tmodelName\030\004 \001(\t\022\024\n\014modelVersion\030\005 \001("
   "\t\022\r\n\005score\030\006 \001(\002\022<\n\017enrollmentToken\030\007 \001("
-  "\0132#.sensory.api.common.EnrollmentToken\"\237"
-  "\001\n\024AuthenticateResponse\022\017\n\007success\030\001 \001(\010"
-  "\022\r\n\005score\030\002 \001(\002\022\017\n\007isAlive\030\003 \001(\010\0220\n\005toke"
-  "n\030\004 \001(\0132!.sensory.api.common.TokenRespon"
-  "se\022\016\n\006userId\030\005 \001(\t\022\024\n\014enrollmentId\030\006 \001(\t"
-  "\"=\n\033LivenessRecognitionResponse\022\017\n\007isAli"
-  "ve\030\001 \001(\010\022\r\n\005score\030\002 \001(\002\"\256\003\n\026CreateEnroll"
-  "mentConfig\022\031\n\006userId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022\033\n"
-  "\010deviceId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022\035\n\tmodelName\030"
-  "\003 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013description\030\004 \001(\tB\010"
-  "\372B\005r\003\030\377\007\022\031\n\021isLivenessEnabled\030\005 \001(\010\022O\n\021l"
-  "ivenessThreshold\030\006 \001(\0162*.sensory.api.v1."
-  "video.RecognitionThresholdB\010\372B\005\202\001\002\020\001\022A\n\013"
-  "compression\030\007 \001(\0132,.sensory.api.common.C"
-  "ompressionConfiguration\022\034\n\013referenceId\030\010"
-  " \001(\tB\007\372B\004r\002\030\177\022!\n\031numLivenessFramesRequir"
-  "ed\030\t \001(\005\022.\n&disableServerEnrollmentTempl"
-  "ateStorage\030\n \001(\010\"\302\002\n\022AuthenticateConfig\022"
-  " \n\014enrollmentId\030\001 \001(\tB\010\372B\005r\003\260\001\001H\000\022\033\n\021enr"
-  "ollmentGroupId\030\002 \001(\tH\000\022\031\n\021isLivenessEnab"
-  "led\030\003 \001(\010\022O\n\021livenessThreshold\030\004 \001(\0162*.s"
-  "ensory.api.v1.video.RecognitionThreshold"
-  "B\010\372B\005\202\001\002\020\001\022A\n\013compression\030\005 \001(\0132,.sensor"
-  "y.api.common.CompressionConfiguration\022\026\n"
-  "\016doIncludeToken\030\006 \001(\010\022\027\n\017enrollmentToken"
-  "\030\007 \001(\014B\r\n\006authId\022\003\370B\001\"\236\001\n\031ValidateRecogn"
-  "itionConfig\022\035\n\tmodelName\030\001 \001(\tB\n\372B\007r\005\020\001\030"
-  "\377\001\022\031\n\006userId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022G\n\tthresho"
-  "ld\030\003 \001(\0162*.sensory.api.v1.video.Recognit"
-  "ionThresholdB\010\372B\005\202\001\002\020\001*B\n\024RecognitionThr"
-  "eshold\022\007\n\003LOW\020\000\022\n\n\006MEDIUM\020\001\022\010\n\004HIGH\020\002\022\013\n"
-  "\007HIGHEST\020\0032m\n\013VideoModels\022^\n\tGetModels\022&"
-  ".sensory.api.v1.video.GetModelsRequest\032\'"
-  ".sensory.api.v1.video.GetModelsResponse\""
-  "\0002\367\001\n\017VideoBiometrics\022w\n\020CreateEnrollmen"
-  "t\022-.sensory.api.v1.video.CreateEnrollmen"
-  "tRequest\032..sensory.api.v1.video.CreateEn"
-  "rollmentResponse\"\000(\0010\001\022k\n\014Authenticate\022)"
-  ".sensory.api.v1.video.AuthenticateReques"
-  "t\032*.sensory.api.v1.video.AuthenticateRes"
-  "ponse\"\000(\0010\0012\221\001\n\020VideoRecognition\022}\n\020Vali"
-  "dateLiveness\0220.sensory.api.v1.video.Vali"
-  "dateRecognitionRequest\0321.sensory.api.v1."
-  "video.LivenessRecognitionResponse\"\000(\0010\001B"
-  "|\n\034ai.sensorycloud.api.v1.videoB\026Sensory"
-  "ApiV1VideoProtoP\001Z:gitlab.com/sensory-cl"
-  "oud/server/titan.git/pkg/api/v1/video\242\002\005"
-  "SENGVb\006proto3"
+  "\0132#.sensory.api.common.EnrollmentToken\022\023"
+  "\n\013didFindFace\030\010 \001(\010\022\023\n\013boundingBox\030\t \003(\003"
+  "\022\027\n\017probabilityFace\030\n \001(\002\"\342\001\n\024Authentica"
+  "teResponse\022\017\n\007success\030\001 \001(\010\022\r\n\005score\030\002 \001"
+  "(\002\022\017\n\007isAlive\030\003 \001(\010\0220\n\005token\030\004 \001(\0132!.sen"
+  "sory.api.common.TokenResponse\022\016\n\006userId\030"
+  "\005 \001(\t\022\024\n\014enrollmentId\030\006 \001(\t\022\023\n\013didFindFa"
+  "ce\030\007 \001(\010\022\023\n\013boundingBox\030\010 \003(\003\022\027\n\017probabi"
+  "lityFace\030\t \001(\002\"\200\001\n\033LivenessRecognitionRe"
+  "sponse\022\017\n\007isAlive\030\001 \001(\010\022\r\n\005score\030\002 \001(\002\022\023"
+  "\n\013didFindFace\030\003 \001(\010\022\023\n\013boundingBox\030\004 \003(\003"
+  "\022\027\n\017probabilityFace\030\005 \001(\002\"\256\003\n\026CreateEnro"
+  "llmentConfig\022\031\n\006userId\030\001 \001(\tB\t\372B\006r\004\020\001\030\177\022"
+  "\033\n\010deviceId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022\035\n\tmodelNam"
+  "e\030\003 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013description\030\004 \001(\t"
+  "B\010\372B\005r\003\030\377\007\022\031\n\021isLivenessEnabled\030\005 \001(\010\022O\n"
+  "\021livenessThreshold\030\006 \001(\0162*.sensory.api.v"
+  "1.video.RecognitionThresholdB\010\372B\005\202\001\002\020\001\022A"
+  "\n\013compression\030\007 \001(\0132,.sensory.api.common"
+  ".CompressionConfiguration\022\034\n\013referenceId"
+  "\030\010 \001(\tB\007\372B\004r\002\030\177\022!\n\031numLivenessFramesRequ"
+  "ired\030\t \001(\005\022.\n&disableServerEnrollmentTem"
+  "plateStorage\030\n \001(\010\"\302\002\n\022AuthenticateConfi"
+  "g\022 \n\014enrollmentId\030\001 \001(\tB\010\372B\005r\003\260\001\001H\000\022\033\n\021e"
+  "nrollmentGroupId\030\002 \001(\tH\000\022\031\n\021isLivenessEn"
+  "abled\030\003 \001(\010\022O\n\021livenessThreshold\030\004 \001(\0162*"
+  ".sensory.api.v1.video.RecognitionThresho"
+  "ldB\010\372B\005\202\001\002\020\001\022A\n\013compression\030\005 \001(\0132,.sens"
+  "ory.api.common.CompressionConfiguration\022"
+  "\026\n\016doIncludeToken\030\006 \001(\010\022\027\n\017enrollmentTok"
+  "en\030\007 \001(\014B\r\n\006authId\022\003\370B\001\"\236\001\n\031ValidateReco"
+  "gnitionConfig\022\035\n\tmodelName\030\001 \001(\tB\n\372B\007r\005\020"
+  "\001\030\377\001\022\031\n\006userId\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022G\n\tthres"
+  "hold\030\003 \001(\0162*.sensory.api.v1.video.Recogn"
+  "itionThresholdB\010\372B\005\202\001\002\020\001*B\n\024RecognitionT"
+  "hreshold\022\007\n\003LOW\020\000\022\n\n\006MEDIUM\020\001\022\010\n\004HIGH\020\002\022"
+  "\013\n\007HIGHEST\020\0032m\n\013VideoModels\022^\n\tGetModels"
+  "\022&.sensory.api.v1.video.GetModelsRequest"
+  "\032\'.sensory.api.v1.video.GetModelsRespons"
+  "e\"\0002\367\001\n\017VideoBiometrics\022w\n\020CreateEnrollm"
+  "ent\022-.sensory.api.v1.video.CreateEnrollm"
+  "entRequest\032..sensory.api.v1.video.Create"
+  "EnrollmentResponse\"\000(\0010\001\022k\n\014Authenticate"
+  "\022).sensory.api.v1.video.AuthenticateRequ"
+  "est\032*.sensory.api.v1.video.AuthenticateR"
+  "esponse\"\000(\0010\0012\221\001\n\020VideoRecognition\022}\n\020Va"
+  "lidateLiveness\0220.sensory.api.v1.video.Va"
+  "lidateRecognitionRequest\0321.sensory.api.v"
+  "1.video.LivenessRecognitionResponse\"\000(\0010"
+  "\001B|\n\034ai.sensorycloud.api.v1.videoB\026Senso"
+  "ryApiV1VideoProtoP\001Z:gitlab.com/sensory-"
+  "cloud/server/titan.git/pkg/api/v1/video\242"
+  "\002\005SENGVb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fvideo_2fvideo_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -448,7 +474,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fvideo_2fvideo_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fvideo_2fvideo_2eproto = {
-  false, false, 2893, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
+  false, false, 3095, descriptor_table_protodef_v1_2fvideo_2fvideo_2eproto, "v1/video/video.proto", 
   &descriptor_table_v1_2fvideo_2fvideo_2eproto_once, descriptor_table_v1_2fvideo_2fvideo_2eproto_deps, 2, 12,
   schemas, file_default_instances, TableStruct_v1_2fvideo_2fvideo_2eproto::offsets,
   file_level_metadata_v1_2fvideo_2fvideo_2eproto, file_level_enum_descriptors_v1_2fvideo_2fvideo_2eproto, file_level_service_descriptors_v1_2fvideo_2fvideo_2eproto,
@@ -1942,7 +1968,8 @@ void CreateEnrollmentResponse::clear_enrollmenttoken() {
 }
 CreateEnrollmentResponse::CreateEnrollmentResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  boundingbox_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -1950,7 +1977,8 @@ CreateEnrollmentResponse::CreateEnrollmentResponse(::PROTOBUF_NAMESPACE_ID::Aren
   // @@protoc_insertion_point(arena_constructor:sensory.api.v1.video.CreateEnrollmentResponse)
 }
 CreateEnrollmentResponse::CreateEnrollmentResponse(const CreateEnrollmentResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      boundingbox_(from.boundingbox_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   enrollmentid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (!from._internal_enrollmentid().empty()) {
@@ -1973,8 +2001,8 @@ CreateEnrollmentResponse::CreateEnrollmentResponse(const CreateEnrollmentRespons
     enrollmenttoken_ = nullptr;
   }
   ::memcpy(&percentcomplete_, &from.percentcomplete_,
-    static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&percentcomplete_)) + sizeof(score_));
+    static_cast<size_t>(reinterpret_cast<char*>(&probabilityface_) -
+    reinterpret_cast<char*>(&percentcomplete_)) + sizeof(probabilityface_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.video.CreateEnrollmentResponse)
 }
 
@@ -1984,8 +2012,8 @@ modelname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAl
 modelversion_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&enrollmenttoken_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&enrollmenttoken_)) + sizeof(score_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&probabilityface_) -
+    reinterpret_cast<char*>(&enrollmenttoken_)) + sizeof(probabilityface_));
 }
 
 CreateEnrollmentResponse::~CreateEnrollmentResponse() {
@@ -2019,6 +2047,7 @@ void CreateEnrollmentResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  boundingbox_.Clear();
   enrollmentid_.ClearToEmpty();
   modelname_.ClearToEmpty();
   modelversion_.ClearToEmpty();
@@ -2027,8 +2056,8 @@ void CreateEnrollmentResponse::Clear() {
   }
   enrollmenttoken_ = nullptr;
   ::memset(&percentcomplete_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&score_) -
-      reinterpret_cast<char*>(&percentcomplete_)) + sizeof(score_));
+      reinterpret_cast<char*>(&probabilityface_) -
+      reinterpret_cast<char*>(&percentcomplete_)) + sizeof(probabilityface_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2097,6 +2126,33 @@ const char* CreateEnrollmentResponse::_InternalParse(const char* ptr, ::PROTOBUF
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
           ptr = ctx->ParseMessage(_internal_mutable_enrollmenttoken(), ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool didFindFace = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64)) {
+          didfindface_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated int64 boundingBox = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 74)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt64Parser(_internal_mutable_boundingbox(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 72) {
+          _internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float probabilityFace = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 85)) {
+          probabilityface_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
@@ -2185,6 +2241,27 @@ failure:
         7, _Internal::enrollmenttoken(this), target, stream);
   }
 
+  // bool didFindFace = 8;
+  if (this->_internal_didfindface() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_didfindface(), target);
+  }
+
+  // repeated int64 boundingBox = 9;
+  {
+    int byte_size = _boundingbox_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteInt64Packed(
+          9, _internal_boundingbox(), byte_size, target);
+    }
+  }
+
+  // float probabilityFace = 10;
+  if (!(this->_internal_probabilityface() <= 0 && this->_internal_probabilityface() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(10, this->_internal_probabilityface(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2200,6 +2277,21 @@ size_t CreateEnrollmentResponse::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated int64 boundingBox = 9;
+  {
+    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      Int64Size(this->boundingbox_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _boundingbox_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
 
   // string enrollmentId = 3;
   if (!this->_internal_enrollmentid().empty()) {
@@ -2239,8 +2331,18 @@ size_t CreateEnrollmentResponse::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
+  // bool didFindFace = 8;
+  if (this->_internal_didfindface() != 0) {
+    total_size += 1 + 1;
+  }
+
   // float score = 6;
   if (!(this->_internal_score() <= 0 && this->_internal_score() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  // float probabilityFace = 10;
+  if (!(this->_internal_probabilityface() <= 0 && this->_internal_probabilityface() >= 0)) {
     total_size += 1 + 4;
   }
 
@@ -2266,6 +2368,7 @@ void CreateEnrollmentResponse::MergeFrom(const CreateEnrollmentResponse& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  boundingbox_.MergeFrom(from.boundingbox_);
   if (!from._internal_enrollmentid().empty()) {
     _internal_set_enrollmentid(from._internal_enrollmentid());
   }
@@ -2284,8 +2387,14 @@ void CreateEnrollmentResponse::MergeFrom(const CreateEnrollmentResponse& from) {
   if (from._internal_isalive() != 0) {
     _internal_set_isalive(from._internal_isalive());
   }
+  if (from._internal_didfindface() != 0) {
+    _internal_set_didfindface(from._internal_didfindface());
+  }
   if (!(from._internal_score() <= 0 && from._internal_score() >= 0)) {
     _internal_set_score(from._internal_score());
+  }
+  if (!(from._internal_probabilityface() <= 0 && from._internal_probabilityface() >= 0)) {
+    _internal_set_probabilityface(from._internal_probabilityface());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2306,6 +2415,7 @@ void CreateEnrollmentResponse::InternalSwap(CreateEnrollmentResponse* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  boundingbox_.InternalSwap(&other->boundingbox_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &enrollmentid_, lhs_arena,
@@ -2322,8 +2432,8 @@ void CreateEnrollmentResponse::InternalSwap(CreateEnrollmentResponse* other) {
       &other->modelversion_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(CreateEnrollmentResponse, score_)
-      + sizeof(CreateEnrollmentResponse::score_)
+      PROTOBUF_FIELD_OFFSET(CreateEnrollmentResponse, probabilityface_)
+      + sizeof(CreateEnrollmentResponse::probabilityface_)
       - PROTOBUF_FIELD_OFFSET(CreateEnrollmentResponse, enrollmenttoken_)>(
           reinterpret_cast<char*>(&enrollmenttoken_),
           reinterpret_cast<char*>(&other->enrollmenttoken_));
@@ -2354,7 +2464,8 @@ void AuthenticateResponse::clear_token() {
 }
 AuthenticateResponse::AuthenticateResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  boundingbox_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -2362,7 +2473,8 @@ AuthenticateResponse::AuthenticateResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena
   // @@protoc_insertion_point(arena_constructor:sensory.api.v1.video.AuthenticateResponse)
 }
 AuthenticateResponse::AuthenticateResponse(const AuthenticateResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      boundingbox_(from.boundingbox_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (!from._internal_userid().empty()) {
@@ -2380,8 +2492,8 @@ AuthenticateResponse::AuthenticateResponse(const AuthenticateResponse& from)
     token_ = nullptr;
   }
   ::memcpy(&score_, &from.score_,
-    static_cast<size_t>(reinterpret_cast<char*>(&isalive_) -
-    reinterpret_cast<char*>(&score_)) + sizeof(isalive_));
+    static_cast<size_t>(reinterpret_cast<char*>(&probabilityface_) -
+    reinterpret_cast<char*>(&score_)) + sizeof(probabilityface_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.video.AuthenticateResponse)
 }
 
@@ -2390,8 +2502,8 @@ userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlrea
 enrollmentid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&token_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&isalive_) -
-    reinterpret_cast<char*>(&token_)) + sizeof(isalive_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&probabilityface_) -
+    reinterpret_cast<char*>(&token_)) + sizeof(probabilityface_));
 }
 
 AuthenticateResponse::~AuthenticateResponse() {
@@ -2424,6 +2536,7 @@ void AuthenticateResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  boundingbox_.Clear();
   userid_.ClearToEmpty();
   enrollmentid_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && token_ != nullptr) {
@@ -2431,8 +2544,8 @@ void AuthenticateResponse::Clear() {
   }
   token_ = nullptr;
   ::memset(&score_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&isalive_) -
-      reinterpret_cast<char*>(&score_)) + sizeof(isalive_));
+      reinterpret_cast<char*>(&probabilityface_) -
+      reinterpret_cast<char*>(&score_)) + sizeof(probabilityface_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2491,6 +2604,33 @@ const char* AuthenticateResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAM
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.video.AuthenticateResponse.enrollmentId"));
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool didFindFace = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
+          didfindface_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated int64 boundingBox = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 66)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt64Parser(_internal_mutable_boundingbox(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 64) {
+          _internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float probabilityFace = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 77)) {
+          probabilityface_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
@@ -2569,6 +2709,27 @@ failure:
         6, this->_internal_enrollmentid(), target);
   }
 
+  // bool didFindFace = 7;
+  if (this->_internal_didfindface() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(7, this->_internal_didfindface(), target);
+  }
+
+  // repeated int64 boundingBox = 8;
+  {
+    int byte_size = _boundingbox_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteInt64Packed(
+          8, _internal_boundingbox(), byte_size, target);
+    }
+  }
+
+  // float probabilityFace = 9;
+  if (!(this->_internal_probabilityface() <= 0 && this->_internal_probabilityface() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(9, this->_internal_probabilityface(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2584,6 +2745,21 @@ size_t AuthenticateResponse::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated int64 boundingBox = 8;
+  {
+    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      Int64Size(this->boundingbox_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _boundingbox_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
 
   // string userId = 5;
   if (!this->_internal_userid().empty()) {
@@ -2621,6 +2797,16 @@ size_t AuthenticateResponse::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
+  // bool didFindFace = 7;
+  if (this->_internal_didfindface() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // float probabilityFace = 9;
+  if (!(this->_internal_probabilityface() <= 0 && this->_internal_probabilityface() >= 0)) {
+    total_size += 1 + 4;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -2643,6 +2829,7 @@ void AuthenticateResponse::MergeFrom(const AuthenticateResponse& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  boundingbox_.MergeFrom(from.boundingbox_);
   if (!from._internal_userid().empty()) {
     _internal_set_userid(from._internal_userid());
   }
@@ -2660,6 +2847,12 @@ void AuthenticateResponse::MergeFrom(const AuthenticateResponse& from) {
   }
   if (from._internal_isalive() != 0) {
     _internal_set_isalive(from._internal_isalive());
+  }
+  if (from._internal_didfindface() != 0) {
+    _internal_set_didfindface(from._internal_didfindface());
+  }
+  if (!(from._internal_probabilityface() <= 0 && from._internal_probabilityface() >= 0)) {
+    _internal_set_probabilityface(from._internal_probabilityface());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2680,6 +2873,7 @@ void AuthenticateResponse::InternalSwap(AuthenticateResponse* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  boundingbox_.InternalSwap(&other->boundingbox_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &userid_, lhs_arena,
@@ -2691,8 +2885,8 @@ void AuthenticateResponse::InternalSwap(AuthenticateResponse* other) {
       &other->enrollmentid_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AuthenticateResponse, isalive_)
-      + sizeof(AuthenticateResponse::isalive_)
+      PROTOBUF_FIELD_OFFSET(AuthenticateResponse, probabilityface_)
+      + sizeof(AuthenticateResponse::probabilityface_)
       - PROTOBUF_FIELD_OFFSET(AuthenticateResponse, token_)>(
           reinterpret_cast<char*>(&token_),
           reinterpret_cast<char*>(&other->token_));
@@ -2712,7 +2906,8 @@ class LivenessRecognitionResponse::_Internal {
 
 LivenessRecognitionResponse::LivenessRecognitionResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  boundingbox_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -2720,19 +2915,20 @@ LivenessRecognitionResponse::LivenessRecognitionResponse(::PROTOBUF_NAMESPACE_ID
   // @@protoc_insertion_point(arena_constructor:sensory.api.v1.video.LivenessRecognitionResponse)
 }
 LivenessRecognitionResponse::LivenessRecognitionResponse(const LivenessRecognitionResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      boundingbox_(from.boundingbox_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&isalive_, &from.isalive_,
-    static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&isalive_)) + sizeof(score_));
+  ::memcpy(&score_, &from.score_,
+    static_cast<size_t>(reinterpret_cast<char*>(&probabilityface_) -
+    reinterpret_cast<char*>(&score_)) + sizeof(probabilityface_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.video.LivenessRecognitionResponse)
 }
 
 void LivenessRecognitionResponse::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&isalive_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&isalive_)) + sizeof(score_));
+    reinterpret_cast<char*>(&score_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&probabilityface_) -
+    reinterpret_cast<char*>(&score_)) + sizeof(probabilityface_));
 }
 
 LivenessRecognitionResponse::~LivenessRecognitionResponse() {
@@ -2762,9 +2958,10 @@ void LivenessRecognitionResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&isalive_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&score_) -
-      reinterpret_cast<char*>(&isalive_)) + sizeof(score_));
+  boundingbox_.Clear();
+  ::memset(&score_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&probabilityface_) -
+      reinterpret_cast<char*>(&score_)) + sizeof(probabilityface_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2786,6 +2983,33 @@ const char* LivenessRecognitionResponse::_InternalParse(const char* ptr, ::PROTO
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21)) {
           score_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool didFindFace = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          didfindface_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated int64 boundingBox = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt64Parser(_internal_mutable_boundingbox(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32) {
+          _internal_add_boundingbox(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float probabilityFace = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45)) {
+          probabilityface_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
@@ -2831,6 +3055,27 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_score(), target);
   }
 
+  // bool didFindFace = 3;
+  if (this->_internal_didfindface() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(3, this->_internal_didfindface(), target);
+  }
+
+  // repeated int64 boundingBox = 4;
+  {
+    int byte_size = _boundingbox_cached_byte_size_.load(std::memory_order_relaxed);
+    if (byte_size > 0) {
+      target = stream->WriteInt64Packed(
+          4, _internal_boundingbox(), byte_size, target);
+    }
+  }
+
+  // float probabilityFace = 5;
+  if (!(this->_internal_probabilityface() <= 0 && this->_internal_probabilityface() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(5, this->_internal_probabilityface(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2847,13 +3092,38 @@ size_t LivenessRecognitionResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // repeated int64 boundingBox = 4;
+  {
+    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      Int64Size(this->boundingbox_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _boundingbox_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // float score = 2;
+  if (!(this->_internal_score() <= 0 && this->_internal_score() >= 0)) {
+    total_size += 1 + 4;
+  }
+
   // bool isAlive = 1;
   if (this->_internal_isalive() != 0) {
     total_size += 1 + 1;
   }
 
-  // float score = 2;
-  if (!(this->_internal_score() <= 0 && this->_internal_score() >= 0)) {
+  // bool didFindFace = 3;
+  if (this->_internal_didfindface() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // float probabilityFace = 5;
+  if (!(this->_internal_probabilityface() <= 0 && this->_internal_probabilityface() >= 0)) {
     total_size += 1 + 4;
   }
 
@@ -2879,11 +3149,18 @@ void LivenessRecognitionResponse::MergeFrom(const LivenessRecognitionResponse& f
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  boundingbox_.MergeFrom(from.boundingbox_);
+  if (!(from._internal_score() <= 0 && from._internal_score() >= 0)) {
+    _internal_set_score(from._internal_score());
+  }
   if (from._internal_isalive() != 0) {
     _internal_set_isalive(from._internal_isalive());
   }
-  if (!(from._internal_score() <= 0 && from._internal_score() >= 0)) {
-    _internal_set_score(from._internal_score());
+  if (from._internal_didfindface() != 0) {
+    _internal_set_didfindface(from._internal_didfindface());
+  }
+  if (!(from._internal_probabilityface() <= 0 && from._internal_probabilityface() >= 0)) {
+    _internal_set_probabilityface(from._internal_probabilityface());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2902,12 +3179,13 @@ bool LivenessRecognitionResponse::IsInitialized() const {
 void LivenessRecognitionResponse::InternalSwap(LivenessRecognitionResponse* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  boundingbox_.InternalSwap(&other->boundingbox_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(LivenessRecognitionResponse, score_)
-      + sizeof(LivenessRecognitionResponse::score_)
-      - PROTOBUF_FIELD_OFFSET(LivenessRecognitionResponse, isalive_)>(
-          reinterpret_cast<char*>(&isalive_),
-          reinterpret_cast<char*>(&other->isalive_));
+      PROTOBUF_FIELD_OFFSET(LivenessRecognitionResponse, probabilityface_)
+      + sizeof(LivenessRecognitionResponse::probabilityface_)
+      - PROTOBUF_FIELD_OFFSET(LivenessRecognitionResponse, score_)>(
+          reinterpret_cast<char*>(&score_),
+          reinterpret_cast<char*>(&other->score_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LivenessRecognitionResponse::GetMetadata() const {

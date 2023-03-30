@@ -1,6 +1,6 @@
 // An example of audio authentication based on file inputs.
 //
-// Copyright (c) 2022 Sensory, Inc.
+// Copyright (c) 2023 Sensory, Inc.
 //
 // Author: Christian Kauten (ckauten@sensoryinc.com)
 //
@@ -72,7 +72,7 @@ int main(int argc, const char** argv) {
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default).")
-        .default_value(0);
+        .default_value(4096);
     parser.add_argument({ "-p", "--padding" })
         .help("The number of milliseconds of padding to append to the audio buffer.")
         .default_value(300);
@@ -101,7 +101,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_HIGH;
     const auto GROUP = args.get<bool>("group");
     const auto LANGUAGE = args.get<std::string>("language");
-    const auto CHUNK_SIZE = args.get<int>("chunksize");
+    auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
 
     // Create a credential store for keeping OAuth credentials in.
@@ -247,10 +247,16 @@ int main(int argc, const char** argv) {
         }
     });
 
-    tqdm progress(sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE));
+    // If the chunk size is zero, disable chunking by setting the chunk size
+    // to be equal to the number of samples.
+    if (CHUNK_SIZE <= 0) CHUNK_SIZE = sfinfo.frames;
+
+    auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);
+    tqdm progress(num_chunks);
     int16_t samples[CHUNK_SIZE];
     int num_frames;
-    while ((num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE))) {
+    for (int i = 0; i < num_chunks; i++) {
+        auto num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE);
         sensory::api::v1::audio::AuthenticateRequest request;
         request.set_audiocontent((uint8_t*) samples, sizeof(int16_t) * num_frames);
         if (!stream->Write(request)) break;
