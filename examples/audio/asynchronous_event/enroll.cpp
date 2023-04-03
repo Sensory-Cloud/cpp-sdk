@@ -115,10 +115,14 @@ int main(int argc, const char** argv) {
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
-        std::cout << "\tid: " << server_health.id() << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -146,7 +150,14 @@ int main(int argc, const char** argv) {
                         model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_TEXT_INDEPENDENT &&
                         model.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD
                     ) continue;
-                    std::cout << model.name() << std::endl;
+                    google::protobuf::util::JsonPrintOptions options;
+                    options.add_whitespace = true;
+                    options.always_print_primitive_fields = true;
+                    options.always_print_enums_as_ints = false;
+                    options.preserve_proto_field_names = true;
+                    std::string model_json;
+                    google::protobuf::util::MessageToJsonString(model, &model_json, options);
+                    std::cout << model_json << std::endl;
                 }
             }
         })->await();
@@ -274,14 +285,14 @@ int main(int argc, const char** argv) {
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
                 // Log the result of the request to the terminal.
                 if (VERBOSE) {  // Verbose output, dump the message to the terminal
-                    std::cout << "Response" << std::endl;
-                    std::cout << "\tPercent Complete:         " << stream->getResponse().percentcomplete()        << std::endl;
-                    std::cout << "\tPercent Segment Complete: " << stream->getResponse().percentsegmentcomplete() << std::endl;
-                    std::cout << "\tAudio Energy:             " << stream->getResponse().audioenergy()            << std::endl;
-                    std::cout << "\tEnrollment ID:            " << stream->getResponse().enrollmentid()           << std::endl;
-                    std::cout << "\tModel Name:               " << stream->getResponse().modelname()              << std::endl;
-                    std::cout << "\tModel Version:            " << stream->getResponse().modelversion()           << std::endl;
-                    std::cout << "\tModel Prompt:             " << stream->getResponse().modelprompt()            << std::endl;
+                    google::protobuf::util::JsonPrintOptions options;
+                    options.add_whitespace = false;
+                    options.always_print_primitive_fields = true;
+                    options.always_print_enums_as_ints = false;
+                    options.preserve_proto_field_names = true;
+                    std::string response_json;
+                    google::protobuf::util::MessageToJsonString(stream->getResponse(), &response_json, options);
+                    std::cout << response_json << std::endl;
                 } else {  // Friendly output, use a progress bar and display the prompt
                     std::vector<std::string> progress{
                         "[          ] 0%   ",

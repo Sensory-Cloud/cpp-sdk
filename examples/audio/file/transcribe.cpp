@@ -120,17 +120,21 @@ int main(int argc, const char** argv) {
     SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Check the server health.
-    sensory::api::common::ServerHealthResponse server_health_response;
-    auto status = cloud.health.get_health(&server_health_response);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -200,36 +204,14 @@ int main(int argc, const char** argv) {
             if (!stream->Read(&response)) break;
             aggregator.process_response(response.wordlist());
             if (!VERBOSE) continue;
-            // Relative energy of the processed audio as a value between 0 and 1.
-            // Can be converted to decibels in (-inf, 0] using 20 * log10(x).
-            std::cout << "Audio Energy: " << response.audioenergy() << std::endl;
-            // The word list contains the directives to the TranscriptAggregator
-            // for accumulating the sliding window transcript over time.
-            for (const auto& word : response.wordlist().words()) {
-                std::string state = "";
-                switch (word.wordstate()) {
-                    case WordState::WORDSTATE_PENDING: state = "PENDING"; break;
-                    case WordState::WORDSTATE_FINAL: state = "FINAL"; break;
-                    default: break;
-                }
-                std::cout << "word=" << word.word() << ", "
-                    << "state=" << state << ", "
-                    << "index=" << word.wordindex() << ", "
-                    << "confidence=" << word.confidence() << ", "
-                    << "begin_time=" << word.begintimems() << ", "
-                    << "end_time=" << word.endtimems() << std::endl;
-            }
-            // The post-processing actions convey pipeline specific
-            // functionality to/from the server. In this case the "FINAL" action
-            // is sent to indicate when the server has finished transcribing.
-            if (response.has_postprocessingaction()) {
-                const auto& action = response.postprocessingaction();
-                std::cout << "Post-processing "
-                    << "actionid=" << action.actionid() << ", "
-                    << "action=" << action.action() << std::endl;
-            }
-            std::cout << "Aggregated Transcript: " << aggregator.get_transcript() << std::endl;
-            std::cout << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = false;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string response_json;
+            google::protobuf::util::MessageToJsonString(response, &response_json, options);
+            std::cout << response_json << std::endl;
         }
         if (OUTPUT_FILE.empty()) {  // No output file, write to standard output.
             std::cout << aggregator.get_transcript() << std::endl;

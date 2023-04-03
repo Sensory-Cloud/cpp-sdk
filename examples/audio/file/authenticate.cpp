@@ -23,7 +23,6 @@
 // SOFTWARE.
 //
 
-#include <google/protobuf/util/time_util.h>
 #include <iostream>
 #include <regex>
 #include <sensorycloud/sensorycloud.hpp>
@@ -111,17 +110,21 @@ int main(int argc, const char** argv) {
     SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Check the server health.
-    sensory::api::common::ServerHealthResponse server_health_response;
-    auto status = cloud.health.get_health(&server_health_response);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -147,20 +150,14 @@ int main(int argc, const char** argv) {
                 enrollment.modeltype() != sensory::api::common::VOICE_BIOMETRIC_WAKEWORD &&
                 enrollment.modeltype() != sensory::api::common::SOUND_EVENT_ENROLLABLE
             ) continue;
-            std::cout << "Description:     " << enrollment.description()  << std::endl;
-            std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
-            std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
-            std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-            std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
-            std::cout << "\tDevice ID:     " << enrollment.deviceid()     << std::endl;
-            std::cout << "\tCreated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-                << std::endl;
-            std::cout << "\tUpdated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-                << std::endl;
-            std::cout << "\tID:            " << enrollment.id()           << std::endl;
-            std::cout << "\tReference ID:  " << enrollment.referenceid()  << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string enrollment_json;
+            google::protobuf::util::MessageToJsonString(enrollment, &enrollment_json, options);
+            std::cout << enrollment_json << std::endl;
         }
         return 0;
     }
@@ -215,11 +212,14 @@ int main(int argc, const char** argv) {
             if (!stream->Read(&response)) break;
             // Log the result of the request to the terminal.
             if (VERBOSE) {  // Verbose output, dump the message to the terminal
-                std::cout << "Response" << std::endl;
-                std::cout << "\tPercent Segment Complete: " << response.percentsegmentcomplete() << std::endl;
-                std::cout << "\tAudio Energy:             " << response.audioenergy()            << std::endl;
-                std::cout << "\tSuccess:                  " << response.success()                << std::endl;
-                std::cout << "\tModel Prompt:             " << response.modelprompt()            << std::endl;
+                google::protobuf::util::JsonPrintOptions options;
+                options.add_whitespace = false;
+                options.always_print_primitive_fields = true;
+                options.always_print_enums_as_ints = false;
+                options.preserve_proto_field_names = true;
+                std::string response_json;
+                google::protobuf::util::MessageToJsonString(response, &response_json, options);
+                std::cout << response_json << std::endl;
             } else {  // Friendly output, use a progress bar and display the prompt
                 std::vector<std::string> progress{
                     "[          ] 0%   ",

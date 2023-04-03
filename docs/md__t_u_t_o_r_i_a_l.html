@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.2</span>
+                                &#160;<span id="projectnumber">1.0.3</span>
                             </div>
                         </td>
                     </tr>
@@ -85,16 +85,12 @@ $(function() {
 <p >Because this SDK is built on <a href="https://www.grpc.io/">gRPC</a>, you may benefit from referring to the <a href="https://www.grpc.io/docs/languages/cpp/basics/">gRPC Tutorial</a> and <a href="https://grpc.github.io/grpc/cpp/annotated.html">gRPC Documentation</a> to familiarize yourself with some of the gRPC structures and patterns that are used in this SDK and tutorial.</p>
 <h1>Project Setup</h1>
 <p >The recommended build system for projects based on this SDK is <a href="https://cmake.org/"><code>cmake</code></a>. To include the SDK in your project , the simplest solution is to add a <code>FetchContent</code> block to your <code>CMakeLists.txt</code>. This approach will result in the compilation and linkage of the protobuff and gRPC dependencies locally.</p>
-<div class="fragment"><div class="line"># CMake version 3.11 is required to use FetchContent</div>
-<div class="line">cmake_minimum_required(VERSION 3.11)</div>
-<div class="line"> </div>
-<div class="line"># C++11 with gcc &gt;4.9 is required to compile the SensoryCloud C++ SDK.</div>
+<div class="fragment"><div class="line">cmake_minimum_required(VERSION 3.14)</div>
 <div class="line">set(CMAKE_CXX_STANDARD 11)</div>
 <div class="line"> </div>
-<div class="line"># Use FetchContent to compile the SDK with your project.</div>
 <div class="line">include(FetchContent)</div>
 <div class="line">FetchContent_Declare(sensorycloud</div>
-<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.1</div>
+<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.3</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(sensorycloud)</div>
 <div class="line"> </div>

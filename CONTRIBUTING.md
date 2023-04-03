@@ -100,6 +100,34 @@ SDK.
     ...
     ```
 
+1.  Update the library version in the `CMakeLists.txt` of each example project.
+
+    ```cmake
+    ...
+    FetchContent_Declare(sensorycloud
+        URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
+    )
+    ...
+    ```
+
+    The files to change include:
+
+    -   [examples/video/CMakeLists.txt](examples/video/CMakeLists.txt)
+    -   [examples/audio/CMakeLists.txt](examples/audio/CMakeLists.txt)
+    -   [examples/management/CMakeLists.txt](examples/management/CMakeLists.txt)
+
+1.  Update the `URL` in README snippets
+
+    ```cmake
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
+    ```
+
+    The files to change include:
+
+    -   [README.md](README.md)
+    -   [TUTORIAL.md](TUTORIAL.md)
+
+1.  Update `CHANGELOG.md` with the new features / bug fixes / changes.
 1.  Update the the `PROJECT_NUMBER` in [Doxyfile](Doxyfile) to reflect the
     change in version. Regenerate documentation using the following command and
     commit and push the changes in the `docs` folder.
@@ -108,14 +136,6 @@ SDK.
     doxygen Doxyfile
     ```
 
-1.  Update the `URL` in the README snippets and `CMakeLists.txt` of example
-    projects (replace `<tag to target>` with the tag for the next release).
-
-    ```cmake
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/<tag to target>
-    ```
-
-1.  Update `CHANGELOG.md` with the new features / bug fixes / changes.
 1.  Request a code review from another team member.
 1.  Merge changes into the main branch (they will be mirrored to GitHub).
 1.  Tag the commit and document the changes in the release notes on GitLab.

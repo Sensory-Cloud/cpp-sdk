@@ -24,7 +24,6 @@
 //
 
 #include <portaudio.h>
-#include <google/protobuf/util/time_util.h>
 #include <iostream>
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
@@ -112,10 +111,14 @@ int main(int argc, const char** argv) {
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
-        std::cout << "\tid: " << server_health.id() << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -141,20 +144,14 @@ int main(int argc, const char** argv) {
         for (auto& enrollment : enrollment_response.enrollments()) {
             if (enrollment.modeltype() != sensory::api::common::SOUND_EVENT_ENROLLABLE)
                 continue;
-            std::cout << "Description:     " << enrollment.description()  << std::endl;
-            std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
-            std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
-            std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-            std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
-            std::cout << "\tDevice ID:     " << enrollment.deviceid()     << std::endl;
-            std::cout << "\tCreated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-                << std::endl;
-            std::cout << "\tUpdated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-                << std::endl;
-            std::cout << "\tID:            " << enrollment.id()           << std::endl;
-            std::cout << "\tReference ID:  " << enrollment.referenceid()  << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string enrollment_json;
+            google::protobuf::util::MessageToJsonString(enrollment, &enrollment_json, options);
+            std::cout << enrollment_json << std::endl;
         }
         return 0;
     }
@@ -273,12 +270,14 @@ int main(int argc, const char** argv) {
             } else if (tag == (void*) Events::Read) {  // Respond to a read event.
                 // Log the result of the request to the terminal.
                 if (VERBOSE) {  // Verbose output, dump the message to the terminal
-                    std::cout << "Response" << std::endl;
-                    std::cout << "\tAudio Energy:             " << stream->getResponse().audioenergy()            << std::endl;
-                    std::cout << "\tUser ID:                  " << stream->getResponse().userid()                 << std::endl;
-                    std::cout << "\tEnrollment ID:            " << stream->getResponse().enrollmentid()           << std::endl;
-                    std::cout << "\tSuccess:                  " << stream->getResponse().success()                << std::endl;
-                    std::cout << "\tModel Prompt:             " << stream->getResponse().modelprompt()            << std::endl;
+                    google::protobuf::util::JsonPrintOptions options;
+                    options.add_whitespace = false;
+                    options.always_print_primitive_fields = true;
+                    options.always_print_enums_as_ints = false;
+                    options.preserve_proto_field_names = true;
+                    std::string response_json;
+                    google::protobuf::util::MessageToJsonString(stream->getResponse(), &response_json, options);
+                    std::cout << response_json << std::endl;
                 } else if (stream->getResponse().success()) {  // detected event
                     std::cout << "Detected event!" << std::endl;
                 }

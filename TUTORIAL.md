@@ -23,16 +23,12 @@ approach will result in the compilation and linkage of the protobuff and gRPC
 dependencies locally.
 
 ```cmake
-# CMake version 3.11 is required to use FetchContent
-cmake_minimum_required(VERSION 3.11)
-
-# C++11 with gcc >4.9 is required to compile the SensoryCloud C++ SDK.
+cmake_minimum_required(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 11)
 
-# Use FetchContent to compile the SDK with your project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v0.15.1
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.3
 )
 FetchContent_MakeAvailable(sensorycloud)
 

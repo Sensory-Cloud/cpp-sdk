@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include <regex>
-#include <google/protobuf/util/time_util.h>
+#include <google/protobuf/util/json_util.h>
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include "dep/argparse.hpp"
@@ -55,19 +55,14 @@ int get_enrollments(
             std::cout << "No enrollments" << std::endl;
         }
         for (auto& enrollment : call->getResponse().enrollments()) {
-            std::cout << "Description: "     << enrollment.description()  << std::endl;
-            std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
-            std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
-            std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-            std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
-            std::cout << "\tDevice ID:     " << enrollment.deviceid()     << std::endl;
-            std::cout << "\tCreated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-                << std::endl;
-            std::cout << "\tUpdated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-                << std::endl;
-            std::cout << "\tID:            " << enrollment.id()    << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string enrollment_json;
+            google::protobuf::util::MessageToJsonString(enrollment, &enrollment_json, options);
+            std::cout << enrollment_json;
         }
     })->await();
     return error_code;
@@ -116,18 +111,14 @@ int get_enrollment_groups(
             std::cout << "No enrollment groups" << std::endl;
         }
         for (auto& enrollment : call->getResponse().enrollmentgroups()) {
-            std::cout << "Description: "     << enrollment.description()  << std::endl;
-            std::cout << "\tModel Name:    " << enrollment.modelname()    << std::endl;
-            std::cout << "\tModel Type:    " << enrollment.modeltype()    << std::endl;
-            std::cout << "\tModel Version: " << enrollment.modelversion() << std::endl;
-            std::cout << "\tUser ID:       " << enrollment.userid()       << std::endl;
-            std::cout << "\tCreated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.createdat())
-                << std::endl;
-            std::cout << "\tUpdated:       "
-                << google::protobuf::util::TimeUtil::ToString(enrollment.updatedat())
-                << std::endl;
-            std::cout << "\tID:            " << enrollment.id()    << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string enrollment_json;
+            google::protobuf::util::MessageToJsonString(enrollment, &enrollment_json, options);
+            std::cout << enrollment_json;
         }
     })->await();
     return error_code;
@@ -271,10 +262,14 @@ int main(int argc, const char** argv) {
         return 1;
     }
     if (ENDPOINT == "get_health") {
-        std::cout << "Server status:" << std::endl;
-        std::cout << "\tisHealthy: " << server_health.ishealthy() << std::endl;
-        std::cout << "\tserverVersion: " << server_health.serverversion() << std::endl;
-        std::cout << "\tid: " << server_health.id() << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json;
         return 0;
     }
 
