@@ -65,7 +65,7 @@ RUN yum install -y autoconf libtool pkg-config git cmake python3
 # to prevent the cloning of protobuf and gRPC from occurring very often.
 COPY ./cmake/common.cmake /cpp-sdk/cmake/common.cmake
 # Create a dummy CMakeLists.txt that will clone the gRPC code.
-RUN printf "cmake_minimum_required(VERSION 3.11)\nproject(clone-grpc)\ninclude(cmake/common.cmake)" > /cpp-sdk/CMakeLists.txt
+RUN printf "cmake_minimum_required(VERSION 3.14)\nproject(clone-grpc)\ninclude(cmake/common.cmake)" > /cpp-sdk/CMakeLists.txt
 # Create a build directory for the repository and clone protobuf and gRPC.
 # Enable verbose output from `FetchContent` to monitor the cloning of gRPC,
 # which can be slow.

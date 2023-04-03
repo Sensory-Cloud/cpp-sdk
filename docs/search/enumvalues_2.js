@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jwt_0',['JWT',['../namespacesensory.html#a3c2daf6706042c468423647a89b88075a1d1fadbd9150349c135781140fffee9d',1,'sensory']]]
+  ['none_0',['None',['../namespacesensory.html#a3c2daf6706042c468423647a89b88075a6adf97f83acf6453d4a6a4b1070f3754',1,'sensory']]]
 ];

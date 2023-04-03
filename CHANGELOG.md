@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.3
+
+-   Fix all usage of cmake to require version 1.14
+-   Remove old build chain tools for audio file examples
+-   Update verbose logging to output JSON format for all service examples
+
 ## 1.0.2
 
 -   Update vision examples

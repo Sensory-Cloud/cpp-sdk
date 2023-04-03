@@ -72,17 +72,21 @@ int main(int argc, const char** argv) {
     SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Query the health of the remote service.
-    sensory::api::common::ServerHealthResponse server_health_response;
-    auto status = cloud.health.get_health(&server_health_response);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -105,7 +109,14 @@ int main(int argc, const char** argv) {
         for (auto& model : audioModelsResponse.models()) {
             if (model.modeltype() != sensory::api::common::VOICE_SYNTHESIS)
                 continue;
-            std::cout << model.name() << std::endl;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string model_json;
+            google::protobuf::util::MessageToJsonString(model, &model_json, options);
+            std::cout << model_json << std::endl;
         }
         return 0;
     }

@@ -91,17 +91,21 @@ int main(int argc, const char** argv) {
     SensoryCloud<FileSystemCredentialStore> cloud(PATH, keychain);
 
     // Check the server health.
-    sensory::api::common::ServerHealthResponse server_health_response;
-    auto status = cloud.health.get_health(&server_health_response);
+    sensory::api::common::ServerHealthResponse server_health;
+    auto status = cloud.health.get_health(&server_health);
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to get server health (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
     if (VERBOSE) {
-        std::cout << "Server status" << std::endl;
-        std::cout << "\tIs Healthy:     " << server_health_response.ishealthy()     << std::endl;
-        std::cout << "\tServer Version: " << server_health_response.serverversion() << std::endl;
-        std::cout << "\tID:             " << server_health_response.id()            << std::endl;
+        google::protobuf::util::JsonPrintOptions options;
+        options.add_whitespace = true;
+        options.always_print_primitive_fields = true;
+        options.always_print_enums_as_ints = false;
+        options.preserve_proto_field_names = true;
+        std::string server_health_json;
+        google::protobuf::util::MessageToJsonString(server_health, &server_health_json, options);
+        std::cout << server_health_json << std::endl;
     }
 
     // Initialize the client.
@@ -157,11 +161,14 @@ int main(int argc, const char** argv) {
             sensory::api::v1::audio::ValidateEventResponse response;
             if (!stream->Read(&response)) break;
             if (VERBOSE) {
-                std::cout << "Response" << std::endl;
-                std::cout << "\tAudio Energy: " << response.audioenergy() << std::endl;
-                std::cout << "\tSuccess:      " << response.success()     << std::endl;
-                std::cout << "\tResult ID:    " << response.resultid()    << std::endl;
-                std::cout << "\tScore:        " << response.score()       << std::endl;
+                google::protobuf::util::JsonPrintOptions options;
+                options.add_whitespace = false;
+                options.always_print_primitive_fields = true;
+                options.always_print_enums_as_ints = false;
+                options.preserve_proto_field_names = true;
+                std::string response_json;
+                google::protobuf::util::MessageToJsonString(response, &response_json, options);
+                std::cout << response_json << std::endl;
             } else if (response.success()) {
                 std::cout << "Detected trigger \""
                     << response.resultid() << "\"" << std::endl;
