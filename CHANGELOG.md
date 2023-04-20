@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.0.4
+
+-   Update CLI short-hand for `language` to be the standard `-L` (instead of
+    `-l`, which is reserved for liveness) in the audio file examples
+
 ## 1.0.3
 
 -   Fix all usage of cmake to require version 1.14

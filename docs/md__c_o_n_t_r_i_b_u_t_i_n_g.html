@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.3</span>
+                                &#160;<span id="projectnumber">1.0.4</span>
                             </div>
                         </td>
                     </tr>
@@ -123,17 +123,31 @@ $(function() {
 </li>
 </ol>
 <ol type="1">
-<li><p class="startli">Update the the <code>PROJECT_NUMBER</code> in [Doxyfile](Doxyfile) to reflect the change in version. Regenerate documentation using the following command and commit and push the changes in the <code>docs</code> folder.</p>
-<p class="startli">```shell doxygen Doxyfile ```</p>
+<li><p class="startli">Update the library version in the <code>CMakeLists.txt</code> of each example project.</p>
+<p class="startli">```cmake ... FetchContent_Declare(sensorycloud URL <a href="https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/">https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/</a>&lt;tag to target&gt; ) ... ```</p>
+<p class="startli">The files to change include:</p><ul>
+<li><a href="examples/video/CMakeLists.txt">examples/video/CMakeLists.txt</a></li>
+<li><a href="examples/audio/CMakeLists.txt">examples/audio/CMakeLists.txt</a></li>
+<li><a href="examples/management/CMakeLists.txt">examples/management/CMakeLists.txt</a></li>
+</ul>
 </li>
 </ol>
 <ol type="1">
-<li><p class="startli">Update the <code>URL</code> in the README snippets and <code>CMakeLists.txt</code> of example projects (replace <code>&lt;tag to target&gt;</code> with the tag for the next release).</p>
+<li><p class="startli">Update the <code>URL</code> in README snippets</p>
 <p class="startli">```cmake URL <a href="https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/">https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/</a>&lt;tag to target&gt; ```</p>
+<p class="startli">The files to change include:</p><ul>
+<li><a class="el" href="index.html#md_README">README.md</a></li>
+<li><a class="el" href="md__t_u_t_o_r_i_a_l.html">TUTORIAL.md</a></li>
+</ul>
 </li>
 </ol>
 <ol type="1">
 <li>Update <code>CHANGELOG.md</code> with the new features / bug fixes / changes.</li>
+</ol>
+<ol type="1">
+<li><p class="startli">Update the the <code>PROJECT_NUMBER</code> in [Doxyfile](Doxyfile) to reflect the change in version. Regenerate documentation using the following command and commit and push the changes in the <code>docs</code> folder.</p>
+<p class="startli">```shell doxygen Doxyfile ```</p>
+</li>
 </ol>
 <ol type="1">
 <li>Request a code review from another team member.</li>

@@ -72,7 +72,7 @@ int main(int argc, const char** argv) {
         .default_value("MEDIUM");
     parser.add_argument({ "-CVid", "--custom-vocabulary-id"})
         .help("An optional ID of a server-side custom vocabulary list to use.");
-    parser.add_argument({ "-l", "--language" }).required(true)
+    parser.add_argument({ "-L", "--language" }).required(true)
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default 4096).")
