@@ -67,7 +67,7 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-g", "--group" })
         .action("store_true")
         .help("A flag determining whether the enrollment ID is for an enrollment group.");
-    parser.add_argument({ "-l", "--language" }).required(true)
+    parser.add_argument({ "-L", "--language" }).required(true)
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default).")

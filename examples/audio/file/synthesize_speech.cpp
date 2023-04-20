@@ -44,7 +44,7 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
         .help("Whether to query for a list of available models.");
-    parser.add_argument({ "-l", "--language" })
+    parser.add_argument({ "-L", "--language" })
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-V", "--voice" })
         .help("The name of the voice to use.");
