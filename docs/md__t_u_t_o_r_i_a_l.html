@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.4</span>
+                                &#160;<span id="projectnumber">1.0.5</span>
                             </div>
                         </td>
                     </tr>
@@ -84,21 +84,22 @@ $(function() {
 </ul>
 <p >Because this SDK is built on <a href="https://www.grpc.io/">gRPC</a>, you may benefit from referring to the <a href="https://www.grpc.io/docs/languages/cpp/basics/">gRPC Tutorial</a> and <a href="https://grpc.github.io/grpc/cpp/annotated.html">gRPC Documentation</a> to familiarize yourself with some of the gRPC structures and patterns that are used in this SDK and tutorial.</p>
 <h1>Project Setup</h1>
-<p >The recommended build system for projects based on this SDK is <a href="https://cmake.org/"><code>cmake</code></a>. To include the SDK in your project , the simplest solution is to add a <code>FetchContent</code> block to your <code>CMakeLists.txt</code>. This approach will result in the compilation and linkage of the protobuff and gRPC dependencies locally.</p>
-<div class="fragment"><div class="line">cmake_minimum_required(VERSION 3.14)</div>
+<p >The recommended build system for projects based on this SDK is <a href="https://cmake.org/"><code>cmake</code></a>. To include the SDK in your project , the simplest solution is to add a <code>FetchContent</code> block to your <code>CMakeLists.txt</code>. This approach will compile and link the protobuff and gRPC libraries locally. Below is an example of the boilerplate CMake syntax to include the SDK in your project.</p>
+<div class="fragment"><div class="line">project(your-project-name)</div>
+<div class="line">cmake_minimum_required(VERSION 3.14)</div>
 <div class="line">set(CMAKE_CXX_STANDARD 11)</div>
 <div class="line"> </div>
 <div class="line">include(FetchContent)</div>
 <div class="line">FetchContent_Declare(sensorycloud</div>
-<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.4</div>
+<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.5</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(sensorycloud)</div>
 <div class="line"> </div>
-<div class="line">...</div>
+<div class="line"># ...</div>
 <div class="line"> </div>
 <div class="line"># Define an executable and link with libsensorycloud.</div>
-<div class="line">add_executable(hello_world hello_world.cpp)</div>
-<div class="line">target_link_libraries(hello_world PRIVATE sensorycloud)</div>
+<div class="line">add_executable(hello_cloud hello_cloud.cpp)</div>
+<div class="line">target_link_libraries(hello_cloud PRIVATE sensorycloud)</div>
 </div><!-- fragment --><h1>Configuring a connection</h1>
 <h2>Endpoint Configuration</h2>
 <p >To connect to your <a href="https://sensorycloud.ai/">SensoryCloud</a> Inference server, you will need to know:</p>
@@ -136,20 +137,22 @@ $(function() {
 <div class="line">    &quot;password&quot;       // The value of the credential.</div>
 <div class="line">)</div>
 </div><!-- fragment --><h2>Configuration &amp; Registration INI Files</h2>
-<p >To simplify connection and device registration, the aforementioned information may be serialized in an INI file in the following format:</p>
+<p >To simplify connection and device registration, the aforementioned information may be serialized in an INI file in the following format that describes your tenant in SensoryCloud:</p>
 <div class="fragment"><div class="line">[SDK-configuration]</div>
 <div class="line">fullyQualifiedDomainName = example.company.com:443</div>
 <div class="line">tenantID = a376234e-5b4b-4acb-bdbc-8cac8c397ace</div>
 <div class="line">credential = password</div>
 <div class="line">enrollmentType = sharedSecret</div>
-<div class="line">deviceID = 4e07cce1-cccb-4630-a2d1-5da71e3c85a3</div>
-<div class="line">deviceName = Server 1</div>
 <div class="line">isSecure = 1</div>
-</div><!-- fragment --><h2>Credential Storage</h2>
-<p >The last thing you will need to set up for your application is a structure for storing credentials in a way that fits your security needs. <code>CredentialStore</code> provides the interface for credential storage that should be implemented for your specific usage.</p>
+</div><!-- fragment --><p >When you sign up for SensoryCloud, you will be provided with an INI file in the above format that you may use with our example code or for your own purposes. Note that when using INI files, device IDs and names are provided optionally through environment variables, i.e.,</p>
+<div class="fragment"><div class="line">export SENSORYCLOUD_DEVICE_ID=4e07cce1-cccb-4630-a2d1-5da71e3c85a3</div>
+<div class="line">export SENSORYCLOUD_DEVICE_NAME=&quot;Server 1&quot;</div>
+</div><!-- fragment --><p >If either the device name or the device ID is not provided, a random one will be generated and stored in the secure credential store. This allows for re-use of our INI files between devices with the ability to track devices in your deployment explicitly, if needed.</p>
+<h2>Credential Storage</h2>
+<p >The last piece you will need to set up for your application is a structure for storing credentials in a way that fits your security needs. <code>CredentialStore</code> provides the interface for credential storage that should be implemented for your specific usage. The below code block provides a functional definition of the interface that you may use as a starting point.</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">/// @brief A key-value interface for storing credentials, tokens, etc.</div>
-<div class="line">struct CredentialStore {</div>
+<div class="line">/// @brief A key-value interface for storing my credentials, tokens, etc.</div>
+<div class="line">struct MyCredentialStore {</div>
 <div class="line">    /// @brief Emplace or replace a key/value pair in the credential store.</div>
 <div class="line">    ///</div>
 <div class="line">    /// @param key the plain-text key of the value to store</div>
@@ -180,30 +183,36 @@ $(function() {
 <div class="line">    ///</div>
 <div class="line">    inline void erase(const std::string&amp; key) const;</div>
 <div class="line">};</div>
-</div><!-- fragment --><p >Included with the SDK are an in-memory credential store <code><a class="el" href="structsensory_1_1token__manager_1_1_in_memory_credential_store.html" title="An in-memory credential store (mostly for testing purposes).">sensory::token_manager::InMemoryCredentialStore</a></code>, and a file-system based credential store <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> that may be useful for low-security applications, demonstration purposes, or debugging.</p>
+</div><!-- fragment --><p >Included with the SDK are some debugging implementations of this interface that may be useful for your testing and/or applications. <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> provides an implementation of the interfaces based on the file-system that may be useful for low-security applications, demonstration purposes, or debugging. We also provide a <code><a class="el" href="structsensory_1_1token__manager_1_1_in_memory_credential_store.html" title="An in-memory credential store (mostly for testing purposes).">sensory::token_manager::InMemoryCredentialStore</a></code> that may be useful for integrating SensoryCloud with your unit tests.</p>
 <h2>SDK Instantiation</h2>
-<p >With the data and structures from the previous steps, one can construct an instance of <code><a class="el" href="classsensory_1_1_sensory_cloud.html" title="The SensoryCloud service.">sensory::SensoryCloud</a></code> that provides access to each cloud service. The following example uses <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> as a credential store for demonstration purposes.</p>
+<p >With the data and structures from the previous steps, one can construct an instance of <code><a class="el" href="classsensory_1_1_sensory_cloud.html" title="The SensoryCloud service.">sensory::SensoryCloud</a></code> that provides access to each cloud service. The following example uses <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> as a credential store for demonstration purposes, along with the config and credentials described in the previous sections. Note that the first argument to the <code>FileSystemCredentialStore</code> is a path (in this case the <code>cwd</code>, <code>.</code>) and the second is a unique identifier for your tenant that simply determines how the keys in the credential store are mapped to paths on disk.</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">FileSystemCredentialStore credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
-<div class="line">SensoryCloud&lt;FileSystemCredentialStore&gt;</div>
+<div class="line">sensory::token_manager::FileSystemCredentialStore</div>
+<div class="line">    credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
+<div class="line">sensory::SensoryCloud&lt;sensory::token_manager::FileSystemCredentialStore&gt;</div>
 <div class="line">    cloud(config, credentials, credential_store);</div>
-</div><!-- fragment --><p >As previously mentioned, config and registration credentials may optionally be stored in INI files and parsed on SDK initialization using the following:</p>
+</div><!-- fragment --><p >As previously mentioned, config and registration credentials may optionally be stored in INI files and parsed on SDK initialization using the following format where <code>./config.ini</code> is a path to your tenant INI file:</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">SensoryCloud&lt;FileSystemCredentialStore&gt; cloud(&quot;config.ini&quot;, ...);</div>
-</div><!-- fragment --><h1>Checking The Server Health</h1>
+<div class="line">sensory::SensoryCloud&lt;sensory::token_manager::FileSystemCredentialStore&gt;</div>
+<div class="line">    cloud(&quot;./config.ini&quot;);</div>
+</div><!-- fragment --><p >When using the INI construction interface, the device ID and name are expected to exist as environment variables if needed, otherwise a device ID and/or name will automatically generated and stored in the secure credential store. An example of how to set these environment variables is provided below.</p>
+<div class="fragment"><div class="line">export SENSORYCLOUD_DEVICE_ID=4e07cce1-cccb-4630-a2d1-5da71e3c85a3</div>
+<div class="line">export SENSORYCLOUD_DEVICE_NAME=&quot;Server 1&quot;</div>
+</div><!-- fragment --><p >Note that our example code uses the INI construction interface.</p>
+<h1>Checking The Server Health</h1>
 <p >It's important to check the health of your <a href="https://sensorycloud.ai/">SensoryCloud</a> Inference server. You can do so using the <code>HealthService</code> via the following:</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">// Create a response for the RPC.</div>
 <div class="line">sensory::api::common::ServerHealthResponse server_health;</div>
 <div class="line">// Perform the RPC and check the status for errors.</div>
-<div class="line">auto status = cloud.health.getHealth(&amp;server_health);</div>
+<div class="line">auto status = cloud.health.get_health(&amp;server_health);</div>
 <div class="line">if (!status.ok()) {  // The call failed, handle the error here.</div>
-<div class="line">    auto errorCode = status.error_code();</div>
-<div class="line">    auto errorMessage = status.error_message();</div>
+<div class="line">    auto error_code = status.error_code();</div>
+<div class="line">    auto error_message = status.error_message();</div>
 <div class="line">} else {  // The call succeeded, handle the response here.</div>
-<div class="line">    auto isHealthy = response.ishealthy();</div>
-<div class="line">    auto serverVersion = response.serverversion();</div>
-<div class="line">    auto serverID = response.id();</div>
+<div class="line">    auto server_is_healthy = server_health.ishealthy();</div>
+<div class="line">    auto server_version = server_health.serverversion();</div>
+<div class="line">    auto server_id = server_health.id();</div>
 <div class="line">}</div>
 </div><!-- fragment --><h1>Example Projects</h1>
 <p >The remainder of the tutorial is organized in a programmatic format through example code. Examples for each individual service may be found in the [examples](examples) directory. </p>

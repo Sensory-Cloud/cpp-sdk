@@ -39,6 +39,7 @@
 #include "sensorycloud/util/string_extensions.hpp"
 #include "sensorycloud/util/jwt.h"
 #include "sensorycloud/util/transcript_aggregator.hpp"
+#include "sensorycloud/sys/env.hpp"
 
 /// @brief The SensoryCloud SDK.
 namespace sensory {
@@ -114,6 +115,56 @@ struct RegistrationCredentials {
         ) {}
 };
 
+/// The key of the device ID environment variable.
+static const std::string DEVICE_ID_ENV_KEY = "SENSORYCLOUD_DEVICE_ID";
+/// The tag of the device ID in the secure credential store.
+static const std::string DEVICE_ID_KEYCHAIN_TAG = "deviceID";
+/// The key of the device name environment variable.
+static const std::string DEVICE_NAME_ENV_KEY = "SENSORYCLOUD_DEVICE_NAME";
+/// The tag of the device name in the secure credential store.
+static const std::string DEVICE_NAME_KEYCHAIN_TAG = "deviceName";
+
+/// @brief Get the system device ID.
+/// @tparam CredentialStore A key-value store for storing and fetching
+/// credentials and tokens.
+/// @param keychain The secure credential store to check for a device ID in.
+/// @returns The device ID from the credential store if found, otherwise the
+/// device ID provided by the `SENSORYCLOUD_DEVICE_NAME` environment variable.
+/// If this value is consumed from the environment, a key will be created in the
+/// credential store for future usage without environment configuration. If
+/// there is neither a value in the keychain, nor provided by the environment,
+/// one will be automatically generated and stored in the keychain for future
+/// use.
+template<typename CredentialStore>
+static inline std::string get_system_device_id(CredentialStore& keychain) {
+    if (keychain.contains(DEVICE_ID_KEYCHAIN_TAG))
+        return keychain.at(DEVICE_ID_KEYCHAIN_TAG);
+    auto device_id = sys::get_env_var(DEVICE_ID_ENV_KEY);
+    if (device_id.empty())
+        device_id = util::uuid_v4();
+    keychain.emplace(DEVICE_ID_KEYCHAIN_TAG, device_id);
+    return device_id;
+}
+
+/// @brief Get the system device name.
+/// @tparam CredentialStore A key-value store for storing and fetching
+/// credentials and tokens.
+/// @param keychain The secure credential store to check for a device name in.
+/// @returns The device name from the credential store if found, otherwise the
+/// device name provided by the `SENSORYCLOUD_DEVICE_NAME` environment variable.
+/// If this value is consumed from the environment, a key will be created in the
+/// credential store for future usage without environment configuration.
+template<typename CredentialStore>
+static inline std::string get_system_device_name(CredentialStore& keychain) {
+    if (keychain.contains(DEVICE_NAME_KEYCHAIN_TAG))
+        return keychain.at(DEVICE_NAME_KEYCHAIN_TAG);
+    auto name = sys::get_env_var(DEVICE_NAME_ENV_KEY);
+    if (name.empty())
+        name = util::uuid_v4();
+    keychain.emplace(DEVICE_NAME_KEYCHAIN_TAG, name);
+    return name;
+}
+
 /// @brief The SensoryCloud service.
 /// @tparam CredentialStore A key-value store for storing and fetching
 /// credentials and tokens.
@@ -139,47 +190,6 @@ class SensoryCloud {
     /// The video service.
     ::sensory::service::VideoService<CredentialStore> video;
 
- private:
-    /// @brief Initialize the SensoryCloud service.
-    ///
-    /// @param reader The INI file read to parse the contents from.
-    /// @param keychain The secure credential store.
-    /// @details
-    /// The configuration file should contain the following section:
-    ///
-    /// ```
-    /// [SDK-configuration]
-    /// fullyQualifiedDomainName = localhost:50051
-    /// tenantID = <your tenant ID>
-    /// deviceID = <the UUID for the device running the SDK>
-    /// isSecure = <0 for insecure connections, 1 for TLS>
-    /// deviceName = <the name of the device>
-    /// enrollmentType = <one of [none,sharedSecret,jwt]>
-    /// credential = <your credential>
-    /// ```
-    ///
-    SensoryCloud(const io::INIReader& reader, CredentialStore& keychain) :
-        config{
-            io::path::normalize_uri(util::strip(
-                reader.get<std::string>("SDK-configuration", "fullyQualifiedDomainName", "localhost:50051")
-            )),
-            reader.get<std::string>("SDK-configuration", "tenantID", "", true),
-            reader.get<std::string>("SDK-configuration", "deviceID", "", true),
-            reader.get<bool>("SDK-configuration", "isSecure", false)
-        },
-        registration_credentials{
-            reader.get<std::string>("SDK-configuration", "deviceName", ""),
-            reader.get<std::string>("SDK-configuration", "enrollmentType", "none"),
-            reader.get<std::string>("SDK-configuration", "credential", "")
-        },
-        health(config),
-        oauth(config),
-        token_manager(oauth, keychain),
-        management(config, token_manager),
-        audio(config, token_manager),
-        video(config, token_manager) { }
-
- public:
     /// @brief Initialize the SensoryCloud service.
     ///
     /// @param config_ The config for the remote service.
@@ -202,6 +212,41 @@ class SensoryCloud {
 
     /// @brief Initialize the SensoryCloud service.
     ///
+    /// @param reader The INI file read to parse the contents from.
+    /// @param keychain The secure credential store.
+    /// @details
+    /// The configuration file should contain the following section:
+    ///
+    /// ```
+    /// [SDK-configuration]
+    /// fullyQualifiedDomainName = localhost:50051
+    /// tenantID = <your tenant ID>
+    /// isSecure = <0 for insecure connections, 1 for TLS>
+    /// enrollmentType = <one of [none,sharedSecret,jwt]>
+    /// credential = <your credential>
+    /// ```
+    ///
+    /// When using this INI construction interface, the device ID and name are
+    /// expected to exist as environment variables if needed, otherwise a
+    /// device ID and/or name will automatically generated and stored in the
+    /// keychain.
+    ///
+    SensoryCloud(const io::INIReader& reader, CredentialStore& keychain) :
+        SensoryCloud({
+            io::path::normalize_uri(util::strip(
+                reader.get<std::string>("SDK-configuration", "fullyQualifiedDomainName", "localhost:50051")
+            )),
+            reader.get<std::string>("SDK-configuration", "tenantID", "", true),
+            get_system_device_id(keychain),
+            reader.get<bool>("SDK-configuration", "isSecure", false)
+        }, {
+            get_system_device_name(keychain),
+            reader.get<std::string>("SDK-configuration", "enrollmentType", "none"),
+            reader.get<std::string>("SDK-configuration", "credential", "")
+        }, keychain) { }
+
+    /// @brief Initialize the SensoryCloud service.
+    ///
     /// @param path The path to an INI file to read the configuration from.
     /// @param keychain The secure credential store.
     /// @details
@@ -212,12 +257,15 @@ class SensoryCloud {
     /// [SDK-configuration]
     /// fullyQualifiedDomainName = localhost:50051
     /// tenantID = <your tenant ID>
-    /// deviceID = <the UUID for the device running the SDK>
     /// isSecure = <0 for insecure connections, 1 for TLS>
-    /// deviceName = <the name of the device>
     /// enrollmentType = <one of [none,sharedSecret,jwt]>
     /// credential = <your credential>
     /// ```
+    ///
+    /// When using this INI construction interface, the device ID and name are
+    /// expected to exist as environment variables if needed, otherwise a
+    /// device ID and/or name will automatically generated and stored in the
+    /// keychain.
     ///
     SensoryCloud(const std::string& path, CredentialStore& keychain) :
         SensoryCloud(io::INIReader{path}, keychain) { }
@@ -233,12 +281,15 @@ class SensoryCloud {
     /// [SDK-configuration]
     /// fullyQualifiedDomainName = localhost:50051
     /// tenantID = <your tenant ID>
-    /// deviceID = <the UUID for the device running the SDK>
     /// isSecure = <0 for insecure connections, 1 for TLS>
-    /// deviceName = <the name of the device>
     /// enrollmentType = <one of [none,sharedSecret,jwt]>
     /// credential = <your credential>
     /// ```
+    ///
+    /// When using this INI construction interface, the device ID and name are
+    /// expected to exist as environment variables if needed, otherwise a
+    /// device ID and/or name will automatically generated and stored in the
+    /// keychain.
     ///
     SensoryCloud(FILE* file, CredentialStore& keychain) :
         SensoryCloud(io::INIReader{file}, keychain) { }

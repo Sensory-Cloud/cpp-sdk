@@ -9,7 +9,7 @@ var searchData=
   ['secure_5frandom_6',['secure_random',['../namespacesensory_1_1util.html#a20d4db7ad358f864f649f18d9c297b4f',1,'sensory::util']]],
   ['securecredentialstore_7',['SecureCredentialStore',['../classsensory_1_1token__manager_1_1_secure_credential_store.html#aa2d2764a5cc0f4d983189cad1cc05452',1,'sensory::token_manager::SecureCredentialStore::SecureCredentialStore()'],['../classsensory_1_1token__manager_1_1_secure_credential_store.html',1,'sensory::token_manager::SecureCredentialStore']]],
   ['sensory_8',['sensory',['../namespacesensory.html',1,'']]],
-  ['sensorycloud_9',['SensoryCloud',['../classsensory_1_1_sensory_cloud.html',1,'sensory::SensoryCloud&lt; CredentialStore &gt;'],['../classsensory_1_1_sensory_cloud.html#af83cdd81f4b2c3835dbb76215e9bf928',1,'sensory::SensoryCloud::SensoryCloud(const ::sensory::Config &amp;config_, const ::sensory::RegistrationCredentials &amp;registration_credentials_, CredentialStore &amp;keychain)'],['../classsensory_1_1_sensory_cloud.html#ae60fb7821493d49392bff7ab3758cc13',1,'sensory::SensoryCloud::SensoryCloud(const std::string &amp;path, CredentialStore &amp;keychain)'],['../classsensory_1_1_sensory_cloud.html#a6c32fd0a0263a5cac67de37444a1998c',1,'sensory::SensoryCloud::SensoryCloud(FILE *file, CredentialStore &amp;keychain)']]],
+  ['sensorycloud_9',['SensoryCloud',['../classsensory_1_1_sensory_cloud.html',1,'sensory::SensoryCloud&lt; CredentialStore &gt;'],['../classsensory_1_1_sensory_cloud.html#a3c854f3281fd3c0eeb00c0c2e745527d',1,'sensory::SensoryCloud::SensoryCloud(const io::INIReader &amp;reader, CredentialStore &amp;keychain)'],['../classsensory_1_1_sensory_cloud.html#af83cdd81f4b2c3835dbb76215e9bf928',1,'sensory::SensoryCloud::SensoryCloud(const ::sensory::Config &amp;config_, const ::sensory::RegistrationCredentials &amp;registration_credentials_, CredentialStore &amp;keychain)'],['../classsensory_1_1_sensory_cloud.html#ae60fb7821493d49392bff7ab3758cc13',1,'sensory::SensoryCloud::SensoryCloud(const std::string &amp;path, CredentialStore &amp;keychain)'],['../classsensory_1_1_sensory_cloud.html#a6c32fd0a0263a5cac67de37444a1998c',1,'sensory::SensoryCloud::SensoryCloud(FILE *file, CredentialStore &amp;keychain)']]],
   ['sensorycloud_20c_2b_2b_20sdk_10',['SensoryCloud C++ SDK',['../index.html',1,'']]],
   ['service_11',['service',['../namespacesensory_1_1service.html',1,'sensory']]],
   ['set_5ftimeout_12',['set_timeout',['../classsensory_1_1_config.html#a9a7d8287e5d3f852181e6f36c05328a0',1,'sensory::Config']]],
@@ -21,6 +21,7 @@ var searchData=
   ['synthesizespeechasyncstream_18',['SynthesizeSpeechAsyncStream',['../classsensory_1_1service_1_1_audio_service.html#af0aad5752f085801b602b897f5f7144c',1,'sensory::service::AudioService']]],
   ['synthesizespeechreadreactor_19',['SynthesizeSpeechReadReactor',['../classsensory_1_1service_1_1_audio_service.html#a665a3251acb0bed5eacb6489da533fd4',1,'sensory::service::AudioService']]],
   ['synthesizespeechstream_20',['SynthesizeSpeechStream',['../classsensory_1_1service_1_1_audio_service.html#a0591f39eb2c8637ce66e4f3ed81ea116',1,'sensory::service::AudioService']]],
-  ['token_5fmanager_21',['token_manager',['../namespacesensory_1_1token__manager.html',1,'sensory']]],
-  ['util_22',['util',['../namespacesensory_1_1util.html',1,'sensory']]]
+  ['sys_21',['sys',['../namespacesensory_1_1sys.html',1,'sensory']]],
+  ['token_5fmanager_22',['token_manager',['../namespacesensory_1_1token__manager.html',1,'sensory']]],
+  ['util_23',['util',['../namespacesensory_1_1util.html',1,'sensory']]]
 ];

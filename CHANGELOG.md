@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.0.5
+
+-   Update `SensoryCloud` INI-based constructors to expect the device ID and
+    name to exists as environment variables. When these values are not
+    provided, automatically generate them and store them in the secure
+    credential store for re-use
+
 ## 1.0.4
 
 -   Update CLI short-hand for `language` to be the standard `-L` (instead of
