@@ -17,26 +17,38 @@ used in this SDK and tutorial.
 ## Project Setup
 
 The recommended build system for projects based on this SDK is
-[`cmake`](https://cmake.org/). To include the SDK in your project , the simplest
-solution is to add a `FetchContent` block to your `CMakeLists.txt`. This
-approach will result in the compilation and linkage of the protobuff and gRPC
-dependencies locally.
+[`cmake`](https://cmake.org/). To include the SDK in your project , the
+simplest solution is to add a `FetchContent` block to your `CMakeLists.txt`.
+This approach will compile and link the protobuff and gRPC libraries locally.
+Below is an example of the boilerplate CMake syntax to include the SDK in your
+project.
 
 ```cmake
+project(your-project-name)
 cmake_minimum_required(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 11)
 
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.4
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.5
 )
 FetchContent_MakeAvailable(sensorycloud)
 
-...
+# ...
 
 # Define an executable and link with libsensorycloud.
-add_executable(hello_world hello_world.cpp)
-target_link_libraries(hello_world PRIVATE sensorycloud)
+add_executable(hello_cloud hello_cloud.cpp)
+target_link_libraries(hello_cloud PRIVATE sensorycloud)
+```
+
+## Header files
+
+The SDK definition is funneled down to a single header file for the most
+common elements of the SDK. In most cases, you will only need the following
+include statement to get started with the SDK.
+
+```c++
+#include <sensorycloud/sensorycloud.hpp>
 ```
 
 ## Configuring a connection
@@ -90,7 +102,8 @@ sensory::RegistrationCredentials credentials(
 ### Configuration & Registration INI Files
 
 To simplify connection and device registration, the aforementioned information
-may be serialized in an INI file in the following format:
+may be serialized in an INI file in the following format that describes your
+tenant in SensoryCloud:
 
 ```
 [SDK-configuration]
@@ -98,21 +111,35 @@ fullyQualifiedDomainName = example.company.com:443
 tenantID = a376234e-5b4b-4acb-bdbc-8cac8c397ace
 credential = password
 enrollmentType = sharedSecret
-deviceID = 4e07cce1-cccb-4630-a2d1-5da71e3c85a3
-deviceName = Server 1
 isSecure = 1
 ```
 
+When you sign up for SensoryCloud, you will be provided with an INI file in
+the above format that you may use with our example code or for your own
+purposes. Note that when using INI files, device IDs and names are provided
+optionally through environment variables, i.e.,
+
+```shell
+export SENSORYCLOUD_DEVICE_ID=4e07cce1-cccb-4630-a2d1-5da71e3c85a3
+export SENSORYCLOUD_DEVICE_NAME="Server 1"
+```
+
+If either the device name or the device ID is not provided, a random one will
+be generated and stored in the secure credential store. This allows for re-use
+of our INI files between devices with the ability to track devices in your
+deployment explicitly, if needed.
+
 ### Credential Storage
 
-The last thing you will need to set up for your application is a structure for
+The last piece you will need to set up for your application is a structure for
 storing credentials in a way that fits your security needs. `CredentialStore`
 provides the interface for credential storage that should be implemented for
-your specific usage.
+your specific usage. The below code block provides a functional definition of
+the interface that you may use as a starting point.
 
 ```c++
-/// @brief A key-value interface for storing credentials, tokens, etc.
-struct CredentialStore {
+/// @brief A key-value interface for storing my credentials, tokens, etc.
+struct MyCredentialStore {
     /// @brief Emplace or replace a key/value pair in the credential store.
     ///
     /// @param key the plain-text key of the value to store
@@ -145,10 +172,13 @@ struct CredentialStore {
 };
 ```
 
-Included with the SDK are an in-memory credential store
-`sensory::token_manager::InMemoryCredentialStore`, and a file-system based
-credential store `sensory::token_manager::FileSystemCredentialStore` that may
-be useful for low-security applications, demonstration purposes, or debugging.
+Included with the SDK are some debugging implementations of this interface that
+may be useful for your testing and/or applications.
+`sensory::token_manager::FileSystemCredentialStore` provides an implementation
+of the interfaces based on the file-system that may be useful for low-security
+applications, demonstration purposes, or debugging. We also provide a
+`sensory::token_manager::InMemoryCredentialStore` that may be useful for
+integrating SensoryCloud with your unit tests.
 
 <!--
 Also included with the SDK are reference implementations for certain
@@ -194,20 +224,41 @@ The table below provides information about the implementations of
 With the data and structures from the previous steps, one can construct an
 instance of `sensory::SensoryCloud` that provides access to each cloud service.
 The following example uses `sensory::token_manager::FileSystemCredentialStore`
-as a credential store for demonstration purposes.
+as a credential store (found in the
+[`<sensorycloud/token_manager/file_system_credential_store.hpp>`](include/sensorycloud/token_manager/file_system_credential_store.hpp)
+header) for demonstration purposes, along with the config and credentials
+described in the previous sections. Note that the first argument to the
+`FileSystemCredentialStore` is a path (in this case the `cwd`, `.`) and the
+second is a unique identifier for your tenant that simply determines how the
+keys in the credential store are mapped to paths on disk.
 
 ```c++
-FileSystemCredentialStore credential_store(".", "com.company.cloud.debug");
-SensoryCloud<FileSystemCredentialStore>
+sensory::token_manager::FileSystemCredentialStore
+    credential_store(".", "com.company.cloud.debug");
+sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>
     cloud(config, credentials, credential_store);
 ```
 
 As previously mentioned, config and registration credentials may optionally be
-stored in INI files and parsed on SDK initialization using the following:
+stored in INI files and parsed on SDK initialization using the following
+format where `./config.ini` is a path to your tenant INI file:
 
 ```c++
-SensoryCloud<FileSystemCredentialStore> cloud("config.ini", ...);
+sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>
+    cloud("./config.ini");
 ```
+
+When using the INI construction interface, the device ID and name are expected
+to exist as environment variables if needed, otherwise a device ID and/or name
+will automatically generated and stored in the secure credential store. An
+example of how to set these environment variables is provided below.
+
+```shell
+export SENSORYCLOUD_DEVICE_ID=4e07cce1-cccb-4630-a2d1-5da71e3c85a3
+export SENSORYCLOUD_DEVICE_NAME="Server 1"
+```
+
+Note that our example code uses the INI construction interface.
 
 ## Checking The Server Health
 
@@ -218,14 +269,14 @@ Inference server. You can do so using the `HealthService` via the following:
 // Create a response for the RPC.
 sensory::api::common::ServerHealthResponse server_health;
 // Perform the RPC and check the status for errors.
-auto status = cloud.health.getHealth(&server_health);
+auto status = cloud.health.get_health(&server_health);
 if (!status.ok()) {  // The call failed, handle the error here.
-    auto errorCode = status.error_code();
-    auto errorMessage = status.error_message();
+    auto error_code = status.error_code();
+    auto error_message = status.error_message();
 } else {  // The call succeeded, handle the response here.
-    auto isHealthy = response.ishealthy();
-    auto serverVersion = response.serverversion();
-    auto serverID = response.id();
+    auto server_is_healthy = server_health.ishealthy();
+    auto server_version = server_health.serverversion();
+    auto server_id = server_health.id();
 }
 ```
 
