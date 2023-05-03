@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.6
+
+-   Improve documentation
+
 ## 1.0.5
 
 -   Update `SensoryCloud` INI-based constructors to expect the device ID and
