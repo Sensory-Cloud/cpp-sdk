@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.7
+
+-   Update management tools to print a group ID when creating enrollment groups
+-   Update audio biometric examples (from files) with support for enrolling
+    to binary feature vectors and authenticating against binary feature vectors
+
 ## 1.0.6
 
 -   Improve documentation

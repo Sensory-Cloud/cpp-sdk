@@ -167,6 +167,8 @@ int create_enrollment_group(
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to create enrollment group (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
             error_code = call->getStatus().error_code();
+        } else {
+            std::cout << "Created group with ID " << groupID << std::endl;
         }
         delete call;
     }

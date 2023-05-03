@@ -144,6 +144,7 @@ int create_enrollment_group(
         std::cout << "Failed to create enrollment group (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
+    std::cout << "Created group with ID " << groupID << std::endl;
     return 0;
 }
 
