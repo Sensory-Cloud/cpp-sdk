@@ -145,11 +145,13 @@ int create_enrollment_group(
     const std::vector<std::string>& enrollmentIDs
 ) {
     int error_code = 0;
-    service.create_enrollment_group(userID, groupID,name, description, model, enrollmentIDs,
-        [&error_code](ManagementService<FileSystemCredentialStore>::CreateEnrollmentGroupCallbackData* call) {
+    service.create_enrollment_group(userID, groupID, name, description, model, enrollmentIDs,
+        [&](ManagementService<FileSystemCredentialStore>::CreateEnrollmentGroupCallbackData* call) {
         if (!call->getStatus().ok()) {  // The call failed.
             std::cout << "Failed to create enrollment group (" << call->getStatus().error_code() << "): " << call->getStatus().error_message() << std::endl;
             error_code = call->getStatus().error_code();
+        } else {
+            std::cout << "Created group with ID " << groupID << std::endl;
         }
     })->await();
     return error_code;

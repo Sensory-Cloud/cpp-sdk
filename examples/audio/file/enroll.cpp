@@ -47,6 +47,8 @@ int main(int argc, const char** argv) {
         .help("The path to an INI file containing server metadata.");
     parser.add_argument({ "-i", "--input" }).required(true)
         .help("The input audio file to stream to Sensory Cloud.");
+    parser.add_argument({ "-o", "--output" })
+        .help("An optional path to a bin file to save the enrollment to.");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
         .help("Whether to query for a list of available models.");
@@ -78,6 +80,7 @@ int main(int argc, const char** argv) {
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
     const auto INPUT_FILE = args.get<std::string>("input");
+    const auto OUTPUT_FILE = args.get<std::string>("output");
     const auto GETMODELS = args.get<bool>("getmodels");
     const auto MODEL = args.get<std::string>("model");
     const auto USER_ID = args.get<std::string>("userid");
@@ -186,6 +189,7 @@ int main(int argc, const char** argv) {
     create_enrollment_config->set_userid(USER_ID);
     create_enrollment_config->set_description(DESCRIPTION);
     create_enrollment_config->set_islivenessenabled(LIVENESS);
+    create_enrollment_config->set_disableserverenrollmenttemplatestorage(!OUTPUT_FILE.empty());
     if (DURATION > 0)
         create_enrollment_config->set_enrollmentduration(DURATION);
     if (NUM_UTTERANCES > 0)
@@ -196,7 +200,7 @@ int main(int argc, const char** argv) {
     auto stream = cloud.audio.create_enrollment(&context, audio_config, create_enrollment_config);
 
     // Create a background thread for handling the transcription responses.
-    std::thread receipt_thread([&stream, &VERBOSE](){
+    std::thread receipt_thread([&](){
         while (true) {
             // Read a message and break out of the loop when the read fails.
             sensory::api::v1::audio::CreateEnrollmentResponse response;
@@ -234,8 +238,16 @@ int main(int argc, const char** argv) {
             // Check for enrollment success
             if (response.percentcomplete() >= 100) {
                 std::cout << std::endl;
-                std::cout << "enrolled with ID: "
-                    << response.enrollmentid() << std::endl;
+                if (OUTPUT_FILE.empty()) {  // Enrollment stored server-side
+                    std::cout << "enrolled with ID: "
+                        << response.enrollmentid() << std::endl;
+                } else {  // Enrollment stored on the local file-system
+                    std::ofstream file(OUTPUT_FILE, std::ios::out | std::ios::binary);
+                    file << response.enrollmenttoken().token();
+                    file.close();  // We're done writing to the WAV file.
+                    std::cout << "wrote feature vector to " << OUTPUT_FILE << std::endl;
+                    std::cout << "feature vector expires in " << response.enrollmenttoken().expiration() << " seconds" << std::endl;
+                }
             }
         }
     });

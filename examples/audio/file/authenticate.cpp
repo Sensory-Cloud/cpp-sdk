@@ -67,6 +67,8 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-g", "--group" })
         .action("store_true")
         .help("A flag determining whether the enrollment ID is for an enrollment group.");
+    parser.add_argument({ "-T", "--token" })
+        .help("A path to the binary feature vector if the server is not to store enrollments.");
     parser.add_argument({ "-L", "--language" }).required(true)
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
@@ -99,6 +101,7 @@ int main(int argc, const char** argv) {
     else if (args.get<std::string>("threshold") == "HIGH")
         THRESHOLD = sensory::api::v1::audio::AuthenticateConfig_ThresholdSecurity_HIGH;
     const auto GROUP = args.get<bool>("group");
+    const auto TOKEN_FILE = args.get<std::string>("token");
     const auto LANGUAGE = args.get<std::string>("language");
     auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
@@ -200,6 +203,28 @@ int main(int argc, const char** argv) {
     authenticate_config->set_islivenessenabled(LIVENESS);
     authenticate_config->set_sensitivity(SENSITIVITY);
     authenticate_config->set_security(THRESHOLD);
+    if (!TOKEN_FILE.empty()) {
+        std::ifstream file(TOKEN_FILE, std::ios::in | std::ios::binary);
+        if (!file) {
+            std::cout << "Failed to read enrollment token file at " << TOKEN_FILE << std::endl;
+            return 1;
+        }
+        // Get the length of the file
+        file.seekg(0, file.end);
+        std::streampos length = file.tellg();
+        file.seekg(0, file.beg);
+        if (length == 0) {
+            std::cout << "enrollment token file at " << TOKEN_FILE << " is empty!" << std::endl;
+            return 1;
+        }
+        // Allocate a buffer to store the contents of the file
+        char buffer[length];
+        // Read the contents of the file into the buffer
+        file.read(buffer, length);
+        file.close();
+        // Copy the buffer into the authenticate config
+        authenticate_config->set_enrollmenttoken(&buffer[0]);
+    }
 
     grpc::ClientContext context;
     auto stream = cloud.audio.authenticate(&context, audio_config, authenticate_config);
