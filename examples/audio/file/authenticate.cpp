@@ -203,6 +203,7 @@ int main(int argc, const char** argv) {
     authenticate_config->set_islivenessenabled(LIVENESS);
     authenticate_config->set_sensitivity(SENSITIVITY);
     authenticate_config->set_security(THRESHOLD);
+    char* buffer = nullptr;
     if (!TOKEN_FILE.empty()) {
         std::ifstream file(TOKEN_FILE, std::ios::in | std::ios::binary);
         if (!file) {
@@ -218,12 +219,12 @@ int main(int argc, const char** argv) {
             return 1;
         }
         // Allocate a buffer to store the contents of the file
-        char buffer[length];
+        buffer = (char*) malloc(length * sizeof(char));
         // Read the contents of the file into the buffer
         file.read(buffer, length);
         file.close();
         // Copy the buffer into the authenticate config
-        authenticate_config->set_enrollmenttoken(&buffer[0]);
+        authenticate_config->set_enrollmenttoken(buffer, length);
     }
 
     grpc::ClientContext context;
@@ -290,6 +291,7 @@ int main(int argc, const char** argv) {
     stream->WritesDone();
     sf_close(infile);
     receipt_thread.join();
+    if (!TOKEN_FILE.empty()) free(buffer);
 
     // Close the stream and check the status code in case the stream broke.
     status = stream->Finish();

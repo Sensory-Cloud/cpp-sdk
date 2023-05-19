@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.7
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.8
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -65,36 +65,23 @@ structure is based on templates, so there is no need to inherit from a base
 class to implement this component.
 
 ```c++
-/// @brief A key-value interface for storing my credentials, tokens, etc.
 struct MyCredentialStore {
-    /// @brief Emplace or replace a key/value pair in the credential store.
-    ///
+    /// @brief Emplace or overwrite a key/value pair in the credential store.
     /// @param key the plain-text key of the value to store
     /// @param value the value to store
-    /// @details
-    /// Unlike most key-value store abstractions in the STL, this
-    /// implementation of emplace should overwrite existing values in the
-    /// key-value store.
-    ///
     inline void emplace(const std::string& key, const std::string& value) const;
 
     /// @brief Return true if the key exists in the credential store.
-    ///
     /// @param key the plain-text key to check for the existence of
-    ///
     inline bool contains(const std::string& key) const;
 
     /// @brief Look-up a secret value in the credential store.
-    ///
     /// @param key the plain-text key of the value to return
     /// @returns the secret value indexed by the given key
-    ///
     inline std::string at(const std::string& key) const;
 
     /// @brief Remove a secret key-value pair in the credential store.
-    ///
     /// @param key the key of the pair to remove from the credential store
-    ///
     inline void erase(const std::string& key) const;
 };
 ```
@@ -108,18 +95,12 @@ demonstration purposes, or debugging. We also provide a
 integrating SensoryCloud with your unit tests. The in-memory store can be
 instantiated without parameters, but the file-system based store must be
 provided with a path to a directory to persist data to and a prefix for files
-that are created in the file-system-based key-value store:
+that are created in the file-system-based key-value store. For this example, we
+utilize the file-system credential store:
 
 ```c++
 sensory::token_manager::FileSystemCredentialStore
     credential_store(".", "com.company.cloud.debug");
-```
-
-Because the file-system credential store is an optional component, you will
-also need to add an additional include for the associated header file.
-
-```c++
-#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 ```
 
 <!--
@@ -304,31 +285,33 @@ blocks for the two approaches for instantiating the SDK.
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
 
-sensory::token_manager::FileSystemCredentialStore
-    credential_store(".", "com.company.cloud.debug");
+int main() {
+    sensory::token_manager::FileSystemCredentialStore
+        credential_store(".", "com.company.cloud.debug");
 
-sensory::Config config(
-    "example.company.com",                   // the host name of the server
-    443,                                     // the port number of the service
-    "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
-    "4e07cce1-cccb-4630-a2d1-5da71e3c85a3",  // a unique device ID
-    true                                     // a flag for enabling TLS
-);
-sensory::RegistrationCredentials credentials(
-    "Server 1",      // A human-readable name for the device.
-    "sharedSecret",  // The type of enrollment ("sharedSecret" or "jwt").
-    "password"       // The value of the credential.
-);
-sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>
-    cloud(config, credentials, credential_store);
+    sensory::Config config(
+        "example.company.com",                   // the host name of the server
+        443,                                     // the port number of the service
+        "a376234e-5b4b-4acb-bdbc-8cac8c397ace",  // your tenant ID
+        "4e07cce1-cccb-4630-a2d1-5da71e3c85a3",  // a unique device ID
+        true                                     // a flag for enabling TLS
+    );
+    sensory::RegistrationCredentials credentials(
+        "Server 1",      // A human-readable name for the device.
+        "sharedSecret",  // The type of enrollment ("sharedSecret" or "jwt").
+        "password"       // The value of the credential.
+    );
+    sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>
+        cloud(config, credentials, credential_store);
 
-sensory::api::common::ServerHealthResponse response;
-auto status = cloud.health.get_health(&response);
-if (!status.ok()) {  // The call failed, handle the error here.
-    auto error_code = status.error_code();
-    auto error_message = status.error_message();
-} else {  // The call succeeded, handle the response here.
-    std::cout << "Server is healthy: " << response.ishealthy() << std::endl;
+    sensory::api::common::ServerHealthResponse response;
+    auto status = cloud.health.get_health(&response);
+    if (!status.ok()) {  // The call failed, handle the error here.
+        auto error_code = status.error_code();
+        auto error_message = status.error_message();
+    } else {  // The call succeeded, handle the response here.
+        std::cout << "Server is healthy: " << response.ishealthy() << std::endl;
+    }
 }
 ```
 
@@ -338,18 +321,20 @@ if (!status.ok()) {  // The call failed, handle the error here.
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
 
-sensory::token_manager::FileSystemCredentialStore
-    credential_store(".", "com.company.cloud.debug");
-sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>
-    cloud("./config.ini", credential_store);
+int main() {
+    sensory::token_manager::FileSystemCredentialStore
+        credential_store(".", "com.company.cloud.debug");
+    sensory::SensoryCloud<sensory::token_manager::FileSystemCredentialStore>
+        cloud("./config.ini", credential_store);
 
-sensory::api::common::ServerHealthResponse response;
-auto status = cloud.health.get_health(&response);
-if (!status.ok()) {  // The call failed, handle the error here.
-    auto error_code = status.error_code();
-    auto error_message = status.error_message();
-} else {  // The call succeeded, handle the response here.
-    std::cout << "Server is healthy: " << response.ishealthy() << std::endl;
+    sensory::api::common::ServerHealthResponse response;
+    auto status = cloud.health.get_health(&response);
+    if (!status.ok()) {  // The call failed, handle the error here.
+        auto error_code = status.error_code();
+        auto error_message = status.error_message();
+    } else {  // The call succeeded, handle the response here.
+        std::cout << "Server is healthy: " << response.ishealthy() << std::endl;
+    }
 }
 ```
 
