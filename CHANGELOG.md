@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.0.8
+
+-   Fix authentication from token file example to persist token buffer until
+    no longer needed by gRPC
+-   Update global header to include optional components for ease of use
+-   Update tutorial
+
 ## 1.0.7
 
 -   Update management tools to print a group ID when creating enrollment groups

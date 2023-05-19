@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.7</span>
+                                &#160;<span id="projectnumber">1.0.8</span>
                             </div>
                         </td>
                     </tr>
@@ -91,7 +91,7 @@ $(function() {
 <div class="line"> </div>
 <div class="line">include(FetchContent)</div>
 <div class="line">FetchContent_Declare(sensorycloud</div>
-<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.7</div>
+<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.8</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(sensorycloud)</div>
 <div class="line"> </div>
@@ -107,45 +107,29 @@ $(function() {
 </div><!-- fragment --><h1>Credential Storage</h1>
 <p >The first piece you will need to set up for your application is a structure for storing and persisting credentials in a way that fits your security needs. The <code>MyCredentialStore</code> structure below provides the interface for credential storage that should be implemented for your specific usage. This structure behaves like a C++ map, but should persist key-value data between executions of your application. This implementation follows C++ syntax for <code>map</code> structures and may be trivially compatible with your existing solution for secure key-value storage. It is worth noting that the SDK's usage of this structure is based on templates, so there is no need to inherit from a base class to implement this component.</p>
 <div class="fragment"><div class="line"> {c++}</div>
-<div class="line">/// @brief A key-value interface for storing my credentials, tokens, etc.</div>
 <div class="line">struct MyCredentialStore {</div>
-<div class="line">    /// @brief Emplace or replace a key/value pair in the credential store.</div>
-<div class="line">    ///</div>
+<div class="line">    /// @brief Emplace or overwrite a key/value pair in the credential store.</div>
 <div class="line">    /// @param key the plain-text key of the value to store</div>
 <div class="line">    /// @param value the value to store</div>
-<div class="line">    /// @details</div>
-<div class="line">    /// Unlike most key-value store abstractions in the STL, this</div>
-<div class="line">    /// implementation of emplace should overwrite existing values in the</div>
-<div class="line">    /// key-value store.</div>
-<div class="line">    ///</div>
 <div class="line">    inline void emplace(const std::string&amp; key, const std::string&amp; value) const;</div>
 <div class="line"> </div>
 <div class="line">    /// @brief Return true if the key exists in the credential store.</div>
-<div class="line">    ///</div>
 <div class="line">    /// @param key the plain-text key to check for the existence of</div>
-<div class="line">    ///</div>
 <div class="line">    inline bool contains(const std::string&amp; key) const;</div>
 <div class="line"> </div>
 <div class="line">    /// @brief Look-up a secret value in the credential store.</div>
-<div class="line">    ///</div>
 <div class="line">    /// @param key the plain-text key of the value to return</div>
 <div class="line">    /// @returns the secret value indexed by the given key</div>
-<div class="line">    ///</div>
 <div class="line">    inline std::string at(const std::string&amp; key) const;</div>
 <div class="line"> </div>
 <div class="line">    /// @brief Remove a secret key-value pair in the credential store.</div>
-<div class="line">    ///</div>
 <div class="line">    /// @param key the key of the pair to remove from the credential store</div>
-<div class="line">    ///</div>
 <div class="line">    inline void erase(const std::string&amp; key) const;</div>
 <div class="line">};</div>
-</div><!-- fragment --><p >Included with the SDK are some debugging implementations of this interface that may be useful for your testing and/or applications. <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> provides an implementation based on the file-system that may be useful for low-security applications, demonstration purposes, or debugging. We also provide a <code><a class="el" href="structsensory_1_1token__manager_1_1_in_memory_credential_store.html" title="An in-memory credential store (mostly for testing purposes).">sensory::token_manager::InMemoryCredentialStore</a></code> that may be useful for integrating SensoryCloud with your unit tests. The in-memory store can be instantiated without parameters, but the file-system based store must be provided with a path to a directory to persist data to and a prefix for files that are created in the file-system-based key-value store:</p>
+</div><!-- fragment --><p >Included with the SDK are some debugging implementations of this interface that may be useful for your testing and/or applications. <code><a class="el" href="classsensory_1_1token__manager_1_1_file_system_credential_store.html" title="A file-system–based credential storage manager.">sensory::token_manager::FileSystemCredentialStore</a></code> provides an implementation based on the file-system that may be useful for low-security applications, demonstration purposes, or debugging. We also provide a <code><a class="el" href="structsensory_1_1token__manager_1_1_in_memory_credential_store.html" title="An in-memory credential store (mostly for testing purposes).">sensory::token_manager::InMemoryCredentialStore</a></code> that may be useful for integrating SensoryCloud with your unit tests. The in-memory store can be instantiated without parameters, but the file-system based store must be provided with a path to a directory to persist data to and a prefix for files that are created in the file-system-based key-value store. For this example, we utilize the file-system credential store:</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">sensory::token_manager::FileSystemCredentialStore</div>
 <div class="line">    credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
-</div><!-- fragment --><p >Because the file-system credential store is an optional component, you will also need to add an additional include for the associated header file.</p>
-<div class="fragment"><div class="line"> {c++}</div>
-<div class="line">#include &lt;sensorycloud/token_manager/file_system_credential_store.hpp&gt;</div>
 </div><!-- fragment --><h1>Configuring a connection</h1>
 <p >There are two ways to configure your connection to SensoryCloud in code. At the lower level you may choose to hard-code your tenant metadata (or specify the parameters in the method of your choosing) using the <code><a class="el" href="classsensory_1_1_config.html" title="Configuration for a cloud endpoint.">sensory::Config</a></code> and <code><a class="el" href="structsensory_1_1_registration_credentials.html" title="A structure containing credentials for device registration.">sensory::RegistrationCredentials</a></code> structures. Alternatively you may choose to use the INI file provided by our sales team to configure your connection. Both of these connection APIs are discussed in the following sections.</p>
 <h2>Hard-coded Config and RegistrationCredentials structures</h2>
@@ -227,49 +211,53 @@ $(function() {
 <div class="line">#include &lt;sensorycloud/sensorycloud.hpp&gt;</div>
 <div class="line">#include &lt;sensorycloud/token_manager/file_system_credential_store.hpp&gt;</div>
 <div class="line"> </div>
-<div class="line">sensory::token_manager::FileSystemCredentialStore</div>
-<div class="line">    credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
+<div class="line">int main() {</div>
+<div class="line">    sensory::token_manager::FileSystemCredentialStore</div>
+<div class="line">        credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
 <div class="line"> </div>
-<div class="line">sensory::Config config(</div>
-<div class="line">    &quot;example.company.com&quot;,                   // the host name of the server</div>
-<div class="line">    443,                                     // the port number of the service</div>
-<div class="line">    &quot;a376234e-5b4b-4acb-bdbc-8cac8c397ace&quot;,  // your tenant ID</div>
-<div class="line">    &quot;4e07cce1-cccb-4630-a2d1-5da71e3c85a3&quot;,  // a unique device ID</div>
-<div class="line">    true                                     // a flag for enabling TLS</div>
-<div class="line">);</div>
-<div class="line">sensory::RegistrationCredentials credentials(</div>
-<div class="line">    &quot;Server 1&quot;,      // A human-readable name for the device.</div>
-<div class="line">    &quot;sharedSecret&quot;,  // The type of enrollment (&quot;sharedSecret&quot; or &quot;jwt&quot;).</div>
-<div class="line">    &quot;password&quot;       // The value of the credential.</div>
-<div class="line">);</div>
-<div class="line">sensory::SensoryCloud&lt;sensory::token_manager::FileSystemCredentialStore&gt;</div>
-<div class="line">    cloud(config, credentials, credential_store);</div>
+<div class="line">    sensory::Config config(</div>
+<div class="line">        &quot;example.company.com&quot;,                   // the host name of the server</div>
+<div class="line">        443,                                     // the port number of the service</div>
+<div class="line">        &quot;a376234e-5b4b-4acb-bdbc-8cac8c397ace&quot;,  // your tenant ID</div>
+<div class="line">        &quot;4e07cce1-cccb-4630-a2d1-5da71e3c85a3&quot;,  // a unique device ID</div>
+<div class="line">        true                                     // a flag for enabling TLS</div>
+<div class="line">    );</div>
+<div class="line">    sensory::RegistrationCredentials credentials(</div>
+<div class="line">        &quot;Server 1&quot;,      // A human-readable name for the device.</div>
+<div class="line">        &quot;sharedSecret&quot;,  // The type of enrollment (&quot;sharedSecret&quot; or &quot;jwt&quot;).</div>
+<div class="line">        &quot;password&quot;       // The value of the credential.</div>
+<div class="line">    );</div>
+<div class="line">    sensory::SensoryCloud&lt;sensory::token_manager::FileSystemCredentialStore&gt;</div>
+<div class="line">        cloud(config, credentials, credential_store);</div>
 <div class="line"> </div>
-<div class="line">sensory::api::common::ServerHealthResponse response;</div>
-<div class="line">auto status = cloud.health.get_health(&amp;response);</div>
-<div class="line">if (!status.ok()) {  // The call failed, handle the error here.</div>
-<div class="line">    auto error_code = status.error_code();</div>
-<div class="line">    auto error_message = status.error_message();</div>
-<div class="line">} else {  // The call succeeded, handle the response here.</div>
-<div class="line">    std::cout &lt;&lt; &quot;Server is healthy: &quot; &lt;&lt; response.ishealthy() &lt;&lt; std::endl;</div>
+<div class="line">    sensory::api::common::ServerHealthResponse response;</div>
+<div class="line">    auto status = cloud.health.get_health(&amp;response);</div>
+<div class="line">    if (!status.ok()) {  // The call failed, handle the error here.</div>
+<div class="line">        auto error_code = status.error_code();</div>
+<div class="line">        auto error_message = status.error_message();</div>
+<div class="line">    } else {  // The call succeeded, handle the response here.</div>
+<div class="line">        std::cout &lt;&lt; &quot;Server is healthy: &quot; &lt;&lt; response.ishealthy() &lt;&lt; std::endl;</div>
+<div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2>INI file API</h2>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">#include &lt;sensorycloud/sensorycloud.hpp&gt;</div>
 <div class="line">#include &lt;sensorycloud/token_manager/file_system_credential_store.hpp&gt;</div>
 <div class="line"> </div>
-<div class="line">sensory::token_manager::FileSystemCredentialStore</div>
-<div class="line">    credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
-<div class="line">sensory::SensoryCloud&lt;sensory::token_manager::FileSystemCredentialStore&gt;</div>
-<div class="line">    cloud(&quot;./config.ini&quot;, credential_store);</div>
+<div class="line">int main() {</div>
+<div class="line">    sensory::token_manager::FileSystemCredentialStore</div>
+<div class="line">        credential_store(&quot;.&quot;, &quot;com.company.cloud.debug&quot;);</div>
+<div class="line">    sensory::SensoryCloud&lt;sensory::token_manager::FileSystemCredentialStore&gt;</div>
+<div class="line">        cloud(&quot;./config.ini&quot;, credential_store);</div>
 <div class="line"> </div>
-<div class="line">sensory::api::common::ServerHealthResponse response;</div>
-<div class="line">auto status = cloud.health.get_health(&amp;response);</div>
-<div class="line">if (!status.ok()) {  // The call failed, handle the error here.</div>
-<div class="line">    auto error_code = status.error_code();</div>
-<div class="line">    auto error_message = status.error_message();</div>
-<div class="line">} else {  // The call succeeded, handle the response here.</div>
-<div class="line">    std::cout &lt;&lt; &quot;Server is healthy: &quot; &lt;&lt; response.ishealthy() &lt;&lt; std::endl;</div>
+<div class="line">    sensory::api::common::ServerHealthResponse response;</div>
+<div class="line">    auto status = cloud.health.get_health(&amp;response);</div>
+<div class="line">    if (!status.ok()) {  // The call failed, handle the error here.</div>
+<div class="line">        auto error_code = status.error_code();</div>
+<div class="line">        auto error_message = status.error_message();</div>
+<div class="line">    } else {  // The call succeeded, handle the response here.</div>
+<div class="line">        std::cout &lt;&lt; &quot;Server is healthy: &quot; &lt;&lt; response.ishealthy() &lt;&lt; std::endl;</div>
+<div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->

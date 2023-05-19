@@ -238,10 +238,9 @@ int main(int argc, const char** argv) {
             // Check for enrollment success
             if (response.percentcomplete() >= 100) {
                 std::cout << std::endl;
-                if (OUTPUT_FILE.empty()) {  // Enrollment stored server-side
-                    std::cout << "enrolled with ID: "
-                        << response.enrollmentid() << std::endl;
-                } else {  // Enrollment stored on the local file-system
+                std::cout << "enrolled with ID: "
+                    << response.enrollmentid() << std::endl;
+                if (!OUTPUT_FILE.empty()) {  // Enrollment stored on the local file-system
                     std::ofstream file(OUTPUT_FILE, std::ios::out | std::ios::binary);
                     file << response.enrollmenttoken().token();
                     file.close();  // We're done writing to the WAV file.

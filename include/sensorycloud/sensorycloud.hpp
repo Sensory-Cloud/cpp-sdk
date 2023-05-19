@@ -34,6 +34,8 @@
 #include "sensorycloud/services/audio_service.hpp"
 #include "sensorycloud/services/video_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
+#include "sensorycloud/token_manager/in_memory_credential_store.hpp"
+#include "sensorycloud/token_manager/file_system_credential_store.hpp"
 #include "sensorycloud/io/ini.hpp"
 #include "sensorycloud/io/path.hpp"
 #include "sensorycloud/util/string_extensions.hpp"
