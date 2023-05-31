@@ -1,4 +1,0 @@
--Iinclude/sensorycloud
--I_deps/catch2-src/include
--I_deps/grpc-src/include
--I_deps/portaudio-src/include

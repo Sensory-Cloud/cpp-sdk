@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.0.9
+
+### Changes
+
+-   Fix small typos in [TUTORIAL.md](TUTORIAL.md)
+
+### Removes
+
+-   [.clang_complete](.clang_complete) removed from root directory
+-   Unnecessary metadata removed from [.gitignore](.gitignore)
+
 ## 1.0.8
 
 -   Fix authentication from token file example to persist token buffer until
