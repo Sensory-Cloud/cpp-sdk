@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.8
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.9
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -283,7 +283,6 @@ blocks for the two approaches for instantiating the SDK.
 
 ```c++
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 
 int main() {
     sensory::token_manager::FileSystemCredentialStore
@@ -319,7 +318,6 @@ int main() {
 
 ```c++
 #include <sensorycloud/sensorycloud.hpp>
-#include <sensorycloud/token_manager/file_system_credential_store.hpp>
 
 int main() {
     sensory::token_manager::FileSystemCredentialStore

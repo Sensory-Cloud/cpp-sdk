@@ -1,7 +1,6 @@
 # MARK: Project Files
 ini/
 *_mock.grpc.pb.h
-com.sensory.cloud.examples*
 cmake_install.cmake
 *CMakeFiles
 *CMakeCache.txt
@@ -9,7 +8,6 @@ cmake_install.cmake
 build*/
 _deps/
 DartConfiguration.tcl
-cmake/portaudio
 
 # C extensions
 # TODO: this might not need ignored for this package

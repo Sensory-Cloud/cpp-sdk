@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.8</span>
+                                &#160;<span id="projectnumber">1.0.9</span>
                             </div>
                         </td>
                     </tr>
@@ -75,8 +75,19 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>1.0.8</h1>
+<div class="textblock"><h1>1.0.9</h1>
+<h2>Changes</h2>
 <ul>
+<li>Fix small typos in <a class="el" href="md__t_u_t_o_r_i_a_l.html">TUTORIAL.md</a></li>
+</ul>
+<h2>Removes</h2>
+<ul>
+<li><a href=".clang_complete">.clang_complete</a> removed from root directory</li>
+<li>Unnecessary metadata removed from <a href=".gitignore">.gitignore</a></li>
+</ul>
+<h1>1.0.8</h1>
+<ul>
+<li>Fix authentication from token file example to persist token buffer until no longer needed by gRPC</li>
 <li>Update global header to include optional components for ease of use</li>
 <li>Update tutorial</li>
 </ul>
