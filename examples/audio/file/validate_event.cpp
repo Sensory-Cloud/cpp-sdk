@@ -59,6 +59,9 @@ int main(int argc, const char** argv) {
         .help("The sensitivity threshold for detecting audio events.");
     parser.add_argument({ "-L", "--language" })
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
+    parser.add_argument({ "-tN", "--topN" })
+        .help("For metric models, determines the number of ranked classes to return in inference responses.")
+        .default_value(5);
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default).")
         .default_value(4096);
@@ -80,6 +83,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = ThresholdSensitivity::HIGH;
     else if (args.get<std::string>("threshold") == "HIGHEST")
         THRESHOLD = ThresholdSensitivity::HIGHEST;
+    const auto TOPN = args.get<uint32_t>("topN");
     const auto LANGUAGE = args.get<std::string>("language");
     auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
@@ -150,6 +154,7 @@ int main(int argc, const char** argv) {
     validate_event_config->set_modelname(MODEL);
     validate_event_config->set_userid(USER_ID);
     validate_event_config->set_sensitivity(THRESHOLD);
+    validate_event_config->set_topn(TOPN);
 
     grpc::ClientContext context;
     auto stream = cloud.audio.validate_event(&context, audio_config, validate_event_config);
@@ -172,6 +177,18 @@ int main(int argc, const char** argv) {
             } else if (response.success()) {
                 std::cout << "Detected trigger \""
                     << response.resultid() << "\"" << std::endl;
+            } else if (response.topnresponse().size()) {
+                std::cout << "Top N results" << std::endl;
+                for (const auto& thing : response.topnresponse()) {
+                    google::protobuf::util::JsonPrintOptions options;
+                    options.add_whitespace = false;
+                    options.always_print_primitive_fields = true;
+                    options.always_print_enums_as_ints = false;
+                    options.preserve_proto_field_names = true;
+                    std::string response_json;
+                    google::protobuf::util::MessageToJsonString(thing, &response_json, options);
+                    std::cout << response_json << std::endl;
+                }
             }
         }
     });

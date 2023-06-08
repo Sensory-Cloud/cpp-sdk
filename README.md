@@ -1,26 +1,39 @@
 # SensoryCloud C++ SDK
 
-This repository contains the source code for the [SensoryCloud][sensory-cloud]
-C++ SDK.
+Welcome to the SensoryCloud C++ SDK repository! This repository contains the
+source code and documentation for the SensoryCloud C++ SDK, which is designed
+to facilitate integration with the SensoryCloud platform for cloud inference.
 
 ## General Information
 
-Before getting started you must spin up a [SensoryCloud][sensory-cloud]
-inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
-must also have the following pieces of information:
+Before you start using the SensoryCloud C++ SDK, it's important to have a
+SensoryCloud inference server set up. If you're new to SensoryCloud, we offer
+a free trial server that allows you to test our cloud platform and determine
+its suitability for your product. To learn more about deploying an inference
+server with SensoryCloud, please visit the [SensoryCloud website][trial].
 
--   your inference server address and port number,
--   your SensoryCloud tenant ID, and
--   your configured secret key used for registering OAuth clients.
+Once your server is up and running, you'll need the following information to
+effectively interact with it using this SDK:
 
-[sensory-cloud]: https://sensorycloud.ai/
+-   The address and port number of your inference server,
+-   Your SensoryCloud tenant ID, and
+-   Your configured secret key used for registering OAuth clients.
+
+If you have any questions or need assistance with server setup or
+configuration, please don't hesitate to
+[contact our sales team][sales]. We
+are here to help ensure a smooth and successful integration of SensoryCloud
+into your product.
+
+[trial]: https://sensorycloud.ai/free-credits/
+[sales]: https://sensorycloud.ai/resources/contact-us/
 
 ## Requirements
 
-This project uses [CMake][cmake] as the primary build system and supports
-the [gcc][gcc], [clang][clang], and [MSVC][MSVC] compilers. To install the
-build tools, run the following installation command depending on your
-deployment target. The minimum requirements for installation of the SDK are:
+The SensoryCloud C++ SDK uses CMake as the primary build system and supports
+the gcc, clang, and MSVC compilers. To install the necessary build tools,
+please follow the instructions below based on your deployment target. The
+minimum requirements for installing the SDK are as follows:
 
 | Dependency       | Version |
 |:-----------------|:--------|
@@ -36,7 +49,8 @@ deployment target. The minimum requirements for installation of the SDK are:
 
 ### Debian / Ubuntu
 
-To install the build tools for Debian-based Linux:
+To install the build tools on Debian-based Linux distributions, run the
+following command:
 
 ```shell
 apt-get install -y build-essential autoconf libtool pkg-config cmake git
@@ -44,7 +58,8 @@ apt-get install -y build-essential autoconf libtool pkg-config cmake git
 
 ### Fedora / RedHat / CentOS
 
-To install the build tools for Fedora-based Linux:
+To install the build tools on Fedora-based Linux distributions, run the
+following command:
 
 ```shell
 yum install -y autoconf libtool pkg-config gcc gcc-c++ cmake git
@@ -52,17 +67,17 @@ yum install -y autoconf libtool pkg-config gcc gcc-c++ cmake git
 
 ### MacOS
 
-To install the build tools for MacOS:
+To install the build tools on macOS, run the following commands:
 
 ```shell
 xcode-select --install
 brew install autoconf automake libtool shtool cmake git
 ```
 
-Because MacOS is not strictly POSIX compliant, you will need to provide gRPC
-with a hint of where your SSL certificates are stored to properly connect to a
-secure server. This can typically be accomplished by exporting the following
-environment variable:
+Since macOS is not strictly POSIX compliant, you need to provide gRPC with a
+hint of where your SSL certificates are stored to establish a secure
+connection to a server. You can typically accomplish this by exporting the
+following environment variable:
 
 ```shell
 export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
@@ -71,7 +86,7 @@ export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem
 <!--
 ### Windows
 
-To install the build tools for Windows:
+To install the build tools on Windows:
 
 ```shell
 TODO
@@ -86,13 +101,14 @@ to your `CMakeLists.txt`.
 ```shell
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.9
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.2.0
 )
 FetchContent_MakeAvailable(sensorycloud)
 ```
 
-This will clone and compile `libsensorycloud` locally to be used in
-applications or other libraries using:
+This code will clone and compile the libsensorycloud library locally, allowing
+you to use it in your applications or other libraries. To link the library
+with your program, use the following command:
 
 ```shell
 target_link_libraries(your_program PRIVATE sensorycloud)
@@ -100,15 +116,20 @@ target_link_libraries(your_program PRIVATE sensorycloud)
 
 ### Tutorial & Examples
 
-Please refer to [TUTORIAL.md](TUTORIAL.md) for a brief tutorial of the
-SDK. Example code for each available service and programming model are
-available in the [examples](examples) directory. These act both as a point of
-reference and as a starting point for the integration of SensoryCloud with your
-application.
+To get started with the SensoryCloud C++ SDK, we recommend checking out the
+[TUTORIAL.md](TUTORIAL.md) document, which provides a brief tutorial on how to
+use the SDK. Additionally, you can find example code for each available
+service and programming model in the [examples](examples) directory. These
+examples serve as both a reference and a starting point for integrating
+SensoryCloud with your own applications.
 
 ## Contributing
 
-The [CONTRIBUTING.md](CONTRIBUTING.md) document describes how to setup the
-development environment for the SDK, compile the code outside of the context of
-an application, run unit tests, and release new versions of the SDK. Please
-refer to the [CHANGELOG.md](CHANGELOG.md) for the latest features and bug fixes.
+If you're interested in contributing to the SensoryCloud C++ SDK, please refer
+to the [CONTRIBUTING.md](CONTRIBUTING.md) document. It contains information on
+setting up the development environment, compiling the code outside of an
+application context, running unit tests, and releasing new versions of the
+SDK. For details on the latest features and bug fixes, please consult the
+[CHANGELOG.md](CHANGELOG.md) file.
+
+We appreciate your contributions and feedback!

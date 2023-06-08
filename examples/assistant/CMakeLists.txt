@@ -1,4 +1,4 @@
-# cmake build file for SensoryCloud management service examples.
+# cmake build file for SensoryCloud assistant service examples.
 #
 # Copyright (c) 2023 Sensory, Inc.
 #
@@ -16,7 +16,7 @@
 #
 
 cmake_minimum_required(VERSION 3.14)
-project(sensory-cloud-management-examples)
+project(sensory-cloud-assistant-examples)
 
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
@@ -27,11 +27,5 @@ FetchContent_MakeAvailable(sensorycloud)
 
 include_directories(dep)
 
-add_executable(management management.cpp)
-target_link_libraries(management PRIVATE sensorycloud)
-
-add_executable(management_callback management_callback.cpp)
-target_link_libraries(management_callback PRIVATE sensorycloud)
-
-add_executable(management_async management_async.cpp)
-target_link_libraries(management_async PRIVATE sensorycloud)
+add_executable(assistant assistant.cpp)
+target_link_libraries(assistant PRIVATE sensorycloud)

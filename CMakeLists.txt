@@ -19,7 +19,7 @@
 
 # Version 3.14 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.14)
-project(sensory-cloud-cpp-sdk VERSION 1.0.9)
+project(sensory-cloud-cpp-sdk VERSION 1.2.0)
 
 # Include the common files for finding/compiling Protobuf and gRPC.
 include(cmake/common.cmake)
@@ -32,6 +32,7 @@ option(SENSORY_CLOUD_BUILD_SECURE_CREDENTIAL_STORE "Build SecureCredentialStore"
 option(SENSORY_CLOUD_BUILD_EXAMPLES "Build all example applications" OFF)
 option(SENSORY_CLOUD_BUILD_EXAMPLES_AUDIO "Build audio example applications" OFF)
 option(SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO "Build video example applications" OFF)
+option(SENSORY_CLOUD_BUILD_EXAMPLES_ASSISTANT "Build assistant example applications" OFF)
 option(SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT "Build management and admin applications" OFF)
 
 # --- Proto Files ------------------------------------------------------------
@@ -399,4 +400,11 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT)
 
     add_executable(examples_management_async examples/management/management_async.cpp)
     target_link_libraries(examples_management_async PRIVATE sensorycloud)
+endif()
+
+if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_ASSISTANT)
+    include_directories(examples/assistant/dep)
+
+    add_executable(examples_assistant examples/assistant/assistant.cpp)
+    target_link_libraries(examples_assistant PRIVATE sensorycloud)
 endif()

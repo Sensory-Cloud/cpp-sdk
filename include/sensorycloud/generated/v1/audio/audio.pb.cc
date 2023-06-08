@@ -216,13 +216,30 @@ struct AuthenticateResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AuthenticateResponseDefaultTypeInternal _AuthenticateResponse_default_instance_;
-constexpr ValidateEventResponse::ValidateEventResponse(
+constexpr SoundIdTopNResponse::SoundIdTopNResponse(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : resultid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , logitscore_(0)
+  , probabilityscore_(0){}
+struct SoundIdTopNResponseDefaultTypeInternal {
+  constexpr SoundIdTopNResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~SoundIdTopNResponseDefaultTypeInternal() {}
+  union {
+    SoundIdTopNResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SoundIdTopNResponseDefaultTypeInternal _SoundIdTopNResponse_default_instance_;
+constexpr ValidateEventResponse::ValidateEventResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : topnresponse_()
+  , resultid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , postprocessingaction_(nullptr)
   , audioenergy_(0)
   , success_(false)
-  , score_(0){}
+  , score_(0)
+  , resultstarttime_(0)
+  , resultendtime_(0){}
 struct ValidateEventResponseDefaultTypeInternal {
   constexpr ValidateEventResponseDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -353,7 +370,8 @@ constexpr ValidateEventConfig::ValidateEventConfig(
   , userid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , audio_(nullptr)
   , sensitivity_(0)
-{}
+
+  , topn_(0){}
 struct ValidateEventConfigDefaultTypeInternal {
   constexpr ValidateEventConfigDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -408,6 +426,20 @@ struct CustomVocabularyWordsDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT CustomVocabularyWordsDefaultTypeInternal _CustomVocabularyWords_default_instance_;
+constexpr TranscribeEventConfig::TranscribeEventConfig(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : modelname_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , sensitivity_(0)
+{}
+struct TranscribeEventConfigDefaultTypeInternal {
+  constexpr TranscribeEventConfigDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~TranscribeEventConfigDefaultTypeInternal() {}
+  union {
+    TranscribeEventConfig _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TranscribeEventConfigDefaultTypeInternal _TranscribeEventConfig_default_instance_;
 constexpr TranscribeConfig::TranscribeConfig(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : modelname_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
@@ -415,10 +447,12 @@ constexpr TranscribeConfig::TranscribeConfig(
   , customvocabularyid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , audio_(nullptr)
   , customwordlist_(nullptr)
-  , enablepunctuationcapitalization_(false)
-  , dosingleutterance_(false)
+  , wakewordconfig_(nullptr)
   , vadsensitivity_(0)
 
+  , enablepunctuationcapitalization_(false)
+  , dosingleutterance_(false)
+  , doofflinemode_(false)
   , vadduration_(0)
   , customvocabrewardthreshold_(0)
 {}
@@ -464,7 +498,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT VoiceSynthesisConfigDefaultType
 }  // namespace v1
 }  // namespace api
 }  // namespace sensory
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2faudio_2faudio_2eproto[29];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_v1_2faudio_2faudio_2eproto[31];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_v1_2faudio_2faudio_2eproto[5];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_v1_2faudio_2faudio_2eproto = nullptr;
 
@@ -604,6 +638,15 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2faudio_2faudio_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::AuthenticateResponse, modelprompt_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::AuthenticateResponse, percentsegmentcomplete_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::SoundIdTopNResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::SoundIdTopNResponse, resultid_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::SoundIdTopNResponse, logitscore_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::SoundIdTopNResponse, probabilityscore_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -613,6 +656,9 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2faudio_2faudio_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, success_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, resultid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, score_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, topnresponse_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, resultstarttime_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, resultendtime_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventResponse, postprocessingaction_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEnrolledEventResponse, _internal_metadata_),
@@ -707,6 +753,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2faudio_2faudio_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventConfig, modelname_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventConfig, userid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventConfig, sensitivity_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::ValidateEventConfig, topn_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::CreateEnrollmentEventConfig, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -741,6 +788,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2faudio_2faudio_2eproto::of
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::CustomVocabularyWords, words_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeEventConfig, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeEventConfig, modelname_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeEventConfig, sensitivity_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeConfig, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -756,6 +811,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2faudio_2faudio_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeConfig, customvocabrewardthreshold_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeConfig, customvocabularyid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeConfig, customwordlist_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeConfig, doofflinemode_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::TranscribeConfig, wakewordconfig_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::audio::AudioConfig, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -790,21 +847,23 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 99, -1, -1, sizeof(::sensory::api::v1::audio::SynthesizeSpeechRequest)},
   { 107, -1, -1, sizeof(::sensory::api::v1::audio::CreateEnrollmentResponse)},
   { 121, -1, -1, sizeof(::sensory::api::v1::audio::AuthenticateResponse)},
-  { 134, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEventResponse)},
-  { 145, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEnrolledEventResponse)},
-  { 156, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeWord)},
-  { 168, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeWordResponse)},
-  { 177, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeResponse)},
-  { 187, -1, -1, sizeof(::sensory::api::v1::audio::SynthesizeSpeechResponse)},
-  { 196, -1, -1, sizeof(::sensory::api::v1::audio::CreateEnrollmentConfig)},
-  { 213, -1, -1, sizeof(::sensory::api::v1::audio::AuthenticateConfig)},
-  { 228, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEventConfig)},
-  { 238, -1, -1, sizeof(::sensory::api::v1::audio::CreateEnrollmentEventConfig)},
-  { 252, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEnrolledEventConfig)},
-  { 264, -1, -1, sizeof(::sensory::api::v1::audio::CustomVocabularyWords)},
-  { 271, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeConfig)},
-  { 287, -1, -1, sizeof(::sensory::api::v1::audio::AudioConfig)},
-  { 297, -1, -1, sizeof(::sensory::api::v1::audio::VoiceSynthesisConfig)},
+  { 134, -1, -1, sizeof(::sensory::api::v1::audio::SoundIdTopNResponse)},
+  { 143, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEventResponse)},
+  { 157, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEnrolledEventResponse)},
+  { 168, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeWord)},
+  { 180, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeWordResponse)},
+  { 189, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeResponse)},
+  { 199, -1, -1, sizeof(::sensory::api::v1::audio::SynthesizeSpeechResponse)},
+  { 208, -1, -1, sizeof(::sensory::api::v1::audio::CreateEnrollmentConfig)},
+  { 225, -1, -1, sizeof(::sensory::api::v1::audio::AuthenticateConfig)},
+  { 240, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEventConfig)},
+  { 251, -1, -1, sizeof(::sensory::api::v1::audio::CreateEnrollmentEventConfig)},
+  { 265, -1, -1, sizeof(::sensory::api::v1::audio::ValidateEnrolledEventConfig)},
+  { 277, -1, -1, sizeof(::sensory::api::v1::audio::CustomVocabularyWords)},
+  { 284, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeEventConfig)},
+  { 292, -1, -1, sizeof(::sensory::api::v1::audio::TranscribeConfig)},
+  { 310, -1, -1, sizeof(::sensory::api::v1::audio::AudioConfig)},
+  { 320, -1, -1, sizeof(::sensory::api::v1::audio::VoiceSynthesisConfig)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -822,6 +881,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_SynthesizeSpeechRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_CreateEnrollmentResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_AuthenticateResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_SoundIdTopNResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_ValidateEventResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_ValidateEnrolledEventResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_TranscribeWord_default_instance_),
@@ -834,6 +894,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_CreateEnrollmentEventConfig_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_ValidateEnrolledEventConfig_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_CustomVocabularyWords_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_TranscribeEventConfig_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_TranscribeConfig_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_AudioConfig_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::sensory::api::v1::audio::_VoiceSynthesisConfig_default_instance_),
@@ -896,9 +957,14 @@ const char descriptor_table_protodef_v1_2faudio_2faudio_2eproto[] PROTOBUF_SECTI
   "oken\030\003 \001(\0132!.sensory.api.common.TokenRes"
   "ponse\022\016\n\006userId\030\004 \001(\t\022\024\n\014enrollmentId\030\005 "
   "\001(\t\022\023\n\013modelPrompt\030\006 \001(\t\022\036\n\026percentSegme"
-  "ntComplete\030\007 \001(\003\"\265\001\n\025ValidateEventRespon"
-  "se\022\023\n\013audioEnergy\030\001 \001(\002\022\017\n\007success\030\002 \001(\010"
-  "\022\020\n\010resultId\030\003 \001(\t\022\r\n\005score\030\004 \001(\002\022U\n\024pos"
+  "ntComplete\030\007 \001(\003\"U\n\023SoundIdTopNResponse\022"
+  "\020\n\010resultId\030\001 \001(\t\022\022\n\nlogitScore\030\002 \001(\002\022\030\n"
+  "\020probabilityScore\030\003 \001(\002\"\246\002\n\025ValidateEven"
+  "tResponse\022\023\n\013audioEnergy\030\001 \001(\002\022\017\n\007succes"
+  "s\030\002 \001(\010\022\020\n\010resultId\030\003 \001(\t\022\r\n\005score\030\004 \001(\002"
+  "\022\?\n\014topNResponse\030\005 \003(\0132).sensory.api.v1."
+  "audio.SoundIdTopNResponse\022\027\n\017ResultStart"
+  "Time\030\006 \001(\002\022\025\n\rResultEndTime\030\007 \001(\002\022U\n\024pos"
   "tProcessingAction\030\n \001(\01327.sensory.api.v1"
   ".audio.AudioResponsePostProcessingAction"
   "\"\200\001\n\035ValidateEnrolledEventResponse\022\023\n\013au"
@@ -941,83 +1007,89 @@ const char descriptor_table_protodef_v1_2faudio_2faudio_2eproto[] PROTOBUF_SECTI
   "ticateConfig.ThresholdSecurityB\010\372B\005\202\001\002\020\001"
   "\022\031\n\021isLivenessEnabled\030\007 \001(\010\022\027\n\017enrollmen"
   "tToken\030\010 \001(\014\"&\n\021ThresholdSecurity\022\010\n\004HIG"
-  "H\020\000\022\007\n\003LOW\020\001B\r\n\006authId\022\003\370B\001\"\326\001\n\023Validate"
+  "H\020\000\022\007\n\003LOW\020\001B\r\n\006authId\022\003\370B\001\"\344\001\n\023Validate"
   "EventConfig\022:\n\005audio\030\001 \001(\0132!.sensory.api"
   ".v1.audio.AudioConfigB\010\372B\005\212\001\002\020\001\022\035\n\tmodel"
   "Name\030\002 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031\n\006userId\030\003 \001(\tB\t"
   "\372B\006r\004\020\001\030\177\022I\n\013sensitivity\030\004 \001(\0162*.sensory"
   ".api.v1.audio.ThresholdSensitivityB\010\372B\005\202"
-  "\001\002\020\001\"\275\002\n\033CreateEnrollmentEventConfig\022:\n\005"
-  "audio\030\001 \001(\0132!.sensory.api.v1.audio.Audio"
-  "ConfigB\010\372B\005\212\001\002\020\001\022\031\n\006userId\030\002 \001(\tB\t\372B\006r\004\020"
-  "\001\030\177\022\035\n\tmodelName\030\003 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\035\n\013de"
-  "scription\030\004 \001(\tB\010\372B\005r\003\030\377\007\022,\n\027enrollmentN"
-  "umUtterances\030\005 \001(\rB\t\372B\006*\004\030\n(\000H\000\022-\n\022enrol"
-  "lmentDuration\030\006 \001(\002B\017\372B\014\n\n\035\000\000pA-\000\000\000\000H\000\022\034"
-  "\n\013referenceId\030\007 \001(\tB\007\372B\004r\002\030\177B\016\n\014enrollLe"
-  "ngth\"\213\002\n\033ValidateEnrolledEventConfig\022:\n\005"
-  "audio\030\001 \001(\0132!.sensory.api.v1.audio.Audio"
-  "ConfigB\010\372B\005\212\001\002\020\001\022 \n\014enrollmentId\030\002 \001(\tB\010"
-  "\372B\005r\003\260\001\001H\000\022\033\n\021enrollmentGroupId\030\003 \001(\tH\000\022"
-  "I\n\013sensitivity\030\004 \001(\0162*.sensory.api.v1.au"
-  "dio.ThresholdSensitivityB\010\372B\005\202\001\002\020\001\022\027\n\017en"
-  "rollmentToken\030\005 \001(\014B\r\n\006authId\022\003\370B\001\"2\n\025Cu"
-  "stomVocabularyWords\022\031\n\005words\030\001 \003(\tB\n\372B\007\222"
-  "\001\004\010\001\020d\"\326\003\n\020TranscribeConfig\022:\n\005audio\030\001 \001"
-  "(\0132!.sensory.api.v1.audio.AudioConfigB\010\372"
-  "B\005\212\001\002\020\001\022\035\n\tmodelName\030\002 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031"
-  "\n\006userId\030\003 \001(\tB\t\372B\006r\004\020\001\030\177\022\'\n\037enablePunct"
-  "uationCapitalization\030\004 \001(\010\022\031\n\021doSingleUt"
-  "terance\030\005 \001(\010\022B\n\016vadSensitivity\030\006 \001(\0162*."
-  "sensory.api.v1.audio.ThresholdSensitivit"
-  "y\022\023\n\013vadDuration\030\007 \001(\002\022N\n\032customVocabRew"
-  "ardThreshold\030\010 \001(\0162*.sensory.api.v1.audi"
-  "o.ThresholdSensitivity\022\032\n\022customVocabula"
-  "ryId\030\t \001(\t\022C\n\016customWordList\030\n \001(\0132+.sen"
-  "sory.api.v1.audio.CustomVocabularyWords\""
-  "\353\001\n\013AudioConfig\022K\n\010encoding\030\001 \001(\0162/.sens"
-  "ory.api.v1.audio.AudioConfig.AudioEncodi"
-  "ngB\010\372B\005\202\001\002\020\001\022!\n\017sampleRateHertz\030\002 \001(\005B\010\372"
-  "B\005\032\003(\300>\022\"\n\021audioChannelCount\030\003 \001(\005B\007\372B\004\032"
-  "\002 \000\022\024\n\014languageCode\030\004 \001(\t\"2\n\rAudioEncodi"
-  "ng\022\014\n\010LINEAR16\020\000\022\010\n\004FLAC\020\001\022\t\n\005MULAW\020\002\"b\n"
-  "\024VoiceSynthesisConfig\022\035\n\tmodelName\030\002 \001(\t"
-  "B\n\372B\007r\005\020\001\030\377\001\022%\n\017sampleRateHertz\030\003 \001(\005B\014\372"
-  "B\t\032\007\030\200\356\005(\300>J\004\010\001\020\002*I\n\031AudioPostProcessing"
-  "Action\022\013\n\007NOT_SET\020\000\022\t\n\005FLUSH\020\001\022\t\n\005RESET\020"
-  "\002\022\t\n\005FINAL\020\003*7\n\tWordState\022\025\n\021WORDSTATE_P"
-  "ENDING\020\000\022\023\n\017WORDSTATE_FINAL\020\001*N\n\024Thresho"
-  "ldSensitivity\022\n\n\006LOWEST\020\000\022\007\n\003LOW\020\001\022\n\n\006ME"
-  "DIUM\020\002\022\010\n\004HIGH\020\003\022\013\n\007HIGHEST\020\0042m\n\013AudioMo"
-  "dels\022^\n\tGetModels\022&.sensory.api.v1.audio"
-  ".GetModelsRequest\032\'.sensory.api.v1.audio"
-  ".GetModelsResponse\"\0002\367\001\n\017AudioBiometrics"
-  "\022w\n\020CreateEnrollment\022-.sensory.api.v1.au"
-  "dio.CreateEnrollmentRequest\032..sensory.ap"
-  "i.v1.audio.CreateEnrollmentResponse\"\000(\0010"
-  "\001\022k\n\014Authenticate\022).sensory.api.v1.audio"
-  ".AuthenticateRequest\032*.sensory.api.v1.au"
-  "dio.AuthenticateResponse\"\000(\0010\0012\205\003\n\013Audio"
-  "Events\022n\n\rValidateEvent\022*.sensory.api.v1"
-  ".audio.ValidateEventRequest\032+.sensory.ap"
-  "i.v1.audio.ValidateEventResponse\"\000(\0010\001\022}"
-  "\n\023CreateEnrolledEvent\0220.sensory.api.v1.a"
-  "udio.CreateEnrolledEventRequest\032..sensor"
-  "y.api.v1.audio.CreateEnrollmentResponse\""
-  "\000(\0010\001\022\206\001\n\025ValidateEnrolledEvent\0222.sensor"
-  "y.api.v1.audio.ValidateEnrolledEventRequ"
-  "est\0323.sensory.api.v1.audio.ValidateEnrol"
-  "ledEventResponse\"\000(\0010\0012|\n\023AudioTranscrip"
-  "tions\022e\n\nTranscribe\022\'.sensory.api.v1.aud"
-  "io.TranscribeRequest\032(.sensory.api.v1.au"
-  "dio.TranscribeResponse\"\000(\0010\0012\207\001\n\016AudioSy"
-  "nthesis\022u\n\020SynthesizeSpeech\022-.sensory.ap"
-  "i.v1.audio.SynthesizeSpeechRequest\032..sen"
-  "sory.api.v1.audio.SynthesizeSpeechRespon"
-  "se\"\0000\001B|\n\034ai.sensorycloud.api.v1.audioB\026"
-  "SensoryApiV1AudioProtoP\001Z:gitlab.com/sen"
-  "sory-cloud/server/titan.git/pkg/api/v1/a"
-  "udio\242\002\005SENGAb\006proto3"
+  "\001\002\020\001\022\014\n\004topN\030\005 \001(\005\"\275\002\n\033CreateEnrollmentE"
+  "ventConfig\022:\n\005audio\030\001 \001(\0132!.sensory.api."
+  "v1.audio.AudioConfigB\010\372B\005\212\001\002\020\001\022\031\n\006userId"
+  "\030\002 \001(\tB\t\372B\006r\004\020\001\030\177\022\035\n\tmodelName\030\003 \001(\tB\n\372B"
+  "\007r\005\020\001\030\377\001\022\035\n\013description\030\004 \001(\tB\010\372B\005r\003\030\377\007\022"
+  ",\n\027enrollmentNumUtterances\030\005 \001(\rB\t\372B\006*\004\030"
+  "\n(\000H\000\022-\n\022enrollmentDuration\030\006 \001(\002B\017\372B\014\n\n"
+  "\035\000\000pA-\000\000\000\000H\000\022\034\n\013referenceId\030\007 \001(\tB\007\372B\004r\002"
+  "\030\177B\016\n\014enrollLength\"\213\002\n\033ValidateEnrolledE"
+  "ventConfig\022:\n\005audio\030\001 \001(\0132!.sensory.api."
+  "v1.audio.AudioConfigB\010\372B\005\212\001\002\020\001\022 \n\014enroll"
+  "mentId\030\002 \001(\tB\010\372B\005r\003\260\001\001H\000\022\033\n\021enrollmentGr"
+  "oupId\030\003 \001(\tH\000\022I\n\013sensitivity\030\004 \001(\0162*.sen"
+  "sory.api.v1.audio.ThresholdSensitivityB\010"
+  "\372B\005\202\001\002\020\001\022\027\n\017enrollmentToken\030\005 \001(\014B\r\n\006aut"
+  "hId\022\003\370B\001\"2\n\025CustomVocabularyWords\022\031\n\005wor"
+  "ds\030\001 \003(\tB\n\372B\007\222\001\004\010\001\020d\"\201\001\n\025TranscribeEvent"
+  "Config\022\035\n\tmodelName\030\001 \001(\tB\n\372B\007r\005\020\001\030\377\001\022I\n"
+  "\013sensitivity\030\002 \001(\0162*.sensory.api.v1.audi"
+  "o.ThresholdSensitivityB\010\372B\005\202\001\002\020\001\"\262\004\n\020Tra"
+  "nscribeConfig\022:\n\005audio\030\001 \001(\0132!.sensory.a"
+  "pi.v1.audio.AudioConfigB\010\372B\005\212\001\002\020\001\022\035\n\tmod"
+  "elName\030\002 \001(\tB\n\372B\007r\005\020\001\030\377\001\022\031\n\006userId\030\003 \001(\t"
+  "B\t\372B\006r\004\020\001\030\177\022\'\n\037enablePunctuationCapitali"
+  "zation\030\004 \001(\010\022\031\n\021doSingleUtterance\030\005 \001(\010\022"
+  "B\n\016vadSensitivity\030\006 \001(\0162*.sensory.api.v1"
+  ".audio.ThresholdSensitivity\022\023\n\013vadDurati"
+  "on\030\007 \001(\002\022N\n\032customVocabRewardThreshold\030\010"
+  " \001(\0162*.sensory.api.v1.audio.ThresholdSen"
+  "sitivity\022\032\n\022customVocabularyId\030\t \001(\t\022C\n\016"
+  "customWordList\030\n \001(\0132+.sensory.api.v1.au"
+  "dio.CustomVocabularyWords\022\025\n\rdoOfflineMo"
+  "de\030\013 \001(\010\022C\n\016wakeWordConfig\030\014 \001(\0132+.senso"
+  "ry.api.v1.audio.TranscribeEventConfig\"\353\001"
+  "\n\013AudioConfig\022K\n\010encoding\030\001 \001(\0162/.sensor"
+  "y.api.v1.audio.AudioConfig.AudioEncoding"
+  "B\010\372B\005\202\001\002\020\001\022!\n\017sampleRateHertz\030\002 \001(\005B\010\372B\005"
+  "\032\003(\300>\022\"\n\021audioChannelCount\030\003 \001(\005B\007\372B\004\032\002 "
+  "\000\022\024\n\014languageCode\030\004 \001(\t\"2\n\rAudioEncoding"
+  "\022\014\n\010LINEAR16\020\000\022\010\n\004FLAC\020\001\022\t\n\005MULAW\020\002\"b\n\024V"
+  "oiceSynthesisConfig\022\035\n\tmodelName\030\002 \001(\tB\n"
+  "\372B\007r\005\020\001\030\377\001\022%\n\017sampleRateHertz\030\003 \001(\005B\014\372B\t"
+  "\032\007\030\200\356\005(\300>J\004\010\001\020\002*I\n\031AudioPostProcessingAc"
+  "tion\022\013\n\007NOT_SET\020\000\022\t\n\005FLUSH\020\001\022\t\n\005RESET\020\002\022"
+  "\t\n\005FINAL\020\003*7\n\tWordState\022\025\n\021WORDSTATE_PEN"
+  "DING\020\000\022\023\n\017WORDSTATE_FINAL\020\001*N\n\024Threshold"
+  "Sensitivity\022\n\n\006LOWEST\020\000\022\007\n\003LOW\020\001\022\n\n\006MEDI"
+  "UM\020\002\022\010\n\004HIGH\020\003\022\013\n\007HIGHEST\020\0042m\n\013AudioMode"
+  "ls\022^\n\tGetModels\022&.sensory.api.v1.audio.G"
+  "etModelsRequest\032\'.sensory.api.v1.audio.G"
+  "etModelsResponse\"\0002\367\001\n\017AudioBiometrics\022w"
+  "\n\020CreateEnrollment\022-.sensory.api.v1.audi"
+  "o.CreateEnrollmentRequest\032..sensory.api."
+  "v1.audio.CreateEnrollmentResponse\"\000(\0010\001\022"
+  "k\n\014Authenticate\022).sensory.api.v1.audio.A"
+  "uthenticateRequest\032*.sensory.api.v1.audi"
+  "o.AuthenticateResponse\"\000(\0010\0012\205\003\n\013AudioEv"
+  "ents\022n\n\rValidateEvent\022*.sensory.api.v1.a"
+  "udio.ValidateEventRequest\032+.sensory.api."
+  "v1.audio.ValidateEventResponse\"\000(\0010\001\022}\n\023"
+  "CreateEnrolledEvent\0220.sensory.api.v1.aud"
+  "io.CreateEnrolledEventRequest\032..sensory."
+  "api.v1.audio.CreateEnrollmentResponse\"\000("
+  "\0010\001\022\206\001\n\025ValidateEnrolledEvent\0222.sensory."
+  "api.v1.audio.ValidateEnrolledEventReques"
+  "t\0323.sensory.api.v1.audio.ValidateEnrolle"
+  "dEventResponse\"\000(\0010\0012|\n\023AudioTranscripti"
+  "ons\022e\n\nTranscribe\022\'.sensory.api.v1.audio"
+  ".TranscribeRequest\032(.sensory.api.v1.audi"
+  "o.TranscribeResponse\"\000(\0010\0012\207\001\n\016AudioSynt"
+  "hesis\022u\n\020SynthesizeSpeech\022-.sensory.api."
+  "v1.audio.SynthesizeSpeechRequest\032..senso"
+  "ry.api.v1.audio.SynthesizeSpeechResponse"
+  "\"\0000\001B|\n\034ai.sensorycloud.api.v1.audioB\026Se"
+  "nsoryApiV1AudioProtoP\001Z:gitlab.com/senso"
+  "ry-cloud/server/titan.git/pkg/api/v1/aud"
+  "io\242\002\005SENGAb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2faudio_2faudio_2eproto_deps[2] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -1025,8 +1097,8 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2faudio_2faudio_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2faudio_2faudio_2eproto = {
-  false, false, 7100, descriptor_table_protodef_v1_2faudio_2faudio_2eproto, "v1/audio/audio.proto", 
-  &descriptor_table_v1_2faudio_2faudio_2eproto_once, descriptor_table_v1_2faudio_2faudio_2eproto_deps, 2, 29,
+  false, false, 7538, descriptor_table_protodef_v1_2faudio_2faudio_2eproto, "v1/audio/audio.proto", 
+  &descriptor_table_v1_2faudio_2faudio_2eproto_once, descriptor_table_v1_2faudio_2faudio_2eproto_deps, 2, 31,
   schemas, file_default_instances, TableStruct_v1_2faudio_2faudio_2eproto::offsets,
   file_level_metadata_v1_2faudio_2faudio_2eproto, file_level_enum_descriptors_v1_2faudio_2faudio_2eproto, file_level_service_descriptors_v1_2faudio_2faudio_2eproto,
 };
@@ -5075,6 +5147,263 @@ void AuthenticateResponse::InternalSwap(AuthenticateResponse* other) {
 
 // ===================================================================
 
+class SoundIdTopNResponse::_Internal {
+ public:
+};
+
+SoundIdTopNResponse::SoundIdTopNResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.audio.SoundIdTopNResponse)
+}
+SoundIdTopNResponse::SoundIdTopNResponse(const SoundIdTopNResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  resultid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_resultid().empty()) {
+    resultid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_resultid(), 
+      GetArenaForAllocation());
+  }
+  ::memcpy(&logitscore_, &from.logitscore_,
+    static_cast<size_t>(reinterpret_cast<char*>(&probabilityscore_) -
+    reinterpret_cast<char*>(&logitscore_)) + sizeof(probabilityscore_));
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.audio.SoundIdTopNResponse)
+}
+
+void SoundIdTopNResponse::SharedCtor() {
+resultid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&logitscore_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&probabilityscore_) -
+    reinterpret_cast<char*>(&logitscore_)) + sizeof(probabilityscore_));
+}
+
+SoundIdTopNResponse::~SoundIdTopNResponse() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.audio.SoundIdTopNResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void SoundIdTopNResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  resultid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void SoundIdTopNResponse::ArenaDtor(void* object) {
+  SoundIdTopNResponse* _this = reinterpret_cast< SoundIdTopNResponse* >(object);
+  (void)_this;
+}
+void SoundIdTopNResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void SoundIdTopNResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void SoundIdTopNResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.audio.SoundIdTopNResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  resultid_.ClearToEmpty();
+  ::memset(&logitscore_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&probabilityscore_) -
+      reinterpret_cast<char*>(&logitscore_)) + sizeof(probabilityscore_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* SoundIdTopNResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string resultId = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_resultid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.audio.SoundIdTopNResponse.resultId"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float logitScore = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21)) {
+          logitscore_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // float probabilityScore = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29)) {
+          probabilityscore_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* SoundIdTopNResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.audio.SoundIdTopNResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string resultId = 1;
+  if (!this->_internal_resultid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_resultid().data(), static_cast<int>(this->_internal_resultid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.audio.SoundIdTopNResponse.resultId");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_resultid(), target);
+  }
+
+  // float logitScore = 2;
+  if (!(this->_internal_logitscore() <= 0 && this->_internal_logitscore() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_logitscore(), target);
+  }
+
+  // float probabilityScore = 3;
+  if (!(this->_internal_probabilityscore() <= 0 && this->_internal_probabilityscore() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(3, this->_internal_probabilityscore(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.audio.SoundIdTopNResponse)
+  return target;
+}
+
+size_t SoundIdTopNResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.audio.SoundIdTopNResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string resultId = 1;
+  if (!this->_internal_resultid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_resultid());
+  }
+
+  // float logitScore = 2;
+  if (!(this->_internal_logitscore() <= 0 && this->_internal_logitscore() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  // float probabilityScore = 3;
+  if (!(this->_internal_probabilityscore() <= 0 && this->_internal_probabilityscore() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SoundIdTopNResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    SoundIdTopNResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SoundIdTopNResponse::GetClassData() const { return &_class_data_; }
+
+void SoundIdTopNResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<SoundIdTopNResponse *>(to)->MergeFrom(
+      static_cast<const SoundIdTopNResponse &>(from));
+}
+
+
+void SoundIdTopNResponse::MergeFrom(const SoundIdTopNResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.audio.SoundIdTopNResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_resultid().empty()) {
+    _internal_set_resultid(from._internal_resultid());
+  }
+  if (!(from._internal_logitscore() <= 0 && from._internal_logitscore() >= 0)) {
+    _internal_set_logitscore(from._internal_logitscore());
+  }
+  if (!(from._internal_probabilityscore() <= 0 && from._internal_probabilityscore() >= 0)) {
+    _internal_set_probabilityscore(from._internal_probabilityscore());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void SoundIdTopNResponse::CopyFrom(const SoundIdTopNResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.audio.SoundIdTopNResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool SoundIdTopNResponse::IsInitialized() const {
+  return true;
+}
+
+void SoundIdTopNResponse::InternalSwap(SoundIdTopNResponse* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &resultid_, lhs_arena,
+      &other->resultid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(SoundIdTopNResponse, probabilityscore_)
+      + sizeof(SoundIdTopNResponse::probabilityscore_)
+      - PROTOBUF_FIELD_OFFSET(SoundIdTopNResponse, logitscore_)>(
+          reinterpret_cast<char*>(&logitscore_),
+          reinterpret_cast<char*>(&other->logitscore_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata SoundIdTopNResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
+      file_level_metadata_v1_2faudio_2faudio_2eproto[14]);
+}
+
+// ===================================================================
+
 class ValidateEventResponse::_Internal {
  public:
   static const ::sensory::api::v1::audio::AudioResponsePostProcessingAction& postprocessingaction(const ValidateEventResponse* msg);
@@ -5086,7 +5415,8 @@ ValidateEventResponse::_Internal::postprocessingaction(const ValidateEventRespon
 }
 ValidateEventResponse::ValidateEventResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  topnresponse_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -5094,7 +5424,8 @@ ValidateEventResponse::ValidateEventResponse(::PROTOBUF_NAMESPACE_ID::Arena* are
   // @@protoc_insertion_point(arena_constructor:sensory.api.v1.audio.ValidateEventResponse)
 }
 ValidateEventResponse::ValidateEventResponse(const ValidateEventResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      topnresponse_(from.topnresponse_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   resultid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (!from._internal_resultid().empty()) {
@@ -5107,8 +5438,8 @@ ValidateEventResponse::ValidateEventResponse(const ValidateEventResponse& from)
     postprocessingaction_ = nullptr;
   }
   ::memcpy(&audioenergy_, &from.audioenergy_,
-    static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&audioenergy_)) + sizeof(score_));
+    static_cast<size_t>(reinterpret_cast<char*>(&resultendtime_) -
+    reinterpret_cast<char*>(&audioenergy_)) + sizeof(resultendtime_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.audio.ValidateEventResponse)
 }
 
@@ -5116,8 +5447,8 @@ void ValidateEventResponse::SharedCtor() {
 resultid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&postprocessingaction_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&score_) -
-    reinterpret_cast<char*>(&postprocessingaction_)) + sizeof(score_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&resultendtime_) -
+    reinterpret_cast<char*>(&postprocessingaction_)) + sizeof(resultendtime_));
 }
 
 ValidateEventResponse::~ValidateEventResponse() {
@@ -5149,14 +5480,15 @@ void ValidateEventResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  topnresponse_.Clear();
   resultid_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && postprocessingaction_ != nullptr) {
     delete postprocessingaction_;
   }
   postprocessingaction_ = nullptr;
   ::memset(&audioenergy_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&score_) -
-      reinterpret_cast<char*>(&audioenergy_)) + sizeof(score_));
+      reinterpret_cast<char*>(&resultendtime_) -
+      reinterpret_cast<char*>(&audioenergy_)) + sizeof(resultendtime_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -5196,6 +5528,35 @@ const char* ValidateEventResponse::_InternalParse(const char* ptr, ::PROTOBUF_NA
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
           score_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .sensory.api.v1.audio.SoundIdTopNResponse topNResponse = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_topnresponse(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // float ResultStartTime = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 53)) {
+          resultstarttime_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // float ResultEndTime = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 61)) {
+          resultendtime_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
@@ -5265,6 +5626,26 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_score(), target);
   }
 
+  // repeated .sensory.api.v1.audio.SoundIdTopNResponse topNResponse = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_topnresponse_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(5, this->_internal_topnresponse(i), target, stream);
+  }
+
+  // float ResultStartTime = 6;
+  if (!(this->_internal_resultstarttime() <= 0 && this->_internal_resultstarttime() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(6, this->_internal_resultstarttime(), target);
+  }
+
+  // float ResultEndTime = 7;
+  if (!(this->_internal_resultendtime() <= 0 && this->_internal_resultendtime() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(7, this->_internal_resultendtime(), target);
+  }
+
   // .sensory.api.v1.audio.AudioResponsePostProcessingAction postProcessingAction = 10;
   if (this->_internal_has_postprocessingaction()) {
     target = stream->EnsureSpace(target);
@@ -5288,6 +5669,13 @@ size_t ValidateEventResponse::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated .sensory.api.v1.audio.SoundIdTopNResponse topNResponse = 5;
+  total_size += 1UL * this->_internal_topnresponse_size();
+  for (const auto& msg : this->topnresponse_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
 
   // string resultId = 3;
   if (!this->_internal_resultid().empty()) {
@@ -5318,6 +5706,16 @@ size_t ValidateEventResponse::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
+  // float ResultStartTime = 6;
+  if (!(this->_internal_resultstarttime() <= 0 && this->_internal_resultstarttime() >= 0)) {
+    total_size += 1 + 4;
+  }
+
+  // float ResultEndTime = 7;
+  if (!(this->_internal_resultendtime() <= 0 && this->_internal_resultendtime() >= 0)) {
+    total_size += 1 + 4;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -5340,6 +5738,7 @@ void ValidateEventResponse::MergeFrom(const ValidateEventResponse& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  topnresponse_.MergeFrom(from.topnresponse_);
   if (!from._internal_resultid().empty()) {
     _internal_set_resultid(from._internal_resultid());
   }
@@ -5354,6 +5753,12 @@ void ValidateEventResponse::MergeFrom(const ValidateEventResponse& from) {
   }
   if (!(from._internal_score() <= 0 && from._internal_score() >= 0)) {
     _internal_set_score(from._internal_score());
+  }
+  if (!(from._internal_resultstarttime() <= 0 && from._internal_resultstarttime() >= 0)) {
+    _internal_set_resultstarttime(from._internal_resultstarttime());
+  }
+  if (!(from._internal_resultendtime() <= 0 && from._internal_resultendtime() >= 0)) {
+    _internal_set_resultendtime(from._internal_resultendtime());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -5374,14 +5779,15 @@ void ValidateEventResponse::InternalSwap(ValidateEventResponse* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  topnresponse_.InternalSwap(&other->topnresponse_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &resultid_, lhs_arena,
       &other->resultid_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ValidateEventResponse, score_)
-      + sizeof(ValidateEventResponse::score_)
+      PROTOBUF_FIELD_OFFSET(ValidateEventResponse, resultendtime_)
+      + sizeof(ValidateEventResponse::resultendtime_)
       - PROTOBUF_FIELD_OFFSET(ValidateEventResponse, postprocessingaction_)>(
           reinterpret_cast<char*>(&postprocessingaction_),
           reinterpret_cast<char*>(&other->postprocessingaction_));
@@ -5390,7 +5796,7 @@ void ValidateEventResponse::InternalSwap(ValidateEventResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ValidateEventResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[14]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[15]);
 }
 
 // ===================================================================
@@ -5733,7 +6139,7 @@ void ValidateEnrolledEventResponse::InternalSwap(ValidateEnrolledEventResponse* 
 ::PROTOBUF_NAMESPACE_ID::Metadata ValidateEnrolledEventResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[15]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[16]);
 }
 
 // ===================================================================
@@ -6059,7 +6465,7 @@ void TranscribeWord::InternalSwap(TranscribeWord* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata TranscribeWord::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[16]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[17]);
 }
 
 // ===================================================================
@@ -6304,7 +6710,7 @@ void TranscribeWordResponse::InternalSwap(TranscribeWordResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata TranscribeWordResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[17]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[18]);
 }
 
 // ===================================================================
@@ -6598,7 +7004,7 @@ void TranscribeResponse::InternalSwap(TranscribeResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata TranscribeResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[18]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[19]);
 }
 
 // ===================================================================
@@ -6875,7 +7281,7 @@ void SynthesizeSpeechResponse::InternalSwap(SynthesizeSpeechResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SynthesizeSpeechResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[19]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[20]);
 }
 
 // ===================================================================
@@ -7441,7 +7847,7 @@ void CreateEnrollmentConfig::InternalSwap(CreateEnrollmentConfig* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata CreateEnrollmentConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[20]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[21]);
 }
 
 // ===================================================================
@@ -7896,7 +8302,7 @@ void AuthenticateConfig::InternalSwap(AuthenticateConfig* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AuthenticateConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[21]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[22]);
 }
 
 // ===================================================================
@@ -7937,7 +8343,9 @@ ValidateEventConfig::ValidateEventConfig(const ValidateEventConfig& from)
   } else {
     audio_ = nullptr;
   }
-  sensitivity_ = from.sensitivity_;
+  ::memcpy(&sensitivity_, &from.sensitivity_,
+    static_cast<size_t>(reinterpret_cast<char*>(&topn_) -
+    reinterpret_cast<char*>(&sensitivity_)) + sizeof(topn_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.audio.ValidateEventConfig)
 }
 
@@ -7946,8 +8354,8 @@ modelname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAl
 userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&audio_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&sensitivity_) -
-    reinterpret_cast<char*>(&audio_)) + sizeof(sensitivity_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&topn_) -
+    reinterpret_cast<char*>(&audio_)) + sizeof(topn_));
 }
 
 ValidateEventConfig::~ValidateEventConfig() {
@@ -7986,7 +8394,9 @@ void ValidateEventConfig::Clear() {
     delete audio_;
   }
   audio_ = nullptr;
-  sensitivity_ = 0;
+  ::memset(&sensitivity_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&topn_) -
+      reinterpret_cast<char*>(&sensitivity_)) + sizeof(topn_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -8030,6 +8440,14 @@ const char* ValidateEventConfig::_InternalParse(const char* ptr, ::PROTOBUF_NAME
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_sensitivity(static_cast<::sensory::api::v1::audio::ThresholdSensitivity>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 topN = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          topn_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -8097,6 +8515,12 @@ failure:
       4, this->_internal_sensitivity(), target);
   }
 
+  // int32 topN = 5;
+  if (this->_internal_topn() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_topn(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -8140,6 +8564,11 @@ size_t ValidateEventConfig::ByteSizeLong() const {
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_sensitivity());
   }
 
+  // int32 topN = 5;
+  if (this->_internal_topn() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_topn());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -8174,6 +8603,9 @@ void ValidateEventConfig::MergeFrom(const ValidateEventConfig& from) {
   if (from._internal_sensitivity() != 0) {
     _internal_set_sensitivity(from._internal_sensitivity());
   }
+  if (from._internal_topn() != 0) {
+    _internal_set_topn(from._internal_topn());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -8204,8 +8636,8 @@ void ValidateEventConfig::InternalSwap(ValidateEventConfig* other) {
       &other->userid_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ValidateEventConfig, sensitivity_)
-      + sizeof(ValidateEventConfig::sensitivity_)
+      PROTOBUF_FIELD_OFFSET(ValidateEventConfig, topn_)
+      + sizeof(ValidateEventConfig::topn_)
       - PROTOBUF_FIELD_OFFSET(ValidateEventConfig, audio_)>(
           reinterpret_cast<char*>(&audio_),
           reinterpret_cast<char*>(&other->audio_));
@@ -8214,7 +8646,7 @@ void ValidateEventConfig::InternalSwap(ValidateEventConfig* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ValidateEventConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[22]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[23]);
 }
 
 // ===================================================================
@@ -8679,7 +9111,7 @@ void CreateEnrollmentEventConfig::InternalSwap(CreateEnrollmentEventConfig* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata CreateEnrollmentEventConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[23]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[24]);
 }
 
 // ===================================================================
@@ -9061,7 +9493,7 @@ void ValidateEnrolledEventConfig::InternalSwap(ValidateEnrolledEventConfig* othe
 ::PROTOBUF_NAMESPACE_ID::Metadata ValidateEnrolledEventConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[24]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[25]);
 }
 
 // ===================================================================
@@ -9251,7 +9683,233 @@ void CustomVocabularyWords::InternalSwap(CustomVocabularyWords* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata CustomVocabularyWords::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[25]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[26]);
+}
+
+// ===================================================================
+
+class TranscribeEventConfig::_Internal {
+ public:
+};
+
+TranscribeEventConfig::TranscribeEventConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:sensory.api.v1.audio.TranscribeEventConfig)
+}
+TranscribeEventConfig::TranscribeEventConfig(const TranscribeEventConfig& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  modelname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_modelname().empty()) {
+    modelname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_modelname(), 
+      GetArenaForAllocation());
+  }
+  sensitivity_ = from.sensitivity_;
+  // @@protoc_insertion_point(copy_constructor:sensory.api.v1.audio.TranscribeEventConfig)
+}
+
+void TranscribeEventConfig::SharedCtor() {
+modelname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+sensitivity_ = 0;
+}
+
+TranscribeEventConfig::~TranscribeEventConfig() {
+  // @@protoc_insertion_point(destructor:sensory.api.v1.audio.TranscribeEventConfig)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void TranscribeEventConfig::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  modelname_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TranscribeEventConfig::ArenaDtor(void* object) {
+  TranscribeEventConfig* _this = reinterpret_cast< TranscribeEventConfig* >(object);
+  (void)_this;
+}
+void TranscribeEventConfig::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void TranscribeEventConfig::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void TranscribeEventConfig::Clear() {
+// @@protoc_insertion_point(message_clear_start:sensory.api.v1.audio.TranscribeEventConfig)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  modelname_.ClearToEmpty();
+  sensitivity_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TranscribeEventConfig::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string modelName = 1 [(.validate.rules) = {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_modelname();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "sensory.api.v1.audio.TranscribeEventConfig.modelName"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.v1.audio.ThresholdSensitivity sensitivity = 2 [(.validate.rules) = {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_sensitivity(static_cast<::sensory::api::v1::audio::ThresholdSensitivity>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TranscribeEventConfig::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:sensory.api.v1.audio.TranscribeEventConfig)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string modelName = 1 [(.validate.rules) = {
+  if (!this->_internal_modelname().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_modelname().data(), static_cast<int>(this->_internal_modelname().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "sensory.api.v1.audio.TranscribeEventConfig.modelName");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_modelname(), target);
+  }
+
+  // .sensory.api.v1.audio.ThresholdSensitivity sensitivity = 2 [(.validate.rules) = {
+  if (this->_internal_sensitivity() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_sensitivity(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:sensory.api.v1.audio.TranscribeEventConfig)
+  return target;
+}
+
+size_t TranscribeEventConfig::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:sensory.api.v1.audio.TranscribeEventConfig)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string modelName = 1 [(.validate.rules) = {
+  if (!this->_internal_modelname().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_modelname());
+  }
+
+  // .sensory.api.v1.audio.ThresholdSensitivity sensitivity = 2 [(.validate.rules) = {
+  if (this->_internal_sensitivity() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_sensitivity());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TranscribeEventConfig::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    TranscribeEventConfig::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TranscribeEventConfig::GetClassData() const { return &_class_data_; }
+
+void TranscribeEventConfig::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<TranscribeEventConfig *>(to)->MergeFrom(
+      static_cast<const TranscribeEventConfig &>(from));
+}
+
+
+void TranscribeEventConfig::MergeFrom(const TranscribeEventConfig& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:sensory.api.v1.audio.TranscribeEventConfig)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_modelname().empty()) {
+    _internal_set_modelname(from._internal_modelname());
+  }
+  if (from._internal_sensitivity() != 0) {
+    _internal_set_sensitivity(from._internal_sensitivity());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void TranscribeEventConfig::CopyFrom(const TranscribeEventConfig& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sensory.api.v1.audio.TranscribeEventConfig)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TranscribeEventConfig::IsInitialized() const {
+  return true;
+}
+
+void TranscribeEventConfig::InternalSwap(TranscribeEventConfig* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &modelname_, lhs_arena,
+      &other->modelname_, rhs_arena
+  );
+  swap(sensitivity_, other->sensitivity_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TranscribeEventConfig::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
+      file_level_metadata_v1_2faudio_2faudio_2eproto[27]);
 }
 
 // ===================================================================
@@ -9260,6 +9918,7 @@ class TranscribeConfig::_Internal {
  public:
   static const ::sensory::api::v1::audio::AudioConfig& audio(const TranscribeConfig* msg);
   static const ::sensory::api::v1::audio::CustomVocabularyWords& customwordlist(const TranscribeConfig* msg);
+  static const ::sensory::api::v1::audio::TranscribeEventConfig& wakewordconfig(const TranscribeConfig* msg);
 };
 
 const ::sensory::api::v1::audio::AudioConfig&
@@ -9269,6 +9928,10 @@ TranscribeConfig::_Internal::audio(const TranscribeConfig* msg) {
 const ::sensory::api::v1::audio::CustomVocabularyWords&
 TranscribeConfig::_Internal::customwordlist(const TranscribeConfig* msg) {
   return *msg->customwordlist_;
+}
+const ::sensory::api::v1::audio::TranscribeEventConfig&
+TranscribeConfig::_Internal::wakewordconfig(const TranscribeConfig* msg) {
+  return *msg->wakewordconfig_;
 }
 TranscribeConfig::TranscribeConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
@@ -9307,9 +9970,14 @@ TranscribeConfig::TranscribeConfig(const TranscribeConfig& from)
   } else {
     customwordlist_ = nullptr;
   }
-  ::memcpy(&enablepunctuationcapitalization_, &from.enablepunctuationcapitalization_,
+  if (from._internal_has_wakewordconfig()) {
+    wakewordconfig_ = new ::sensory::api::v1::audio::TranscribeEventConfig(*from.wakewordconfig_);
+  } else {
+    wakewordconfig_ = nullptr;
+  }
+  ::memcpy(&vadsensitivity_, &from.vadsensitivity_,
     static_cast<size_t>(reinterpret_cast<char*>(&customvocabrewardthreshold_) -
-    reinterpret_cast<char*>(&enablepunctuationcapitalization_)) + sizeof(customvocabrewardthreshold_));
+    reinterpret_cast<char*>(&vadsensitivity_)) + sizeof(customvocabrewardthreshold_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.audio.TranscribeConfig)
 }
 
@@ -9337,6 +10005,7 @@ inline void TranscribeConfig::SharedDtor() {
   customvocabularyid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete audio_;
   if (this != internal_default_instance()) delete customwordlist_;
+  if (this != internal_default_instance()) delete wakewordconfig_;
 }
 
 void TranscribeConfig::ArenaDtor(void* object) {
@@ -9366,9 +10035,13 @@ void TranscribeConfig::Clear() {
     delete customwordlist_;
   }
   customwordlist_ = nullptr;
-  ::memset(&enablepunctuationcapitalization_, 0, static_cast<size_t>(
+  if (GetArenaForAllocation() == nullptr && wakewordconfig_ != nullptr) {
+    delete wakewordconfig_;
+  }
+  wakewordconfig_ = nullptr;
+  ::memset(&vadsensitivity_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&customvocabrewardthreshold_) -
-      reinterpret_cast<char*>(&enablepunctuationcapitalization_)) + sizeof(customvocabrewardthreshold_));
+      reinterpret_cast<char*>(&vadsensitivity_)) + sizeof(customvocabrewardthreshold_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -9462,6 +10135,22 @@ const char* TranscribeConfig::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
       case 10:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
           ptr = ctx->ParseMessage(_internal_mutable_customwordlist(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool doOfflineMode = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 88)) {
+          doofflinemode_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .sensory.api.v1.audio.TranscribeEventConfig wakeWordConfig = 12;
+      case 12:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 98)) {
+          ptr = ctx->ParseMessage(_internal_mutable_wakewordconfig(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -9573,6 +10262,20 @@ failure:
         10, _Internal::customwordlist(this), target, stream);
   }
 
+  // bool doOfflineMode = 11;
+  if (this->_internal_doofflinemode() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(11, this->_internal_doofflinemode(), target);
+  }
+
+  // .sensory.api.v1.audio.TranscribeEventConfig wakeWordConfig = 12;
+  if (this->_internal_has_wakewordconfig()) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(
+        12, _Internal::wakewordconfig(this), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -9624,6 +10327,19 @@ size_t TranscribeConfig::ByteSizeLong() const {
         *customwordlist_);
   }
 
+  // .sensory.api.v1.audio.TranscribeEventConfig wakeWordConfig = 12;
+  if (this->_internal_has_wakewordconfig()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *wakewordconfig_);
+  }
+
+  // .sensory.api.v1.audio.ThresholdSensitivity vadSensitivity = 6;
+  if (this->_internal_vadsensitivity() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_vadsensitivity());
+  }
+
   // bool enablePunctuationCapitalization = 4;
   if (this->_internal_enablepunctuationcapitalization() != 0) {
     total_size += 1 + 1;
@@ -9634,10 +10350,9 @@ size_t TranscribeConfig::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // .sensory.api.v1.audio.ThresholdSensitivity vadSensitivity = 6;
-  if (this->_internal_vadsensitivity() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_vadsensitivity());
+  // bool doOfflineMode = 11;
+  if (this->_internal_doofflinemode() != 0) {
+    total_size += 1 + 1;
   }
 
   // float vadDuration = 7;
@@ -9688,14 +10403,20 @@ void TranscribeConfig::MergeFrom(const TranscribeConfig& from) {
   if (from._internal_has_customwordlist()) {
     _internal_mutable_customwordlist()->::sensory::api::v1::audio::CustomVocabularyWords::MergeFrom(from._internal_customwordlist());
   }
+  if (from._internal_has_wakewordconfig()) {
+    _internal_mutable_wakewordconfig()->::sensory::api::v1::audio::TranscribeEventConfig::MergeFrom(from._internal_wakewordconfig());
+  }
+  if (from._internal_vadsensitivity() != 0) {
+    _internal_set_vadsensitivity(from._internal_vadsensitivity());
+  }
   if (from._internal_enablepunctuationcapitalization() != 0) {
     _internal_set_enablepunctuationcapitalization(from._internal_enablepunctuationcapitalization());
   }
   if (from._internal_dosingleutterance() != 0) {
     _internal_set_dosingleutterance(from._internal_dosingleutterance());
   }
-  if (from._internal_vadsensitivity() != 0) {
-    _internal_set_vadsensitivity(from._internal_vadsensitivity());
+  if (from._internal_doofflinemode() != 0) {
+    _internal_set_doofflinemode(from._internal_doofflinemode());
   }
   if (!(from._internal_vadduration() <= 0 && from._internal_vadduration() >= 0)) {
     _internal_set_vadduration(from._internal_vadduration());
@@ -9748,7 +10469,7 @@ void TranscribeConfig::InternalSwap(TranscribeConfig* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata TranscribeConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[26]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[28]);
 }
 
 // ===================================================================
@@ -10030,7 +10751,7 @@ void AudioConfig::InternalSwap(AudioConfig* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata AudioConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[27]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[29]);
 }
 
 // ===================================================================
@@ -10253,7 +10974,7 @@ void VoiceSynthesisConfig::InternalSwap(VoiceSynthesisConfig* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata VoiceSynthesisConfig::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_v1_2faudio_2faudio_2eproto_getter, &descriptor_table_v1_2faudio_2faudio_2eproto_once,
-      file_level_metadata_v1_2faudio_2faudio_2eproto[28]);
+      file_level_metadata_v1_2faudio_2faudio_2eproto[30]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -10304,6 +11025,9 @@ template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::CreateEnrollmentResponse
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::AuthenticateResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::audio::AuthenticateResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::audio::AuthenticateResponse >(arena);
 }
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::SoundIdTopNResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::audio::SoundIdTopNResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::audio::SoundIdTopNResponse >(arena);
+}
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::ValidateEventResponse* Arena::CreateMaybeMessage< ::sensory::api::v1::audio::ValidateEventResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::audio::ValidateEventResponse >(arena);
 }
@@ -10339,6 +11063,9 @@ template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::ValidateEnrolledEventCon
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::CustomVocabularyWords* Arena::CreateMaybeMessage< ::sensory::api::v1::audio::CustomVocabularyWords >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::audio::CustomVocabularyWords >(arena);
+}
+template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::TranscribeEventConfig* Arena::CreateMaybeMessage< ::sensory::api::v1::audio::TranscribeEventConfig >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::sensory::api::v1::audio::TranscribeEventConfig >(arena);
 }
 template<> PROTOBUF_NOINLINE ::sensory::api::v1::audio::TranscribeConfig* Arena::CreateMaybeMessage< ::sensory::api::v1::audio::TranscribeConfig >(Arena* arena) {
   return Arena::CreateMessageInternal< ::sensory::api::v1::audio::TranscribeConfig >(arena);

@@ -1,27 +1,29 @@
 # Tutorial
 
-The tutorial provides an overview of the [SensoryCloud][sensory-cloud] C++ SDK.
-This tutorial will show you how to:
+The tutorial provides an overview of the SensoryCloud C++ SDK. This tutorial
+will show you how to:
 
--   setup a C++ project and include the [SensoryCloud][sensory-cloud] C++ SDK
-    in your build,
--   implement secure credential storage and connect to your inference server,
--   query the server's health, and
--   navigate the [SensoryCloud][sensory-cloud] example projects.
+-   Setup a C++ project and include the SDK in your build,
+-   Implement secure credential storage and connect to your inference server,
+-   Query the server's health, and
+-   Navigate the example projects.
 
 Because this SDK is built on [gRPC][gRPC], you may benefit from referring to
 the [gRPC Tutorial][gRPC Tutorial] and [gRPC Documentation][gRPC Documentation]
 to familiarize yourself with some of the gRPC structures and patterns that are
 used in this SDK and tutorial.
 
+[gRPC]: https://www.grpc.io/
+[gRPC Tutorial]: https://www.grpc.io/docs/languages/cpp/basics/
+[gRPC Documentation]: https://grpc.github.io/grpc/cpp/annotated.html
+
 ## Project Setup
 
-The recommended build system for projects based on this SDK is
-[`cmake`](https://cmake.org/). To include the SDK in your project , the
-simplest solution is to add a `FetchContent` block to your `CMakeLists.txt`.
-This approach will compile and link the protobuff and gRPC dependencies
-locally. Below is an example of the boilerplate CMake syntax to include the
-SDK in your project.
+The recommended build system for projects based on this SDK is CMake. To
+include the SDK in your project , the simplest solution is to add a
+`FetchContent` block to your `CMakeLists.txt`. This approach will compile and
+link the protobuff and gRPC dependencies locally. Below is an example of the
+boilerplate CMake syntax to include the SDK in your project.
 
 ```cmake
 project(your-project-name)
@@ -30,7 +32,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.9
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.2.0
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -157,7 +159,7 @@ To connect to your inference server using a hard-coded config, you will need
 to know:
 
 1.  the host-name or IP address that the service is running at,
-2.  the specific port that the service is running at -- typically `443`, --
+2.  the specific port that the service is running at - typically `443`, -
 3.  your tenant ID that uniquely identifies your tenant in SensoryCloud, and
 4.  a way of uniquely identifying devices in your application.
 
@@ -250,9 +252,9 @@ _Note that our example code uses the INI construction interface._
 
 ## Checking The Server Health
 
-Once you have a connection to SensoryCloud instantiated, it's important to
-check the health of your [SensoryCloud][sensory-cloud] inference server. You
-can do so using the `HealthService` via the following:
+Once you have a connection to the server instantiated, it's important to
+check the health of your inference server. You can do so using the
+`HealthService` via the following:
 
 ```c++
 // Create a response for the RPC.
@@ -335,10 +337,3 @@ int main() {
     }
 }
 ```
-
-<!-- URLs -->
-
-[sensory-cloud]: https://sensorycloud.ai/
-[gRPC]: https://www.grpc.io/
-[gRPC Tutorial]: https://www.grpc.io/docs/languages/cpp/basics/
-[gRPC Documentation]: https://grpc.github.io/grpc/cpp/annotated.html
