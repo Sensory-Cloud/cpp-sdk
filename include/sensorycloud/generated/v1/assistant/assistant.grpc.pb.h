@@ -32,7 +32,6 @@ namespace api {
 namespace v1 {
 namespace assistant {
 
-// Serivce to comunicate with an assistant
 class AssistantService final {
  public:
   static constexpr char const* service_full_name() {
@@ -41,48 +40,45 @@ class AssistantService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    // Sends and process messages from a virtual assistant
+    // Allows a user to verify their own email. Will fail if the email is already verified.
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
-    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>> ProcessMessage(::grpc::ClientContext* context) {
-      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>>(ProcessMessageRaw(context));
+    virtual ::grpc::Status TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::sensory::api::v1::assistant::TextChatResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::assistant::TextChatResponse>> AsyncTextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::assistant::TextChatResponse>>(AsyncTextChatRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>> AsyncProcessMessage(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>>(AsyncProcessMessageRaw(context, cq, tag));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>> PrepareAsyncProcessMessage(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>>(PrepareAsyncProcessMessageRaw(context, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::assistant::TextChatResponse>> PrepareAsyncTextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::assistant::TextChatResponse>>(PrepareAsyncTextChatRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
-      // Sends and process messages from a virtual assistant
+      // Allows a user to verify their own email. Will fail if the email is already verified.
       // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
-      virtual void ProcessMessage(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::assistant::AssistantMessageRequest,::sensory::api::v1::assistant::AssistantMessageResponse>* reactor) = 0;
+      virtual void TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
-    virtual ::grpc::ClientReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* ProcessMessageRaw(::grpc::ClientContext* context) = 0;
-    virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* AsyncProcessMessageRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderWriterInterface< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* PrepareAsyncProcessMessageRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::assistant::TextChatResponse>* AsyncTextChatRaw(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::sensory::api::v1::assistant::TextChatResponse>* PrepareAsyncTextChatRaw(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
-    std::unique_ptr< ::grpc::ClientReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>> ProcessMessage(::grpc::ClientContext* context) {
-      return std::unique_ptr< ::grpc::ClientReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>>(ProcessMessageRaw(context));
+    ::grpc::Status TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::sensory::api::v1::assistant::TextChatResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>> AsyncTextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>>(AsyncTextChatRaw(context, request, cq));
     }
-    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>> AsyncProcessMessage(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>>(AsyncProcessMessageRaw(context, cq, tag));
-    }
-    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>> PrepareAsyncProcessMessage(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>>(PrepareAsyncProcessMessageRaw(context, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>> PrepareAsyncTextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>>(PrepareAsyncTextChatRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
-      void ProcessMessage(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::assistant::AssistantMessageRequest,::sensory::api::v1::assistant::AssistantMessageResponse>* reactor) override;
+      void TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response, std::function<void(::grpc::Status)>) override;
+      void TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -94,10 +90,9 @@ class AssistantService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
-    ::grpc::ClientReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* ProcessMessageRaw(::grpc::ClientContext* context) override;
-    ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* AsyncProcessMessageRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* PrepareAsyncProcessMessageRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
-    const ::grpc::internal::RpcMethod rpcmethod_ProcessMessage_;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>* AsyncTextChatRaw(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>* PrepareAsyncTextChatRaw(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_TextChat_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -105,119 +100,149 @@ class AssistantService final {
    public:
     Service();
     virtual ~Service();
-    // Sends and process messages from a virtual assistant
+    // Allows a user to verify their own email. Will fail if the email is already verified.
     // Authorization metadata is required {"authorization": "Bearer <TOKEN>"}
-    virtual ::grpc::Status ProcessMessage(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* stream);
+    virtual ::grpc::Status TextChat(::grpc::ServerContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response);
   };
   template <class BaseClass>
-  class WithAsyncMethod_ProcessMessage : public BaseClass {
+  class WithAsyncMethod_TextChat : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_ProcessMessage() {
+    WithAsyncMethod_TextChat() {
       ::grpc::Service::MarkMethodAsync(0);
     }
-    ~WithAsyncMethod_ProcessMessage() override {
+    ~WithAsyncMethod_TextChat() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProcessMessage(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* /*stream*/)  override {
+    ::grpc::Status TextChat(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestProcessMessage(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncBidiStreaming(0, context, stream, new_call_cq, notification_cq, tag);
+    void RequestTextChat(::grpc::ServerContext* context, ::sensory::api::v1::assistant::TextChatRequest* request, ::grpc::ServerAsyncResponseWriter< ::sensory::api::v1::assistant::TextChatResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_ProcessMessage<Service > AsyncService;
+  typedef WithAsyncMethod_TextChat<Service > AsyncService;
   template <class BaseClass>
-  class WithCallbackMethod_ProcessMessage : public BaseClass {
+  class WithCallbackMethod_TextChat : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_ProcessMessage() {
+    WithCallbackMethod_TextChat() {
       ::grpc::Service::MarkMethodCallback(0,
-          new ::grpc::internal::CallbackBidiHandler< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context) { return this->ProcessMessage(context); }));
+                   ::grpc::CallbackServerContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response) { return this->TextChat(context, request, response); }));}
+    void SetMessageAllocatorFor_TextChat(
+        ::grpc::MessageAllocator< ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_ProcessMessage() override {
+    ~WithCallbackMethod_TextChat() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProcessMessage(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* /*stream*/)  override {
+    ::grpc::Status TextChat(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerBidiReactor< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* ProcessMessage(
-      ::grpc::CallbackServerContext* /*context*/)
-      { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* TextChat(
+      ::grpc::CallbackServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_ProcessMessage<Service > CallbackService;
+  typedef WithCallbackMethod_TextChat<Service > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
-  class WithGenericMethod_ProcessMessage : public BaseClass {
+  class WithGenericMethod_TextChat : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_ProcessMessage() {
+    WithGenericMethod_TextChat() {
       ::grpc::Service::MarkMethodGeneric(0);
     }
-    ~WithGenericMethod_ProcessMessage() override {
+    ~WithGenericMethod_TextChat() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProcessMessage(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* /*stream*/)  override {
+    ::grpc::Status TextChat(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithRawMethod_ProcessMessage : public BaseClass {
+  class WithRawMethod_TextChat : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_ProcessMessage() {
+    WithRawMethod_TextChat() {
       ::grpc::Service::MarkMethodRaw(0);
     }
-    ~WithRawMethod_ProcessMessage() override {
+    ~WithRawMethod_TextChat() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProcessMessage(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* /*stream*/)  override {
+    ::grpc::Status TextChat(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestProcessMessage(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncBidiStreaming(0, context, stream, new_call_cq, notification_cq, tag);
+    void RequestTextChat(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_ProcessMessage : public BaseClass {
+  class WithRawCallbackMethod_TextChat : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_ProcessMessage() {
+    WithRawCallbackMethod_TextChat() {
       ::grpc::Service::MarkMethodRawCallback(0,
-          new ::grpc::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context) { return this->ProcessMessage(context); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->TextChat(context, request, response); }));
     }
-    ~WithRawCallbackMethod_ProcessMessage() override {
+    ~WithRawCallbackMethod_TextChat() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ProcessMessage(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* /*stream*/)  override {
+    ::grpc::Status TextChat(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* ProcessMessage(
-      ::grpc::CallbackServerContext* /*context*/)
-      { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* TextChat(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
-  typedef Service StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_TextChat : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_TextChat() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse>* streamer) {
+                       return this->StreamedTextChat(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_TextChat() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status TextChat(::grpc::ServerContext* /*context*/, const ::sensory::api::v1::assistant::TextChatRequest* /*request*/, ::sensory::api::v1::assistant::TextChatResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedTextChat(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::sensory::api::v1::assistant::TextChatRequest,::sensory::api::v1::assistant::TextChatResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_TextChat<Service > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef Service StreamedService;
+  typedef WithStreamedUnaryMethod_TextChat<Service > StreamedService;
 };
 
 }  // namespace assistant

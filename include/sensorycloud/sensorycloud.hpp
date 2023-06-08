@@ -33,6 +33,7 @@
 #include "sensorycloud/services/management_service.hpp"
 #include "sensorycloud/services/audio_service.hpp"
 #include "sensorycloud/services/video_service.hpp"
+#include "sensorycloud/services/assistant_service.hpp"
 #include "sensorycloud/token_manager/token_manager.hpp"
 #include "sensorycloud/token_manager/in_memory_credential_store.hpp"
 #include "sensorycloud/token_manager/file_system_credential_store.hpp"
@@ -191,6 +192,8 @@ class SensoryCloud {
     ::sensory::service::AudioService<CredentialStore> audio;
     /// The video service.
     ::sensory::service::VideoService<CredentialStore> video;
+    /// The assistant service.
+    ::sensory::service::AssistantService<CredentialStore> assistant;
 
     /// @brief Initialize the SensoryCloud service.
     ///
@@ -210,7 +213,8 @@ class SensoryCloud {
         token_manager(oauth, keychain),
         management(config, token_manager),
         audio(config, token_manager),
-        video(config, token_manager) { }
+        video(config, token_manager),
+        assistant(config, token_manager) { }
 
     /// @brief Initialize the SensoryCloud service.
     ///

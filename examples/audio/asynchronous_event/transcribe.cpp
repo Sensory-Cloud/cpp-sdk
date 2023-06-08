@@ -81,6 +81,12 @@ int main(int argc, const char** argv) {
         .default_value("MEDIUM");
     parser.add_argument({ "-CVid", "--custom-vocabulary-id"})
         .help("An optional ID of a server-side custom vocabulary list to use.");
+    parser.add_argument({ "-Wm", "--wake-word-model"})
+        .help("A wake-word model to use for event-triggered transcription.");
+    parser.add_argument({ "-Ws", "--wake-word-sensitivity"})
+        .help("The sensitivity level for detecting wake-words.")
+        .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
+        .default_value("LOW");
     parser.add_argument({ "-L", "--language" })
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
@@ -121,6 +127,16 @@ int main(int argc, const char** argv) {
     else if (args.get<std::string>("custom-vocabulary-sensitivity") == "HIGHEST")
         CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::HIGHEST;
     const auto CUSTOM_VOCAB_ID = args.get<std::string>("custom-vocabulary-id");
+    const auto WAKE_WORD_MODEL = args.get<std::string>("wake-word-model");
+    ThresholdSensitivity WAKE_WORD_SENSITIVITY;
+    if (args.get<std::string>("wake-word-sensitivity") == "LOW")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::LOW;
+    else if (args.get<std::string>("wake-word-sensitivity") == "MEDIUM")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::MEDIUM;
+    else if (args.get<std::string>("wake-word-sensitivity") == "HIGH")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::HIGH;
+    else if (args.get<std::string>("wake-word-sensitivity") == "HIGHEST")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::HIGHEST;
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
@@ -231,6 +247,12 @@ int main(int argc, const char** argv) {
     }
     transcribe_config->set_customvocabrewardthreshold(CUSTOM_VOCAB_SENSITIVITY);
     transcribe_config->set_customvocabularyid(CUSTOM_VOCAB_ID);
+    if (!WAKE_WORD_MODEL.empty()) {
+        auto wake_word_config = new sensory::api::v1::audio::TranscribeEventConfig;
+        wake_word_config->set_modelname(WAKE_WORD_MODEL);
+        wake_word_config->set_sensitivity(WAKE_WORD_SENSITIVITY);
+        transcribe_config->set_allocated_wakewordconfig(wake_word_config);
+    }
     // Initialize the stream with the cloud.
     grpc::CompletionQueue queue;
     auto stream = cloud.audio.transcribe(&queue, audio_config, transcribe_config, nullptr, (void*) Events::Finish);

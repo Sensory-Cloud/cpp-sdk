@@ -48,7 +48,8 @@ constexpr UsageEvent::UsageEvent(
   , billablefunction_(0)
 
   , audiodurationms_(int64_t{0})
-  , videoframecount_(int64_t{0}){}
+  , videoframecount_(int64_t{0})
+  , tokencount_(int64_t{0}){}
 struct UsageEventDefaultTypeInternal {
   constexpr UsageEventDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -206,6 +207,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fevent_2fevent_2eproto::of
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, videoframecount_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, tenantid_),
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, billablefunction_),
+  PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEvent, tokencount_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::sensory::api::v1::event::UsageEventResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -283,13 +285,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_v1_2fevent_2fevent_2eproto::of
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsRequest)},
   { 7, -1, -1, sizeof(::sensory::api::v1::event::UsageEvent)},
-  { 25, -1, -1, sizeof(::sensory::api::v1::event::UsageEventResponse)},
-  { 44, -1, -1, sizeof(::sensory::api::v1::event::UsageEventListRequest)},
-  { 55, -1, -1, sizeof(::sensory::api::v1::event::UsageEventListResponse)},
-  { 63, -1, -1, sizeof(::sensory::api::v1::event::GlobalEventSummaryRequest)},
-  { 73, -1, -1, sizeof(::sensory::api::v1::event::UsageEventSummary)},
-  { 80, -1, -1, sizeof(::sensory::api::v1::event::UsageEventModelSummary)},
-  { 92, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsResponse)},
+  { 26, -1, -1, sizeof(::sensory::api::v1::event::UsageEventResponse)},
+  { 45, -1, -1, sizeof(::sensory::api::v1::event::UsageEventListRequest)},
+  { 56, -1, -1, sizeof(::sensory::api::v1::event::UsageEventListResponse)},
+  { 64, -1, -1, sizeof(::sensory::api::v1::event::GlobalEventSummaryRequest)},
+  { 74, -1, -1, sizeof(::sensory::api::v1::event::UsageEventSummary)},
+  { 81, -1, -1, sizeof(::sensory::api::v1::event::UsageEventModelSummary)},
+  { 93, -1, -1, sizeof(::sensory::api::v1::event::PublishUsageEventsResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -310,7 +312,7 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "alidate/validate.proto\032\023common/common.pr"
   "oto\"M\n\031PublishUsageEventsRequest\0220\n\006even"
   "ts\030\001 \003(\0132 .sensory.api.v1.event.UsageEve"
-  "nt\"\261\003\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
+  "nt\"\305\003\n\nUsageEvent\0227\n\ttimestamp\030\001 \001(\0132\032.g"
   "oogle.protobuf.TimestampB\010\372B\005\262\001\002\010\001\022\031\n\010du"
   "ration\030\002 \001(\003B\007\372B\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372B\005r\003"
   "\260\001\001\022\033\n\010clientId\030\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004type"
@@ -320,56 +322,56 @@ const char descriptor_table_protodef_v1_2fevent_2fevent_2eproto[] PROTOBUF_SECTI
   "on.TechnologyType\022\016\n\006models\030\010 \003(\t\022\027\n\017aud"
   "ioDurationMs\030\t \001(\003\022\027\n\017videoFrameCount\030\n "
   "\001(\003\022\020\n\010tenantId\030\013 \001(\t\0227\n\020billableFunctio"
-  "n\030\014 \001(\0162\035.sensory.api.common.ModelType\"\306"
-  "\003\n\022UsageEventResponse\0227\n\ttimestamp\030\001 \001(\013"
-  "2\032.google.protobuf.TimestampB\010\372B\005\262\001\002\010\001\022\031"
-  "\n\010duration\030\002 \001(\003B\007\372B\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372"
-  "B\005r\003\260\001\001\022\033\n\010clientId\030\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004"
-  "type\030\005 \001(\0162\".sensory.api.common.UsageEve"
-  "ntTypeB\010\372B\005\202\001\002\020\001\022\031\n\005route\030\006 \001(\tB\n\372B\007r\005\020\001"
-  "\030\377\003\0228\n\014technologies\030\007 \003(\0162\".sensory.api."
-  "common.TechnologyType\022\016\n\006models\030\010 \003(\t\022\025\n"
-  "\rbillableValue\030\t \001(\003\022\025\n\rbillableUnits\030\n "
-  "\001(\t\022\020\n\010tenantId\030\013 \001(\t\0227\n\020billableFunctio"
-  "n\030\014 \001(\0162\035.sensory.api.common.ModelType\022\017"
-  "\n\007credits\030\r \001(\001\"\365\001\n\025UsageEventListReques"
-  "t\022\020\n\010tenantId\030\001 \001(\t\0229\n\npagination\030\002 \001(\0132"
-  "%.sensory.api.common.PaginationOptions\022)"
-  "\n\005after\030\003 \001(\0132\032.google.protobuf.Timestam"
-  "p\022*\n\006before\030\004 \001(\0132\032.google.protobuf.Time"
-  "stamp\0228\n\021billableFunctions\030\005 \003(\0162\035.senso"
-  "ry.api.common.ModelType\"\216\001\n\026UsageEventLi"
-  "stResponse\0228\n\006events\030\001 \003(\0132(.sensory.api"
-  ".v1.event.UsageEventResponse\022:\n\npaginati"
-  "on\030\002 \001(\0132&.sensory.api.common.Pagination"
-  "Response\"\275\001\n\031GlobalEventSummaryRequest\022\017"
-  "\n\007tenants\030\001 \003(\t\022)\n\005after\030\002 \001(\0132\032.google."
-  "protobuf.Timestamp\022*\n\006before\030\003 \001(\0132\032.goo"
-  "gle.protobuf.Timestamp\0228\n\021billableFuncti"
-  "ons\030\005 \003(\0162\035.sensory.api.common.ModelType"
-  "\"T\n\021UsageEventSummary\022\?\n\tsummaries\030\001 \003(\013"
-  "2,.sensory.api.v1.event.UsageEventModelS"
-  "ummary\"\241\001\n\026UsageEventModelSummary\0227\n\020bil"
-  "lableFunction\030\001 \001(\0162\035.sensory.api.common"
-  ".ModelType\022\r\n\005units\030\002 \001(\t\022\r\n\005value\030\003 \001(\003"
-  "\022\r\n\005count\030\004 \001(\003\022\017\n\007credits\030\005 \001(\001\022\020\n\010tena"
-  "ntId\030\006 \001(\t\"\034\n\032PublishUsageEventsResponse"
-  "2\340\003\n\014EventService\022y\n\022PublishUsageEvents\022"
-  "/.sensory.api.v1.event.PublishUsageEvent"
-  "sRequest\0320.sensory.api.v1.event.PublishU"
-  "sageEventsResponse\"\000\022p\n\021GetUsageEventLis"
-  "t\022+.sensory.api.v1.event.UsageEventListR"
-  "equest\032,.sensory.api.v1.event.UsageEvent"
-  "ListResponse\"\000\022n\n\024GetUsageEventSummary\022+"
-  ".sensory.api.v1.event.UsageEventListRequ"
-  "est\032\'.sensory.api.v1.event.UsageEventSum"
-  "mary\"\000\022s\n\025GetGlobalUsageSummary\022/.sensor"
-  "y.api.v1.event.GlobalEventSummaryRequest"
-  "\032\'.sensory.api.v1.event.UsageEventSummar"
-  "y\"\000B{\n\034ai.sensorycloud.api.v1.eventB\026Sen"
-  "soryApiV1EventProtoP\001Z:gitlab.com/sensor"
-  "y-cloud/server/titan.git/pkg/api/v1/even"
-  "t\242\002\004SENGb\006proto3"
+  "n\030\014 \001(\0162\035.sensory.api.common.ModelType\022\022"
+  "\n\ntokenCount\030\r \001(\003\"\306\003\n\022UsageEventRespons"
+  "e\0227\n\ttimestamp\030\001 \001(\0132\032.google.protobuf.T"
+  "imestampB\010\372B\005\262\001\002\010\001\022\031\n\010duration\030\002 \001(\003B\007\372B"
+  "\004\"\002(\000\022\024\n\002id\030\003 \001(\tB\010\372B\005r\003\260\001\001\022\033\n\010clientId\030"
+  "\004 \001(\tB\t\372B\006r\004\020\001\030\177\022:\n\004type\030\005 \001(\0162\".sensory"
+  ".api.common.UsageEventTypeB\010\372B\005\202\001\002\020\001\022\031\n\005"
+  "route\030\006 \001(\tB\n\372B\007r\005\020\001\030\377\003\0228\n\014technologies\030"
+  "\007 \003(\0162\".sensory.api.common.TechnologyTyp"
+  "e\022\016\n\006models\030\010 \003(\t\022\025\n\rbillableValue\030\t \001(\003"
+  "\022\025\n\rbillableUnits\030\n \001(\t\022\020\n\010tenantId\030\013 \001("
+  "\t\0227\n\020billableFunction\030\014 \001(\0162\035.sensory.ap"
+  "i.common.ModelType\022\017\n\007credits\030\r \001(\001\"\365\001\n\025"
+  "UsageEventListRequest\022\020\n\010tenantId\030\001 \001(\t\022"
+  "9\n\npagination\030\002 \001(\0132%.sensory.api.common"
+  ".PaginationOptions\022)\n\005after\030\003 \001(\0132\032.goog"
+  "le.protobuf.Timestamp\022*\n\006before\030\004 \001(\0132\032."
+  "google.protobuf.Timestamp\0228\n\021billableFun"
+  "ctions\030\005 \003(\0162\035.sensory.api.common.ModelT"
+  "ype\"\216\001\n\026UsageEventListResponse\0228\n\006events"
+  "\030\001 \003(\0132(.sensory.api.v1.event.UsageEvent"
+  "Response\022:\n\npagination\030\002 \001(\0132&.sensory.a"
+  "pi.common.PaginationResponse\"\275\001\n\031GlobalE"
+  "ventSummaryRequest\022\017\n\007tenants\030\001 \003(\t\022)\n\005a"
+  "fter\030\002 \001(\0132\032.google.protobuf.Timestamp\022*"
+  "\n\006before\030\003 \001(\0132\032.google.protobuf.Timesta"
+  "mp\0228\n\021billableFunctions\030\005 \003(\0162\035.sensory."
+  "api.common.ModelType\"T\n\021UsageEventSummar"
+  "y\022\?\n\tsummaries\030\001 \003(\0132,.sensory.api.v1.ev"
+  "ent.UsageEventModelSummary\"\241\001\n\026UsageEven"
+  "tModelSummary\0227\n\020billableFunction\030\001 \001(\0162"
+  "\035.sensory.api.common.ModelType\022\r\n\005units\030"
+  "\002 \001(\t\022\r\n\005value\030\003 \001(\003\022\r\n\005count\030\004 \001(\003\022\017\n\007c"
+  "redits\030\005 \001(\001\022\020\n\010tenantId\030\006 \001(\t\"\034\n\032Publis"
+  "hUsageEventsResponse2\340\003\n\014EventService\022y\n"
+  "\022PublishUsageEvents\022/.sensory.api.v1.eve"
+  "nt.PublishUsageEventsRequest\0320.sensory.a"
+  "pi.v1.event.PublishUsageEventsResponse\"\000"
+  "\022p\n\021GetUsageEventList\022+.sensory.api.v1.e"
+  "vent.UsageEventListRequest\032,.sensory.api"
+  ".v1.event.UsageEventListResponse\"\000\022n\n\024Ge"
+  "tUsageEventSummary\022+.sensory.api.v1.even"
+  "t.UsageEventListRequest\032\'.sensory.api.v1"
+  ".event.UsageEventSummary\"\000\022s\n\025GetGlobalU"
+  "sageSummary\022/.sensory.api.v1.event.Globa"
+  "lEventSummaryRequest\032\'.sensory.api.v1.ev"
+  "ent.UsageEventSummary\"\000B{\n\034ai.sensoryclo"
+  "ud.api.v1.eventB\026SensoryApiV1EventProtoP"
+  "\001Z:gitlab.com/sensory-cloud/server/titan"
+  ".git/pkg/api/v1/event\242\002\004SENGb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_v1_2fevent_2fevent_2eproto_deps[3] = {
   &::descriptor_table_common_2fcommon_2eproto,
@@ -378,7 +380,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_v1_2fevent_2fevent_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_v1_2fevent_2fevent_2eproto = {
-  false, false, 2576, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
+  false, false, 2596, descriptor_table_protodef_v1_2fevent_2fevent_2eproto, "v1/event/event.proto", 
   &descriptor_table_v1_2fevent_2fevent_2eproto_once, descriptor_table_v1_2fevent_2fevent_2eproto_deps, 3, 9,
   schemas, file_default_instances, TableStruct_v1_2fevent_2fevent_2eproto::offsets,
   file_level_metadata_v1_2fevent_2fevent_2eproto, file_level_enum_descriptors_v1_2fevent_2fevent_2eproto, file_level_service_descriptors_v1_2fevent_2fevent_2eproto,
@@ -638,8 +640,8 @@ UsageEvent::UsageEvent(const UsageEvent& from)
     timestamp_ = nullptr;
   }
   ::memcpy(&duration_, &from.duration_,
-    static_cast<size_t>(reinterpret_cast<char*>(&videoframecount_) -
-    reinterpret_cast<char*>(&duration_)) + sizeof(videoframecount_));
+    static_cast<size_t>(reinterpret_cast<char*>(&tokencount_) -
+    reinterpret_cast<char*>(&duration_)) + sizeof(tokencount_));
   // @@protoc_insertion_point(copy_constructor:sensory.api.v1.event.UsageEvent)
 }
 
@@ -650,8 +652,8 @@ route_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlread
 tenantid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&timestamp_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&videoframecount_) -
-    reinterpret_cast<char*>(&timestamp_)) + sizeof(videoframecount_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&tokencount_) -
+    reinterpret_cast<char*>(&timestamp_)) + sizeof(tokencount_));
 }
 
 UsageEvent::~UsageEvent() {
@@ -697,8 +699,8 @@ void UsageEvent::Clear() {
   }
   timestamp_ = nullptr;
   ::memset(&duration_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&videoframecount_) -
-      reinterpret_cast<char*>(&duration_)) + sizeof(videoframecount_));
+      reinterpret_cast<char*>(&tokencount_) -
+      reinterpret_cast<char*>(&duration_)) + sizeof(tokencount_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -822,6 +824,14 @@ const char* UsageEvent::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_billablefunction(static_cast<::sensory::api::common::ModelType>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 tokenCount = 13;
+      case 13:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 104)) {
+          tokencount_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -953,6 +963,12 @@ failure:
       12, this->_internal_billablefunction(), target);
   }
 
+  // int64 tokenCount = 13;
+  if (this->_internal_tokencount() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(13, this->_internal_tokencount(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1057,6 +1073,11 @@ size_t UsageEvent::ByteSizeLong() const {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_videoframecount());
   }
 
+  // int64 tokenCount = 13;
+  if (this->_internal_tokencount() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_tokencount());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -1111,6 +1132,9 @@ void UsageEvent::MergeFrom(const UsageEvent& from) {
   if (from._internal_videoframecount() != 0) {
     _internal_set_videoframecount(from._internal_videoframecount());
   }
+  if (from._internal_tokencount() != 0) {
+    _internal_set_tokencount(from._internal_tokencount());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1153,8 +1177,8 @@ void UsageEvent::InternalSwap(UsageEvent* other) {
       &other->tenantid_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(UsageEvent, videoframecount_)
-      + sizeof(UsageEvent::videoframecount_)
+      PROTOBUF_FIELD_OFFSET(UsageEvent, tokencount_)
+      + sizeof(UsageEvent::tokencount_)
       - PROTOBUF_FIELD_OFFSET(UsageEvent, timestamp_)>(
           reinterpret_cast<char*>(&timestamp_),
           reinterpret_cast<char*>(&other->timestamp_));

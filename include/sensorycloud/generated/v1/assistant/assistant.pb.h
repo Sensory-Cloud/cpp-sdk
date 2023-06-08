@@ -32,7 +32,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
-#include "validate/validate.pb.h"
+#include "common/common.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_v1_2fassistant_2fassistant_2eproto
@@ -48,7 +48,7 @@ struct TableStruct_v1_2fassistant_2fassistant_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[7]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -59,90 +59,75 @@ namespace sensory {
 namespace api {
 namespace v1 {
 namespace assistant {
-class AssistantMessage;
-struct AssistantMessageDefaultTypeInternal;
-extern AssistantMessageDefaultTypeInternal _AssistantMessage_default_instance_;
-class AssistantMessageConfig;
-struct AssistantMessageConfigDefaultTypeInternal;
-extern AssistantMessageConfigDefaultTypeInternal _AssistantMessageConfig_default_instance_;
-class AssistantMessageRequest;
-struct AssistantMessageRequestDefaultTypeInternal;
-extern AssistantMessageRequestDefaultTypeInternal _AssistantMessageRequest_default_instance_;
-class AssistantMessageResponse;
-struct AssistantMessageResponseDefaultTypeInternal;
-extern AssistantMessageResponseDefaultTypeInternal _AssistantMessageResponse_default_instance_;
-class AssistantPostProcessingActionRequest;
-struct AssistantPostProcessingActionRequestDefaultTypeInternal;
-extern AssistantPostProcessingActionRequestDefaultTypeInternal _AssistantPostProcessingActionRequest_default_instance_;
-class AssistantPostProcessingActionResponse;
-struct AssistantPostProcessingActionResponseDefaultTypeInternal;
-extern AssistantPostProcessingActionResponseDefaultTypeInternal _AssistantPostProcessingActionResponse_default_instance_;
-class Intent;
-struct IntentDefaultTypeInternal;
-extern IntentDefaultTypeInternal _Intent_default_instance_;
+class ChatMessage;
+struct ChatMessageDefaultTypeInternal;
+extern ChatMessageDefaultTypeInternal _ChatMessage_default_instance_;
+class TextChatRequest;
+struct TextChatRequestDefaultTypeInternal;
+extern TextChatRequestDefaultTypeInternal _TextChatRequest_default_instance_;
+class TextChatResponse;
+struct TextChatResponseDefaultTypeInternal;
+extern TextChatResponseDefaultTypeInternal _TextChatResponse_default_instance_;
 }  // namespace assistant
 }  // namespace v1
 }  // namespace api
 }  // namespace sensory
 PROTOBUF_NAMESPACE_OPEN
-template<> ::sensory::api::v1::assistant::AssistantMessage* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::AssistantMessage>(Arena*);
-template<> ::sensory::api::v1::assistant::AssistantMessageConfig* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::AssistantMessageConfig>(Arena*);
-template<> ::sensory::api::v1::assistant::AssistantMessageRequest* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::AssistantMessageRequest>(Arena*);
-template<> ::sensory::api::v1::assistant::AssistantMessageResponse* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::AssistantMessageResponse>(Arena*);
-template<> ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::AssistantPostProcessingActionRequest>(Arena*);
-template<> ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::AssistantPostProcessingActionResponse>(Arena*);
-template<> ::sensory::api::v1::assistant::Intent* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::Intent>(Arena*);
+template<> ::sensory::api::v1::assistant::ChatMessage* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::ChatMessage>(Arena*);
+template<> ::sensory::api::v1::assistant::TextChatRequest* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::TextChatRequest>(Arena*);
+template<> ::sensory::api::v1::assistant::TextChatResponse* Arena::CreateMaybeMessage<::sensory::api::v1::assistant::TextChatResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sensory {
 namespace api {
 namespace v1 {
 namespace assistant {
 
-enum AssistantPostProcessingAction : int {
-  NOT_SET = 0,
-  FINAL = 1,
-  AssistantPostProcessingAction_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  AssistantPostProcessingAction_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+enum ChatRole : int {
+  SYSTEM = 0,
+  USER = 1,
+  ASSISTANT = 2,
+  ChatRole_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  ChatRole_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool AssistantPostProcessingAction_IsValid(int value);
-constexpr AssistantPostProcessingAction AssistantPostProcessingAction_MIN = NOT_SET;
-constexpr AssistantPostProcessingAction AssistantPostProcessingAction_MAX = FINAL;
-constexpr int AssistantPostProcessingAction_ARRAYSIZE = AssistantPostProcessingAction_MAX + 1;
+bool ChatRole_IsValid(int value);
+constexpr ChatRole ChatRole_MIN = SYSTEM;
+constexpr ChatRole ChatRole_MAX = ASSISTANT;
+constexpr int ChatRole_ARRAYSIZE = ChatRole_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* AssistantPostProcessingAction_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ChatRole_descriptor();
 template<typename T>
-inline const std::string& AssistantPostProcessingAction_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, AssistantPostProcessingAction>::value ||
+inline const std::string& ChatRole_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ChatRole>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function AssistantPostProcessingAction_Name.");
+    "Incorrect type passed to function ChatRole_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    AssistantPostProcessingAction_descriptor(), enum_t_value);
+    ChatRole_descriptor(), enum_t_value);
 }
-inline bool AssistantPostProcessingAction_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, AssistantPostProcessingAction* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<AssistantPostProcessingAction>(
-    AssistantPostProcessingAction_descriptor(), name, value);
+inline bool ChatRole_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ChatRole* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ChatRole>(
+    ChatRole_descriptor(), name, value);
 }
 // ===================================================================
 
-class AssistantMessageRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.AssistantMessageRequest) */ {
+class ChatMessage final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.ChatMessage) */ {
  public:
-  inline AssistantMessageRequest() : AssistantMessageRequest(nullptr) {}
-  ~AssistantMessageRequest() override;
-  explicit constexpr AssistantMessageRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline ChatMessage() : ChatMessage(nullptr) {}
+  ~ChatMessage() override;
+  explicit constexpr ChatMessage(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  AssistantMessageRequest(const AssistantMessageRequest& from);
-  AssistantMessageRequest(AssistantMessageRequest&& from) noexcept
-    : AssistantMessageRequest() {
+  ChatMessage(const ChatMessage& from);
+  ChatMessage(ChatMessage&& from) noexcept
+    : ChatMessage() {
     *this = ::std::move(from);
   }
 
-  inline AssistantMessageRequest& operator=(const AssistantMessageRequest& from) {
+  inline ChatMessage& operator=(const ChatMessage& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AssistantMessageRequest& operator=(AssistantMessageRequest&& from) noexcept {
+  inline ChatMessage& operator=(ChatMessage&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -165,26 +150,20 @@ class AssistantMessageRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AssistantMessageRequest& default_instance() {
+  static const ChatMessage& default_instance() {
     return *internal_default_instance();
   }
-  enum StreamingRequestCase {
-    kConfig = 1,
-    kMessage = 2,
-    STREAMINGREQUEST_NOT_SET = 0,
-  };
-
-  static inline const AssistantMessageRequest* internal_default_instance() {
-    return reinterpret_cast<const AssistantMessageRequest*>(
-               &_AssistantMessageRequest_default_instance_);
+  static inline const ChatMessage* internal_default_instance() {
+    return reinterpret_cast<const ChatMessage*>(
+               &_ChatMessage_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(AssistantMessageRequest& a, AssistantMessageRequest& b) {
+  friend void swap(ChatMessage& a, ChatMessage& b) {
     a.Swap(&b);
   }
-  inline void Swap(AssistantMessageRequest* other) {
+  inline void Swap(ChatMessage* other) {
     if (other == this) return;
     if (GetOwningArena() == other->GetOwningArena()) {
       InternalSwap(other);
@@ -192,7 +171,7 @@ class AssistantMessageRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AssistantMessageRequest* other) {
+  void UnsafeArenaSwap(ChatMessage* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -200,17 +179,17 @@ class AssistantMessageRequest final :
 
   // implements Message ----------------------------------------------
 
-  inline AssistantMessageRequest* New() const final {
-    return new AssistantMessageRequest();
+  inline ChatMessage* New() const final {
+    return new ChatMessage();
   }
 
-  AssistantMessageRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<AssistantMessageRequest>(arena);
+  ChatMessage* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ChatMessage>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AssistantMessageRequest& from);
+  void CopyFrom(const ChatMessage& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const AssistantMessageRequest& from);
+  void MergeFrom(const ChatMessage& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
@@ -227,13 +206,13 @@ class AssistantMessageRequest final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(AssistantMessageRequest* other);
+  void InternalSwap(ChatMessage* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.AssistantMessageRequest";
+    return "sensory.api.v1.assistant.ChatMessage";
   }
   protected:
-  explicit AssistantMessageRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit ChatMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -250,110 +229,64 @@ class AssistantMessageRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPostProcessingActionFieldNumber = 10,
-    kConfigFieldNumber = 1,
-    kMessageFieldNumber = 2,
+    kContentFieldNumber = 2,
+    kRoleFieldNumber = 1,
   };
-  // .sensory.api.v1.assistant.AssistantPostProcessingActionRequest postProcessingAction = 10;
-  bool has_postprocessingaction() const;
+  // string content = 2;
+  void clear_content();
+  const std::string& content() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_content(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_content();
+  PROTOBUF_MUST_USE_RESULT std::string* release_content();
+  void set_allocated_content(std::string* content);
   private:
-  bool _internal_has_postprocessingaction() const;
+  const std::string& _internal_content() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_content(const std::string& value);
+  std::string* _internal_mutable_content();
   public:
-  void clear_postprocessingaction();
-  const ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest& postprocessingaction() const;
-  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* release_postprocessingaction();
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* mutable_postprocessingaction();
-  void set_allocated_postprocessingaction(::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* postprocessingaction);
-  private:
-  const ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest& _internal_postprocessingaction() const;
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* _internal_mutable_postprocessingaction();
-  public:
-  void unsafe_arena_set_allocated_postprocessingaction(
-      ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* postprocessingaction);
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* unsafe_arena_release_postprocessingaction();
 
-  // .sensory.api.v1.assistant.AssistantMessageConfig config = 1;
-  bool has_config() const;
+  // .sensory.api.v1.assistant.ChatRole role = 1;
+  void clear_role();
+  ::sensory::api::v1::assistant::ChatRole role() const;
+  void set_role(::sensory::api::v1::assistant::ChatRole value);
   private:
-  bool _internal_has_config() const;
+  ::sensory::api::v1::assistant::ChatRole _internal_role() const;
+  void _internal_set_role(::sensory::api::v1::assistant::ChatRole value);
   public:
-  void clear_config();
-  const ::sensory::api::v1::assistant::AssistantMessageConfig& config() const;
-  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::assistant::AssistantMessageConfig* release_config();
-  ::sensory::api::v1::assistant::AssistantMessageConfig* mutable_config();
-  void set_allocated_config(::sensory::api::v1::assistant::AssistantMessageConfig* config);
-  private:
-  const ::sensory::api::v1::assistant::AssistantMessageConfig& _internal_config() const;
-  ::sensory::api::v1::assistant::AssistantMessageConfig* _internal_mutable_config();
-  public:
-  void unsafe_arena_set_allocated_config(
-      ::sensory::api::v1::assistant::AssistantMessageConfig* config);
-  ::sensory::api::v1::assistant::AssistantMessageConfig* unsafe_arena_release_config();
 
-  // .sensory.api.v1.assistant.AssistantMessage message = 2;
-  bool has_message() const;
-  private:
-  bool _internal_has_message() const;
-  public:
-  void clear_message();
-  const ::sensory::api::v1::assistant::AssistantMessage& message() const;
-  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::assistant::AssistantMessage* release_message();
-  ::sensory::api::v1::assistant::AssistantMessage* mutable_message();
-  void set_allocated_message(::sensory::api::v1::assistant::AssistantMessage* message);
-  private:
-  const ::sensory::api::v1::assistant::AssistantMessage& _internal_message() const;
-  ::sensory::api::v1::assistant::AssistantMessage* _internal_mutable_message();
-  public:
-  void unsafe_arena_set_allocated_message(
-      ::sensory::api::v1::assistant::AssistantMessage* message);
-  ::sensory::api::v1::assistant::AssistantMessage* unsafe_arena_release_message();
-
-  void clear_streamingRequest();
-  StreamingRequestCase streamingRequest_case() const;
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.AssistantMessageRequest)
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.ChatMessage)
  private:
   class _Internal;
-  void set_has_config();
-  void set_has_message();
-
-  inline bool has_streamingRequest() const;
-  inline void clear_has_streamingRequest();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* postprocessingaction_;
-  union StreamingRequestUnion {
-    constexpr StreamingRequestUnion() : _constinit_{} {}
-      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
-    ::sensory::api::v1::assistant::AssistantMessageConfig* config_;
-    ::sensory::api::v1::assistant::AssistantMessage* message_;
-  } streamingRequest_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr content_;
+  int role_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
-
   friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
 };
 // -------------------------------------------------------------------
 
-class AssistantMessage final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.AssistantMessage) */ {
+class TextChatRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.TextChatRequest) */ {
  public:
-  inline AssistantMessage() : AssistantMessage(nullptr) {}
-  ~AssistantMessage() override;
-  explicit constexpr AssistantMessage(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline TextChatRequest() : TextChatRequest(nullptr) {}
+  ~TextChatRequest() override;
+  explicit constexpr TextChatRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  AssistantMessage(const AssistantMessage& from);
-  AssistantMessage(AssistantMessage&& from) noexcept
-    : AssistantMessage() {
+  TextChatRequest(const TextChatRequest& from);
+  TextChatRequest(TextChatRequest&& from) noexcept
+    : TextChatRequest() {
     *this = ::std::move(from);
   }
 
-  inline AssistantMessage& operator=(const AssistantMessage& from) {
+  inline TextChatRequest& operator=(const TextChatRequest& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AssistantMessage& operator=(AssistantMessage&& from) noexcept {
+  inline TextChatRequest& operator=(TextChatRequest&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -376,26 +309,20 @@ class AssistantMessage final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AssistantMessage& default_instance() {
+  static const TextChatRequest& default_instance() {
     return *internal_default_instance();
   }
-  enum MessageCase {
-    kText = 1,
-    kAudioContent = 2,
-    MESSAGE_NOT_SET = 0,
-  };
-
-  static inline const AssistantMessage* internal_default_instance() {
-    return reinterpret_cast<const AssistantMessage*>(
-               &_AssistantMessage_default_instance_);
+  static inline const TextChatRequest* internal_default_instance() {
+    return reinterpret_cast<const TextChatRequest*>(
+               &_TextChatRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(AssistantMessage& a, AssistantMessage& b) {
+  friend void swap(TextChatRequest& a, TextChatRequest& b) {
     a.Swap(&b);
   }
-  inline void Swap(AssistantMessage* other) {
+  inline void Swap(TextChatRequest* other) {
     if (other == this) return;
     if (GetOwningArena() == other->GetOwningArena()) {
       InternalSwap(other);
@@ -403,7 +330,7 @@ class AssistantMessage final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AssistantMessage* other) {
+  void UnsafeArenaSwap(TextChatRequest* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -411,17 +338,17 @@ class AssistantMessage final :
 
   // implements Message ----------------------------------------------
 
-  inline AssistantMessage* New() const final {
-    return new AssistantMessage();
+  inline TextChatRequest* New() const final {
+    return new TextChatRequest();
   }
 
-  AssistantMessage* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<AssistantMessage>(arena);
+  TextChatRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TextChatRequest>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AssistantMessage& from);
+  void CopyFrom(const TextChatRequest& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const AssistantMessage& from);
+  void MergeFrom(const TextChatRequest& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
@@ -438,13 +365,13 @@ class AssistantMessage final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(AssistantMessage* other);
+  void InternalSwap(TextChatRequest* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.AssistantMessage";
+    return "sensory.api.v1.assistant.TextChatRequest";
   }
   protected:
-  explicit AssistantMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit TextChatRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -461,619 +388,28 @@ class AssistantMessage final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTextFieldNumber = 1,
-    kAudioContentFieldNumber = 2,
+    kMessagesFieldNumber = 2,
+    kModelNameFieldNumber = 1,
   };
-  // string text = 1 [(.validate.rules) = {
-  bool has_text() const;
+  // repeated .sensory.api.v1.assistant.ChatMessage messages = 2;
+  int messages_size() const;
   private:
-  bool _internal_has_text() const;
+  int _internal_messages_size() const;
   public:
-  void clear_text();
-  const std::string& text() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_text(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_text();
-  PROTOBUF_MUST_USE_RESULT std::string* release_text();
-  void set_allocated_text(std::string* text);
+  void clear_messages();
+  ::sensory::api::v1::assistant::ChatMessage* mutable_messages(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::ChatMessage >*
+      mutable_messages();
   private:
-  const std::string& _internal_text() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_text(const std::string& value);
-  std::string* _internal_mutable_text();
+  const ::sensory::api::v1::assistant::ChatMessage& _internal_messages(int index) const;
+  ::sensory::api::v1::assistant::ChatMessage* _internal_add_messages();
   public:
+  const ::sensory::api::v1::assistant::ChatMessage& messages(int index) const;
+  ::sensory::api::v1::assistant::ChatMessage* add_messages();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::ChatMessage >&
+      messages() const;
 
-  // bytes audioContent = 2;
-  bool has_audiocontent() const;
-  private:
-  bool _internal_has_audiocontent() const;
-  public:
-  void clear_audiocontent();
-  const std::string& audiocontent() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_audiocontent(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_audiocontent();
-  PROTOBUF_MUST_USE_RESULT std::string* release_audiocontent();
-  void set_allocated_audiocontent(std::string* audiocontent);
-  private:
-  const std::string& _internal_audiocontent() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_audiocontent(const std::string& value);
-  std::string* _internal_mutable_audiocontent();
-  public:
-
-  void clear_message();
-  MessageCase message_case() const;
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.AssistantMessage)
- private:
-  class _Internal;
-  void set_has_text();
-  void set_has_audiocontent();
-
-  inline bool has_message() const;
-  inline void clear_has_message();
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  union MessageUnion {
-    constexpr MessageUnion() : _constinit_{} {}
-      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr text_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr audiocontent_;
-  } message_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
-
-  friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
-};
-// -------------------------------------------------------------------
-
-class Intent final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.Intent) */ {
- public:
-  inline Intent() : Intent(nullptr) {}
-  ~Intent() override;
-  explicit constexpr Intent(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  Intent(const Intent& from);
-  Intent(Intent&& from) noexcept
-    : Intent() {
-    *this = ::std::move(from);
-  }
-
-  inline Intent& operator=(const Intent& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Intent& operator=(Intent&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Intent& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const Intent* internal_default_instance() {
-    return reinterpret_cast<const Intent*>(
-               &_Intent_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    2;
-
-  friend void swap(Intent& a, Intent& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(Intent* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Intent* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline Intent* New() const final {
-    return new Intent();
-  }
-
-  Intent* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<Intent>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Intent& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const Intent& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(Intent* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.Intent";
-  }
-  protected:
-  explicit Intent(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kNameFieldNumber = 1,
-    kConfidenceFieldNumber = 2,
-  };
-  // string name = 1;
-  void clear_name();
-  const std::string& name() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_name(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_name();
-  PROTOBUF_MUST_USE_RESULT std::string* release_name();
-  void set_allocated_name(std::string* name);
-  private:
-  const std::string& _internal_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
-  std::string* _internal_mutable_name();
-  public:
-
-  // double confidence = 2;
-  void clear_confidence();
-  double confidence() const;
-  void set_confidence(double value);
-  private:
-  double _internal_confidence() const;
-  void _internal_set_confidence(double value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.Intent)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-  double confidence_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
-};
-// -------------------------------------------------------------------
-
-class AssistantMessageResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.AssistantMessageResponse) */ {
- public:
-  inline AssistantMessageResponse() : AssistantMessageResponse(nullptr) {}
-  ~AssistantMessageResponse() override;
-  explicit constexpr AssistantMessageResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  AssistantMessageResponse(const AssistantMessageResponse& from);
-  AssistantMessageResponse(AssistantMessageResponse&& from) noexcept
-    : AssistantMessageResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline AssistantMessageResponse& operator=(const AssistantMessageResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline AssistantMessageResponse& operator=(AssistantMessageResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const AssistantMessageResponse& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const AssistantMessageResponse* internal_default_instance() {
-    return reinterpret_cast<const AssistantMessageResponse*>(
-               &_AssistantMessageResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    3;
-
-  friend void swap(AssistantMessageResponse& a, AssistantMessageResponse& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(AssistantMessageResponse* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(AssistantMessageResponse* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline AssistantMessageResponse* New() const final {
-    return new AssistantMessageResponse();
-  }
-
-  AssistantMessageResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<AssistantMessageResponse>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AssistantMessageResponse& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const AssistantMessageResponse& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(AssistantMessageResponse* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.AssistantMessageResponse";
-  }
-  protected:
-  explicit AssistantMessageResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kIntentsFieldNumber = 4,
-    kTextFieldNumber = 1,
-    kAudioContentFieldNumber = 2,
-    kIntentFieldNumber = 3,
-    kPostProcessingActionFieldNumber = 10,
-    kIsAudioCompleteFieldNumber = 5,
-  };
-  // repeated .sensory.api.v1.assistant.Intent intents = 4;
-  int intents_size() const;
-  private:
-  int _internal_intents_size() const;
-  public:
-  void clear_intents();
-  ::sensory::api::v1::assistant::Intent* mutable_intents(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::Intent >*
-      mutable_intents();
-  private:
-  const ::sensory::api::v1::assistant::Intent& _internal_intents(int index) const;
-  ::sensory::api::v1::assistant::Intent* _internal_add_intents();
-  public:
-  const ::sensory::api::v1::assistant::Intent& intents(int index) const;
-  ::sensory::api::v1::assistant::Intent* add_intents();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::Intent >&
-      intents() const;
-
-  // string text = 1;
-  void clear_text();
-  const std::string& text() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_text(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_text();
-  PROTOBUF_MUST_USE_RESULT std::string* release_text();
-  void set_allocated_text(std::string* text);
-  private:
-  const std::string& _internal_text() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_text(const std::string& value);
-  std::string* _internal_mutable_text();
-  public:
-
-  // bytes audioContent = 2;
-  void clear_audiocontent();
-  const std::string& audiocontent() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_audiocontent(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_audiocontent();
-  PROTOBUF_MUST_USE_RESULT std::string* release_audiocontent();
-  void set_allocated_audiocontent(std::string* audiocontent);
-  private:
-  const std::string& _internal_audiocontent() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_audiocontent(const std::string& value);
-  std::string* _internal_mutable_audiocontent();
-  public:
-
-  // .sensory.api.v1.assistant.Intent intent = 3;
-  bool has_intent() const;
-  private:
-  bool _internal_has_intent() const;
-  public:
-  void clear_intent();
-  const ::sensory::api::v1::assistant::Intent& intent() const;
-  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::assistant::Intent* release_intent();
-  ::sensory::api::v1::assistant::Intent* mutable_intent();
-  void set_allocated_intent(::sensory::api::v1::assistant::Intent* intent);
-  private:
-  const ::sensory::api::v1::assistant::Intent& _internal_intent() const;
-  ::sensory::api::v1::assistant::Intent* _internal_mutable_intent();
-  public:
-  void unsafe_arena_set_allocated_intent(
-      ::sensory::api::v1::assistant::Intent* intent);
-  ::sensory::api::v1::assistant::Intent* unsafe_arena_release_intent();
-
-  // .sensory.api.v1.assistant.AssistantPostProcessingActionResponse postProcessingAction = 10;
-  bool has_postprocessingaction() const;
-  private:
-  bool _internal_has_postprocessingaction() const;
-  public:
-  void clear_postprocessingaction();
-  const ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse& postprocessingaction() const;
-  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* release_postprocessingaction();
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* mutable_postprocessingaction();
-  void set_allocated_postprocessingaction(::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* postprocessingaction);
-  private:
-  const ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse& _internal_postprocessingaction() const;
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* _internal_mutable_postprocessingaction();
-  public:
-  void unsafe_arena_set_allocated_postprocessingaction(
-      ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* postprocessingaction);
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* unsafe_arena_release_postprocessingaction();
-
-  // bool isAudioComplete = 5;
-  void clear_isaudiocomplete();
-  bool isaudiocomplete() const;
-  void set_isaudiocomplete(bool value);
-  private:
-  bool _internal_isaudiocomplete() const;
-  void _internal_set_isaudiocomplete(bool value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.AssistantMessageResponse)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::Intent > intents_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr text_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr audiocontent_;
-  ::sensory::api::v1::assistant::Intent* intent_;
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* postprocessingaction_;
-  bool isaudiocomplete_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
-};
-// -------------------------------------------------------------------
-
-class AssistantMessageConfig final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.AssistantMessageConfig) */ {
- public:
-  inline AssistantMessageConfig() : AssistantMessageConfig(nullptr) {}
-  ~AssistantMessageConfig() override;
-  explicit constexpr AssistantMessageConfig(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  AssistantMessageConfig(const AssistantMessageConfig& from);
-  AssistantMessageConfig(AssistantMessageConfig&& from) noexcept
-    : AssistantMessageConfig() {
-    *this = ::std::move(from);
-  }
-
-  inline AssistantMessageConfig& operator=(const AssistantMessageConfig& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline AssistantMessageConfig& operator=(AssistantMessageConfig&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const AssistantMessageConfig& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const AssistantMessageConfig* internal_default_instance() {
-    return reinterpret_cast<const AssistantMessageConfig*>(
-               &_AssistantMessageConfig_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    4;
-
-  friend void swap(AssistantMessageConfig& a, AssistantMessageConfig& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(AssistantMessageConfig* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(AssistantMessageConfig* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline AssistantMessageConfig* New() const final {
-    return new AssistantMessageConfig();
-  }
-
-  AssistantMessageConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<AssistantMessageConfig>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AssistantMessageConfig& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const AssistantMessageConfig& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(AssistantMessageConfig* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.AssistantMessageConfig";
-  }
-  protected:
-  explicit AssistantMessageConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kUserIdFieldNumber = 2,
-    kDeviceIdFieldNumber = 3,
-    kModelNameFieldNumber = 4,
-    kIncludeAudioResponseFieldNumber = 5,
-  };
-  // string userId = 2 [(.validate.rules) = {
-  void clear_userid();
-  const std::string& userid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_userid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_userid();
-  PROTOBUF_MUST_USE_RESULT std::string* release_userid();
-  void set_allocated_userid(std::string* userid);
-  private:
-  const std::string& _internal_userid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(const std::string& value);
-  std::string* _internal_mutable_userid();
-  public:
-
-  // string deviceId = 3 [(.validate.rules) = {
-  void clear_deviceid();
-  const std::string& deviceid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_deviceid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_deviceid();
-  PROTOBUF_MUST_USE_RESULT std::string* release_deviceid();
-  void set_allocated_deviceid(std::string* deviceid);
-  private:
-  const std::string& _internal_deviceid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_deviceid(const std::string& value);
-  std::string* _internal_mutable_deviceid();
-  public:
-
-  // string modelName = 4 [(.validate.rules) = {
+  // string modelName = 1;
   void clear_modelname();
   const std::string& modelname() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1087,49 +423,38 @@ class AssistantMessageConfig final :
   std::string* _internal_mutable_modelname();
   public:
 
-  // bool includeAudioResponse = 5;
-  void clear_includeaudioresponse();
-  bool includeaudioresponse() const;
-  void set_includeaudioresponse(bool value);
-  private:
-  bool _internal_includeaudioresponse() const;
-  void _internal_set_includeaudioresponse(bool value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.AssistantMessageConfig)
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.TextChatRequest)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr userid_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr deviceid_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::ChatMessage > messages_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr modelname_;
-  bool includeaudioresponse_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
 };
 // -------------------------------------------------------------------
 
-class AssistantPostProcessingActionRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.AssistantPostProcessingActionRequest) */ {
+class TextChatResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.TextChatResponse) */ {
  public:
-  inline AssistantPostProcessingActionRequest() : AssistantPostProcessingActionRequest(nullptr) {}
-  ~AssistantPostProcessingActionRequest() override;
-  explicit constexpr AssistantPostProcessingActionRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline TextChatResponse() : TextChatResponse(nullptr) {}
+  ~TextChatResponse() override;
+  explicit constexpr TextChatResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  AssistantPostProcessingActionRequest(const AssistantPostProcessingActionRequest& from);
-  AssistantPostProcessingActionRequest(AssistantPostProcessingActionRequest&& from) noexcept
-    : AssistantPostProcessingActionRequest() {
+  TextChatResponse(const TextChatResponse& from);
+  TextChatResponse(TextChatResponse&& from) noexcept
+    : TextChatResponse() {
     *this = ::std::move(from);
   }
 
-  inline AssistantPostProcessingActionRequest& operator=(const AssistantPostProcessingActionRequest& from) {
+  inline TextChatResponse& operator=(const TextChatResponse& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AssistantPostProcessingActionRequest& operator=(AssistantPostProcessingActionRequest&& from) noexcept {
+  inline TextChatResponse& operator=(TextChatResponse&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1152,20 +477,20 @@ class AssistantPostProcessingActionRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AssistantPostProcessingActionRequest& default_instance() {
+  static const TextChatResponse& default_instance() {
     return *internal_default_instance();
   }
-  static inline const AssistantPostProcessingActionRequest* internal_default_instance() {
-    return reinterpret_cast<const AssistantPostProcessingActionRequest*>(
-               &_AssistantPostProcessingActionRequest_default_instance_);
+  static inline const TextChatResponse* internal_default_instance() {
+    return reinterpret_cast<const TextChatResponse*>(
+               &_TextChatResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    2;
 
-  friend void swap(AssistantPostProcessingActionRequest& a, AssistantPostProcessingActionRequest& b) {
+  friend void swap(TextChatResponse& a, TextChatResponse& b) {
     a.Swap(&b);
   }
-  inline void Swap(AssistantPostProcessingActionRequest* other) {
+  inline void Swap(TextChatResponse* other) {
     if (other == this) return;
     if (GetOwningArena() == other->GetOwningArena()) {
       InternalSwap(other);
@@ -1173,7 +498,7 @@ class AssistantPostProcessingActionRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AssistantPostProcessingActionRequest* other) {
+  void UnsafeArenaSwap(TextChatResponse* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1181,17 +506,17 @@ class AssistantPostProcessingActionRequest final :
 
   // implements Message ----------------------------------------------
 
-  inline AssistantPostProcessingActionRequest* New() const final {
-    return new AssistantPostProcessingActionRequest();
+  inline TextChatResponse* New() const final {
+    return new TextChatResponse();
   }
 
-  AssistantPostProcessingActionRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<AssistantPostProcessingActionRequest>(arena);
+  TextChatResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TextChatResponse>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AssistantPostProcessingActionRequest& from);
+  void CopyFrom(const TextChatResponse& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const AssistantPostProcessingActionRequest& from);
+  void MergeFrom(const TextChatResponse& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
@@ -1208,13 +533,13 @@ class AssistantPostProcessingActionRequest final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(AssistantPostProcessingActionRequest* other);
+  void InternalSwap(TextChatResponse* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.AssistantPostProcessingActionRequest";
+    return "sensory.api.v1.assistant.TextChatResponse";
   }
   protected:
-  explicit AssistantPostProcessingActionRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit TextChatResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -1231,200 +556,34 @@ class AssistantPostProcessingActionRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kActionIdFieldNumber = 1,
-    kActionFieldNumber = 2,
+    kMessageFieldNumber = 1,
   };
-  // string actionId = 1;
-  void clear_actionid();
-  const std::string& actionid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_actionid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_actionid();
-  PROTOBUF_MUST_USE_RESULT std::string* release_actionid();
-  void set_allocated_actionid(std::string* actionid);
+  // .sensory.api.v1.assistant.ChatMessage message = 1;
+  bool has_message() const;
   private:
-  const std::string& _internal_actionid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_actionid(const std::string& value);
-  std::string* _internal_mutable_actionid();
+  bool _internal_has_message() const;
   public:
-
-  // .sensory.api.v1.assistant.AssistantPostProcessingAction action = 2 [(.validate.rules) = {
-  void clear_action();
-  ::sensory::api::v1::assistant::AssistantPostProcessingAction action() const;
-  void set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value);
+  void clear_message();
+  const ::sensory::api::v1::assistant::ChatMessage& message() const;
+  PROTOBUF_MUST_USE_RESULT ::sensory::api::v1::assistant::ChatMessage* release_message();
+  ::sensory::api::v1::assistant::ChatMessage* mutable_message();
+  void set_allocated_message(::sensory::api::v1::assistant::ChatMessage* message);
   private:
-  ::sensory::api::v1::assistant::AssistantPostProcessingAction _internal_action() const;
-  void _internal_set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value);
+  const ::sensory::api::v1::assistant::ChatMessage& _internal_message() const;
+  ::sensory::api::v1::assistant::ChatMessage* _internal_mutable_message();
   public:
+  void unsafe_arena_set_allocated_message(
+      ::sensory::api::v1::assistant::ChatMessage* message);
+  ::sensory::api::v1::assistant::ChatMessage* unsafe_arena_release_message();
 
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.AssistantPostProcessingActionRequest)
+  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.TextChatResponse)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr actionid_;
-  int action_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
-};
-// -------------------------------------------------------------------
-
-class AssistantPostProcessingActionResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensory.api.v1.assistant.AssistantPostProcessingActionResponse) */ {
- public:
-  inline AssistantPostProcessingActionResponse() : AssistantPostProcessingActionResponse(nullptr) {}
-  ~AssistantPostProcessingActionResponse() override;
-  explicit constexpr AssistantPostProcessingActionResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  AssistantPostProcessingActionResponse(const AssistantPostProcessingActionResponse& from);
-  AssistantPostProcessingActionResponse(AssistantPostProcessingActionResponse&& from) noexcept
-    : AssistantPostProcessingActionResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline AssistantPostProcessingActionResponse& operator=(const AssistantPostProcessingActionResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline AssistantPostProcessingActionResponse& operator=(AssistantPostProcessingActionResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const AssistantPostProcessingActionResponse& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const AssistantPostProcessingActionResponse* internal_default_instance() {
-    return reinterpret_cast<const AssistantPostProcessingActionResponse*>(
-               &_AssistantPostProcessingActionResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    6;
-
-  friend void swap(AssistantPostProcessingActionResponse& a, AssistantPostProcessingActionResponse& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(AssistantPostProcessingActionResponse* other) {
-    if (other == this) return;
-    if (GetOwningArena() == other->GetOwningArena()) {
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(AssistantPostProcessingActionResponse* other) {
-    if (other == this) return;
-    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline AssistantPostProcessingActionResponse* New() const final {
-    return new AssistantPostProcessingActionResponse();
-  }
-
-  AssistantPostProcessingActionResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<AssistantPostProcessingActionResponse>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const AssistantPostProcessingActionResponse& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const AssistantPostProcessingActionResponse& from);
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(AssistantPostProcessingActionResponse* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "sensory.api.v1.assistant.AssistantPostProcessingActionResponse";
-  }
-  protected:
-  explicit AssistantPostProcessingActionResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                       bool is_message_owned = false);
-  private:
-  static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kActionIdFieldNumber = 1,
-    kActionFieldNumber = 2,
-  };
-  // string actionId = 1;
-  void clear_actionid();
-  const std::string& actionid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_actionid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_actionid();
-  PROTOBUF_MUST_USE_RESULT std::string* release_actionid();
-  void set_allocated_actionid(std::string* actionid);
-  private:
-  const std::string& _internal_actionid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_actionid(const std::string& value);
-  std::string* _internal_mutable_actionid();
-  public:
-
-  // .sensory.api.v1.assistant.AssistantPostProcessingAction action = 2 [(.validate.rules) = {
-  void clear_action();
-  ::sensory::api::v1::assistant::AssistantPostProcessingAction action() const;
-  void set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value);
-  private:
-  ::sensory::api::v1::assistant::AssistantPostProcessingAction _internal_action() const;
-  void _internal_set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:sensory.api.v1.assistant.AssistantPostProcessingActionResponse)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr actionid_;
-  int action_;
+  ::sensory::api::v1::assistant::ChatMessage* message_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fassistant_2fassistant_2eproto;
 };
@@ -1437,970 +596,114 @@ class AssistantPostProcessingActionResponse final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// AssistantMessageRequest
+// ChatMessage
 
-// .sensory.api.v1.assistant.AssistantMessageConfig config = 1;
-inline bool AssistantMessageRequest::_internal_has_config() const {
-  return streamingRequest_case() == kConfig;
+// .sensory.api.v1.assistant.ChatRole role = 1;
+inline void ChatMessage::clear_role() {
+  role_ = 0;
 }
-inline bool AssistantMessageRequest::has_config() const {
-  return _internal_has_config();
+inline ::sensory::api::v1::assistant::ChatRole ChatMessage::_internal_role() const {
+  return static_cast< ::sensory::api::v1::assistant::ChatRole >(role_);
 }
-inline void AssistantMessageRequest::set_has_config() {
-  _oneof_case_[0] = kConfig;
+inline ::sensory::api::v1::assistant::ChatRole ChatMessage::role() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.ChatMessage.role)
+  return _internal_role();
 }
-inline void AssistantMessageRequest::clear_config() {
-  if (_internal_has_config()) {
-    if (GetArenaForAllocation() == nullptr) {
-      delete streamingRequest_.config_;
-    }
-    clear_has_streamingRequest();
-  }
-}
-inline ::sensory::api::v1::assistant::AssistantMessageConfig* AssistantMessageRequest::release_config() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageRequest.config)
-  if (_internal_has_config()) {
-    clear_has_streamingRequest();
-      ::sensory::api::v1::assistant::AssistantMessageConfig* temp = streamingRequest_.config_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    streamingRequest_.config_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::sensory::api::v1::assistant::AssistantMessageConfig& AssistantMessageRequest::_internal_config() const {
-  return _internal_has_config()
-      ? *streamingRequest_.config_
-      : reinterpret_cast< ::sensory::api::v1::assistant::AssistantMessageConfig&>(::sensory::api::v1::assistant::_AssistantMessageConfig_default_instance_);
-}
-inline const ::sensory::api::v1::assistant::AssistantMessageConfig& AssistantMessageRequest::config() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageRequest.config)
-  return _internal_config();
-}
-inline ::sensory::api::v1::assistant::AssistantMessageConfig* AssistantMessageRequest::unsafe_arena_release_config() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:sensory.api.v1.assistant.AssistantMessageRequest.config)
-  if (_internal_has_config()) {
-    clear_has_streamingRequest();
-    ::sensory::api::v1::assistant::AssistantMessageConfig* temp = streamingRequest_.config_;
-    streamingRequest_.config_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void AssistantMessageRequest::unsafe_arena_set_allocated_config(::sensory::api::v1::assistant::AssistantMessageConfig* config) {
-  clear_streamingRequest();
-  if (config) {
-    set_has_config();
-    streamingRequest_.config_ = config;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.assistant.AssistantMessageRequest.config)
-}
-inline ::sensory::api::v1::assistant::AssistantMessageConfig* AssistantMessageRequest::_internal_mutable_config() {
-  if (!_internal_has_config()) {
-    clear_streamingRequest();
-    set_has_config();
-    streamingRequest_.config_ = CreateMaybeMessage< ::sensory::api::v1::assistant::AssistantMessageConfig >(GetArenaForAllocation());
-  }
-  return streamingRequest_.config_;
-}
-inline ::sensory::api::v1::assistant::AssistantMessageConfig* AssistantMessageRequest::mutable_config() {
-  ::sensory::api::v1::assistant::AssistantMessageConfig* _msg = _internal_mutable_config();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageRequest.config)
-  return _msg;
-}
-
-// .sensory.api.v1.assistant.AssistantMessage message = 2;
-inline bool AssistantMessageRequest::_internal_has_message() const {
-  return streamingRequest_case() == kMessage;
-}
-inline bool AssistantMessageRequest::has_message() const {
-  return _internal_has_message();
-}
-inline void AssistantMessageRequest::set_has_message() {
-  _oneof_case_[0] = kMessage;
-}
-inline void AssistantMessageRequest::clear_message() {
-  if (_internal_has_message()) {
-    if (GetArenaForAllocation() == nullptr) {
-      delete streamingRequest_.message_;
-    }
-    clear_has_streamingRequest();
-  }
-}
-inline ::sensory::api::v1::assistant::AssistantMessage* AssistantMessageRequest::release_message() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageRequest.message)
-  if (_internal_has_message()) {
-    clear_has_streamingRequest();
-      ::sensory::api::v1::assistant::AssistantMessage* temp = streamingRequest_.message_;
-    if (GetArenaForAllocation() != nullptr) {
-      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-    }
-    streamingRequest_.message_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline const ::sensory::api::v1::assistant::AssistantMessage& AssistantMessageRequest::_internal_message() const {
-  return _internal_has_message()
-      ? *streamingRequest_.message_
-      : reinterpret_cast< ::sensory::api::v1::assistant::AssistantMessage&>(::sensory::api::v1::assistant::_AssistantMessage_default_instance_);
-}
-inline const ::sensory::api::v1::assistant::AssistantMessage& AssistantMessageRequest::message() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageRequest.message)
-  return _internal_message();
-}
-inline ::sensory::api::v1::assistant::AssistantMessage* AssistantMessageRequest::unsafe_arena_release_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:sensory.api.v1.assistant.AssistantMessageRequest.message)
-  if (_internal_has_message()) {
-    clear_has_streamingRequest();
-    ::sensory::api::v1::assistant::AssistantMessage* temp = streamingRequest_.message_;
-    streamingRequest_.message_ = nullptr;
-    return temp;
-  } else {
-    return nullptr;
-  }
-}
-inline void AssistantMessageRequest::unsafe_arena_set_allocated_message(::sensory::api::v1::assistant::AssistantMessage* message) {
-  clear_streamingRequest();
-  if (message) {
-    set_has_message();
-    streamingRequest_.message_ = message;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.assistant.AssistantMessageRequest.message)
-}
-inline ::sensory::api::v1::assistant::AssistantMessage* AssistantMessageRequest::_internal_mutable_message() {
-  if (!_internal_has_message()) {
-    clear_streamingRequest();
-    set_has_message();
-    streamingRequest_.message_ = CreateMaybeMessage< ::sensory::api::v1::assistant::AssistantMessage >(GetArenaForAllocation());
-  }
-  return streamingRequest_.message_;
-}
-inline ::sensory::api::v1::assistant::AssistantMessage* AssistantMessageRequest::mutable_message() {
-  ::sensory::api::v1::assistant::AssistantMessage* _msg = _internal_mutable_message();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageRequest.message)
-  return _msg;
-}
-
-// .sensory.api.v1.assistant.AssistantPostProcessingActionRequest postProcessingAction = 10;
-inline bool AssistantMessageRequest::_internal_has_postprocessingaction() const {
-  return this != internal_default_instance() && postprocessingaction_ != nullptr;
-}
-inline bool AssistantMessageRequest::has_postprocessingaction() const {
-  return _internal_has_postprocessingaction();
-}
-inline void AssistantMessageRequest::clear_postprocessingaction() {
-  if (GetArenaForAllocation() == nullptr && postprocessingaction_ != nullptr) {
-    delete postprocessingaction_;
-  }
-  postprocessingaction_ = nullptr;
-}
-inline const ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest& AssistantMessageRequest::_internal_postprocessingaction() const {
-  const ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* p = postprocessingaction_;
-  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest&>(
-      ::sensory::api::v1::assistant::_AssistantPostProcessingActionRequest_default_instance_);
-}
-inline const ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest& AssistantMessageRequest::postprocessingaction() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageRequest.postProcessingAction)
-  return _internal_postprocessingaction();
-}
-inline void AssistantMessageRequest::unsafe_arena_set_allocated_postprocessingaction(
-    ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* postprocessingaction) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(postprocessingaction_);
-  }
-  postprocessingaction_ = postprocessingaction;
-  if (postprocessingaction) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.assistant.AssistantMessageRequest.postProcessingAction)
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* AssistantMessageRequest::release_postprocessingaction() {
+inline void ChatMessage::_internal_set_role(::sensory::api::v1::assistant::ChatRole value) {
   
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* temp = postprocessingaction_;
-  postprocessingaction_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
+  role_ = value;
 }
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* AssistantMessageRequest::unsafe_arena_release_postprocessingaction() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageRequest.postProcessingAction)
-  
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* temp = postprocessingaction_;
-  postprocessingaction_ = nullptr;
-  return temp;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* AssistantMessageRequest::_internal_mutable_postprocessingaction() {
-  
-  if (postprocessingaction_ == nullptr) {
-    auto* p = CreateMaybeMessage<::sensory::api::v1::assistant::AssistantPostProcessingActionRequest>(GetArenaForAllocation());
-    postprocessingaction_ = p;
-  }
-  return postprocessingaction_;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* AssistantMessageRequest::mutable_postprocessingaction() {
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* _msg = _internal_mutable_postprocessingaction();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageRequest.postProcessingAction)
-  return _msg;
-}
-inline void AssistantMessageRequest::set_allocated_postprocessingaction(::sensory::api::v1::assistant::AssistantPostProcessingActionRequest* postprocessingaction) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete postprocessingaction_;
-  }
-  if (postprocessingaction) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::assistant::AssistantPostProcessingActionRequest>::GetOwningArena(postprocessingaction);
-    if (message_arena != submessage_arena) {
-      postprocessingaction = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, postprocessingaction, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  postprocessingaction_ = postprocessingaction;
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageRequest.postProcessingAction)
+inline void ChatMessage::set_role(::sensory::api::v1::assistant::ChatRole value) {
+  _internal_set_role(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.ChatMessage.role)
 }
 
-inline bool AssistantMessageRequest::has_streamingRequest() const {
-  return streamingRequest_case() != STREAMINGREQUEST_NOT_SET;
+// string content = 2;
+inline void ChatMessage::clear_content() {
+  content_.ClearToEmpty();
 }
-inline void AssistantMessageRequest::clear_has_streamingRequest() {
-  _oneof_case_[0] = STREAMINGREQUEST_NOT_SET;
-}
-inline AssistantMessageRequest::StreamingRequestCase AssistantMessageRequest::streamingRequest_case() const {
-  return AssistantMessageRequest::StreamingRequestCase(_oneof_case_[0]);
-}
-// -------------------------------------------------------------------
-
-// AssistantMessage
-
-// string text = 1 [(.validate.rules) = {
-inline bool AssistantMessage::_internal_has_text() const {
-  return message_case() == kText;
-}
-inline bool AssistantMessage::has_text() const {
-  return _internal_has_text();
-}
-inline void AssistantMessage::set_has_text() {
-  _oneof_case_[0] = kText;
-}
-inline void AssistantMessage::clear_text() {
-  if (_internal_has_text()) {
-    message_.text_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-    clear_has_message();
-  }
-}
-inline const std::string& AssistantMessage::text() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessage.text)
-  return _internal_text();
-}
-template <typename ArgT0, typename... ArgT>
-inline void AssistantMessage::set_text(ArgT0&& arg0, ArgT... args) {
-  if (!_internal_has_text()) {
-    clear_message();
-    set_has_text();
-    message_.text_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  }
-  message_.text_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessage.text)
-}
-inline std::string* AssistantMessage::mutable_text() {
-  std::string* _s = _internal_mutable_text();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessage.text)
-  return _s;
-}
-inline const std::string& AssistantMessage::_internal_text() const {
-  if (_internal_has_text()) {
-    return message_.text_.Get();
-  }
-  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
-}
-inline void AssistantMessage::_internal_set_text(const std::string& value) {
-  if (!_internal_has_text()) {
-    clear_message();
-    set_has_text();
-    message_.text_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  }
-  message_.text_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantMessage::_internal_mutable_text() {
-  if (!_internal_has_text()) {
-    clear_message();
-    set_has_text();
-    message_.text_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  }
-  return message_.text_.Mutable(
-      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantMessage::release_text() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessage.text)
-  if (_internal_has_text()) {
-    clear_has_message();
-    return message_.text_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-  } else {
-    return nullptr;
-  }
-}
-inline void AssistantMessage::set_allocated_text(std::string* text) {
-  if (has_message()) {
-    clear_message();
-  }
-  if (text != nullptr) {
-    set_has_text();
-    message_.text_.UnsafeSetDefault(text);
-    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
-    if (arena != nullptr) {
-      arena->Own(text);
-    }
-  }
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessage.text)
-}
-
-// bytes audioContent = 2;
-inline bool AssistantMessage::_internal_has_audiocontent() const {
-  return message_case() == kAudioContent;
-}
-inline bool AssistantMessage::has_audiocontent() const {
-  return _internal_has_audiocontent();
-}
-inline void AssistantMessage::set_has_audiocontent() {
-  _oneof_case_[0] = kAudioContent;
-}
-inline void AssistantMessage::clear_audiocontent() {
-  if (_internal_has_audiocontent()) {
-    message_.audiocontent_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-    clear_has_message();
-  }
-}
-inline const std::string& AssistantMessage::audiocontent() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessage.audioContent)
-  return _internal_audiocontent();
-}
-template <typename ArgT0, typename... ArgT>
-inline void AssistantMessage::set_audiocontent(ArgT0&& arg0, ArgT... args) {
-  if (!_internal_has_audiocontent()) {
-    clear_message();
-    set_has_audiocontent();
-    message_.audiocontent_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  }
-  message_.audiocontent_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessage.audioContent)
-}
-inline std::string* AssistantMessage::mutable_audiocontent() {
-  std::string* _s = _internal_mutable_audiocontent();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessage.audioContent)
-  return _s;
-}
-inline const std::string& AssistantMessage::_internal_audiocontent() const {
-  if (_internal_has_audiocontent()) {
-    return message_.audiocontent_.Get();
-  }
-  return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
-}
-inline void AssistantMessage::_internal_set_audiocontent(const std::string& value) {
-  if (!_internal_has_audiocontent()) {
-    clear_message();
-    set_has_audiocontent();
-    message_.audiocontent_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  }
-  message_.audiocontent_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantMessage::_internal_mutable_audiocontent() {
-  if (!_internal_has_audiocontent()) {
-    clear_message();
-    set_has_audiocontent();
-    message_.audiocontent_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  }
-  return message_.audiocontent_.Mutable(
-      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantMessage::release_audiocontent() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessage.audioContent)
-  if (_internal_has_audiocontent()) {
-    clear_has_message();
-    return message_.audiocontent_.ReleaseNonDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-  } else {
-    return nullptr;
-  }
-}
-inline void AssistantMessage::set_allocated_audiocontent(std::string* audiocontent) {
-  if (has_message()) {
-    clear_message();
-  }
-  if (audiocontent != nullptr) {
-    set_has_audiocontent();
-    message_.audiocontent_.UnsafeSetDefault(audiocontent);
-    ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArenaForAllocation();
-    if (arena != nullptr) {
-      arena->Own(audiocontent);
-    }
-  }
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessage.audioContent)
-}
-
-inline bool AssistantMessage::has_message() const {
-  return message_case() != MESSAGE_NOT_SET;
-}
-inline void AssistantMessage::clear_has_message() {
-  _oneof_case_[0] = MESSAGE_NOT_SET;
-}
-inline AssistantMessage::MessageCase AssistantMessage::message_case() const {
-  return AssistantMessage::MessageCase(_oneof_case_[0]);
-}
-// -------------------------------------------------------------------
-
-// Intent
-
-// string name = 1;
-inline void Intent::clear_name() {
-  name_.ClearToEmpty();
-}
-inline const std::string& Intent::name() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.Intent.name)
-  return _internal_name();
+inline const std::string& ChatMessage::content() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.ChatMessage.content)
+  return _internal_content();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Intent::set_name(ArgT0&& arg0, ArgT... args) {
+void ChatMessage::set_content(ArgT0&& arg0, ArgT... args) {
  
- name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.Intent.name)
+ content_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.ChatMessage.content)
 }
-inline std::string* Intent::mutable_name() {
-  std::string* _s = _internal_mutable_name();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.Intent.name)
+inline std::string* ChatMessage::mutable_content() {
+  std::string* _s = _internal_mutable_content();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.ChatMessage.content)
   return _s;
 }
-inline const std::string& Intent::_internal_name() const {
-  return name_.Get();
+inline const std::string& ChatMessage::_internal_content() const {
+  return content_.Get();
 }
-inline void Intent::_internal_set_name(const std::string& value) {
+inline void ChatMessage::_internal_set_content(const std::string& value) {
   
-  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+  content_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* Intent::_internal_mutable_name() {
+inline std::string* ChatMessage::_internal_mutable_content() {
   
-  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+  return content_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* Intent::release_name() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.Intent.name)
-  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+inline std::string* ChatMessage::release_content() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.ChatMessage.content)
+  return content_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void Intent::set_allocated_name(std::string* name) {
-  if (name != nullptr) {
+inline void ChatMessage::set_allocated_content(std::string* content) {
+  if (content != nullptr) {
     
   } else {
     
   }
-  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+  content_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), content,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.Intent.name)
-}
-
-// double confidence = 2;
-inline void Intent::clear_confidence() {
-  confidence_ = 0;
-}
-inline double Intent::_internal_confidence() const {
-  return confidence_;
-}
-inline double Intent::confidence() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.Intent.confidence)
-  return _internal_confidence();
-}
-inline void Intent::_internal_set_confidence(double value) {
-  
-  confidence_ = value;
-}
-inline void Intent::set_confidence(double value) {
-  _internal_set_confidence(value);
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.Intent.confidence)
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.ChatMessage.content)
 }
 
 // -------------------------------------------------------------------
 
-// AssistantMessageResponse
+// TextChatRequest
 
-// string text = 1;
-inline void AssistantMessageResponse::clear_text() {
-  text_.ClearToEmpty();
-}
-inline const std::string& AssistantMessageResponse::text() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageResponse.text)
-  return _internal_text();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AssistantMessageResponse::set_text(ArgT0&& arg0, ArgT... args) {
- 
- text_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageResponse.text)
-}
-inline std::string* AssistantMessageResponse::mutable_text() {
-  std::string* _s = _internal_mutable_text();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageResponse.text)
-  return _s;
-}
-inline const std::string& AssistantMessageResponse::_internal_text() const {
-  return text_.Get();
-}
-inline void AssistantMessageResponse::_internal_set_text(const std::string& value) {
-  
-  text_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageResponse::_internal_mutable_text() {
-  
-  return text_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageResponse::release_text() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageResponse.text)
-  return text_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void AssistantMessageResponse::set_allocated_text(std::string* text) {
-  if (text != nullptr) {
-    
-  } else {
-    
-  }
-  text_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), text,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageResponse.text)
-}
-
-// bytes audioContent = 2;
-inline void AssistantMessageResponse::clear_audiocontent() {
-  audiocontent_.ClearToEmpty();
-}
-inline const std::string& AssistantMessageResponse::audiocontent() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageResponse.audioContent)
-  return _internal_audiocontent();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AssistantMessageResponse::set_audiocontent(ArgT0&& arg0, ArgT... args) {
- 
- audiocontent_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageResponse.audioContent)
-}
-inline std::string* AssistantMessageResponse::mutable_audiocontent() {
-  std::string* _s = _internal_mutable_audiocontent();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageResponse.audioContent)
-  return _s;
-}
-inline const std::string& AssistantMessageResponse::_internal_audiocontent() const {
-  return audiocontent_.Get();
-}
-inline void AssistantMessageResponse::_internal_set_audiocontent(const std::string& value) {
-  
-  audiocontent_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageResponse::_internal_mutable_audiocontent() {
-  
-  return audiocontent_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageResponse::release_audiocontent() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageResponse.audioContent)
-  return audiocontent_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void AssistantMessageResponse::set_allocated_audiocontent(std::string* audiocontent) {
-  if (audiocontent != nullptr) {
-    
-  } else {
-    
-  }
-  audiocontent_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), audiocontent,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageResponse.audioContent)
-}
-
-// .sensory.api.v1.assistant.Intent intent = 3;
-inline bool AssistantMessageResponse::_internal_has_intent() const {
-  return this != internal_default_instance() && intent_ != nullptr;
-}
-inline bool AssistantMessageResponse::has_intent() const {
-  return _internal_has_intent();
-}
-inline void AssistantMessageResponse::clear_intent() {
-  if (GetArenaForAllocation() == nullptr && intent_ != nullptr) {
-    delete intent_;
-  }
-  intent_ = nullptr;
-}
-inline const ::sensory::api::v1::assistant::Intent& AssistantMessageResponse::_internal_intent() const {
-  const ::sensory::api::v1::assistant::Intent* p = intent_;
-  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::assistant::Intent&>(
-      ::sensory::api::v1::assistant::_Intent_default_instance_);
-}
-inline const ::sensory::api::v1::assistant::Intent& AssistantMessageResponse::intent() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageResponse.intent)
-  return _internal_intent();
-}
-inline void AssistantMessageResponse::unsafe_arena_set_allocated_intent(
-    ::sensory::api::v1::assistant::Intent* intent) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(intent_);
-  }
-  intent_ = intent;
-  if (intent) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.assistant.AssistantMessageResponse.intent)
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::release_intent() {
-  
-  ::sensory::api::v1::assistant::Intent* temp = intent_;
-  intent_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::unsafe_arena_release_intent() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageResponse.intent)
-  
-  ::sensory::api::v1::assistant::Intent* temp = intent_;
-  intent_ = nullptr;
-  return temp;
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::_internal_mutable_intent() {
-  
-  if (intent_ == nullptr) {
-    auto* p = CreateMaybeMessage<::sensory::api::v1::assistant::Intent>(GetArenaForAllocation());
-    intent_ = p;
-  }
-  return intent_;
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::mutable_intent() {
-  ::sensory::api::v1::assistant::Intent* _msg = _internal_mutable_intent();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageResponse.intent)
-  return _msg;
-}
-inline void AssistantMessageResponse::set_allocated_intent(::sensory::api::v1::assistant::Intent* intent) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete intent_;
-  }
-  if (intent) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::assistant::Intent>::GetOwningArena(intent);
-    if (message_arena != submessage_arena) {
-      intent = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, intent, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  intent_ = intent;
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageResponse.intent)
-}
-
-// repeated .sensory.api.v1.assistant.Intent intents = 4;
-inline int AssistantMessageResponse::_internal_intents_size() const {
-  return intents_.size();
-}
-inline int AssistantMessageResponse::intents_size() const {
-  return _internal_intents_size();
-}
-inline void AssistantMessageResponse::clear_intents() {
-  intents_.Clear();
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::mutable_intents(int index) {
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageResponse.intents)
-  return intents_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::Intent >*
-AssistantMessageResponse::mutable_intents() {
-  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.assistant.AssistantMessageResponse.intents)
-  return &intents_;
-}
-inline const ::sensory::api::v1::assistant::Intent& AssistantMessageResponse::_internal_intents(int index) const {
-  return intents_.Get(index);
-}
-inline const ::sensory::api::v1::assistant::Intent& AssistantMessageResponse::intents(int index) const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageResponse.intents)
-  return _internal_intents(index);
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::_internal_add_intents() {
-  return intents_.Add();
-}
-inline ::sensory::api::v1::assistant::Intent* AssistantMessageResponse::add_intents() {
-  ::sensory::api::v1::assistant::Intent* _add = _internal_add_intents();
-  // @@protoc_insertion_point(field_add:sensory.api.v1.assistant.AssistantMessageResponse.intents)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::Intent >&
-AssistantMessageResponse::intents() const {
-  // @@protoc_insertion_point(field_list:sensory.api.v1.assistant.AssistantMessageResponse.intents)
-  return intents_;
-}
-
-// bool isAudioComplete = 5;
-inline void AssistantMessageResponse::clear_isaudiocomplete() {
-  isaudiocomplete_ = false;
-}
-inline bool AssistantMessageResponse::_internal_isaudiocomplete() const {
-  return isaudiocomplete_;
-}
-inline bool AssistantMessageResponse::isaudiocomplete() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageResponse.isAudioComplete)
-  return _internal_isaudiocomplete();
-}
-inline void AssistantMessageResponse::_internal_set_isaudiocomplete(bool value) {
-  
-  isaudiocomplete_ = value;
-}
-inline void AssistantMessageResponse::set_isaudiocomplete(bool value) {
-  _internal_set_isaudiocomplete(value);
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageResponse.isAudioComplete)
-}
-
-// .sensory.api.v1.assistant.AssistantPostProcessingActionResponse postProcessingAction = 10;
-inline bool AssistantMessageResponse::_internal_has_postprocessingaction() const {
-  return this != internal_default_instance() && postprocessingaction_ != nullptr;
-}
-inline bool AssistantMessageResponse::has_postprocessingaction() const {
-  return _internal_has_postprocessingaction();
-}
-inline void AssistantMessageResponse::clear_postprocessingaction() {
-  if (GetArenaForAllocation() == nullptr && postprocessingaction_ != nullptr) {
-    delete postprocessingaction_;
-  }
-  postprocessingaction_ = nullptr;
-}
-inline const ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse& AssistantMessageResponse::_internal_postprocessingaction() const {
-  const ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* p = postprocessingaction_;
-  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse&>(
-      ::sensory::api::v1::assistant::_AssistantPostProcessingActionResponse_default_instance_);
-}
-inline const ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse& AssistantMessageResponse::postprocessingaction() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageResponse.postProcessingAction)
-  return _internal_postprocessingaction();
-}
-inline void AssistantMessageResponse::unsafe_arena_set_allocated_postprocessingaction(
-    ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* postprocessingaction) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(postprocessingaction_);
-  }
-  postprocessingaction_ = postprocessingaction;
-  if (postprocessingaction) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.assistant.AssistantMessageResponse.postProcessingAction)
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* AssistantMessageResponse::release_postprocessingaction() {
-  
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* temp = postprocessingaction_;
-  postprocessingaction_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* AssistantMessageResponse::unsafe_arena_release_postprocessingaction() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageResponse.postProcessingAction)
-  
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* temp = postprocessingaction_;
-  postprocessingaction_ = nullptr;
-  return temp;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* AssistantMessageResponse::_internal_mutable_postprocessingaction() {
-  
-  if (postprocessingaction_ == nullptr) {
-    auto* p = CreateMaybeMessage<::sensory::api::v1::assistant::AssistantPostProcessingActionResponse>(GetArenaForAllocation());
-    postprocessingaction_ = p;
-  }
-  return postprocessingaction_;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* AssistantMessageResponse::mutable_postprocessingaction() {
-  ::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* _msg = _internal_mutable_postprocessingaction();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageResponse.postProcessingAction)
-  return _msg;
-}
-inline void AssistantMessageResponse::set_allocated_postprocessingaction(::sensory::api::v1::assistant::AssistantPostProcessingActionResponse* postprocessingaction) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete postprocessingaction_;
-  }
-  if (postprocessingaction) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::assistant::AssistantPostProcessingActionResponse>::GetOwningArena(postprocessingaction);
-    if (message_arena != submessage_arena) {
-      postprocessingaction = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, postprocessingaction, submessage_arena);
-    }
-    
-  } else {
-    
-  }
-  postprocessingaction_ = postprocessingaction;
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageResponse.postProcessingAction)
-}
-
-// -------------------------------------------------------------------
-
-// AssistantMessageConfig
-
-// string userId = 2 [(.validate.rules) = {
-inline void AssistantMessageConfig::clear_userid() {
-  userid_.ClearToEmpty();
-}
-inline const std::string& AssistantMessageConfig::userid() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageConfig.userId)
-  return _internal_userid();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AssistantMessageConfig::set_userid(ArgT0&& arg0, ArgT... args) {
- 
- userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageConfig.userId)
-}
-inline std::string* AssistantMessageConfig::mutable_userid() {
-  std::string* _s = _internal_mutable_userid();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageConfig.userId)
-  return _s;
-}
-inline const std::string& AssistantMessageConfig::_internal_userid() const {
-  return userid_.Get();
-}
-inline void AssistantMessageConfig::_internal_set_userid(const std::string& value) {
-  
-  userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageConfig::_internal_mutable_userid() {
-  
-  return userid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageConfig::release_userid() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageConfig.userId)
-  return userid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void AssistantMessageConfig::set_allocated_userid(std::string* userid) {
-  if (userid != nullptr) {
-    
-  } else {
-    
-  }
-  userid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), userid,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageConfig.userId)
-}
-
-// string deviceId = 3 [(.validate.rules) = {
-inline void AssistantMessageConfig::clear_deviceid() {
-  deviceid_.ClearToEmpty();
-}
-inline const std::string& AssistantMessageConfig::deviceid() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageConfig.deviceId)
-  return _internal_deviceid();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AssistantMessageConfig::set_deviceid(ArgT0&& arg0, ArgT... args) {
- 
- deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageConfig.deviceId)
-}
-inline std::string* AssistantMessageConfig::mutable_deviceid() {
-  std::string* _s = _internal_mutable_deviceid();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageConfig.deviceId)
-  return _s;
-}
-inline const std::string& AssistantMessageConfig::_internal_deviceid() const {
-  return deviceid_.Get();
-}
-inline void AssistantMessageConfig::_internal_set_deviceid(const std::string& value) {
-  
-  deviceid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageConfig::_internal_mutable_deviceid() {
-  
-  return deviceid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantMessageConfig::release_deviceid() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageConfig.deviceId)
-  return deviceid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void AssistantMessageConfig::set_allocated_deviceid(std::string* deviceid) {
-  if (deviceid != nullptr) {
-    
-  } else {
-    
-  }
-  deviceid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), deviceid,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageConfig.deviceId)
-}
-
-// string modelName = 4 [(.validate.rules) = {
-inline void AssistantMessageConfig::clear_modelname() {
+// string modelName = 1;
+inline void TextChatRequest::clear_modelname() {
   modelname_.ClearToEmpty();
 }
-inline const std::string& AssistantMessageConfig::modelname() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageConfig.modelName)
+inline const std::string& TextChatRequest::modelname() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.TextChatRequest.modelName)
   return _internal_modelname();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void AssistantMessageConfig::set_modelname(ArgT0&& arg0, ArgT... args) {
+void TextChatRequest::set_modelname(ArgT0&& arg0, ArgT... args) {
  
  modelname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageConfig.modelName)
+  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.TextChatRequest.modelName)
 }
-inline std::string* AssistantMessageConfig::mutable_modelname() {
+inline std::string* TextChatRequest::mutable_modelname() {
   std::string* _s = _internal_mutable_modelname();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantMessageConfig.modelName)
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.TextChatRequest.modelName)
   return _s;
 }
-inline const std::string& AssistantMessageConfig::_internal_modelname() const {
+inline const std::string& TextChatRequest::_internal_modelname() const {
   return modelname_.Get();
 }
-inline void AssistantMessageConfig::_internal_set_modelname(const std::string& value) {
+inline void TextChatRequest::_internal_set_modelname(const std::string& value) {
   
   modelname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* AssistantMessageConfig::_internal_mutable_modelname() {
+inline std::string* TextChatRequest::_internal_mutable_modelname() {
   
   return modelname_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* AssistantMessageConfig::release_modelname() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantMessageConfig.modelName)
+inline std::string* TextChatRequest::release_modelname() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.TextChatRequest.modelName)
   return modelname_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void AssistantMessageConfig::set_allocated_modelname(std::string* modelname) {
+inline void TextChatRequest::set_allocated_modelname(std::string* modelname) {
   if (modelname != nullptr) {
     
   } else {
@@ -2408,180 +711,146 @@ inline void AssistantMessageConfig::set_allocated_modelname(std::string* modelna
   }
   modelname_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), modelname,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantMessageConfig.modelName)
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.TextChatRequest.modelName)
 }
 
-// bool includeAudioResponse = 5;
-inline void AssistantMessageConfig::clear_includeaudioresponse() {
-  includeaudioresponse_ = false;
+// repeated .sensory.api.v1.assistant.ChatMessage messages = 2;
+inline int TextChatRequest::_internal_messages_size() const {
+  return messages_.size();
 }
-inline bool AssistantMessageConfig::_internal_includeaudioresponse() const {
-  return includeaudioresponse_;
+inline int TextChatRequest::messages_size() const {
+  return _internal_messages_size();
 }
-inline bool AssistantMessageConfig::includeaudioresponse() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantMessageConfig.includeAudioResponse)
-  return _internal_includeaudioresponse();
+inline void TextChatRequest::clear_messages() {
+  messages_.Clear();
 }
-inline void AssistantMessageConfig::_internal_set_includeaudioresponse(bool value) {
-  
-  includeaudioresponse_ = value;
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatRequest::mutable_messages(int index) {
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.TextChatRequest.messages)
+  return messages_.Mutable(index);
 }
-inline void AssistantMessageConfig::set_includeaudioresponse(bool value) {
-  _internal_set_includeaudioresponse(value);
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantMessageConfig.includeAudioResponse)
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::ChatMessage >*
+TextChatRequest::mutable_messages() {
+  // @@protoc_insertion_point(field_mutable_list:sensory.api.v1.assistant.TextChatRequest.messages)
+  return &messages_;
 }
-
-// -------------------------------------------------------------------
-
-// AssistantPostProcessingActionRequest
-
-// string actionId = 1;
-inline void AssistantPostProcessingActionRequest::clear_actionid() {
-  actionid_.ClearToEmpty();
+inline const ::sensory::api::v1::assistant::ChatMessage& TextChatRequest::_internal_messages(int index) const {
+  return messages_.Get(index);
 }
-inline const std::string& AssistantPostProcessingActionRequest::actionid() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.actionId)
-  return _internal_actionid();
+inline const ::sensory::api::v1::assistant::ChatMessage& TextChatRequest::messages(int index) const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.TextChatRequest.messages)
+  return _internal_messages(index);
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AssistantPostProcessingActionRequest::set_actionid(ArgT0&& arg0, ArgT... args) {
- 
- actionid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.actionId)
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatRequest::_internal_add_messages() {
+  return messages_.Add();
 }
-inline std::string* AssistantPostProcessingActionRequest::mutable_actionid() {
-  std::string* _s = _internal_mutable_actionid();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.actionId)
-  return _s;
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatRequest::add_messages() {
+  ::sensory::api::v1::assistant::ChatMessage* _add = _internal_add_messages();
+  // @@protoc_insertion_point(field_add:sensory.api.v1.assistant.TextChatRequest.messages)
+  return _add;
 }
-inline const std::string& AssistantPostProcessingActionRequest::_internal_actionid() const {
-  return actionid_.Get();
-}
-inline void AssistantPostProcessingActionRequest::_internal_set_actionid(const std::string& value) {
-  
-  actionid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantPostProcessingActionRequest::_internal_mutable_actionid() {
-  
-  return actionid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantPostProcessingActionRequest::release_actionid() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.actionId)
-  return actionid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void AssistantPostProcessingActionRequest::set_allocated_actionid(std::string* actionid) {
-  if (actionid != nullptr) {
-    
-  } else {
-    
-  }
-  actionid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), actionid,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.actionId)
-}
-
-// .sensory.api.v1.assistant.AssistantPostProcessingAction action = 2 [(.validate.rules) = {
-inline void AssistantPostProcessingActionRequest::clear_action() {
-  action_ = 0;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingAction AssistantPostProcessingActionRequest::_internal_action() const {
-  return static_cast< ::sensory::api::v1::assistant::AssistantPostProcessingAction >(action_);
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingAction AssistantPostProcessingActionRequest::action() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.action)
-  return _internal_action();
-}
-inline void AssistantPostProcessingActionRequest::_internal_set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value) {
-  
-  action_ = value;
-}
-inline void AssistantPostProcessingActionRequest::set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value) {
-  _internal_set_action(value);
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantPostProcessingActionRequest.action)
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensory::api::v1::assistant::ChatMessage >&
+TextChatRequest::messages() const {
+  // @@protoc_insertion_point(field_list:sensory.api.v1.assistant.TextChatRequest.messages)
+  return messages_;
 }
 
 // -------------------------------------------------------------------
 
-// AssistantPostProcessingActionResponse
+// TextChatResponse
 
-// string actionId = 1;
-inline void AssistantPostProcessingActionResponse::clear_actionid() {
-  actionid_.ClearToEmpty();
+// .sensory.api.v1.assistant.ChatMessage message = 1;
+inline bool TextChatResponse::_internal_has_message() const {
+  return this != internal_default_instance() && message_ != nullptr;
 }
-inline const std::string& AssistantPostProcessingActionResponse::actionid() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.actionId)
-  return _internal_actionid();
+inline bool TextChatResponse::has_message() const {
+  return _internal_has_message();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void AssistantPostProcessingActionResponse::set_actionid(ArgT0&& arg0, ArgT... args) {
- 
- actionid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.actionId)
+inline void TextChatResponse::clear_message() {
+  if (GetArenaForAllocation() == nullptr && message_ != nullptr) {
+    delete message_;
+  }
+  message_ = nullptr;
 }
-inline std::string* AssistantPostProcessingActionResponse::mutable_actionid() {
-  std::string* _s = _internal_mutable_actionid();
-  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.actionId)
-  return _s;
+inline const ::sensory::api::v1::assistant::ChatMessage& TextChatResponse::_internal_message() const {
+  const ::sensory::api::v1::assistant::ChatMessage* p = message_;
+  return p != nullptr ? *p : reinterpret_cast<const ::sensory::api::v1::assistant::ChatMessage&>(
+      ::sensory::api::v1::assistant::_ChatMessage_default_instance_);
 }
-inline const std::string& AssistantPostProcessingActionResponse::_internal_actionid() const {
-  return actionid_.Get();
+inline const ::sensory::api::v1::assistant::ChatMessage& TextChatResponse::message() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.TextChatResponse.message)
+  return _internal_message();
 }
-inline void AssistantPostProcessingActionResponse::_internal_set_actionid(const std::string& value) {
-  
-  actionid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
-}
-inline std::string* AssistantPostProcessingActionResponse::_internal_mutable_actionid() {
-  
-  return actionid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
-}
-inline std::string* AssistantPostProcessingActionResponse::release_actionid() {
-  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.actionId)
-  return actionid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
-}
-inline void AssistantPostProcessingActionResponse::set_allocated_actionid(std::string* actionid) {
-  if (actionid != nullptr) {
+inline void TextChatResponse::unsafe_arena_set_allocated_message(
+    ::sensory::api::v1::assistant::ChatMessage* message) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(message_);
+  }
+  message_ = message;
+  if (message) {
     
   } else {
     
   }
-  actionid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), actionid,
-      GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.actionId)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:sensory.api.v1.assistant.TextChatResponse.message)
 }
-
-// .sensory.api.v1.assistant.AssistantPostProcessingAction action = 2 [(.validate.rules) = {
-inline void AssistantPostProcessingActionResponse::clear_action() {
-  action_ = 0;
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingAction AssistantPostProcessingActionResponse::_internal_action() const {
-  return static_cast< ::sensory::api::v1::assistant::AssistantPostProcessingAction >(action_);
-}
-inline ::sensory::api::v1::assistant::AssistantPostProcessingAction AssistantPostProcessingActionResponse::action() const {
-  // @@protoc_insertion_point(field_get:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.action)
-  return _internal_action();
-}
-inline void AssistantPostProcessingActionResponse::_internal_set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value) {
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatResponse::release_message() {
   
-  action_ = value;
+  ::sensory::api::v1::assistant::ChatMessage* temp = message_;
+  message_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
 }
-inline void AssistantPostProcessingActionResponse::set_action(::sensory::api::v1::assistant::AssistantPostProcessingAction value) {
-  _internal_set_action(value);
-  // @@protoc_insertion_point(field_set:sensory.api.v1.assistant.AssistantPostProcessingActionResponse.action)
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatResponse::unsafe_arena_release_message() {
+  // @@protoc_insertion_point(field_release:sensory.api.v1.assistant.TextChatResponse.message)
+  
+  ::sensory::api::v1::assistant::ChatMessage* temp = message_;
+  message_ = nullptr;
+  return temp;
+}
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatResponse::_internal_mutable_message() {
+  
+  if (message_ == nullptr) {
+    auto* p = CreateMaybeMessage<::sensory::api::v1::assistant::ChatMessage>(GetArenaForAllocation());
+    message_ = p;
+  }
+  return message_;
+}
+inline ::sensory::api::v1::assistant::ChatMessage* TextChatResponse::mutable_message() {
+  ::sensory::api::v1::assistant::ChatMessage* _msg = _internal_mutable_message();
+  // @@protoc_insertion_point(field_mutable:sensory.api.v1.assistant.TextChatResponse.message)
+  return _msg;
+}
+inline void TextChatResponse::set_allocated_message(::sensory::api::v1::assistant::ChatMessage* message) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete message_;
+  }
+  if (message) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::sensory::api::v1::assistant::ChatMessage>::GetOwningArena(message);
+    if (message_arena != submessage_arena) {
+      message = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, message, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  message_ = message;
+  // @@protoc_insertion_point(field_set_allocated:sensory.api.v1.assistant.TextChatResponse.message)
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -2596,10 +865,10 @@ inline void AssistantPostProcessingActionResponse::set_action(::sensory::api::v1
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::sensory::api::v1::assistant::AssistantPostProcessingAction> : ::std::true_type {};
+template <> struct is_proto_enum< ::sensory::api::v1::assistant::ChatRole> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::v1::assistant::AssistantPostProcessingAction>() {
-  return ::sensory::api::v1::assistant::AssistantPostProcessingAction_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::sensory::api::v1::assistant::ChatRole>() {
+  return ::sensory::api::v1::assistant::ChatRole_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

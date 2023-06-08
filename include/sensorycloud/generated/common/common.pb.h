@@ -222,12 +222,13 @@ enum ModelType : int {
   OBJECT_RECOGNITION = 203,
   IMAGE_TRANSFORM = 204,
   FACE_EMBEDDING = 205,
+  LLM_GPT_3_5 = 301,
   ModelType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ModelType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ModelType_IsValid(int value);
 constexpr ModelType ModelType_MIN = UNKNOWN;
-constexpr ModelType ModelType_MAX = FACE_EMBEDDING;
+constexpr ModelType ModelType_MAX = LLM_GPT_3_5;
 constexpr int ModelType_ARRAYSIZE = ModelType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ModelType_descriptor();
@@ -251,12 +252,13 @@ enum TechnologyType : int {
   TNL = 3,
   STT = 4,
   TTS = 5,
+  SOUND_ID = 6,
   TechnologyType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   TechnologyType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool TechnologyType_IsValid(int value);
 constexpr TechnologyType TechnologyType_MIN = NOT_SET;
-constexpr TechnologyType TechnologyType_MAX = TTS;
+constexpr TechnologyType TechnologyType_MAX = SOUND_ID;
 constexpr int TechnologyType_ARRAYSIZE = TechnologyType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TechnologyType_descriptor();
@@ -334,12 +336,13 @@ enum UsageEventType : int {
   ENROLLMENT = 2,
   SYNTHESIS = 3,
   TRANSCRIPTION = 4,
+  LLM = 5,
   UsageEventType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   UsageEventType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool UsageEventType_IsValid(int value);
 constexpr UsageEventType UsageEventType_MIN = AUTHENTICATION;
-constexpr UsageEventType UsageEventType_MAX = TRANSCRIPTION;
+constexpr UsageEventType UsageEventType_MAX = LLM;
 constexpr int UsageEventType_ARRAYSIZE = UsageEventType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UsageEventType_descriptor();

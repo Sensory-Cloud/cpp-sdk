@@ -63,6 +63,9 @@ int main(int argc, const char** argv) {
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
         .help("The sensitivity threshold for detecting audio events.");
+    parser.add_argument({ "-tN", "--topN" })
+        .help("For metric models, determines the number of ranked classes to return in inference responses.")
+        .default_value(5);
     parser.add_argument({ "-L", "--language" })
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
@@ -89,6 +92,7 @@ int main(int argc, const char** argv) {
         THRESHOLD = ThresholdSensitivity::HIGH;
     else if (args.get<std::string>("threshold") == "HIGHEST")
         THRESHOLD = ThresholdSensitivity::HIGHEST;
+    const auto TOPN = args.get<uint32_t>("topN");
     const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
@@ -177,6 +181,8 @@ int main(int argc, const char** argv) {
     validate_event_config->set_modelname(MODEL);
     validate_event_config->set_userid(USER_ID);
     validate_event_config->set_sensitivity(THRESHOLD);
+    validate_event_config->set_topn(TOPN);
+
     // Initialize the stream with the cloud.
     grpc::ClientContext context;
     auto stream = cloud.audio.validate_event(&context, audio_config, validate_event_config);
@@ -235,17 +241,29 @@ int main(int argc, const char** argv) {
 
         // Log the result of the request to the terminal.
         if (VERBOSE) {
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = false;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string response_json;
+            google::protobuf::util::MessageToJsonString(response, &response_json, options);
+            std::cout << response_json << std::endl;
+        } else if (response.success()) {
+            std::cout << "Detected trigger \""
+                << response.resultid() << "\"" << std::endl;
+        } else if (response.topnresponse().size()) {
+            std::cout << "Top N results" << std::endl;
+            for (const auto& thing : response.topnresponse()) {
                 google::protobuf::util::JsonPrintOptions options;
                 options.add_whitespace = false;
                 options.always_print_primitive_fields = true;
                 options.always_print_enums_as_ints = false;
                 options.preserve_proto_field_names = true;
                 std::string response_json;
-                google::protobuf::util::MessageToJsonString(response, &response_json, options);
+                google::protobuf::util::MessageToJsonString(thing, &response_json, options);
                 std::cout << response_json << std::endl;
-        } else if (response.success()) {
-            std::cout << "Detected trigger \""
-                << response.resultid() << "\"" << std::endl;
+            }
         }
     }
 

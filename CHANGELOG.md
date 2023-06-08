@@ -1,5 +1,36 @@
 # Change Log
 
+## 1.2.0
+
+### Adds
+
+-   New assistant end-point integrated as `sensory::service::AssistantService`
+    -   `SensoryCloud` structure updated to instantiate the new service
+    -   New suite of example assistant applications in the
+        [examples/assistant](examples/assistant) directory
+
+
+### Changes
+
+-   Support added for `v1.2.0` of the SensoryCloud proto files
+    -   Proto files rendered down into new headers and source files
+-   Support added for Top-N sound ID using the event validation end-point in
+    `sensory::service::AudioService`
+    -   All audio event validation examples updated with a new `--topN`/`tN`
+        flag for providing the Top-N classes to be returned from the server
+-   Support added for wake-words in speech-to-text end-point in
+    `sensory::service::AudioService`
+    -   All transcription examples updated with support for wake-words
+    -   the `-Wm` or `--wake-word-model` flags are used to provide the model
+        name
+    -   the `-Ws` or `--wake-word-sensitivity` flags are used to provide the
+        sensitivity threshold for the model
+-   Support added for offline processing of speech-to-text responses
+    -   the `-off` or `--offline` flags can be used for offline processing of
+        STT for file examples
+-   Improved flow and readability of [README.md](README.md)
+-   Improved flow and readability of [TUTORIAL.md](TUTORIAL.md)
+
 ## 1.0.9
 
 ### Changes

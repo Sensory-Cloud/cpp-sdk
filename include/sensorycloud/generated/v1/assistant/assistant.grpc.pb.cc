@@ -25,7 +25,7 @@ namespace v1 {
 namespace assistant {
 
 static const char* AssistantService_method_names[] = {
-  "/sensory.api.v1.assistant.AssistantService/ProcessMessage",
+  "/sensory.api.v1.assistant.AssistantService/TextChat",
 };
 
 std::unique_ptr< AssistantService::Stub> AssistantService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -35,44 +35,52 @@ std::unique_ptr< AssistantService::Stub> AssistantService::NewStub(const std::sh
 }
 
 AssistantService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_ProcessMessage_(AssistantService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::BIDI_STREAMING, channel)
+  : channel_(channel), rpcmethod_TextChat_(AssistantService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
-::grpc::ClientReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* AssistantService::Stub::ProcessMessageRaw(::grpc::ClientContext* context) {
-  return ::grpc::internal::ClientReaderWriterFactory< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>::Create(channel_.get(), rpcmethod_ProcessMessage_, context);
+::grpc::Status AssistantService::Stub::TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::sensory::api::v1::assistant::TextChatResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_TextChat_, context, request, response);
 }
 
-void AssistantService::Stub::async::ProcessMessage(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::sensory::api::v1::assistant::AssistantMessageRequest,::sensory::api::v1::assistant::AssistantMessageResponse>* reactor) {
-  ::grpc::internal::ClientCallbackReaderWriterFactory< ::sensory::api::v1::assistant::AssistantMessageRequest,::sensory::api::v1::assistant::AssistantMessageResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_ProcessMessage_, context, reactor);
+void AssistantService::Stub::async::TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_TextChat_, context, request, response, std::move(f));
 }
 
-::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* AssistantService::Stub::AsyncProcessMessageRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>::Create(channel_.get(), cq, rpcmethod_ProcessMessage_, context, true, tag);
+void AssistantService::Stub::async::TextChat(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_TextChat_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncReaderWriter< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>* AssistantService::Stub::PrepareAsyncProcessMessageRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>::Create(channel_.get(), cq, rpcmethod_ProcessMessage_, context, false, nullptr);
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>* AssistantService::Stub::PrepareAsyncTextChatRaw(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::sensory::api::v1::assistant::TextChatResponse, ::sensory::api::v1::assistant::TextChatRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_TextChat_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::sensory::api::v1::assistant::TextChatResponse>* AssistantService::Stub::AsyncTextChatRaw(::grpc::ClientContext* context, const ::sensory::api::v1::assistant::TextChatRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncTextChatRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 AssistantService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       AssistantService_method_names[0],
-      ::grpc::internal::RpcMethod::BIDI_STREAMING,
-      new ::grpc::internal::BidiStreamingHandler< AssistantService::Service, ::sensory::api::v1::assistant::AssistantMessageRequest, ::sensory::api::v1::assistant::AssistantMessageResponse>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AssistantService::Service, ::sensory::api::v1::assistant::TextChatRequest, ::sensory::api::v1::assistant::TextChatResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](AssistantService::Service* service,
              ::grpc::ServerContext* ctx,
-             ::grpc::ServerReaderWriter<::sensory::api::v1::assistant::AssistantMessageResponse,
-             ::sensory::api::v1::assistant::AssistantMessageRequest>* stream) {
-               return service->ProcessMessage(ctx, stream);
+             const ::sensory::api::v1::assistant::TextChatRequest* req,
+             ::sensory::api::v1::assistant::TextChatResponse* resp) {
+               return service->TextChat(ctx, req, resp);
              }, this)));
 }
 
 AssistantService::Service::~Service() {
 }
 
-::grpc::Status AssistantService::Service::ProcessMessage(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::sensory::api::v1::assistant::AssistantMessageResponse, ::sensory::api::v1::assistant::AssistantMessageRequest>* stream) {
+::grpc::Status AssistantService::Service::TextChat(::grpc::ServerContext* context, const ::sensory::api::v1::assistant::TextChatRequest* request, ::sensory::api::v1::assistant::TextChatResponse* response) {
   (void) context;
-  (void) stream;
+  (void) request;
+  (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 

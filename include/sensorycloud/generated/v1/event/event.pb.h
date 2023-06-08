@@ -393,6 +393,7 @@ class UsageEvent final :
     kBillableFunctionFieldNumber = 12,
     kAudioDurationMsFieldNumber = 9,
     kVideoFrameCountFieldNumber = 10,
+    kTokenCountFieldNumber = 13,
   };
   // repeated .sensory.api.common.TechnologyType technologies = 7;
   int technologies_size() const;
@@ -554,6 +555,15 @@ class UsageEvent final :
   void _internal_set_videoframecount(::PROTOBUF_NAMESPACE_ID::int64 value);
   public:
 
+  // int64 tokenCount = 13;
+  void clear_tokencount();
+  ::PROTOBUF_NAMESPACE_ID::int64 tokencount() const;
+  void set_tokencount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::int64 _internal_tokencount() const;
+  void _internal_set_tokencount(::PROTOBUF_NAMESPACE_ID::int64 value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensory.api.v1.event.UsageEvent)
  private:
   class _Internal;
@@ -574,6 +584,7 @@ class UsageEvent final :
   int billablefunction_;
   ::PROTOBUF_NAMESPACE_ID::int64 audiodurationms_;
   ::PROTOBUF_NAMESPACE_ID::int64 videoframecount_;
+  ::PROTOBUF_NAMESPACE_ID::int64 tokencount_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_v1_2fevent_2fevent_2eproto;
 };
@@ -2544,6 +2555,26 @@ inline void UsageEvent::_internal_set_billablefunction(::sensory::api::common::M
 inline void UsageEvent::set_billablefunction(::sensory::api::common::ModelType value) {
   _internal_set_billablefunction(value);
   // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.billableFunction)
+}
+
+// int64 tokenCount = 13;
+inline void UsageEvent::clear_tokencount() {
+  tokencount_ = int64_t{0};
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UsageEvent::_internal_tokencount() const {
+  return tokencount_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 UsageEvent::tokencount() const {
+  // @@protoc_insertion_point(field_get:sensory.api.v1.event.UsageEvent.tokenCount)
+  return _internal_tokencount();
+}
+inline void UsageEvent::_internal_set_tokencount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  
+  tokencount_ = value;
+}
+inline void UsageEvent::set_tokencount(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _internal_set_tokencount(value);
+  // @@protoc_insertion_point(field_set:sensory.api.v1.event.UsageEvent.tokenCount)
 }
 
 // -------------------------------------------------------------------

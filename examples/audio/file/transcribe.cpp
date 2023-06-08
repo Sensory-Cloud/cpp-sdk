@@ -34,7 +34,6 @@
 
 using sensory::SensoryCloud;
 using sensory::token_manager::FileSystemCredentialStore;
-using sensory::service::AudioService;
 using sensory::util::TranscriptAggregator;
 using sensory::api::v1::audio::WordState;
 using sensory::api::v1::audio::ThresholdSensitivity;
@@ -72,11 +71,19 @@ int main(int argc, const char** argv) {
         .default_value("MEDIUM");
     parser.add_argument({ "-CVid", "--custom-vocabulary-id"})
         .help("An optional ID of a server-side custom vocabulary list to use.");
+    parser.add_argument({ "-Wm", "--wake-word-model"})
+        .help("A wake-word model to use for event-triggered transcription.");
+    parser.add_argument({ "-Ws", "--wake-word-sensitivity"})
+        .help("The sensitivity level for detecting wake-words.")
+        .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
+        .default_value("LOW");
     parser.add_argument({ "-L", "--language" }).required(true)
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default 4096).")
         .default_value(4096);
+    parser.add_argument({ "-off", "--offline"}).action("store_true")
+        .help("Process data offline instead of in a real-time stream.");
     parser.add_argument({ "-v", "--verbose" }).action("store_true")
         .help("Produce verbose output during transcription.");
     // Parse the arguments from the command line.
@@ -109,9 +116,20 @@ int main(int argc, const char** argv) {
     else if (args.get<std::string>("custom-vocabulary-sensitivity") == "HIGHEST")
         CUSTOM_VOCAB_SENSITIVITY = ThresholdSensitivity::HIGHEST;
     const auto CUSTOM_VOCAB_ID = args.get<std::string>("custom-vocabulary-id");
+    const auto WAKE_WORD_MODEL = args.get<std::string>("wake-word-model");
+    ThresholdSensitivity WAKE_WORD_SENSITIVITY;
+    if (args.get<std::string>("wake-word-sensitivity") == "LOW")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::LOW;
+    else if (args.get<std::string>("wake-word-sensitivity") == "MEDIUM")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::MEDIUM;
+    else if (args.get<std::string>("wake-word-sensitivity") == "HIGH")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::HIGH;
+    else if (args.get<std::string>("wake-word-sensitivity") == "HIGHEST")
+        WAKE_WORD_SENSITIVITY = ThresholdSensitivity::HIGHEST;
     const auto LANGUAGE = args.get<std::string>("language");
     auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
+    const auto OFFLINE = args.get<bool>("offline");
 
     // Create a credential store for keeping OAuth credentials in.
     FileSystemCredentialStore keychain(".", "com.sensory.cloud.examples");
@@ -190,6 +208,13 @@ int main(int argc, const char** argv) {
     }
     transcribe_config->set_customvocabrewardthreshold(CUSTOM_VOCAB_SENSITIVITY);
     transcribe_config->set_customvocabularyid(CUSTOM_VOCAB_ID);
+    if (!WAKE_WORD_MODEL.empty()) {
+        auto wake_word_config = new sensory::api::v1::audio::TranscribeEventConfig;
+        wake_word_config->set_modelname(WAKE_WORD_MODEL);
+        wake_word_config->set_sensitivity(WAKE_WORD_SENSITIVITY);
+        transcribe_config->set_allocated_wakewordconfig(wake_word_config);
+    }
+    transcribe_config->set_doofflinemode(OFFLINE);
 
     grpc::ClientContext context;
     auto stream = cloud.audio.transcribe(&context, audio_config, transcribe_config);
