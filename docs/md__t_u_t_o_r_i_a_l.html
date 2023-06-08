@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.9</span>
+                                &#160;<span id="projectnumber">1.2.1</span>
                             </div>
                         </td>
                     </tr>
@@ -75,23 +75,23 @@ $(function() {
   <div class="headertitle"><div class="title">Tutorial </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p >The tutorial provides an overview of the <a href="https://sensorycloud.ai/">SensoryCloud</a> C++ SDK. This tutorial will show you how to:</p>
+<div class="textblock"><p >The tutorial provides an overview of the SensoryCloud C++ SDK. This tutorial will show you how to:</p>
 <ul>
-<li>setup a C++ project and include the <a href="https://sensorycloud.ai/">SensoryCloud</a> C++ SDK in your build,</li>
-<li>implement secure credential storage and connect to your inference server,</li>
-<li>query the server's health, and</li>
-<li>navigate the <a href="https://sensorycloud.ai/">SensoryCloud</a> example projects.</li>
+<li>Setup a C++ project and include the SDK in your build,</li>
+<li>Implement secure credential storage and connect to your inference server,</li>
+<li>Query the server's health, and</li>
+<li>Navigate the example projects.</li>
 </ul>
 <p >Because this SDK is built on <a href="https://www.grpc.io/">gRPC</a>, you may benefit from referring to the <a href="https://www.grpc.io/docs/languages/cpp/basics/">gRPC Tutorial</a> and <a href="https://grpc.github.io/grpc/cpp/annotated.html">gRPC Documentation</a> to familiarize yourself with some of the gRPC structures and patterns that are used in this SDK and tutorial.</p>
 <h1>Project Setup</h1>
-<p >The recommended build system for projects based on this SDK is <a href="https://cmake.org/"><code>cmake</code></a>. To include the SDK in your project , the simplest solution is to add a <code>FetchContent</code> block to your <code>CMakeLists.txt</code>. This approach will compile and link the protobuff and gRPC dependencies locally. Below is an example of the boilerplate CMake syntax to include the SDK in your project.</p>
+<p >The recommended build system for projects based on this SDK is CMake. To include the SDK in your project , the simplest solution is to add a <code>FetchContent</code> block to your <code>CMakeLists.txt</code>. This approach will compile and link the protobuff and gRPC dependencies locally. Below is an example of the boilerplate CMake syntax to include the SDK in your project.</p>
 <div class="fragment"><div class="line">project(your-project-name)</div>
 <div class="line">cmake_minimum_required(VERSION 3.14)</div>
 <div class="line">set(CMAKE_CXX_STANDARD 11)</div>
 <div class="line"> </div>
 <div class="line">include(FetchContent)</div>
 <div class="line">FetchContent_Declare(sensorycloud</div>
-<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.9</div>
+<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.2.1</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(sensorycloud)</div>
 <div class="line"> </div>
@@ -136,7 +136,7 @@ $(function() {
 <p >To connect to your inference server using a hard-coded config, you will need to know:</p>
 <ol type="1">
 <li>the host-name or IP address that the service is running at,</li>
-<li>the specific port that the service is running at &ndash; typically <code>443</code>, &ndash;</li>
+<li>the specific port that the service is running at - typically <code>443</code>, -</li>
 <li>your tenant ID that uniquely identifies your tenant in SensoryCloud, and</li>
 <li>a way of uniquely identifying devices in your application.</li>
 </ol>
@@ -190,7 +190,7 @@ $(function() {
 <div class="line">    cloud(&quot;./config.ini&quot;, credential_store);</div>
 </div><!-- fragment --><p ><em>Note that our example code uses the INI construction interface.</em></p>
 <h1>Checking The Server Health</h1>
-<p >Once you have a connection to SensoryCloud instantiated, it's important to check the health of your <a href="https://sensorycloud.ai/">SensoryCloud</a> inference server. You can do so using the <code>HealthService</code> via the following:</p>
+<p >Once you have a connection to the server instantiated, it's important to check the health of your inference server. You can do so using the <code>HealthService</code> via the following:</p>
 <div class="fragment"><div class="line"> {c++}</div>
 <div class="line">// Create a response for the RPC.</div>
 <div class="line">sensory::api::common::ServerHealthResponse response;</div>

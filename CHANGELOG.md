@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.2.1
+
+### Fixes
+
+-   Test cases that no longer apply after changes in v1.0.9 have been corrected
+-   Generates missing documentation from 1.2.0 release
+
 ## 1.2.0
 
 ### Adds

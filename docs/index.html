@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.9</span>
+                                &#160;<span id="projectnumber">1.2.1</span>
                             </div>
                         </td>
                     </tr>
@@ -75,16 +75,18 @@ $(function() {
   <div class="headertitle"><div class="title">SensoryCloud C++ SDK </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p ><a class="anchor" id="md_README"></a> This repository contains the source code for the <a href="https://sensorycloud.ai/">SensoryCloud</a> C++ SDK.</p>
+<div class="textblock"><p ><a class="anchor" id="md_README"></a> Welcome to the SensoryCloud C++ SDK repository! This repository contains the source code and documentation for the SensoryCloud C++ SDK, which is designed to facilitate integration with the SensoryCloud platform for cloud inference.</p>
 <h1>General Information</h1>
-<p >Before getting started you must spin up a <a href="https://sensorycloud.ai/">SensoryCloud</a> inference server or have <a href="https://sensorycloud.ai/">SensoryCloud</a> spin one up for you. You must also have the following pieces of information:</p>
+<p >Before you start using the SensoryCloud C++ SDK, it's important to have a SensoryCloud inference server set up. If you're new to SensoryCloud, we offer a free trial server that allows you to test our cloud platform and determine its suitability for your product. To learn more about deploying an inference server with SensoryCloud, please visit the <a href="https://sensorycloud.ai/free-credits/">SensoryCloud website</a>.</p>
+<p >Once your server is up and running, you'll need the following information to effectively interact with it using this SDK:</p>
 <ul>
-<li>your inference server address and port number,</li>
-<li>your SensoryCloud tenant ID, and</li>
-<li>your configured secret key used for registering OAuth clients.</li>
+<li>The address and port number of your inference server,</li>
+<li>Your SensoryCloud tenant ID, and</li>
+<li>Your configured secret key used for registering OAuth clients.</li>
 </ul>
+<p >If you have any questions or need assistance with server setup or configuration, please don't hesitate to <a href="https://sensorycloud.ai/resources/contact-us/">contact our sales team</a>. We are here to help ensure a smooth and successful integration of SensoryCloud into your product.</p>
 <h1>Requirements</h1>
-<p >This project uses <a href="https://cmake.org/">CMake</a> as the primary build system and supports the <a href="https://gcc.gnu.org/">gcc</a>, <a href="https://clang.llvm.org/get_started.html">clang</a>, and <a href="https://visualstudio.microsoft.com/vs/features/cplusplus/">MSVC</a> compilers. To install the build tools, run the following installation command depending on your deployment target. The minimum requirements for installation of the SDK are:</p>
+<p >The SensoryCloud C++ SDK uses CMake as the primary build system and supports the gcc, clang, and MSVC compilers. To install the necessary build tools, please follow the instructions below based on your deployment target. The minimum requirements for installing the SDK are as follows:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadLeft">Dependency   </th><th class="markdownTableHeadLeft">Version    </th></tr>
@@ -98,30 +100,31 @@ $(function() {
 <td class="markdownTableBodyLeft"><a href="https://visualstudio.microsoft.com/vs/features/cplusplus/"><code>MSVC</code></a>   </td><td class="markdownTableBodyLeft">&gt;= 2015   </td></tr>
 </table>
 <h2>Debian / Ubuntu</h2>
-<p >To install the build tools for Debian-based Linux:</p>
+<p >To install the build tools on Debian-based Linux distributions, run the following command:</p>
 <div class="fragment"><div class="line">apt-get install -y build-essential autoconf libtool pkg-config cmake git</div>
 </div><!-- fragment --><h2>Fedora / RedHat / CentOS</h2>
-<p >To install the build tools for Fedora-based Linux:</p>
+<p >To install the build tools on Fedora-based Linux distributions, run the following command:</p>
 <div class="fragment"><div class="line">yum install -y autoconf libtool pkg-config gcc gcc-c++ cmake git</div>
 </div><!-- fragment --><h2>MacOS</h2>
-<p >To install the build tools for MacOS:</p>
+<p >To install the build tools on macOS, run the following commands:</p>
 <div class="fragment"><div class="line">xcode-select --install</div>
 <div class="line">brew install autoconf automake libtool shtool cmake git</div>
-</div><!-- fragment --><p >Because MacOS is not strictly POSIX compliant, you will need to provide gRPC with a hint of where your SSL certificates are stored to properly connect to a secure server. This can typically be accomplished by exporting the following environment variable:</p>
+</div><!-- fragment --><p >Since macOS is not strictly POSIX compliant, you need to provide gRPC with a hint of where your SSL certificates are stored to establish a secure connection to a server. You can typically accomplish this by exporting the following environment variable:</p>
 <div class="fragment"><div class="line">export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/cert.pem</div>
 </div><!-- fragment --><h1>Integration</h1>
 <p >To include the SensoryCloud C++ SDK in your project, add the following snippet to your <code>CMakeLists.txt</code>.</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>
 <div class="line">FetchContent_Declare(sensorycloud</div>
-<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.0.9</div>
+<div class="line">    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.2.1</div>
 <div class="line">)</div>
 <div class="line">FetchContent_MakeAvailable(sensorycloud)</div>
-</div><!-- fragment --><p >This will clone and compile <code>libsensorycloud</code> locally to be used in applications or other libraries using:</p>
+</div><!-- fragment --><p >This code will clone and compile the libsensorycloud library locally, allowing you to use it in your applications or other libraries. To link the library with your program, use the following command:</p>
 <div class="fragment"><div class="line">target_link_libraries(your_program PRIVATE sensorycloud)</div>
 </div><!-- fragment --><h2>Tutorial &amp; Examples</h2>
-<p >Please refer to <a class="el" href="md__t_u_t_o_r_i_a_l.html">TUTORIAL.md</a> for a brief tutorial of the SDK. Example code for each available service and programming model are available in the [examples](examples) directory. These act both as a point of reference and as a starting point for the integration of SensoryCloud with your application.</p>
+<p >To get started with the SensoryCloud C++ SDK, we recommend checking out the <a class="el" href="md__t_u_t_o_r_i_a_l.html">TUTORIAL.md</a> document, which provides a brief tutorial on how to use the SDK. Additionally, you can find example code for each available service and programming model in the [examples](examples) directory. These examples serve as both a reference and a starting point for integrating SensoryCloud with your own applications.</p>
 <h1>Contributing</h1>
-<p >The <a class="el" href="md__c_o_n_t_r_i_b_u_t_i_n_g.html">CONTRIBUTING.md</a> document describes how to setup the development environment for the SDK, compile the code outside of the context of an application, run unit tests, and release new versions of the SDK. Please refer to the <a class="el" href="md__c_h_a_n_g_e_l_o_g.html">CHANGELOG.md</a> for the latest features and bug fixes. </p>
+<p >If you're interested in contributing to the SensoryCloud C++ SDK, please refer to the <a class="el" href="md__c_o_n_t_r_i_b_u_t_i_n_g.html">CONTRIBUTING.md</a> document. It contains information on setting up the development environment, compiling the code outside of an application context, running unit tests, and releasing new versions of the SDK. For details on the latest features and bug fixes, please consult the <a class="el" href="md__c_h_a_n_g_e_l_o_g.html">CHANGELOG.md</a> file.</p>
+<p >We appreciate your contributions and feedback! </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.18-->
