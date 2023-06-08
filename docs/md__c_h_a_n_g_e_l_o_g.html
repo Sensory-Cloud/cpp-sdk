@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.0.9</span>
+                                &#160;<span id="projectnumber">1.2.1</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,45 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>1.0.9</h1>
+<div class="textblock"><h1>1.2.1</h1>
+<h2>Fixes</h2>
+<ul>
+<li>Test cases that no longer apply after changes in v1.0.9 have been corrected</li>
+<li>Generates missing documentation from 1.2.0 release</li>
+</ul>
+<h1>1.2.0</h1>
+<h2>Adds</h2>
+<ul>
+<li>New assistant end-point integrated as <code><a class="el" href="classsensory_1_1service_1_1_assistant_service.html" title="A service for assistance.">sensory::service::AssistantService</a></code><ul>
+<li><code>SensoryCloud</code> structure updated to instantiate the new service</li>
+<li>New suite of example assistant applications in the <a href="examples/assistant">examples/assistant</a> directory</li>
+</ul>
+</li>
+</ul>
+<h2>Changes</h2>
+<ul>
+<li>Support added for <code>v1.2.0</code> of the SensoryCloud proto files<ul>
+<li>Proto files rendered down into new headers and source files</li>
+</ul>
+</li>
+<li>Support added for Top-N sound ID using the event validation end-point in <code><a class="el" href="classsensory_1_1service_1_1_audio_service.html" title="A service for audio data.">sensory::service::AudioService</a></code><ul>
+<li>All audio event validation examples updated with a new <code>--topN</code>/<code>tN</code> flag for providing the Top-N classes to be returned from the server</li>
+</ul>
+</li>
+<li>Support added for wake-words in speech-to-text end-point in <code><a class="el" href="classsensory_1_1service_1_1_audio_service.html" title="A service for audio data.">sensory::service::AudioService</a></code><ul>
+<li>All transcription examples updated with support for wake-words</li>
+<li>the <code>-Wm</code> or <code>--wake-word-model</code> flags are used to provide the model name</li>
+<li>the <code>-Ws</code> or <code>--wake-word-sensitivity</code> flags are used to provide the sensitivity threshold for the model</li>
+</ul>
+</li>
+<li>Support added for offline processing of speech-to-text responses<ul>
+<li>the <code>-off</code> or <code>--offline</code> flags can be used for offline processing of STT for file examples</li>
+</ul>
+</li>
+<li>Improved flow and readability of <a class="el" href="index.html#md_README">README.md</a></li>
+<li>Improved flow and readability of <a class="el" href="md__t_u_t_o_r_i_a_l.html">TUTORIAL.md</a></li>
+</ul>
+<h1>1.0.9</h1>
 <h2>Changes</h2>
 <ul>
 <li>Fix small typos in <a class="el" href="md__t_u_t_o_r_i_a_l.html">TUTORIAL.md</a></li>

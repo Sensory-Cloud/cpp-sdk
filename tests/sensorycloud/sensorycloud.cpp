@@ -147,22 +147,11 @@ SCENARIO("a user attempts to create a new SensoryCloud instance with a broken IN
     GIVEN("a path to a valid INI file that has an [SDK-Configuration] section with no `tenantID`") {
         TemporaryFile file;
         if (!file.is_open()) FAIL("Failed to create temporary file for test");
-        file.write("[SDK-Configuration]\ndeviceID=c359e48b-5c95-4b20-8051-75bfaa6bb485");
+        file.write("[SDK-Configuration]\nfullyQualifiedDomainName=10.10.28.51:50050");
         InMemoryCredentialStore keychain;
         WHEN("a new instance of SensoryCloud is instantiated") {
             THEN("a runtime error is thrown") {
                 REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(file.file, keychain), Catch::Contains("Failed to find key \"tenantID\" in section [SDK-configuration]"));
-            }
-        }
-    }
-    GIVEN("a path to a valid INI file that has an [SDK-Configuration] section with no `deviceID`") {
-        TemporaryFile file;
-        if (!file.is_open()) FAIL("Failed to create temporary file for test");
-        file.write("[SDK-Configuration]\ntenantID=c359e48b-5c95-4b20-8051-75bfaa6bb485");
-        InMemoryCredentialStore keychain;
-        WHEN("a new instance of SensoryCloud is instantiated") {
-            THEN("a runtime error is thrown") {
-                REQUIRE_THROWS_WITH(SensoryCloud<InMemoryCredentialStore>(file.file, keychain), Catch::Contains("Failed to find key \"deviceID\" in section [SDK-configuration]"));
             }
         }
     }
