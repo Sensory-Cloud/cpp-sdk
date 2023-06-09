@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.2.1</span>
+                                &#160;<span id="projectnumber">1.2.2</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,25 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>1.2.1</h1>
+<div class="textblock"><h1>1.2.2</h1>
+<h2>Changes</h2>
+<ul>
+<li>Updates the command line interface of voice biometric examples from files to yield more interpret-able outputs and be easier to script with. This change affects the following files:</li>
+</ul>
+<h4><a href="examples/audio/file/enroll.cpp">examples/audio/file/enroll.cpp</a></h4>
+<p >Success cases will now look like:</p>
+<div class="fragment"><div class="line">100%|████████████████████████████████████████| 390/390 [00:01&lt;00:00, 264.728it/s] enrollment success</div>
+<div class="line">enrollment ID: ad9ff64a-6a6a-4841-8447-b1f35e96aa4a</div>
+</div><!-- fragment --><p >Failure cases will now look like:</p>
+<div class="fragment"><div class="line">100%|████████████████████████████████████████| 43/43 [00:00&lt;00:00, 126.547it/s] enrollment progress: 50%</div>
+<div class="line">stream broke with (10): Client aborted the connection before enrollment was complete</div>
+</div><!-- fragment --><h4><a href="examples/audio/file/authenticate.cpp">examples/audio/file/authenticate.cpp</a></h4>
+<p >Success cases will now look like:</p>
+<div class="fragment"><div class="line">100%|████████████████████████████████████████| 390/390 [00:00&lt;00:00, 3455.49it/s] authentication success</div>
+</div><!-- fragment --><p >Failure cases will now look like:</p>
+<div class="fragment"><div class="line">100%|████████████████████████████████████████| 43/43 [00:00&lt;00:00, 133.188it/s] authentication failure</div>
+<div class="line">stream broke with (11): Client upload has exceeded the allowed duration</div>
+</div><!-- fragment --><h1>1.2.1</h1>
 <h2>Fixes</h2>
 <ul>
 <li>Test cases that no longer apply after changes in v1.0.9 have been corrected</li>

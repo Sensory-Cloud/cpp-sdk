@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <regex>
+#include <atomic>
 #include <sensorycloud/sensorycloud.hpp>
 #include <sensorycloud/token_manager/file_system_credential_store.hpp>
 #include <sndfile.h>
@@ -230,12 +231,22 @@ int main(int argc, const char** argv) {
     grpc::ClientContext context;
     auto stream = cloud.audio.authenticate(&context, audio_config, authenticate_config);
 
+    // If the chunk size is zero, disable chunking by setting the chunk size
+    // to be equal to the number of samples.
+    if (CHUNK_SIZE <= 0) CHUNK_SIZE = sfinfo.frames;
+
+    auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);
+    tqdm progress(num_chunks);
+    int16_t samples[CHUNK_SIZE];
+    std::atomic<bool> is_authenticated(false);
+
     // Create a background thread for handling the transcription responses.
-    std::thread receipt_thread([&stream, &VERBOSE](){
+    std::thread receipt_thread([&](){
         while (true) {
             // Read a message and break out of the loop when the read fails.
             sensory::api::v1::audio::AuthenticateResponse response;
             if (!stream->Read(&response)) break;
+            is_authenticated = response.success();
             // Log the result of the request to the terminal.
             if (VERBOSE) {  // Verbose output, dump the message to the terminal
                 google::protobuf::util::JsonPrintOptions options;
@@ -247,56 +258,31 @@ int main(int argc, const char** argv) {
                 google::protobuf::util::MessageToJsonString(response, &response_json, options);
                 std::cout << response_json << std::endl;
             } else {  // Friendly output, use a progress bar and display the prompt
-                std::vector<std::string> progress{
-                    "[          ] 0%   ",
-                    "[*         ] 10%  ",
-                    "[**        ] 20%  ",
-                    "[***       ] 30%  ",
-                    "[****      ] 40%  ",
-                    "[*****     ] 50%  ",
-                    "[******    ] 60%  ",
-                    "[*******   ] 70%  ",
-                    "[********  ] 80%  ",
-                    "[********* ] 90%  ",
-                    "[**********] 100% "
-                };
-                auto prompt = response.modelprompt().length() > 0 ?
-                    "Prompt: \"" + response.modelprompt() + "\"" :
-                    "Text-independent model, say anything";
-                std::cout << '\r'
-                    << progress[int(response.percentsegmentcomplete() / 10.f)]
-                    << prompt << std::flush;
+                progress.set_postfix("authentication progress: " + std::to_string(response.percentsegmentcomplete()) + "%");
             }
-            // Check for successful authentication
-            if (response.success())  // Authentication succeeded, stop reading.
-                if (VERBOSE) std::cout << std::endl << "successful authentication";
         }
     });
 
-    // If the chunk size is zero, disable chunking by setting the chunk size
-    // to be equal to the number of samples.
-    if (CHUNK_SIZE <= 0) CHUNK_SIZE = sfinfo.frames;
-
-    auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);
-    tqdm progress(num_chunks);
-    int16_t samples[CHUNK_SIZE];
     int num_frames;
     for (int i = 0; i < num_chunks; i++) {
         auto num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE);
         sensory::api::v1::audio::AuthenticateRequest request;
         request.set_audiocontent((uint8_t*) samples, sizeof(int16_t) * num_frames);
         if (!stream->Write(request)) break;
-        progress();
+        if (!VERBOSE) progress();
     }
     stream->WritesDone();
     sf_close(infile);
     receipt_thread.join();
     if (!TOKEN_FILE.empty()) free(buffer);
+    // Finish the progress bar according to the authentication status
+    progress.set_postfix(is_authenticated ? "authentication success" : "authentication failure");
+    if (!VERBOSE) progress.complete();
 
     // Close the stream and check the status code in case the stream broke.
     status = stream->Finish();
     if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "stream broke ("
+        std::cout << "stream broke with ("
             << status.error_code() << "): "
             << status.error_message() << std::endl;
         return 1;

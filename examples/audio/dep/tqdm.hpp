@@ -102,6 +102,9 @@ class tqdm {
     /// the progress bars to use (i.e., the theme for the bar)
     std::vector<std::string> bars;
 
+    /// A post-fixed message to append to the progress bar.
+    std::string postfix = "";
+
     /// whether the progress bar is running in an instance of `screen`
     bool in_screen = system("test $STY") == 0;
     /// whether the progress bar is running in an interactive shell
@@ -189,8 +192,9 @@ class tqdm {
         // update the iteration counter
         n += dn;
         // check if the terminal supports interactive output and whether this
-        // call to update is in the next period and should output to console
-        if (!is_tty || (n % period != 0)) return;
+        // call to update is in the next period and should output to console.
+        // If n is equal to the total ignore the period and finish the bar.
+        if (n != total && (!is_tty || (n % period != 0))) return;
         // measure the average and determine the total difference in time
         auto dt_tot = measure();
         // learn the period value to prevent overhead from the bar
@@ -214,7 +218,7 @@ class tqdm {
 
         // remove last bar (carriage return) and print the percent complete
         // and the start of the bar
-        std::cout << "\r" << percent_complete << "%|";
+        std::cout << "\33[2K\r" << percent_complete << "%|";
         // print complete pieces
         for (int i = 0; i < pieces_filled; i++)
             std::cout << bars[8];
@@ -233,10 +237,23 @@ class tqdm {
             average << unit << "/s" <<
             "]";
 
+        // If a postfix is provided, add it to the progress
+        if (!postfix.empty()) std::cout << " " << postfix;
         // print a new line if complete
         if (is_complete) std::cout << std::endl;
         // flush cout
         if (total - n > period) std::cout << std::flush;
+    }
+
+    /// @brief Set the post-fix to a new value.
+    /// @param postfix The post fix message to show on the progress bar.
+    inline void set_postfix(const std::string& postfix) {
+        this->postfix = postfix;
+    }
+
+    /// @brief Jump the status bar to the completion point.
+    inline void complete() {
+        update(total - n);
     }
 };
 
