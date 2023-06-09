@@ -1,5 +1,43 @@
 # Change Log
 
+## 1.2.2
+
+### Changes
+
+-   Updates the command line interface of voice biometric examples from files
+    to yield more interpret-able outputs and be easier to script with. This
+    change affects the following files:
+
+##### [examples/audio/file/enroll.cpp](examples/audio/file/enroll.cpp)
+Success cases will now look like:
+
+```shell
+100%|████████████████████████████████████████| 390/390 [00:01<00:00, 264.728it/s] enrollment success
+enrollment ID: ad9ff64a-6a6a-4841-8447-b1f35e96aa4a
+```
+
+Failure cases will now look like:
+
+```shell
+100%|████████████████████████████████████████| 43/43 [00:00<00:00, 126.547it/s] enrollment progress: 50%
+stream broke with (10): Client aborted the connection before enrollment was complete
+```
+
+##### [examples/audio/file/authenticate.cpp](examples/audio/file/authenticate.cpp)
+
+Success cases will now look like:
+
+```shell
+100%|████████████████████████████████████████| 390/390 [00:00<00:00, 3455.49it/s] authentication success
+```
+
+Failure cases will now look like:
+
+```shell
+100%|████████████████████████████████████████| 43/43 [00:00<00:00, 133.188it/s] authentication failure
+stream broke with (11): Client upload has exceeded the allowed duration
+```
+
 ## 1.2.1
 
 ### Fixes

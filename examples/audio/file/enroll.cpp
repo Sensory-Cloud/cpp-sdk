@@ -199,6 +199,15 @@ int main(int argc, const char** argv) {
     grpc::ClientContext context;
     auto stream = cloud.audio.create_enrollment(&context, audio_config, create_enrollment_config);
 
+    // If the chunk size is zero, disable chunking by setting the chunk size
+    // to be equal to the number of samples.
+    if (CHUNK_SIZE <= 0) CHUNK_SIZE = sfinfo.frames;
+
+    auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);
+    tqdm progress(num_chunks);
+    int16_t samples[CHUNK_SIZE];
+    std::string enrollment_id = "";
+
     // Create a background thread for handling the transcription responses.
     std::thread receipt_thread([&](){
         while (true) {
@@ -215,31 +224,10 @@ int main(int argc, const char** argv) {
                 google::protobuf::util::MessageToJsonString(response, &response_json, options);
                 std::cout << response_json << std::endl;
             } else {  // Friendly output, use a progress bar and display the prompt
-                std::vector<std::string> progress{
-                    "[          ] 0%   ",
-                    "[*         ] 10%  ",
-                    "[**        ] 20%  ",
-                    "[***       ] 30%  ",
-                    "[****      ] 40%  ",
-                    "[*****     ] 50%  ",
-                    "[******    ] 60%  ",
-                    "[*******   ] 70%  ",
-                    "[********  ] 80%  ",
-                    "[********* ] 90%  ",
-                    "[**********] 100% "
-                };
-                auto prompt = response.modelprompt().length() > 0 ?
-                    "Prompt: \"" + response.modelprompt() + "\"" :
-                    "Text-independent model, say anything";
-                std::cout << '\r'
-                    << progress[int(response.percentcomplete() / 10.f)]
-                    << prompt << std::flush;
+                progress.set_postfix("enrollment progress: " + std::to_string(response.percentcomplete()) + "%");
             }
-            // Check for enrollment success
-            if (response.percentcomplete() >= 100) {
-                std::cout << std::endl;
-                std::cout << "enrolled with ID: "
-                    << response.enrollmentid() << std::endl;
+            if (response.percentcomplete() >= 100) {  // Check for enrollment success
+                enrollment_id = response.enrollmentid();
                 if (!OUTPUT_FILE.empty()) {  // Enrollment stored on the local file-system
                     std::ofstream file(OUTPUT_FILE, std::ios::out | std::ios::binary);
                     file << response.enrollmenttoken().token();
@@ -251,29 +239,28 @@ int main(int argc, const char** argv) {
         }
     });
 
-    // If the chunk size is zero, disable chunking by setting the chunk size
-    // to be equal to the number of samples.
-    if (CHUNK_SIZE <= 0) CHUNK_SIZE = sfinfo.frames;
-
-    auto num_chunks = sfinfo.frames / CHUNK_SIZE + (bool)(sfinfo.frames % CHUNK_SIZE);
-    tqdm progress(num_chunks);
-    int16_t samples[CHUNK_SIZE];
     int num_frames;
     for (int i = 0; i < num_chunks; i++) {
         auto num_frames = sf_read_short(infile, &samples[0], CHUNK_SIZE);
         sensory::api::v1::audio::CreateEnrollmentRequest request;
         request.set_audiocontent((uint8_t*) samples, sizeof(int16_t) * num_frames);
         if (!stream->Write(request)) break;
-        progress();
+        if (!VERBOSE) progress();
     }
     stream->WritesDone();
     sf_close(infile);
     receipt_thread.join();
+    // Finish the progress bar according to the authentication status
+    progress.set_postfix(enrollment_id.empty() ? "enrollment failure" : "enrollment success");
+    if (!VERBOSE) progress.complete();
+
+    if (!enrollment_id.empty())
+        std::cout << "enrollment ID: " + enrollment_id << std::endl;
 
     // Close the stream and check the status code in case the stream broke.
     status = stream->Finish();
     if (!status.ok()) {  // The call failed, print a descriptive message.
-        std::cout << "stream broke ("
+        std::cout << "stream broke with ("
             << status.error_code() << "): "
             << status.error_message() << std::endl;
         return 1;
