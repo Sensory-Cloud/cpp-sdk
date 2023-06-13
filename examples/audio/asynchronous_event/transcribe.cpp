@@ -187,7 +187,7 @@ int main(int argc, const char** argv) {
                 // Iterate over the models returned in the response
                 for (auto& model : call->getResponse().models()) {
                     // Ignore models that aren't face biometric models.
-                    if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_COMMAND_AND_SEARCH)
+                    if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_GRAMMAR)
                         continue;
                     google::protobuf::util::JsonPrintOptions options;
                     options.add_whitespace = true;

@@ -184,7 +184,7 @@ int main(int argc, const char** argv) {
             return 1;
         }
         for (auto& model : audioModelsResponse.models()) {
-            if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_COMMAND_AND_SEARCH)
+            if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_GRAMMAR)
                 continue;
             google::protobuf::util::JsonPrintOptions options;
             options.add_whitespace = true;

@@ -45,13 +45,16 @@ int main(int argc, const char** argv) {
         .description("A tool for streaming audio files to SensoryCloud for audio transcription.");
     parser.add_argument({ "path" })
         .help("The path to an INI file containing server metadata.");
-    parser.add_argument({ "-i", "--input" }).required(true)
+    parser.add_argument({ "-g", "--getmodels" })
+        .action("store_true")
+        .help("Whether to query for a list of available models.");
+    parser.add_argument({ "-i", "--input" })
         .help("The input audio file to stream to SensoryCloud.");
     parser.add_argument({ "-o", "--output" })
         .help("The output file to write the transcription to.");
-    parser.add_argument({ "-m", "--model" }).required(true)
+    parser.add_argument({ "-m", "--model" })
         .help("The name of the transcription model to use.");
-    parser.add_argument({ "-u", "--userid" }).required(true)
+    parser.add_argument({ "-u", "--userid" })
         .help("The name of the user ID for the transcription.");
     parser.add_argument({ "-cp", "--capitalization-punctuation"}).action("store_true")
         .help("Enable capitalization and punctuation.");
@@ -77,7 +80,7 @@ int main(int argc, const char** argv) {
         .help("The sensitivity level for detecting wake-words.")
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("LOW");
-    parser.add_argument({ "-L", "--language" }).required(true)
+    parser.add_argument({ "-L", "--language" })
         .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default 4096).")
@@ -89,6 +92,7 @@ int main(int argc, const char** argv) {
     // Parse the arguments from the command line.
     const auto args = parser.parse_args();
     const auto PATH = args.get<std::string>("path");
+    const auto GETMODELS = args.get<bool>("getmodels");
     const auto INPUT_FILE = args.get<std::string>("input");
     const auto OUTPUT_FILE = args.get<std::string>("output");
     const auto MODEL = args.get<std::string>("model");
@@ -161,6 +165,31 @@ int main(int argc, const char** argv) {
     if (!status.ok()) {  // the call failed, print a descriptive message
         std::cout << "Failed to initialize (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
+    }
+
+    // Query the available models
+    if (GETMODELS) {
+        sensory::api::v1::audio::GetModelsResponse audioModelsResponse;
+        status = cloud.audio.get_models(&audioModelsResponse);
+        if (!status.ok()) {  // the call failed, print a descriptive message
+            std::cout << "Failed to get audio models ("
+                << status.error_code() << "): "
+                << status.error_message() << std::endl;
+            return 1;
+        }
+        for (auto& model : audioModelsResponse.models()) {
+            if (model.modeltype() != sensory::api::common::VOICE_TRANSCRIBE_GRAMMAR)
+                continue;
+            google::protobuf::util::JsonPrintOptions options;
+            options.add_whitespace = true;
+            options.always_print_primitive_fields = true;
+            options.always_print_enums_as_ints = false;
+            options.preserve_proto_field_names = true;
+            std::string model_json;
+            google::protobuf::util::MessageToJsonString(model, &model_json, options);
+            std::cout << model_json << std::endl;
+        }
+        return 0;
     }
 
     // Try to load the audio file.
