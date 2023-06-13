@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.2.3
+
+### Changes
+
+-   Update the speech-to-text examples to query the correct set of models
+-   Update the speech-to-text from file example with ability to query models
+
 ## 1.2.2
 
 ### Changes
