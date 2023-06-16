@@ -38,18 +38,16 @@ int main(int argc, const char** argv) {
         .description("A tool for synthesizing speech from phrases using SensoryCloud.");
     parser.add_argument({ "path" })
         .help("The path to an INI file containing server metadata.");
-    parser.add_argument({ "-o", "--output" })
-        .help("The output path to write the audio samples to.")
-        .default_value("speech.wav");
     parser.add_argument({ "-g", "--getmodels" })
         .action("store_true")
         .help("Whether to query for a list of available models.");
-    parser.add_argument({ "-L", "--language" })
-        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
-    parser.add_argument({ "-V", "--voice" })
+    parser.add_argument({ "-m", "--model" })
         .help("The name of the voice to use.");
     parser.add_argument({ "-p", "--phrase" })
         .help("The phrase to synthesize into speech.");
+    parser.add_argument({ "-o", "--output" })
+        .help("The output path to write the audio samples to.")
+        .default_value("speech.wav");
     parser.add_argument({ "-fs", "--sample_rate" })
         .help("The sample rate of the audio to generate (default 22050.)")
         .default_value(22050);
@@ -60,8 +58,7 @@ int main(int argc, const char** argv) {
     const auto PATH = args.get<std::string>("path");
     const auto OUTPUT = args.get<std::string>("output");
     const auto GETMODELS = args.get<bool>("getmodels");
-    const auto LANGUAGE = args.get<std::string>("language");
-    const auto VOICE = args.get<std::string>("voice");
+    const auto MODEL = args.get<std::string>("model");
     const auto PHRASE = args.get<std::string>("phrase");
     const auto SAMPLE_RATE = args.get<uint32_t>("sample_rate");
     const auto VERBOSE = args.get<bool>("verbose");
@@ -123,7 +120,7 @@ int main(int argc, const char** argv) {
 
     // Initialize the stream with the cloud.
     grpc::ClientContext context;
-    auto stream = cloud.audio.synthesize_speech(&context, VOICE, SAMPLE_RATE, PHRASE);
+    auto stream = cloud.audio.synthesize_speech(&context, MODEL, SAMPLE_RATE, PHRASE);
 
     // Open a binary file-stream to write the audio contents to.
     std::ofstream file(OUTPUT, std::ios::out | std::ios::binary);

@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.2.4
+
+### Changes
+
+-   Example documentation updated with more verbose language
+    -   all CLIs thoroughly documented including all optional arguments
+
+### Fixes
+
+-   Assistant API updated to yield error messages when requests fail
+    -   This addresses issues where large synthesis operations would result
+        in null output from the terminal (due to an uncaught non-fatal error)
+
 ## 1.2.3
 
 ### Changes

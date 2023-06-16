@@ -174,6 +174,7 @@ int main(int argc, const char** argv) {
     std::atomic<bool> did_find_face(false), is_live(false), is_authenticated(false);
     std::atomic<float> xmin(0), ymin(0), xmax(0), ymax(0);
     std::atomic<float> score(0);
+    std::string user_id;
     // An OpenCV matrix containing the frame data from the camera.
     cv::Mat frame;
     // A mutual exclusion for locking access to the frame between foreground
@@ -256,6 +257,7 @@ int main(int argc, const char** argv) {
                 xmax = stream->getResponse().boundingbox()[2];
                 ymax = stream->getResponse().boundingbox()[3];
                 is_authenticated = stream->getResponse().success();
+                if (is_authenticated) user_id = stream->getResponse().userid();
                 score = stream->getResponse().score();
                 is_live = stream->getResponse().isalive();
                 if (VERBOSE) {
@@ -330,14 +332,14 @@ int main(int argc, const char** argv) {
     event_thread.join();
 
     if (!stream->getStatus().ok()) {
-        std::cout << "Failed to authenticate ("
+        std::cout << "authentication stream failed with ("
             << stream->getStatus().error_code() << "): "
             << stream->getStatus().error_message() << std::endl;
         return 1;
     } else if (is_authenticated) {
-        std::cout << "Successfully authenticated!" << std::endl;
+        std::cout << "authenticated user: " << user_id << std::endl;
     } else {
-        std::cout << "Failed to authenticate!" << std::endl;
+        std::cout << "failed to authenticate!" << std::endl;
     }
 
     delete stream;

@@ -1,10 +1,10 @@
 # SensoryCloud Management Services
 
-This project implements [SensoryCloud][sensory-cloud] management tools.
+This project provides a demonstration of SensoryCloud management tools.
 
 ## Compilation
 
-To compile the tools in this project:
+To compile the applications in this project, follow these steps:
 
 ```shell
 mkdir -p build
@@ -15,13 +15,26 @@ make
 
 ## Usage
 
-Before getting started you must spin up a [SensoryCloud][sensory-cloud]
-inference server or have [SensoryCloud][sensory-cloud] spin one up for you. You
-must also have the following pieces of information:
+Before you start using this example project, it's important to have a
+SensoryCloud inference server set up. If you're new to SensoryCloud, we offer
+a free trial server that allows you to test our cloud platform and determine
+its suitability for your product. To learn more about deploying an inference
+server with SensoryCloud, please visit the [SensoryCloud website][trial].
 
--   your inference server address and port number,
--   your SensoryCloud tenant ID, and
--   your configured secret key used for registering OAuth clients.
+Once your server is up and running, you'll need the following information to
+effectively interact with it using this SDK:
+
+-   The address and port number of your inference server,
+-   Your SensoryCloud tenant ID, and
+-   Your configured secret key used for registering OAuth clients.
+
+If you have any questions or need assistance with server setup or
+configuration, please don't hesitate to [contact our sales team][sales]. We
+are here to help ensure a smooth and successful integration of SensoryCloud
+into your product.
+
+[trial]: https://sensorycloud.ai/free-credits/
+[sales]: https://sensorycloud.ai/resources/contact-us/
 
 ### Get server health
 

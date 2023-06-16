@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.2.3</span>
+                                &#160;<span id="projectnumber">1.2.4</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,22 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>1.2.3</h1>
+<div class="textblock"><h1>1.2.4</h1>
+<h2>Changes</h2>
+<ul>
+<li>Example documentation updated with more verbose language<ul>
+<li>all CLIs thoroughly documented including all optional arguments</li>
+</ul>
+</li>
+</ul>
+<h2>Fixes</h2>
+<ul>
+<li>Assistant API updated to yield error messages when requests fail<ul>
+<li>This addresses issues where large synthesis operations would result in null output from the terminal (due to an uncaught non-fatal error)</li>
+</ul>
+</li>
+</ul>
+<h1>1.2.3</h1>
 <h2>Changes</h2>
 <ul>
 <li>Update the speech-to-text examples to query the correct set of models</li>
