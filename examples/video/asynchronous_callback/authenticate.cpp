@@ -77,6 +77,8 @@ class FaceAuthenticationReactor :
     std::atomic<float> score;
     /// A flag determining whether the last sent frame was detected as live.
     std::atomic<bool> is_live;
+    /// The ID of the user that was authenticated
+    std::string user_id;
 
  public:
     /// @brief Initialize a reactor for streaming video from an OpenCV stream.
@@ -101,6 +103,9 @@ class FaceAuthenticationReactor :
 
     /// @brief Return true if the user successfully authenticated
     inline bool get_is_authenticated() const { return is_authenticated; }
+
+    /// @brief Return the ID of the user that was authenticated (if any.)
+    inline std::string get_user_id() const { return user_id; }
 
     /// @brief React to a _write done_ event.
     ///
@@ -144,6 +149,7 @@ class FaceAuthenticationReactor :
         xmax = response.boundingbox()[2];
         ymax = response.boundingbox()[3];
         is_authenticated = response.success();
+        if (is_authenticated) user_id = response.userid();
         score = response.score();
         is_live = response.isalive();
         // Log information about the response to the terminal.
@@ -365,14 +371,14 @@ int main(int argc, const char** argv) {
     status = reactor.stream_video(capture, LIVENESS);
 
     if (!status.ok()) {
-        std::cout << "Failed to authenticate ("
+        std::cout << "authentication stream failed with ("
             << status.error_code() << "): "
             << status.error_message() << std::endl;
         return 1;
     } else if (reactor.get_is_authenticated()) {
-        std::cout << "Successfully authenticated!" << std::endl;
+        std::cout << "authenticated user: " << reactor.get_user_id() << std::endl;
     } else {
-        std::cout << "Failed to authenticate!" << std::endl;
+        std::cout << "failed to authenticate!" << std::endl;
     }
     return 0;
 }
