@@ -138,7 +138,7 @@ enable a custom vocabulary, the follow command may be utilized:
     -m <model name> \
     -u <user ID> \
     -L <language code> \
-    -CV <custom vocab words>
+    -CV <custom vocab words> \
     -CVs MEDIUM
 ```
 
