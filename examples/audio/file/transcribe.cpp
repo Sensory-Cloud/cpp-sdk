@@ -80,8 +80,6 @@ int main(int argc, const char** argv) {
         .help("The sensitivity level for detecting wake-words.")
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("LOW");
-    parser.add_argument({ "-L", "--language" })
-        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default 4096).")
         .default_value(4096);
@@ -130,7 +128,6 @@ int main(int argc, const char** argv) {
         WAKE_WORD_SENSITIVITY = ThresholdSensitivity::HIGH;
     else if (args.get<std::string>("wake-word-sensitivity") == "HIGHEST")
         WAKE_WORD_SENSITIVITY = ThresholdSensitivity::HIGHEST;
-    const auto LANGUAGE = args.get<std::string>("language");
     auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
     const auto OFFLINE = args.get<bool>("offline");
@@ -220,7 +217,7 @@ int main(int argc, const char** argv) {
     audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
     audio_config->set_sampleratehertz(sfinfo.samplerate);
     audio_config->set_audiochannelcount(sfinfo.channels);
-    audio_config->set_languagecode(LANGUAGE);
+    audio_config->set_languagecode("en");
     // Create the config with the transcription parameters.
     auto transcribe_config = new sensory::api::v1::audio::TranscribeConfig;
     transcribe_config->set_modelname(MODEL);

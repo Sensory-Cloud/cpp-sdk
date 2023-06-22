@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.2.5
+
+### Changes
+
+-   Documentation for text-to-speech updated to remove erroneous `-u`/`--user`
+    flag. The text-to-speech endpoint does not currently require a user ID
+    input parameter
+-   speech-to-text examples updated to remove the language code input
+    parameter. This parameter is planned for deprecation and is currently
+    unused.
+-   audio event validation examples updated to remove the language code input
+    parameter. This parameter is planned for deprecation and is currently
+    unused.
+
 ## 1.2.4
 
 ### Changes

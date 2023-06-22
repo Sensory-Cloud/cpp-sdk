@@ -58,8 +58,6 @@ int main(int argc, const char** argv) {
     parser.add_argument({ "-g", "--group" })
         .action("store_true")
         .help("A flag determining whether the enrollment ID is for an enrollment group.");
-    parser.add_argument({ "-L", "--language" })
-        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-C", "--chunksize" })
         .help("The number of audio samples per message; 0 to stream all samples in one message (default).")
         .default_value(4096);
@@ -82,7 +80,6 @@ int main(int argc, const char** argv) {
     else if (args.get<std::string>("sensitivity") == "HIGHEST")
         SENSITIVITY = ThresholdSensitivity::HIGHEST;
     const auto GROUP = args.get<bool>("group");
-    const auto LANGUAGE = args.get<std::string>("language");
     auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
 
@@ -171,7 +168,7 @@ int main(int argc, const char** argv) {
     audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
     audio_config->set_sampleratehertz(sfinfo.samplerate);
     audio_config->set_audiochannelcount(sfinfo.channels);
-    audio_config->set_languagecode(LANGUAGE);
+    audio_config->set_languagecode("en");
     // Create the config with the enrolled event validation parameters.
     auto validate_enrolled_event_config = new ::sensory::api::v1::audio::ValidateEnrolledEventConfig;
     if (GROUP)

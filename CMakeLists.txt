@@ -19,7 +19,7 @@
 
 # Version 3.14 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.14)
-project(sensory-cloud-cpp-sdk VERSION 1.2.4)
+project(sensory-cloud-cpp-sdk VERSION 1.2.5)
 
 # Include the common files for finding/compiling Protobuf and gRPC.
 include(cmake/common.cmake)

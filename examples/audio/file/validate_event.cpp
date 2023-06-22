@@ -57,8 +57,6 @@ int main(int argc, const char** argv) {
         .choices({"LOW", "MEDIUM", "HIGH", "HIGHEST"})
         .default_value("HIGH")
         .help("The sensitivity threshold for detecting audio events.");
-    parser.add_argument({ "-L", "--language" })
-        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     parser.add_argument({ "-tN", "--topN" })
         .help("For metric models, determines the number of ranked classes to return in inference responses.")
         .default_value(5);
@@ -84,7 +82,6 @@ int main(int argc, const char** argv) {
     else if (args.get<std::string>("threshold") == "HIGHEST")
         THRESHOLD = ThresholdSensitivity::HIGHEST;
     const auto TOPN = args.get<uint32_t>("topN");
-    const auto LANGUAGE = args.get<std::string>("language");
     auto CHUNK_SIZE = args.get<int>("chunksize");
     const auto VERBOSE = args.get<bool>("verbose");
 
@@ -148,7 +145,7 @@ int main(int argc, const char** argv) {
     audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
     audio_config->set_sampleratehertz(sfinfo.samplerate);
     audio_config->set_audiochannelcount(sfinfo.channels);
-    audio_config->set_languagecode(LANGUAGE);
+    audio_config->set_languagecode("en");
     // Create the config with the event validation parameters.
     auto validate_event_config = new sensory::api::v1::audio::ValidateEventConfig;
     validate_event_config->set_modelname(MODEL);
