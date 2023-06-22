@@ -90,21 +90,16 @@ Once you have identified a model to perform transcription with, the follow
 command can be executed to initiate a real-time transcription feed from the
 default audio input device on your machine.
 
-
 ```shell
 ./transcribe <path to config.ini file> \
     -m <model name> \
-    -u <user ID> \
-    -L <language code>
+    -u <user ID>
 ```
 
 -   `<path to config.ini file>` is a path to your SensoryCloud config file.
 -   `<model name>` describes the model to transcribe the speech with.
 -   `<user ID>` describes the unique ID for the user that is initiating the
     transcription.
--   The `-L` flag describes the localization of the input audio as an
-    [IETF BCP 47](https://www.ietf.org/rfc/bcp/bcp47.html) language
-    (e.g., en-US for U.S. English)
 
 #### Capitalization and Punctuation
 
@@ -120,7 +115,6 @@ in the emission of fully punctuated and capitalized text where appropriate.
 ./transcribe <path to config.ini file> \
     -m <model name> \
     -u <user ID> \
-    -L <language code> \
     -cp
 ```
 
@@ -137,7 +131,6 @@ enable a custom vocabulary, the follow command may be utilized:
 ./transcribe <path to config.ini file> \
     -m <model name> \
     -u <user ID> \
-    -L <language code> \
     -CV <custom vocab words> \
     -CVs MEDIUM
 ```
@@ -170,7 +163,6 @@ initiate a transcription stream that is triggered by a wake-word.
 ./transcribe <path to config.ini file> \
     -m <model name> \
     -u <user ID> \
-    -L <language code> \
     -Wm <wake-word model> \
     -Ws LOW
 ```
@@ -200,7 +192,6 @@ To enable single utterance mode, the following command can be executed:
 ./transcribe <path to config.ini file> \
     -m <model name> \
     -u <user ID> \
-    -L <language code> \
     -S -Vs LOW -Vd 1
 ```
 
@@ -243,7 +234,6 @@ command may be executed to synthesize audio to a WAV file.
 ```shell
 ./synthesize_speech <path to config.ini file> \
     -m <model name> \
-    -u <user ID> \
     -p "Hello, World!" \
     -o speech.wav \
     -fs 22050
@@ -251,8 +241,6 @@ command may be executed to synthesize audio to a WAV file.
 
 -   `<path to config.ini file>` is a path to your SensoryCloud config file.
 -   `<model name>` describes the model to synthesize the speech with.
--   `<user ID>` describes the unique ID for the user that is initiating the
-    synthesis.
 -   the `-p` flag provides the phrase to transcribe, `Hello, World!` in this
     case.
 -   the `-o` flag controls the output file that is generated. This value will
@@ -290,17 +278,13 @@ default audio input device on your machine.
 ```shell
 ./validate_event <path to config.ini file> \
     -m <model name> \
-    -u <user ID> \
-    -L <language code>
+    -u <user ID>
 ```
 
 -   `<path to config.ini file>` is a path to your SensoryCloud config file.
 -   `<model name>` describes the model to transcribe the speech with.
 -   `<user ID>` describes the unique ID for the user that is initiating the
     transcription.
--   The `-L` flag describes the localization of the input audio as an
-    [IETF BCP 47](https://www.ietf.org/rfc/bcp/bcp47.html) language
-    (e.g., en-US for U.S. English)
 
 #### Event Enrollment
 
@@ -316,8 +300,7 @@ microphone input using the following:
     -m <model name> \
     -n <num occurrences> \
     -d "A description of the event enrollment" \
-    -u <user ID> \
-    -L <language code>
+    -u <user ID>
 ```
 
 -   `<path to config.ini file>` is a path to your SensoryCloud config file.
@@ -330,9 +313,6 @@ microphone input using the following:
     will be used.
 -   The `-d` flag allows one to provide an optional description of the
     enrollment.
--   The `-L` flag describes the localization of the input audio as an
-    [IETF BCP 47](https://www.ietf.org/rfc/bcp/bcp47.html) language
-    (e.g., en-US for U.S. English)
 
 #### Enrolled Event Validation
 
@@ -500,7 +480,6 @@ of executing an transcription from a WAV file:
 ./transcribe_file <path to config.ini file> \
     -m <model name> \
     -u <user ID> \
-    -L <language code> \
     -i <path to audio file>
 ```
 

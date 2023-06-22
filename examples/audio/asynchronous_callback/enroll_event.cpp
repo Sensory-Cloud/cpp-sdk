@@ -196,8 +196,6 @@ int main(int argc, const char** argv) {
         .help("The duration of a text-dependent enrollment.");
     parser.add_argument({ "-r", "--reference-id" })
         .help("An optional reference ID for tagging the enrollment.");
-    parser.add_argument({ "-L", "--language" })
-        .help("The IETF BCP 47 language tag for the input audio (e.g., en-US).");
     // parser.add_argument({ "-C", "--chunksize" })
     //     .help("The number of audio samples per message (default 4096).")
     //     .default_value("4096");
@@ -218,7 +216,6 @@ int main(int argc, const char** argv) {
     const auto NUM_UTTERANCES = args.get<uint32_t>("numutterances");
     const auto DURATION = args.get<float>("duration");
     const auto REFERENCE_ID = args.get<std::string>("reference-id");
-    const auto LANGUAGE = args.get<std::string>("language");
     const uint32_t CHUNK_SIZE = 4096;//args.get<int>("chunksize");
     const auto SAMPLE_RATE = 16000;//args.get<uint32_t>("samplerate");
     const auto VERBOSE = args.get<bool>("verbose");
@@ -334,7 +331,7 @@ int main(int argc, const char** argv) {
     audio_config->set_encoding(sensory::api::v1::audio::AudioConfig_AudioEncoding_LINEAR16);
     audio_config->set_sampleratehertz(SAMPLE_RATE);
     audio_config->set_audiochannelcount(NUM_CHANNELS);
-    audio_config->set_languagecode(LANGUAGE);
+    audio_config->set_languagecode("en");
     // Create the config with the event enrollment parameters.
     auto create_enrollment_event_config = new ::sensory::api::v1::audio::CreateEnrollmentEventConfig;
     create_enrollment_event_config->set_modelname(MODEL);
