@@ -1,4 +1,4 @@
-// The SensoryCloud C++ SDK management service demo (synchronous interface).
+// The SensoryCloud C++ SDK Management service demo (synchronous interface).
 //
 // Copyright (c) 2023 Sensory, Inc.
 //
@@ -36,7 +36,7 @@ using sensory::service::ManagementService;
 
 /// @brief Get the enrollments for the given user.
 ///
-/// @param service The management service for getting enrollments.
+/// @param service The management service to interact with.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int get_enrollments(
@@ -87,7 +87,7 @@ int delete_enrollment(
 
 /// @brief Get the enrollment groups for the given user.
 ///
-/// @param service The management service for getting enrollments.
+/// @param service The management service to interact with.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int get_enrollment_groups(
@@ -119,13 +119,15 @@ int get_enrollment_groups(
 
 /// @brief Create a new enrollment group.
 ///
-/// @param service The management service for getting enrollments.
+/// @param service The management service to interact with.
 /// @param userID The user ID of the user that owns the enrollment group.
 /// @param groupdID The optional group ID to create the group with (an empty
 /// string to generate the UUID on the server).
 /// @param name The name of the group to create.
 /// @param description A text description of the enrollment group.
 /// @param model The name of the model associated with the enrollment group.
+/// @param enrollmentIDs The IDs to create the enrollment group with. This
+/// value may be an empty list to create an empty enrollment group.
 /// @returns 0 if the call succeeds, 1 otherwise.
 ///
 int create_enrollment_group(
@@ -144,13 +146,35 @@ int create_enrollment_group(
         std::cout << "Failed to create enrollment group (" << status.error_code() << "): " << status.error_message() << std::endl;
         return 1;
     }
-    std::cout << "Created group with ID " << groupID << std::endl;
+    std::cout << "Created group with ID " << rsp.id() << std::endl;
+    return 0;
+}
+
+/// @brief Update an existing enrollment group.
+///
+/// @param service The management service to interact with.
+/// @param groupdID The ID of the enrollment group to update
+/// @param groupName The new name for the group.
+/// @returns 0 if the call succeeds, 1 otherwise.
+///
+int update_enrollment_group(
+    ManagementService<FileSystemCredentialStore>& service,
+    const std::string& groupID,
+    const std::string& groupName
+) {
+    sensory::api::v1::management::EnrollmentGroupResponse rsp;
+    auto status = service.update_enrollment_group(&rsp, groupID, groupName);
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Failed to update enrollment group (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
+    }
+    std::cout << "Updated group with ID " << groupID << " to have name " << groupName << std::endl;
     return 0;
 }
 
 /// @brief Append enrollment IDs to an existing enrollment group.
 ///
-/// @param service The management service for getting enrollments.
+/// @param service The management service to interact with.
 /// @param groupID the UUID of the group to append enrollments to
 /// @param enrollments the list of enrollments to append to the group
 /// @returns 0 if the call succeeds, 1 otherwise.
@@ -168,6 +192,48 @@ int append_enrollment_group(
     }
     return 0;
 }
+
+/// @brief Remove enrollments from an existing enrollment group.
+///
+/// @param service The management service to interact with.
+/// @param groupID the UUID of the group to remove enrollments from
+/// @param enrollments the list of enrollments to remove from the group
+/// @returns 0 if the call succeeds, 1 otherwise.
+///
+int remove_enrollments_from_group(
+    ManagementService<FileSystemCredentialStore>& service,
+    const std::string& groupID,
+    const std::vector<std::string>& enrollments
+) {
+    sensory::api::v1::management::EnrollmentGroupResponse rsp;
+    auto status = service.remove_enrollments_from_group(&rsp, groupID, enrollments);
+    if (!status.ok()) {  // The call failed, print a descriptive message.
+        std::cout << "Failed to remove enrollments from group (" << status.error_code() << "): " << status.error_message() << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+// /// @brief Remove enrollment IDs from an existing enrollment group.
+// ///
+// /// @param service The management service to interact with.
+// /// @param groupID the UUID of the group to remove enrollments from
+// /// @param enrollments the list of enrollments to remove from the group
+// /// @returns 0 if the call succeeds, 1 otherwise.
+// ///
+// int remove_enrollments_from_group(
+//     ManagementService<FileSystemCredentialStore>& service,
+//     const std::string& groupID,
+//     const std::vector<std::string>& enrollments
+// ) {
+//     sensory::api::v1::management::EnrollmentGroupResponse rsp;
+//     auto status = service.remove_enrollments_from_group(&rsp, groupID, enrollments);
+//     if (!status.ok()) {  // The call failed, print a descriptive message.
+//         std::cout << "Failed to remove enrollments from group (" << status.error_code() << "): " << status.error_message() << std::endl;
+//         return 1;
+//     }
+//     return 0;
+// }
 
 /// @brief Delete the enrollment group with the given ID.
 ///
@@ -203,6 +269,8 @@ int main(int argc, const char** argv) {
             "get_enrollment_groups",
             "create_enrollment_group",
             "append_enrollment_group",
+            "update_enrollment_group",
+            "remove_enrollments_from_group",
             "delete_enrollment_group"
         }).help("The management endpoint to use.");
     parser.add_argument({ "-u", "--userid" })
@@ -267,10 +335,20 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    if      (ENDPOINT == "get_enrollments")        return get_enrollments(cloud.management, USER_ID);
-    else if (ENDPOINT == "delete_enrollment")      return delete_enrollment(cloud.management, ENROLLMENT_ID);
-    else if (ENDPOINT == "get_enrollment_groups")   return get_enrollment_groups(cloud.management, USER_ID);
-    else if (ENDPOINT == "create_enrollment_group") return create_enrollment_group(cloud.management, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, {});
-    else if (ENDPOINT == "append_enrollment_group") return append_enrollment_group(cloud.management, ENROLLMENT_ID, ENROLLMENT_IDS);
-    else if (ENDPOINT == "delete_enrollment_group") return delete_enrollment_group(cloud.management, ENROLLMENT_ID);
+    if      (ENDPOINT == "get_enrollments")
+        return get_enrollments(cloud.management, USER_ID);
+    else if (ENDPOINT == "delete_enrollment")
+        return delete_enrollment(cloud.management, ENROLLMENT_ID);
+    else if (ENDPOINT == "get_enrollment_groups")
+        return get_enrollment_groups(cloud.management, USER_ID);
+    else if (ENDPOINT == "create_enrollment_group")
+        return create_enrollment_group(cloud.management, USER_ID, ENROLLMENT_ID, NAME, DESCRIPTION, MODEL, ENROLLMENT_IDS);
+    else if (ENDPOINT == "append_enrollment_group")
+        return append_enrollment_group(cloud.management, ENROLLMENT_ID, ENROLLMENT_IDS);
+    else if (ENDPOINT == "update_enrollment_group")
+        return update_enrollment_group(cloud.management, ENROLLMENT_ID, NAME);
+    else if (ENDPOINT == "remove_enrollments_from_group")
+        return remove_enrollments_from_group(cloud.management, ENROLLMENT_ID, ENROLLMENT_IDS);
+    else if (ENDPOINT == "delete_enrollment_group")
+        return delete_enrollment_group(cloud.management, ENROLLMENT_ID);
 }

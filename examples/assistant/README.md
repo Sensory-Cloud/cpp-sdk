@@ -1,6 +1,7 @@
 # SensoryCloud Assistant Services
 
-This project provides a demonstration of SensoryCloud assistant services.
+This project provides a demonstration of the SensoryCloud LLM-based assistant
+service.
 
 ## Compilation
 
@@ -38,16 +39,24 @@ into your product.
 
 ### Text Chat
 
+<!--
 To fetch assistant models:
 
 ```shell
 ./assistant <path to config.ini file> -g
 ```
+-->
 
 To start an interactive chat session:
 
+<!--
 ```shell
 ./assistant <path to config.ini file> -m <model name>
+```
+-->
+
+```shell
+./assistant <path to config.ini file>
 ```
 
 This will start an interactive shell similar to a Python interpreter. Simply

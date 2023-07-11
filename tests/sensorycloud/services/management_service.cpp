@@ -49,6 +49,8 @@ using ::sensory::api::v1::management::EnrollmentResponse;
 using ::sensory::api::v1::management::GetEnrollmentGroupsResponse;
 using ::sensory::api::v1::management::GetEnrollmentsRequest;
 using ::sensory::api::v1::management::GetEnrollmentsResponse;
+using ::sensory::api::v1::management::RemoveEnrollmentsRequest;
+using ::sensory::api::v1::management::UpdateEnrollmentGroupRequest;
 
 using testing::_;
 
@@ -195,6 +197,30 @@ SCENARIO("A client requires a synchronous interface to the management service") 
             }
         }
 
+        // ----- UpdateEnrollmentGroup -----------------------------------------
+
+        WHEN("UpdateEnrollmentGroup is called") {
+            EXPECT_CALL(*stub, UpdateEnrollmentGroup(_, _, _))
+                .Times(1)
+                .WillOnce([] (ClientContext*, const UpdateEnrollmentGroupRequest& request, EnrollmentGroupResponse *response) {
+                    REQUIRE(request.id() == "foo group");
+                    REQUIRE(request.name() == "foo name");
+                    response->set_id("response group");
+                    response->set_description("response description");
+                    return Status::OK;
+                }
+            );
+            EnrollmentGroupResponse response;
+            auto status = service.update_enrollment_group(&response, "foo group", "foo name");
+            THEN("The status is OK") {
+                REQUIRE(status.ok());
+            }
+            THEN("the response is updated from the call") {
+                REQUIRE("response group" == response.id());
+                REQUIRE("response description" == response.description());
+            }
+        }
+
         // ----- AppendEnrollmentGroup -----------------------------------------
 
         WHEN("AppendEnrollmentGroup is called") {
@@ -210,6 +236,23 @@ SCENARIO("A client requires a synchronous interface to the management service") 
             );
             EnrollmentGroupResponse response;
             auto status = service.append_enrollment_group(&response, "foo ID", {"ID0", "ID1"});
+        }
+
+        // ----- RemoveEnrollmentsFromGroup ----------------------------------
+
+        WHEN("RemoveEnrollmentsFromGroup is called") {
+            EXPECT_CALL(*stub, RemoveEnrollmentsFromGroup(_, _, _))
+                .Times(1)
+                .WillOnce([] (ClientContext*, const RemoveEnrollmentsRequest& request, EnrollmentGroupResponse *response) {
+                    REQUIRE(request.groupid() == "foo ID");
+                    REQUIRE(2 == request.enrollmentids_size());
+                    REQUIRE("ID0" == request.enrollmentids(0));
+                    REQUIRE("ID1" == request.enrollmentids(1));
+                    return Status::OK;
+                }
+            );
+            EnrollmentGroupResponse response;
+            auto status = service.remove_enrollments_from_group(&response, "foo ID", {"ID0", "ID1"});
         }
 
         // ----- DeleteEnrollment ----------------------------------------------

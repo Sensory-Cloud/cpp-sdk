@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['uuid_5fv4_0',['uuid_v4',['../namespacesensory_1_1util.html#afe2ab2f74c69f7797dfb8b2bebf92943',1,'sensory::util']]]
+  ['update_5fenrollment_5fgroup_0',['update_enrollment_group',['../classsensory_1_1service_1_1_management_service.html#a7c3d9b0948f653635f745e9c2c72366e',1,'sensory::service::ManagementService::update_enrollment_group(::sensory::api::v1::management::EnrollmentGroupResponse *response, const std::string &amp;groupID, const std::string &amp;groupName) const'],['../classsensory_1_1service_1_1_management_service.html#a5d88e6abd7931f5df258b1f9208e130a',1,'sensory::service::ManagementService::update_enrollment_group(::grpc::CompletionQueue *queue, const std::string &amp;groupID, const std::string &amp;groupName) const'],['../classsensory_1_1service_1_1_management_service.html#a2c91adc8c1b25610c293cd9961b57921',1,'sensory::service::ManagementService::update_enrollment_group(const std::string &amp;groupID, const std::string &amp;groupName, const Callback &amp;callback) const']]],
+  ['updateenrollmentgroupasynccall_1',['UpdateEnrollmentGroupAsyncCall',['../classsensory_1_1service_1_1_management_service.html#ac9570702327b2bc5be876cacb73aada4',1,'sensory::service::ManagementService']]],
+  ['updateenrollmentgroupcallbackdata_2',['UpdateEnrollmentGroupCallbackData',['../classsensory_1_1service_1_1_management_service.html#a728f4ceb81b10cfc734a143fb9128e62',1,'sensory::service::ManagementService']]],
+  ['uuid_5fv4_3',['uuid_v4',['../namespacesensory_1_1util.html#afe2ab2f74c69f7797dfb8b2bebf92943',1,'sensory::util']]]
 ];
