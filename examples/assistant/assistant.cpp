@@ -118,7 +118,6 @@ int main(int argc, const char** argv) {
     // Create a request and set the model name. We'll use the request to cache
     // all communication to-and-from the assistant.
     ::sensory::api::v1::assistant::TextChatRequest request;
-    std::cout << MODEL << std::endl;
     request.set_modelname(MODEL);
 
     while (true) {
@@ -127,7 +126,7 @@ int main(int argc, const char** argv) {
         std::string line;
         std::getline(std::cin, line);
         // Detect the shutdown signal
-        if (line == "exit" || line == "exit()") break;
+        if (line == "exit" || line == "exit()" || line == "quit") break;
         // Create the chat request
         auto message = request.add_messages();
         message->set_role(::sensory::api::v1::assistant::ChatRole::USER);

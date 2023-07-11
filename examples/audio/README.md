@@ -288,12 +288,19 @@ default audio input device on your machine.
 
 #### Event Enrollment
 
-When fetching models from the server, the JSON output will contain a boolean
-field `isEnrollable` describing whether a given event detection model supports
-enrollment features. Models that support enrollment can be adapted to unique
-instances of sounds. Once you've identified an event detection model that you
-would like to enroll with, an enrollment can be created from a real-time
-microphone input using the following:
+To fetch event validation models that support enrollment, use the following
+command. Here `<path to config.ini file>` should be a path to an INI file on
+disk that describes your tenant in SensoryCloud. The `-g` flag instructs the
+tool to fetch models and print them without performing an enrollment.
+
+```shell
+./enroll_event <path to config.ini file> -g
+```
+
+Models that support enrollment can be adapted to unique instances of sounds.
+Once you've identified an event detection model that you would like to enroll
+with, an enrollment can be created from a real-time microphone input using the
+following:
 
 ```shell
 ./enroll_event <path to config.ini file> \
@@ -473,8 +480,10 @@ patterns. Our file-processing tools enable automated testing of our systems
 based on data that reflects the dynamics of your particular use case. In all
 cases, the file-processing counterpart for each tool simply appends the suffix
 `_file`. and introduces the CLI flag `-i <path to audio file>` for providing a
-path to an input file. For instance, below illustrates a theoretical example
-of executing an transcription from a WAV file:
+path to an input file. Audio files are expected to be monophonic (single
+channel) in 16-bit signed format (linear PCM) with a sample rate of _16kHz_.
+For instance, below illustrates a theoretical example of executing an
+transcription from a WAV file:
 
 ```shell
 ./transcribe_file <path to config.ini file> \

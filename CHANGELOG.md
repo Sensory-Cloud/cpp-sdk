@@ -1,5 +1,24 @@
 # Change Log
 
+## 1.3.0
+
+### Adds
+
+-   Management service updated with missing endpoints
+    -   _"Remove Enrollment From Group"_ enables users to remove enrollments
+        from an existing enrollment group
+    -   _"Update Enrollment Group"_ enables users to rename their enrollment
+        groups as needed
+-   Management CLIs updated with flows for
+    -   _"Remove Enrollment From Group"_
+    -   _"Update Enrollment Group"_
+
+### Changes
+
+-   Documentation for management services updated with more verbosity
+-   Revision to assistant documentation to reflect the latest features and
+    usage
+
 ## 1.2.5
 
 ### Changes
