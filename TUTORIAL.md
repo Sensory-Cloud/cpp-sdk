@@ -32,7 +32,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.3.0
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.3.1
 )
 FetchContent_MakeAvailable(sensorycloud)
 

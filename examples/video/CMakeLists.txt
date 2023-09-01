@@ -21,7 +21,7 @@ project(sensory-cloud-video-examples)
 # Fetch the sensorycloud SDK and compile it as part of this project.
 include(FetchContent)
 FetchContent_Declare(sensorycloud
-    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.3.0
+    URL https://codeload.github.com/Sensory-Cloud/cpp-sdk/tar.gz/refs/tags/v1.3.1
 )
 FetchContent_MakeAvailable(sensorycloud)
 
@@ -37,40 +37,40 @@ include_directories(dep)
 
 add_executable(authenticate synchronous/authenticate.cpp)
 target_link_libraries(authenticate PRIVATE sensorycloud)
-target_link_libraries(authenticate PRIVATE ${OpenCV_LIBS})
+target_link_libraries(authenticate PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 add_executable(authenticate_async asynchronous_event/authenticate.cpp)
 target_link_libraries(authenticate_async PRIVATE sensorycloud)
-target_link_libraries(authenticate_async PRIVATE ${OpenCV_LIBS})
+target_link_libraries(authenticate_async PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 add_executable(authenticate_callback asynchronous_callback/authenticate.cpp)
 target_link_libraries(authenticate_callback PRIVATE sensorycloud)
-target_link_libraries(authenticate_callback PRIVATE ${OpenCV_LIBS})
+target_link_libraries(authenticate_callback PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 # --- Enroll -------------------------------------------------------------------
 
 add_executable(enroll synchronous/enroll.cpp)
 target_link_libraries(enroll PRIVATE sensorycloud)
-target_link_libraries(enroll PRIVATE ${OpenCV_LIBS})
+target_link_libraries(enroll PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 add_executable(enroll_async asynchronous_event/enroll.cpp)
 target_link_libraries(enroll_async PRIVATE sensorycloud)
-target_link_libraries(enroll_async PRIVATE ${OpenCV_LIBS})
+target_link_libraries(enroll_async PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 add_executable(enroll_callback asynchronous_callback/enroll.cpp)
 target_link_libraries(enroll_callback PRIVATE sensorycloud)
-target_link_libraries(enroll_callback PRIVATE ${OpenCV_LIBS})
+target_link_libraries(enroll_callback PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 # --- Liveness -----------------------------------------------------------------
 
 add_executable(liveness synchronous/liveness.cpp)
 target_link_libraries(liveness PRIVATE sensorycloud)
-target_link_libraries(liveness PRIVATE ${OpenCV_LIBS})
+target_link_libraries(liveness PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 add_executable(liveness_async asynchronous_event/liveness.cpp)
 target_link_libraries(liveness_async PRIVATE sensorycloud)
-target_link_libraries(liveness_async PRIVATE ${OpenCV_LIBS})
+target_link_libraries(liveness_async PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
 add_executable(liveness_callback asynchronous_callback/liveness.cpp)
 target_link_libraries(liveness_callback PRIVATE sensorycloud)
-target_link_libraries(liveness_callback PRIVATE ${OpenCV_LIBS})
+target_link_libraries(liveness_callback PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
