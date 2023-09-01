@@ -31,7 +31,7 @@ MathJax.Hub.Config({
                     <tr style="height: 56px;">
                         <td id="projectalign" style="padding-left: 0.5em;">
                             <div id="projectname">SensoryCloud C++ SDK
-                                &#160;<span id="projectnumber">1.3.0</span>
+                                &#160;<span id="projectnumber">1.3.1</span>
                             </div>
                         </td>
                     </tr>
@@ -75,7 +75,19 @@ $(function() {
   <div class="headertitle"><div class="title">Change Log </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1>1.3.0</h1>
+<div class="textblock"><h1>1.3.1</h1>
+<h2>Changes</h2>
+<ul>
+<li><p class="startli">Fix OpenCV link libraries in examples to target only the specific sub-libraries being used, i.e.,</p>
+<p class="startli">```cmake target_link_libraries(application PRIVATE ${OpenCV_LIBS}) ```</p>
+<p class="startli">became</p>
+<p class="startli">```cmake target_link_libraries(application PRIVATE opencv_highgui opencv_imgproc opencv_videoio) ```</p>
+<p class="startli">This resolves a protobuf dependency collision that was resulting in a lockup when attempting to run any vision examples.</p>
+</li>
+<li>Fix <code>(SensoryCloud).initialize</code> to request a token after registering a new device. This ensures that the device is fully configured after a successful call to <code>initialize</code>. Previously, one would need to make a call to any other endpoint after the first call to <code>initialize</code> on a new device to fetch a token. Failing to do so would cause a device session to fall into a broken state where <code>initialize</code> could not find a token on subsequent invocations and thus would attempt to re-initialize the device which had already been initialized with the server.</li>
+<li><code>SensoryCloud::token_manager</code> moved from public scope to private scope. All token management is handled internally within the SDK.</li>
+</ul>
+<h1>1.3.0</h1>
 <h2>Adds</h2>
 <ul>
 <li>Management service updated with missing endpoints<ul>
@@ -83,10 +95,16 @@ $(function() {
 <li>_"Update Enrollment Group"_ enables users to rename their enrollment groups as needed</li>
 </ul>
 </li>
+<li>Management CLIs updated with flows for<ul>
+<li>_"Remove Enrollment From Group"_</li>
+<li>_"Update Enrollment Group"_</li>
+</ul>
+</li>
 </ul>
 <h2>Changes</h2>
 <ul>
 <li>Documentation for management services updated with more verbosity</li>
+<li>Revision to assistant documentation to reflect the latest features and usage</li>
 </ul>
 <h1>1.2.5</h1>
 <h2>Changes</h2>

@@ -19,7 +19,7 @@
 
 # Version 3.14 is required for the FetchContent features that are used here.
 cmake_minimum_required(VERSION 3.14)
-project(sensory-cloud-cpp-sdk VERSION 1.3.0)
+project(sensory-cloud-cpp-sdk VERSION 1.3.1)
 
 # Include the common files for finding/compiling Protobuf and gRPC.
 include(cmake/common.cmake)
@@ -350,43 +350,43 @@ if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_VIDEO)
 
     add_executable(examples_video_authenticate examples/video/synchronous/authenticate.cpp)
     target_link_libraries(examples_video_authenticate PRIVATE sensorycloud)
-    target_link_libraries(examples_video_authenticate PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_authenticate PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     add_executable(examples_video_authenticate_async examples/video/asynchronous_event/authenticate.cpp)
     target_link_libraries(examples_video_authenticate_async PRIVATE sensorycloud)
-    target_link_libraries(examples_video_authenticate_async PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_authenticate_async PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     add_executable(examples_video_authenticate_callback examples/video/asynchronous_callback/authenticate.cpp)
     target_link_libraries(examples_video_authenticate_callback PRIVATE sensorycloud)
-    target_link_libraries(examples_video_authenticate_callback PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_authenticate_callback PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     # --- Create Enrollment ----------------------------------------------------
 
     add_executable(examples_video_enroll examples/video/synchronous/enroll.cpp)
     target_link_libraries(examples_video_enroll PRIVATE sensorycloud)
-    target_link_libraries(examples_video_enroll PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_enroll PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     add_executable(examples_video_enroll_async examples/video/asynchronous_event/enroll.cpp)
     target_link_libraries(examples_video_enroll_async PRIVATE sensorycloud)
-    target_link_libraries(examples_video_enroll_async PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_enroll_async PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     add_executable(examples_video_enroll_callback examples/video/asynchronous_callback/enroll.cpp)
     target_link_libraries(examples_video_enroll_callback PRIVATE sensorycloud)
-    target_link_libraries(examples_video_enroll_callback PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_enroll_callback PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     # --- Validate Liveness ----------------------------------------------------
 
     add_executable(examples_video_liveness examples/video/synchronous/liveness.cpp)
     target_link_libraries(examples_video_liveness PRIVATE sensorycloud)
-    target_link_libraries(examples_video_liveness PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_liveness PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     add_executable(examples_video_liveness_async examples/video/asynchronous_event/liveness.cpp)
     target_link_libraries(examples_video_liveness_async PRIVATE sensorycloud)
-    target_link_libraries(examples_video_liveness_async PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_liveness_async PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 
     add_executable(examples_video_liveness_callback examples/video/asynchronous_callback/liveness.cpp)
     target_link_libraries(examples_video_liveness_callback PRIVATE sensorycloud)
-    target_link_libraries(examples_video_liveness_callback PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(examples_video_liveness_callback PRIVATE opencv_highgui opencv_imgproc opencv_videoio)
 endif()
 
 if (SENSORY_CLOUD_BUILD_EXAMPLES OR SENSORY_CLOUD_BUILD_EXAMPLES_MANAGEMENT)

@@ -178,14 +178,14 @@ class SensoryCloud {
     const ::sensory::Config config;
     /// The credentials for registering the device with the server.
     const ::sensory::RegistrationCredentials registration_credentials;
+    /// The token manager.
+    ::sensory::token_manager::TokenManager<CredentialStore> token_manager;
 
  public:
     /// The health service.
     ::sensory::service::HealthService health;
     /// The OAuth service.
     ::sensory::service::OAuthService oauth;
-    /// The token manager.
-    ::sensory::token_manager::TokenManager<CredentialStore> token_manager;
     /// The management service.
     ::sensory::service::ManagementService<CredentialStore> management;
     /// The audio service.
@@ -323,12 +323,14 @@ class SensoryCloud {
                 .set_payload_claim("tenant_id", jwt::claim(token_manager.get_service().get_config().get_tenant_id()))
                 .set_payload_claim("client_id", jwt::claim(device_credentials.id))
                 .sign(jwt::algorithm::ed25519{"", key, "", ""});
-        return oauth.register_device(response,
+        auto status = oauth.register_device(response,
             registration_credentials.device_name,
             credential,
             device_credentials.id,
             device_credentials.secret
         );
+        if (status.ok()) token_manager.get_access_token();
+        return status;
     }
 };
 

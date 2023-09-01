@@ -1,5 +1,38 @@
 # Change Log
 
+## 1.3.1
+
+### Changes
+
+-   Fix OpenCV link libraries in examples to target only the specific
+    sub-libraries being used, i.e.,
+
+    ```cmake
+    target_link_libraries(application PRIVATE ${OpenCV_LIBS})
+    ```
+
+    became
+
+    ```cmake
+    target_link_libraries(application PRIVATE
+        opencv_highgui
+        opencv_imgproc
+        opencv_videoio)
+    ```
+
+    This resolves a protobuf dependency collision that was resulting in a
+    lockup when attempting to run any vision examples.
+-   Fix `(SensoryCloud).initialize` to request a token after registering a
+    new device. This ensures that the device is fully configured after a
+    successful call to `initialize`. Previously, one would need to make a call
+    to any other endpoint after the first call to `initialize` on a new device
+    to fetch a token. Failing to do so would cause a device session to fall
+    into a broken state where `initialize` could not find a token on
+    subsequent invocations and thus would attempt to re-initialize the device
+    which had already been initialized with the server.
+-   `SensoryCloud::token_manager` moved from public scope to private scope. All
+    token management is handled internally within the SDK.
+
 ## 1.3.0
 
 ### Adds
