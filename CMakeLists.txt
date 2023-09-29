@@ -91,7 +91,7 @@ endif()  # SENSORY_CLOUD_GENERATE_PROTO
 
 file(GLOB_RECURSE INCLUDES CONFIGURE_DEPENDS include/*.h include/*.hpp)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.c src/*.cc src/*.cpp)
-add_library(sensorycloud SHARED
+add_library(sensorycloud STATIC
     ${INCLUDES} ${SOURCES}
     ${PROTO_HDRS} ${PROTO_SRCS}
     ${GRPC_HDRS} ${GRPC_SRCS}

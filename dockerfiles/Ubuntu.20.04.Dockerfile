@@ -41,10 +41,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # ----------------------------------------------------------------------------
 
 # Update Ubuntu software repositories.
-RUN apt-get --fix-missing update
-RUN apt-get -y upgrade
-# Install dependencies for the SDK.
-RUN apt-get install -y build-essential autoconf libtool pkg-config git python3
+RUN apt-get --fix-missing update && apt-get -y upgrade && apt-get install -y build-essential autoconf libtool pkg-config git python3
 
 # Install the latest version of CMake. This is based on the official CMake
 # documentation for Ubuntu 20.04 here: https://apt.kitware.com/
